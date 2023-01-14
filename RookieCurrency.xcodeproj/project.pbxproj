@@ -127,10 +127,10 @@
 			children = (
 				E1CE96A8248555530029ED73 /* Controller */,
 				E13B274424758ACB00E0A07D /* RookieCurrency */,
+				E15BA6AC24FCA66600CA5B1B /* CombineCurrency */,
 				E1CE96A32485549D0029ED73 /* Extension */,
 				E1CE96A02485535D0029ED73 /* Data Model */,
 				E13B275B24758ACF00E0A07D /* RookieCurrencyTests */,
-				E15BA6AC24FCA66600CA5B1B /* CombineCurrency */,
 				E15BA6C324FCA66900CA5B1B /* CombineCurrencyTests */,
 				E13B274324758ACB00E0A07D /* Products */,
 			);
