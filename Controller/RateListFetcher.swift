@@ -21,7 +21,25 @@ enum RateListFetcher {
         var urlComponents = URLComponents(string: baseURL)
         
         let accessKey = "cab92b8eb8df1c00d9913e9701776955"
-        let symbolQueryValue = "TWD,JPY,USD,CNY,GBP,SEK,CAD,ZAR,HKD,SGD,CHF,NZD,AUD,XAG,XAU"
+        let symbols = [
+            "TWD",
+            "JPY",
+            "USD",
+            "CNY",
+            "GBP",
+            "SEK",
+            "CAD",
+            "ZAR",
+            "HKD",
+            "SGD",
+            "CHF",
+            "NZD",
+            "AUD",
+            "XAG",
+            "XAU"
+        ]
+        let symbolQueryValue = symbols
+            .reduce("") { partialResult, symbol in partialResult.isEmpty ? symbol : partialResult + "," + symbol }
         
         urlComponents?.queryItems = [
             URLQueryItem(name: "access_key", value: accessKey),
