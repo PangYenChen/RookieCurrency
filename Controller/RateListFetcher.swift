@@ -61,18 +61,18 @@ enum RateListFetcher {
         
         /// 索取該資料的 url
         var url: URL {
-            var dummyUrlComponents = urlComponents
+            var urlComponents = urlComponents
             
             switch self {
             case .latest:
-                dummyUrlComponents?.path += "latest"
+                urlComponents?.path += "latest"
             case .historical(date: let date):
                 let dateString = DateFormatter.requestDateFormatter.string(from: date)
-                dummyUrlComponents?.path += dateString
+                urlComponents?.path += dateString
             }
             
             #warning("雖然說不應該 forced unwrap，但我想不到什麼時候會是 nil。")
-            return (dummyUrlComponents?.url)!
+            return (urlComponents?.url)!
         }
     }
     
