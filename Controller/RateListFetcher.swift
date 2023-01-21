@@ -21,25 +21,9 @@ enum RateListFetcher {
         var urlComponents = URLComponents(string: baseURL)
         
         let accessKey = "cab92b8eb8df1c00d9913e9701776955"
-        let symbols = [
-            "TWD",
-            "JPY",
-            "USD",
-            "CNY",
-            "GBP",
-            "SEK",
-            "CAD",
-            "ZAR",
-            "HKD",
-            "SGD",
-            "CHF",
-            "NZD",
-            "AUD",
-            "XAG",
-            "XAU"
-        ]
-        let symbolQueryValue = symbols
-            .reduce("") { partialResult, symbol in partialResult.isEmpty ? symbol : partialResult + "," + symbol }
+        let symbolQueryValue = ResponseDataModel.RateList.Currency.allCases
+            .compactMap { $0 == .EUR ? nil : $0.rawValue } // 以歐元為匯率基準幣別，所以 query 不帶歐元
+            .joined(separator: ",")
         
         urlComponents?.queryItems = [
             URLQueryItem(name: "access_key", value: accessKey),
@@ -145,7 +129,7 @@ extension RateListFetcher {
     static func rateListPublisher(for endPoint: EndPoint) -> AnyPublisher<ResponseDataModel.RateList, Error> {
         RookieURLSessionController.dataTaskPublish(with: endPoint.url)
             .receive(on: DispatchQueue.main)
-            .map { $0.0}
+            .map { $0.0 }
             .handleEvents(receiveOutput: prettyPrint)
             .tryMap { (data) -> Data in
                 if let responseError = try? jsonDecoder.decode(ResponseDataModel.ServerError.self, from: data) {
