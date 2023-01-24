@@ -68,7 +68,7 @@ extension RateListSetController {
                 
                 // 所需的資料全部拿到後
                 dispatchGroup?.notify(queue: .main) {
-                    print("###", self, #function, "全部的資料是\n\t", historicalRateListSet)
+                    print("###", self, #function, "全部的資料是\n\t", historicalRateListSet.sorted { lhs, rhs in lhs.date < rhs.date })
                     completionHandler(.success((latestRateList, historicalRateListSet)))
 
                     do {

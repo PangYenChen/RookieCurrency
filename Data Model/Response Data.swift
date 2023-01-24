@@ -177,7 +177,7 @@ extension ResponseDataModel.RateList: Hashable {
 }
 
 extension ResponseDataModel.RateList: CustomStringConvertible {
-    var description: String { dateString}
+    var description: String { dateString }
 }
 
 // MARK: - 伺服器回傳的錯誤 ResponseDataModel.ServerError
