@@ -12,33 +12,32 @@ import Combine
 /// 跟伺服器拿資料的物件
 enum RateListFetcher {
     
-    /// 組裝出 url 的 url components
-    private static let urlComponents: URLComponents? = {
-        
-        /// 拿匯率的 base url，我使用的免費方案不支援 https。
-        /// 提供資料的服務商： https://fixer.io
-        let baseURL = "http://data.fixer.io/api/"
-        
-        var urlComponents = URLComponents(string: baseURL)
-        
-        let accessKey = "cab92b8eb8df1c00d9913e9701776955"
-        let symbolQueryValue = Currency.allCases
-            .compactMap { $0 == .EUR ? nil : $0.rawValue } // 以歐元為匯率基準幣別，所以 query 不帶歐元
-            .joined(separator: ",")
-        
-        urlComponents?.queryItems = [
-            URLQueryItem(name: "access_key", value: accessKey),
-            URLQueryItem(name: "symbols", value: symbolQueryValue)
-        ]
-        
-        return urlComponents
-    }()
-    
     /// 解析伺服器回傳的資料的共用 JSON decoder
     private static let jsonDecoder = JSONDecoder()
     
     /// 拿的資料的種類
     enum EndPoint {
+        /// 組裝出 url 的 url components
+        private static let urlComponents: URLComponents? = {
+            
+            /// 拿匯率的 base url，我使用的免費方案不支援 https。
+            /// 提供資料的服務商： https://fixer.io
+            let baseURL = "http://data.fixer.io/api/"
+            
+            var urlComponents = URLComponents(string: baseURL)
+            
+            let accessKey = "cab92b8eb8df1c00d9913e9701776955"
+            let symbolQueryValue = Currency.allCases
+                .compactMap { $0 == .EUR ? nil : $0.rawValue } // 以歐元為匯率基準幣別，所以 query 不帶歐元
+                .joined(separator: ",")
+            
+            urlComponents?.queryItems = [
+                URLQueryItem(name: "access_key", value: accessKey),
+                URLQueryItem(name: "symbols", value: symbolQueryValue)
+            ]
+            
+            return urlComponents
+        }()
         /// 當下的資料
         case latest
         /// 日期為 date 的歷史資料
@@ -46,7 +45,7 @@ enum RateListFetcher {
         
         /// 索取該資料的 url
         var url: URL {
-            var urlComponents = urlComponents
+            var urlComponents = Self.urlComponents
             
             switch self {
             case .latest:
