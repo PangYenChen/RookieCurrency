@@ -57,6 +57,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		516916B92983D4C800547B60 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		E111736524C8863600F1A0EB /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
 		E1133334248A924D00B8E67F /* RateListSetArchiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateListSetArchiver.swift; sourceTree = "<group>"; };
 		E1133336248CDD1500B8E67F /* RookieURLSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RookieURLSessionController.swift; sourceTree = "<group>"; };
@@ -153,6 +154,7 @@
 		E13B273924758ACB00E0A07D = {
 			isa = PBXGroup;
 			children = (
+				516916B92983D4C800547B60 /* README.md */,
 				51D67ED2297591BC008B8928 /* Supporting Files */,
 				E1CE96A8248555530029ED73 /* Controller */,
 				E13B274424758ACB00E0A07D /* RookieCurrency */,
