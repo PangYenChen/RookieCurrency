@@ -102,8 +102,11 @@
                     </view>
                     <connections>
                         <outlet property="baseCurrencyLabel" destination="ata-M6-Xbs" id="f27-2H-FEN"/>
+                        <outlet property="baseCurrencyTitleLabel" destination="4fs-lU-ZK6" id="Sif-V7-gkv"/>
                         <outlet property="latestUpdateTimeLabel" destination="420-at-sAo" id="t92-G7-1GW"/>
+                        <outlet property="latestUpdateTimeTitle" destination="WVj-Mr-C4V" id="k1k-BV-Xu6"/>
                         <outlet property="numberOfDayTextField" destination="xvC-8b-rEh" id="i6y-p1-rht"/>
+                        <outlet property="numberOfDayTitle" destination="MD4-qZ-SP8" id="h5c-oj-bhJ"/>
                         <outlet property="stepper" destination="Nk5-ky-A11" id="sO5-pH-MZB"/>
                     </connections>
                 </viewController>
