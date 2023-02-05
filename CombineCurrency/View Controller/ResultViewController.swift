@@ -11,9 +11,9 @@ import Combine
 
 class ResultViewController: UIViewController {
     // MARK: - Property
-    @IBOutlet weak var latestUpdateTimeLabel: UILabel!
-    @IBOutlet weak var stepper: UIStepper!
     @IBOutlet weak var numberOfDayTextField: UITextField!
+    @IBOutlet weak var stepper: UIStepper!
+    @IBOutlet weak var latestUpdateTimeLabel: UILabel!
     @IBOutlet weak var baseCurrencyLabel: UILabel!
     
     private var anyCancellableSet = Set<AnyCancellable>()
@@ -105,7 +105,7 @@ class ResultViewController: UIViewController {
         }
     }
     
-    @IBAction func valueDidChange(_ sender: UIStepper) {
+    @IBAction func stepperValueDidChange(_ sender: UIStepper) {
         numberOfDay.send(Int(sender.value))
     }
     

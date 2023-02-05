@@ -10,9 +10,9 @@ import UIKit
 
 class ResultViewController: UIViewController {
     // MARK: - Property
-    @IBOutlet weak var numberOfDayField: UITextField!
+    @IBOutlet weak var numberOfDayTextField: UITextField!
     @IBOutlet weak var stepper: UIStepper!
-    @IBOutlet weak var latestTimeLabel: UILabel!
+    @IBOutlet weak var latestUpdateTimeLabel: UILabel!
     @IBOutlet weak var baseCurrencyLabel: UILabel!
     
     private var baseCurrency: ResponseDataModel.RateList.Currency = .TWD {
@@ -38,7 +38,7 @@ class ResultViewController: UIViewController {
         let numberOfDay = UserDefaults.standard.double(forKey: "numberOfDay")
         stepper.value = (numberOfDay > 0) ? numberOfDay : 30
         
-        numberOfDayField.text = "\(Int(stepper.value))"
+        numberOfDayTextField.text = "\(Int(stepper.value))"
         
         if let baseCurrencyString = UserDefaults.standard.string(forKey: "baseCurrency"),
             let baseCurrency = ResponseDataModel.RateList.Currency(rawValue: baseCurrencyString) {
@@ -49,7 +49,7 @@ class ResultViewController: UIViewController {
     }
     
     @IBAction func stepperValueDidChange(_ sender: UIStepper) {
-        numberOfDayField.text = "\(Int(stepper.value))"
+        numberOfDayTextField.text = "\(Int(stepper.value))"
         UserDefaults.standard.set(stepper.value, forKey: "numberOfDay")
     }
     
@@ -79,7 +79,7 @@ extension ResultViewController: ResultDelegate {
     func updateLatestTime(_ timestamp: Int) {
         let date = Date(timeIntervalSince1970: Double(timestamp))
         let dateString = DateFormatter.uiDateFormatter.string(from: date)
-        latestTimeLabel.text = dateString
+        latestUpdateTimeLabel.text = dateString
     }
     
     func getNumberOfDay() -> Int { Int(stepper.value) }

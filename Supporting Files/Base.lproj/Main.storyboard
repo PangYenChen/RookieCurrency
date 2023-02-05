@@ -12,7 +12,7 @@
         <!--Result View Controller-->
         <scene sceneID="0gu-Xe-SWx">
             <objects>
-                <viewController id="dbP-sf-lll" customClass="ResultViewController" customModule="RookieCurrency" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="dbP-sf-lll" customClass="ResultViewController" customModule="CombineCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="82u-6C-sN1">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -102,8 +102,8 @@
                     </view>
                     <connections>
                         <outlet property="baseCurrencyLabel" destination="ata-M6-Xbs" id="f27-2H-FEN"/>
-                        <outlet property="latestTimeLabel" destination="420-at-sAo" id="t92-G7-1GW"/>
-                        <outlet property="numberOfDayField" destination="xvC-8b-rEh" id="i6y-p1-rht"/>
+                        <outlet property="latestUpdateTimeLabel" destination="420-at-sAo" id="t92-G7-1GW"/>
+                        <outlet property="numberOfDayTextField" destination="xvC-8b-rEh" id="i6y-p1-rht"/>
                         <outlet property="stepper" destination="Nk5-ky-A11" id="sO5-pH-MZB"/>
                     </connections>
                 </viewController>
@@ -114,7 +114,7 @@
         <!--Result Table View Controller-->
         <scene sceneID="8l1-9B-nkE">
             <objects>
-                <tableViewController id="c2h-qt-hiT" customClass="ResultTableViewController" customModule="RookieCurrency" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="c2h-qt-hiT" customClass="ResultTableViewController" customModule="CombineCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="RFI-HH-5Kf">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="706"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
