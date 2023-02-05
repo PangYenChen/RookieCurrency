@@ -199,8 +199,8 @@
 		E15BA6AC24FCA66600CA5B1B /* CombineCurrency */ = {
 			isa = PBXGroup;
 			children = (
-				51D67ED1297590B0008B8928 /* Supporting Files */,
 				E1FB994224FF9E340096FE2C /* View Controller */,
+				51D67ED1297590B0008B8928 /* Supporting Files */,
 			);
 			path = CombineCurrency;
 			sourceTree = "<group>";
@@ -254,8 +254,8 @@
 		E1FB994224FF9E340096FE2C /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
-				E1FB993E24FF554C0096FE2C /* ResultViewController.swift */,
 				E15BA6CD24FCCFAC00CA5B1B /* ResultTableViewController.swift */,
+				E1FB993E24FF554C0096FE2C /* ResultViewController.swift */,
 			);
 			path = "View Controller";
 			sourceTree = "<group>";

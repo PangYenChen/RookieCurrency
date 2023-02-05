@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="15702" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dbP-sf-lll">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dbP-sf-lll">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="15704"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -15,62 +17,63 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Brr-Ch-dxb">
-                                <rect key="frame" x="0.0" y="152" width="414" height="710"/>
-                                <connections>
-                                    <segue destination="c2h-qt-hiT" kind="embed" id="nhs-0K-sp2"/>
-                                </connections>
-                            </containerView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" insetsLayoutMarginsFromSafeArea="NO" text="考量過去天數：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MD4-qZ-SP8">
-                                <rect key="frame" x="20" y="50.5" width="121.5" height="21"/>
+                                <rect key="frame" x="20" y="54.5" width="121.5" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
+                            <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Brr-Ch-dxb">
+                                <rect key="frame" x="0.0" y="156" width="414" height="706"/>
+                                <connections>
+                                    <segue destination="c2h-qt-hiT" kind="embed" id="nhs-0K-sp2"/>
+                                </connections>
+                            </containerView>
                             <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="30" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xvC-8b-rEh">
-                                <rect key="frame" x="149.5" y="44" width="46" height="34"/>
+                                <rect key="frame" x="149.5" y="48" width="46" height="34"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
                             </textField>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="最後更新時間：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WVj-Mr-C4V">
-                                <rect key="frame" x="20" y="86.5" width="121.5" height="20"/>
+                                <rect key="frame" x="20" y="90.5" width="121.5" height="20"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minimumValue="1" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="Nk5-ky-A11">
-                                <rect key="frame" x="300" y="45" width="94" height="32"/>
+                                <rect key="frame" x="300" y="49" width="94" height="32"/>
                                 <connections>
                                     <action selector="stepperValueDidChange:" destination="dbP-sf-lll" eventType="valueChanged" id="NNL-Of-kl5"/>
                                 </connections>
                             </stepper>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="420-at-sAo">
-                                <rect key="frame" x="149.5" y="86" width="244.5" height="21"/>
+                                <rect key="frame" x="149.5" y="90" width="244.5" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="基準幣別：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4fs-lU-ZK6">
-                                <rect key="frame" x="20" y="123" width="87" height="21"/>
+                                <rect key="frame" x="20" y="127" width="87" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ata-M6-Xbs">
-                                <rect key="frame" x="115" y="123" width="240" height="21"/>
+                                <rect key="frame" x="115" y="127" width="240" height="21"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <nil key="textColor"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rMe-Uz-Dnn">
-                                <rect key="frame" x="363" y="118.5" width="31" height="30"/>
+                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rMe-Uz-Dnn">
+                                <rect key="frame" x="363" y="122.5" width="31" height="30"/>
                                 <state key="normal" title="變更"/>
                                 <connections>
                                     <action selector="chooseBaseCurrency:" destination="dbP-sf-lll" eventType="touchUpInside" id="ZDX-dw-6Yn"/>
                                 </connections>
                             </button>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="BMa-dG-uLr"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
                             <constraint firstItem="ata-M6-Xbs" firstAttribute="leading" secondItem="4fs-lU-ZK6" secondAttribute="trailing" constant="8" symbolic="YES" id="13Z-5S-in0"/>
                             <constraint firstItem="MD4-qZ-SP8" firstAttribute="leading" secondItem="BMa-dG-uLr" secondAttribute="leading" constant="20" id="1os-Bo-MYk"/>
@@ -96,7 +99,6 @@
                             <constraint firstItem="4fs-lU-ZK6" firstAttribute="leading" secondItem="WVj-Mr-C4V" secondAttribute="leading" id="xai-QF-OUH"/>
                             <constraint firstItem="420-at-sAo" firstAttribute="leading" secondItem="WVj-Mr-C4V" secondAttribute="trailing" constant="8" symbolic="YES" id="yiL-Fg-gPH"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="BMa-dG-uLr"/>
                     </view>
                     <connections>
                         <outlet property="baseCurrencyLabel" destination="ata-M6-Xbs" id="f27-2H-FEN"/>
@@ -114,12 +116,12 @@
             <objects>
                 <tableViewController id="c2h-qt-hiT" customClass="ResultTableViewController" customModule="RookieCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="RFI-HH-5Kf">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="747"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="706"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
                             <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" id="RHz-hV-8X7">
-                                <rect key="frame" x="0.0" y="28" width="414" height="43.5"/>
+                                <rect key="frame" x="0.0" y="50" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="RHz-hV-8X7" id="34P-uq-Z3T">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
@@ -138,4 +140,9 @@
             <point key="canvasLocation" x="2687" y="116"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+    </resources>
 </document>
