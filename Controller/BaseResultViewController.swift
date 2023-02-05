@@ -20,7 +20,7 @@ class BaseResultViewController: UIViewController {
     @IBOutlet weak var baseCurrencyLabel: UILabel!
     
     override func viewDidLoad() {
-        numberOfDayTitle.text = NSLocalizedString("numberOfConsideredDay", comment: "")
+        
     }
     // MARK: - methods
     @IBAction func stepperValueDidChange(_ sender: UIStepper) {

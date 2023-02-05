@@ -25,6 +25,8 @@ class ResultViewController: BaseResultViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        numberOfDayTitle.text = R.string.localizable.numberOfConsideredDay()
+        
         guard let resultTableViewController = children.first as? ResultTableViewController else {
             fatalError()
         }

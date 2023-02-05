@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 52;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,6 +12,8 @@
 		5129D7A3298FA3D9005F5DE5 /* ResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultViewController.swift */; };
 		5129D7A7298FAAC5005F5DE5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5129D7AA298FAAC5005F5DE5 /* Localizable.strings */; };
 		5129D7A8298FAAC5005F5DE5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5129D7AA298FAAC5005F5DE5 /* Localizable.strings */; };
+		51433D33298FD7BF00F2B4E6 /* RswiftLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 51433D32298FD7BF00F2B4E6 /* RswiftLibrary */; };
+		51433D3B298FD8C400F2B4E6 /* RswiftLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 51433D3A298FD8C400F2B4E6 /* RswiftLibrary */; };
 		51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274524758ACB00E0A07D /* AppDelegate.swift */; };
 		51D67ED42975922D008B8928 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274724758ACB00E0A07D /* SceneDelegate.swift */; };
 		E111736624C8863600F1A0EB /* BaseResultViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E111736524C8863600F1A0EB /* BaseResultViewController.swift */; };
@@ -100,6 +102,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51433D33298FD7BF00F2B4E6 /* RswiftLibrary in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -114,6 +117,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51433D3B298FD8C400F2B4E6 /* RswiftLibrary in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -127,6 +131,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		51433D39298FD8C400F2B4E6 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		51D67ED029758F07008B8928 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -171,6 +182,7 @@
 				E13B275B24758ACF00E0A07D /* RookieCurrencyTests */,
 				E15BA6C324FCA66900CA5B1B /* CombineCurrencyTests */,
 				E13B274324758ACB00E0A07D /* Products */,
+				51433D39298FD8C400F2B4E6 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -282,8 +294,12 @@
 			buildRules = (
 			);
 			dependencies = (
+				51433D35298FD7D800F2B4E6 /* PBXTargetDependency */,
 			);
 			name = RookieCurrency;
+			packageProductDependencies = (
+				51433D32298FD7BF00F2B4E6 /* RswiftLibrary */,
+			);
 			productName = RookieCurrnecy;
 			productReference = E13B274224758ACB00E0A07D /* RookieCurrency.app */;
 			productType = "com.apple.product-type.application";
@@ -317,8 +333,12 @@
 			buildRules = (
 			);
 			dependencies = (
+				51433D38298FD8AC00F2B4E6 /* PBXTargetDependency */,
 			);
 			name = CombineCurrency;
+			packageProductDependencies = (
+				51433D3A298FD8C400F2B4E6 /* RswiftLibrary */,
+			);
 			productName = CombineCurrency;
 			productReference = E15BA6AB24FCA66600CA5B1B /* CombineCurrency.app */;
 			productType = "com.apple.product-type.application";
@@ -377,6 +397,9 @@
 				"zh-Hant",
 			);
 			mainGroup = E13B273924758ACB00E0A07D;
+			packageReferences = (
+				51433D31298FD7BF00F2B4E6 /* XCRemoteSwiftPackageReference "R" */,
+			);
 			productRefGroup = E13B274324758ACB00E0A07D /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -486,6 +509,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		51433D35298FD7D800F2B4E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 51433D34298FD7D800F2B4E6 /* RswiftGenerateInternalResources */;
+		};
+		51433D38298FD8AC00F2B4E6 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 51433D37298FD8AC00F2B4E6 /* RswiftGenerateInternalResources */;
+		};
 		E13B275A24758ACF00E0A07D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = E13B274124758ACB00E0A07D /* RookieCurrency */;
@@ -863,6 +894,38 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		51433D31298FD7BF00F2B4E6 /* XCRemoteSwiftPackageReference "R" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/mac-cain13/R.swift";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 7.0.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		51433D32298FD7BF00F2B4E6 /* RswiftLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51433D31298FD7BF00F2B4E6 /* XCRemoteSwiftPackageReference "R" */;
+			productName = RswiftLibrary;
+		};
+		51433D34298FD7D800F2B4E6 /* RswiftGenerateInternalResources */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "plugin:RswiftGenerateInternalResources";
+		};
+		51433D37298FD8AC00F2B4E6 /* RswiftGenerateInternalResources */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "plugin:RswiftGenerateInternalResources";
+		};
+		51433D3A298FD8C400F2B4E6 /* RswiftLibrary */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51433D31298FD7BF00F2B4E6 /* XCRemoteSwiftPackageReference "R" */;
+			productName = RswiftLibrary;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = E13B273A24758ACB00E0A07D /* Project object */;
 }
