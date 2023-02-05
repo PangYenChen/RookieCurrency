@@ -9,13 +9,9 @@
 import UIKit
 import Combine
 
-class ResultViewController: UIViewController {
-    // MARK: - Property
-    @IBOutlet weak var numberOfDayTextField: UITextField!
-    @IBOutlet weak var stepper: UIStepper!
-    @IBOutlet weak var latestUpdateTimeLabel: UILabel!
-    @IBOutlet weak var baseCurrencyLabel: UILabel!
+class ResultViewController: BaseResultViewController {
     
+    // MARK: - property
     private var anyCancellableSet = Set<AnyCancellable>()
     
     var numberOfDay: CurrentValueSubject<Int, Never>!
@@ -105,11 +101,11 @@ class ResultViewController: UIViewController {
         }
     }
     
-    @IBAction func stepperValueDidChange(_ sender: UIStepper) {
+    override func stepperValueDidChange(_ sender: UIStepper) {
         numberOfDay.send(Int(sender.value))
     }
     
-    @IBAction func chooseBaseCurrency(_ sender: UIButton) {
+    override func chooseBaseCurrency(_ sender: UIButton) {
         let alertController = UIAlertController(title: "請選擇基準備別", message: nil, preferredStyle: .actionSheet)
         
         for currency in ResponseDataModel.RateList.Currency.allCases {
