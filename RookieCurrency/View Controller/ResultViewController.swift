@@ -2,19 +2,14 @@
 //  ResultViewController.swift
 //  RookieCurrency
 //
-//  Created by Pang-yen Chen on 2020/7/22.
-//  Copyright © 2020 Pang-yen Chen. All rights reserved.
+//  Created by 陳邦彥 on 2023/2/5.
+//  Copyright © 2023 Pang-yen Chen. All rights reserved.
 //
 
 import UIKit
 
-class ResultViewController: UIViewController {
-    // MARK: - Property
-    @IBOutlet weak var numberOfDayTextField: UITextField!
-    @IBOutlet weak var stepper: UIStepper!
-    @IBOutlet weak var latestUpdateTimeLabel: UILabel!
-    @IBOutlet weak var baseCurrencyLabel: UILabel!
-    
+class ResultViewController: BaseResultViewController {
+    // MARK: - private property
     private var baseCurrency: ResponseDataModel.RateList.Currency = .TWD {
         didSet {
             UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
@@ -26,7 +21,7 @@ class ResultViewController: UIViewController {
         }
     }
     
-    // MARK: - Method
+    // MARK: - Methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -41,19 +36,19 @@ class ResultViewController: UIViewController {
         numberOfDayTextField.text = "\(Int(stepper.value))"
         
         if let baseCurrencyString = UserDefaults.standard.string(forKey: "baseCurrency"),
-            let baseCurrency = ResponseDataModel.RateList.Currency(rawValue: baseCurrencyString) {
+           let baseCurrency = ResponseDataModel.RateList.Currency(rawValue: baseCurrencyString) {
             self.baseCurrency = baseCurrency
         } else {
             baseCurrency = .TWD
         }
     }
     
-    @IBAction func stepperValueDidChange(_ sender: UIStepper) {
+    override func stepperValueDidChange(_ sender: UIStepper) {
         numberOfDayTextField.text = "\(Int(stepper.value))"
         UserDefaults.standard.set(stepper.value, forKey: "numberOfDay")
     }
     
-    @IBAction func chooseBaseCurrency(_ sender: UIButton) {
+    override func chooseBaseCurrency(_ sender: UIButton) {
         let alertController = UIAlertController(title: "請選擇基準備別", message: nil, preferredStyle: .actionSheet)
         
         for currency in ResponseDataModel.RateList.Currency.allCases {
@@ -74,7 +69,7 @@ class ResultViewController: UIViewController {
     }
 }
 
-/// 跟 child view controller 溝通
+// MARK: - 跟 child view controller 溝通
 extension ResultViewController: ResultDelegate {
     func updateLatestTime(_ timestamp: Int) {
         let date = Date(timeIntervalSince1970: Double(timestamp))
@@ -84,5 +79,5 @@ extension ResultViewController: ResultDelegate {
     
     func getNumberOfDay() -> Int { Int(stepper.value) }
     
-    func getBaseCurrency() -> ResponseDataModel.RateList.Currency { baseCurrency}
+    func getBaseCurrency() -> ResponseDataModel.RateList.Currency { baseCurrency }
 }
