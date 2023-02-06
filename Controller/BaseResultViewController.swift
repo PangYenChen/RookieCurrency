@@ -8,6 +8,7 @@
 
 import UIKit
 
+/// An abstract base class for view controller displaying result.
 /// This class is designed to be subclassed.
 class BaseResultViewController: UIViewController {
     // MARK: - Property

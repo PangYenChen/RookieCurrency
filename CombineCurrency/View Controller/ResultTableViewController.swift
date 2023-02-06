@@ -9,7 +9,7 @@
 import UIKit
 import Combine
 
-class ResultTableViewController: UITableViewController {
+class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - Property
     private let latestUpdateTimeStampSubject = PassthroughSubject<Int, Never>()
@@ -26,12 +26,6 @@ class ResultTableViewController: UITableViewController {
     var baseCurrency: ResponseDataModel.RateList.Currency = .TWD
     
     private var anyCancellableSet = Set<AnyCancellable>()
-    
-    var analyzedData: Array<(currency: ResponseDataModel.RateList.Currency, latest: Double, mean: Double, deviation: Double)> = [] {
-        didSet {
-            self.tableView.reloadData()
-        }
-    }
     
     var anyCancellable: AnyCancellable?
     
@@ -71,7 +65,7 @@ class ResultTableViewController: UITableViewController {
                         },
                           receiveValue: { [unowned self] analyzedData in
                             self.tableView.refreshControl?.endRefreshing()
-                            self.analyzedData = analyzedData
+                            self.analyzedDataArray = analyzedData
                     })
             })
             .sink(receiveValue: { _ in})
@@ -79,46 +73,7 @@ class ResultTableViewController: UITableViewController {
         
     }
     
-    
-    @objc private func getDataAndUpdateUI() {
+    override func getDataAndUpdateUI() {
         updateData.send((baseCurrency, numberOfDay))
-    }
-    
-    private func showErrorAlert(error: Error) {
-        let alertController = UIAlertController(title: "唉呀！出錯啦！", message: error.localizedDescription, preferredStyle: .alert)
-        let cancelAlertAction = UIAlertAction(title: "喔，是喔。", style: .cancel) { [unowned self] _ in
-            self.dismiss(animated: true)
-        }
-        
-        alertController.addAction(cancelAlertAction)
-        present(alertController, animated: true)
-    }
-    
-    // MARK: - Table view data source
-
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return analyzedData.count
-    }
-
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        var cell: UITableViewCell! = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier")
-        
-        if cell == nil {
-            cell = UITableViewCell(style: .subtitle, reuseIdentifier: "reuseIdentifier")
-        }
-        
-        let data = analyzedData[indexPath.item]
-        let currency = data.currency
-        let deviationString = NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
-        let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
-        let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
-        
-        cell.textLabel?.text = "\(currency) " + currency.name + deviationString
-        cell.detailTextLabel?.text = "過去平均：" + meanString + "，今天匯率：" + latestString
-            
-        cell.textLabel?.textColor = data.deviation < 0 ? .systemGreen : .systemRed
-        
-        return cell
     }
 }
