@@ -10,3 +10,23 @@
 "latestUpdateTime" = "最後更新時間：%@";
 "baseCurrency" = "基準幣別：%@";
 "changeBaseCurrency" = "變更";
+"alertTitle" = "唉呀！出錯啦！";
+"alertActionTitle" = "喔，是喔。";
+"currencyCellDetail" = "過去平均：%1$@，今天匯率：%2$@";
+// MARK: - 幣別
+"TWD" = "新台幣";
+"USD" = "美金";
+"JPY" = "日圓";
+"EUR" = "歐元";
+"CNY" = "人民幣";
+"GBP" = "英鎊";
+"SEK" = "瑞典克朗";
+"CAD" = "加拿大幣";
+"ZAR" = "南非幣";
+"HKD" = "港幣";
+"SGD" = "新加坡幣";
+"CHF" = "瑞士法郎";
+"NZD" = "紐西蘭幣";
+"AUD" = "澳幣";
+"XAG" = "白銀";
+"XAU" = "黃金";

@@ -79,22 +79,22 @@ extension ResponseDataModel {
             
             var name: String {
                 switch self {
-                case .TWD: return "新台幣"
-                case .USD: return "美金"
-                case .JPY: return "日圓"
-                case .EUR: return "歐元"
-                case .CNY: return "人民幣"
-                case .GBP: return "英鎊"
-                case .SEK: return "瑞典克朗"
-                case .CAD: return "加拿大幣"
-                case .ZAR: return "南非幣"
-                case .HKD: return "港幣"
-                case .SGD: return "新加坡幣"
-                case .CHF: return "瑞士法郎"
-                case .NZD: return "紐西蘭幣"
-                case .AUD: return "澳幣"
-                case .XAG: return "白銀"
-                case .XAU: return "黃金"
+                case .TWD: return R.string.localizable.twD()
+                case .USD: return R.string.localizable.usD()
+                case .JPY: return R.string.localizable.jpY()
+                case .EUR: return R.string.localizable.euR()
+                case .CNY: return R.string.localizable.cnY()
+                case .GBP: return R.string.localizable.gbP()
+                case .SEK: return R.string.localizable.seK()
+                case .CAD: return R.string.localizable.caD()
+                case .ZAR: return R.string.localizable.zaR()
+                case .HKD: return R.string.localizable.hkD()
+                case .SGD: return R.string.localizable.sgD()
+                case .CHF: return R.string.localizable.chF()
+                case .NZD: return R.string.localizable.nzD()
+                case .AUD: return R.string.localizable.auD()
+                case .XAG: return R.string.localizable.xaG()
+                case .XAU: return R.string.localizable.xaU()
                 }
             }
         }

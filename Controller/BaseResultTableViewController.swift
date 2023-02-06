@@ -42,8 +42,13 @@ class BaseResultTableViewController: UITableViewController {
             message = error.localizedDescription
         }
         
-        let alertController = UIAlertController(title: "唉呀！出錯啦！", message: message, preferredStyle: .alert)
-        let alertAction = UIAlertAction(title: "喔，是喔。", style: .cancel) { _ in
+        let alertTitle = R.string.localizable.alertTitle()
+        let alertController = UIAlertController(title: alertTitle,
+                                                message: message,
+                                                preferredStyle: .alert)
+        
+        let alertActionTitle = R.string.localizable.alertActionTitle()
+        let alertAction = UIAlertAction(title: alertActionTitle, style: .cancel) { _ in
             alertController.dismiss(animated: true)
         }
         alertController.addAction(alertAction)
@@ -70,7 +75,7 @@ class BaseResultTableViewController: UITableViewController {
         let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
         
         cell.textLabel?.text = "\(currency) " + currency.name + deviationString
-        cell.detailTextLabel?.text = "過去平均：" + meanString + "，今天匯率：" + latestString
+        cell.detailTextLabel?.text = R.string.localizable.currencyCellDetail(meanString, latestString)
         
         cell.textLabel?.textColor = data.deviation < 0 ? .systemGreen : .systemRed
         
