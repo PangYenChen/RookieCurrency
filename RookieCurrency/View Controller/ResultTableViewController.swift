@@ -105,7 +105,7 @@ class ResultTableViewController: UITableViewController {
     }
 }
 
-protocol ResultDelegate: class {
+protocol ResultDelegate: AnyObject {
     func updateLatestTime(_ timestamp: Int)
     
     func getNumberOfDay() -> Int

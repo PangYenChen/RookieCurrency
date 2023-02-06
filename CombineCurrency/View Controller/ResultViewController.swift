@@ -32,6 +32,7 @@ class ResultViewController: BaseResultViewController {
                 .map(Double.init)
                 .map(Date.init(timeIntervalSince1970:))
                 .map(DateFormatter.uiDateFormatter.string(from:))
+                .map { R.string.localizable.latestUpdateTime($0) }
                 .assign(to: \.text, on: latestUpdateTimeLabel)
                 .store(in: &anyCancellableSet)
         }
@@ -50,7 +51,8 @@ class ResultViewController: BaseResultViewController {
             
             numberOfDay
                 .map(String.init)
-                .assign(to: \.text, on: numberOfDayTextField)
+                .map { R.string.localizable.numberOfConsideredDay($0) }
+                .assign(to: \.text, on: numberOfDayLabel)
                 .store(in: &anyCancellableSet)
             
             numberOfDay
@@ -86,7 +88,7 @@ class ResultViewController: BaseResultViewController {
                 .store(in: &anyCancellableSet)
             
             baseCurrency
-                .map { $0.name}
+                .map { R.string.localizable.baseCurrency($0.name) }
                 .assign(to: \.text, on: baseCurrencyLabel)
                 .store(in: &anyCancellableSet)
             

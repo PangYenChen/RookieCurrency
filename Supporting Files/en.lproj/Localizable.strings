@@ -6,7 +6,7 @@
   Copyright © 2023 Pang-yen Chen. All rights reserved.
 */
 
-"numberOfConsideredDay" = "number of considered day:";
-"latestUpdateTime" = "latest update time:";
-"baseCurrency" = "base currency:";
+"numberOfConsideredDay" = "number of considered day: %@";
+"latestUpdateTime" = "latest update time: %@";
+"baseCurrency" = "base currency: %@";
 "changeBaseCurrency" = "change";

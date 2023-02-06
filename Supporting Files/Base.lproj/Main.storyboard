@@ -5,6 +5,7 @@
         <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -17,97 +18,76 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" insetsLayoutMarginsFromSafeArea="NO" text="考量過去天數：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MD4-qZ-SP8">
-                                <rect key="frame" x="20" y="54.5" width="121.5" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacing="11" translatesAutoresizingMaskIntoConstraints="NO" id="g9w-d3-VWK">
+                                <rect key="frame" x="20" y="48" width="374" height="104.5"/>
+                                <subviews>
+                                    <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="jja-Yr-8V9">
+                                        <rect key="frame" x="0.0" y="0.0" width="374" height="32"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" insetsLayoutMarginsFromSafeArea="NO" text="#考量過去天數：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MD4-qZ-SP8">
+                                                <rect key="frame" x="0.0" y="6" width="272" height="20.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minimumValue="1" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="Nk5-ky-A11">
+                                                <rect key="frame" x="280" y="0.0" width="94" height="32"/>
+                                                <connections>
+                                                    <action selector="stepperValueDidChange:" destination="dbP-sf-lll" eventType="valueChanged" id="NNL-Of-kl5"/>
+                                                </connections>
+                                            </stepper>
+                                        </subviews>
+                                    </stackView>
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="#最後更新時間：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WVj-Mr-C4V">
+                                        <rect key="frame" x="0.0" y="43" width="374" height="20.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                        <nil key="textColor"/>
+                                        <nil key="highlightedColor"/>
+                                    </label>
+                                    <stackView opaque="NO" contentMode="scaleToFill" alignment="center" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="ync-l5-cL2">
+                                        <rect key="frame" x="0.0" y="74.5" width="374" height="30"/>
+                                        <subviews>
+                                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="#基準幣別：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4fs-lU-ZK6">
+                                                <rect key="frame" x="0.0" y="5" width="326" height="20.5"/>
+                                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                <nil key="textColor"/>
+                                                <nil key="highlightedColor"/>
+                                            </label>
+                                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rMe-Uz-Dnn">
+                                                <rect key="frame" x="334" y="0.0" width="40" height="30"/>
+                                                <state key="normal" title="#變更"/>
+                                                <connections>
+                                                    <action selector="chooseBaseCurrency:" destination="dbP-sf-lll" eventType="touchUpInside" id="ZDX-dw-6Yn"/>
+                                                </connections>
+                                            </button>
+                                        </subviews>
+                                    </stackView>
+                                </subviews>
+                            </stackView>
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Brr-Ch-dxb">
-                                <rect key="frame" x="0.0" y="156" width="414" height="706"/>
+                                <rect key="frame" x="0.0" y="160.5" width="414" height="701.5"/>
                                 <connections>
                                     <segue destination="c2h-qt-hiT" kind="embed" id="nhs-0K-sp2"/>
                                 </connections>
                             </containerView>
-                            <textField opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="30" borderStyle="roundedRect" textAlignment="natural" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="xvC-8b-rEh">
-                                <rect key="frame" x="149.5" y="48" width="46" height="34"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
-                            </textField>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="252" verticalHuggingPriority="251" text="最後更新時間：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="WVj-Mr-C4V">
-                                <rect key="frame" x="20" y="90.5" width="121.5" height="20"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <stepper opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="1" minimumValue="1" maximumValue="100" translatesAutoresizingMaskIntoConstraints="NO" id="Nk5-ky-A11">
-                                <rect key="frame" x="300" y="49" width="94" height="32"/>
-                                <connections>
-                                    <action selector="stepperValueDidChange:" destination="dbP-sf-lll" eventType="valueChanged" id="NNL-Of-kl5"/>
-                                </connections>
-                            </stepper>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="420-at-sAo">
-                                <rect key="frame" x="149.5" y="90" width="244.5" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="基準幣別：" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4fs-lU-ZK6">
-                                <rect key="frame" x="20" y="127" width="87" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="--" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ata-M6-Xbs">
-                                <rect key="frame" x="115" y="127" width="240" height="21"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                <nil key="textColor"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <button opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="252" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rMe-Uz-Dnn">
-                                <rect key="frame" x="363" y="122.5" width="31" height="30"/>
-                                <state key="normal" title="變更"/>
-                                <connections>
-                                    <action selector="chooseBaseCurrency:" destination="dbP-sf-lll" eventType="touchUpInside" id="ZDX-dw-6Yn"/>
-                                </connections>
-                            </button>
                         </subviews>
                         <viewLayoutGuide key="safeArea" id="BMa-dG-uLr"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstItem="ata-M6-Xbs" firstAttribute="leading" secondItem="4fs-lU-ZK6" secondAttribute="trailing" constant="8" symbolic="YES" id="13Z-5S-in0"/>
-                            <constraint firstItem="MD4-qZ-SP8" firstAttribute="leading" secondItem="BMa-dG-uLr" secondAttribute="leading" constant="20" id="1os-Bo-MYk"/>
-                            <constraint firstItem="rMe-Uz-Dnn" firstAttribute="leading" secondItem="ata-M6-Xbs" secondAttribute="trailing" constant="8" symbolic="YES" id="2UY-Qc-mwi"/>
-                            <constraint firstItem="BMa-dG-uLr" firstAttribute="trailing" secondItem="rMe-Uz-Dnn" secondAttribute="trailing" constant="20" id="3B4-Q8-Hgp"/>
-                            <constraint firstItem="Brr-Ch-dxb" firstAttribute="top" secondItem="4fs-lU-ZK6" secondAttribute="bottom" constant="8" symbolic="YES" id="7VH-2e-CLJ"/>
-                            <constraint firstItem="WVj-Mr-C4V" firstAttribute="centerY" secondItem="420-at-sAo" secondAttribute="centerY" id="Ade-lY-wA8"/>
-                            <constraint firstItem="Nk5-ky-A11" firstAttribute="centerY" secondItem="xvC-8b-rEh" secondAttribute="centerY" id="C8M-Ih-qT1"/>
-                            <constraint firstItem="WVj-Mr-C4V" firstAttribute="leading" secondItem="MD4-qZ-SP8" secondAttribute="leading" id="CgR-8w-ee0"/>
+                            <constraint firstItem="g9w-d3-VWK" firstAttribute="top" secondItem="BMa-dG-uLr" secondAttribute="top" id="5p7-am-C9L"/>
+                            <constraint firstItem="BMa-dG-uLr" firstAttribute="trailing" secondItem="g9w-d3-VWK" secondAttribute="trailing" constant="20" id="CpI-2B-4ND"/>
                             <constraint firstItem="BMa-dG-uLr" firstAttribute="bottom" secondItem="Brr-Ch-dxb" secondAttribute="bottom" id="Ji5-g1-7Rh"/>
-                            <constraint firstItem="BMa-dG-uLr" firstAttribute="trailing" secondItem="Nk5-ky-A11" secondAttribute="trailing" constant="20" id="OHl-eJ-Led"/>
-                            <constraint firstItem="BMa-dG-uLr" firstAttribute="trailing" secondItem="420-at-sAo" secondAttribute="trailing" constant="20" id="bCr-Ui-ebv"/>
-                            <constraint firstItem="rMe-Uz-Dnn" firstAttribute="centerY" secondItem="ata-M6-Xbs" secondAttribute="centerY" id="cnt-Zg-W51"/>
                             <constraint firstItem="BMa-dG-uLr" firstAttribute="trailing" secondItem="Brr-Ch-dxb" secondAttribute="trailing" id="e6V-XR-xSU"/>
-                            <constraint firstItem="Nk5-ky-A11" firstAttribute="leading" relation="greaterThanOrEqual" secondItem="xvC-8b-rEh" secondAttribute="trailing" constant="8" symbolic="YES" id="eUf-sN-NVv"/>
-                            <constraint firstItem="4fs-lU-ZK6" firstAttribute="top" secondItem="WVj-Mr-C4V" secondAttribute="bottom" constant="16.5" id="fvP-jN-00y"/>
-                            <constraint firstItem="420-at-sAo" firstAttribute="top" secondItem="xvC-8b-rEh" secondAttribute="bottom" constant="8" symbolic="YES" id="p4f-V2-kGO"/>
-                            <constraint firstItem="MD4-qZ-SP8" firstAttribute="centerY" secondItem="xvC-8b-rEh" secondAttribute="centerY" id="q3s-kf-laM"/>
-                            <constraint firstItem="xvC-8b-rEh" firstAttribute="top" secondItem="BMa-dG-uLr" secondAttribute="top" id="rOo-9c-q9r"/>
-                            <constraint firstItem="xvC-8b-rEh" firstAttribute="leading" secondItem="MD4-qZ-SP8" secondAttribute="trailing" constant="8" symbolic="YES" id="vUk-jr-jHS"/>
+                            <constraint firstItem="Brr-Ch-dxb" firstAttribute="top" secondItem="g9w-d3-VWK" secondAttribute="bottom" constant="8" symbolic="YES" id="gk0-Z9-bgK"/>
+                            <constraint firstItem="g9w-d3-VWK" firstAttribute="leading" secondItem="BMa-dG-uLr" secondAttribute="leading" constant="20" id="iTL-RO-Ghk"/>
                             <constraint firstItem="Brr-Ch-dxb" firstAttribute="leading" secondItem="BMa-dG-uLr" secondAttribute="leading" id="w3o-eO-jUf"/>
-                            <constraint firstItem="ata-M6-Xbs" firstAttribute="centerY" secondItem="4fs-lU-ZK6" secondAttribute="centerY" id="xB5-sX-0D1"/>
-                            <constraint firstItem="4fs-lU-ZK6" firstAttribute="leading" secondItem="WVj-Mr-C4V" secondAttribute="leading" id="xai-QF-OUH"/>
-                            <constraint firstItem="420-at-sAo" firstAttribute="leading" secondItem="WVj-Mr-C4V" secondAttribute="trailing" constant="8" symbolic="YES" id="yiL-Fg-gPH"/>
                         </constraints>
                     </view>
                     <connections>
                         <outlet property="baseCurrencyChangingButton" destination="rMe-Uz-Dnn" id="NtX-ls-U2g"/>
-                        <outlet property="baseCurrencyLabel" destination="ata-M6-Xbs" id="f27-2H-FEN"/>
-                        <outlet property="baseCurrencyTitleLabel" destination="4fs-lU-ZK6" id="Sif-V7-gkv"/>
-                        <outlet property="latestUpdateTimeLabel" destination="420-at-sAo" id="t92-G7-1GW"/>
-                        <outlet property="latestUpdateTimeTitle" destination="WVj-Mr-C4V" id="k1k-BV-Xu6"/>
-                        <outlet property="numberOfDayTextField" destination="xvC-8b-rEh" id="i6y-p1-rht"/>
-                        <outlet property="numberOfDayTitle" destination="MD4-qZ-SP8" id="h5c-oj-bhJ"/>
+                        <outlet property="baseCurrencyLabel" destination="4fs-lU-ZK6" id="eel-Iy-RaT"/>
+                        <outlet property="latestUpdateTimeLabel" destination="WVj-Mr-C4V" id="KrM-sp-qpS"/>
+                        <outlet property="numberOfDayLabel" destination="MD4-qZ-SP8" id="eC1-Wr-2F4"/>
                         <outlet property="stepper" destination="Nk5-ky-A11" id="sO5-pH-MZB"/>
                     </connections>
                 </viewController>
@@ -120,7 +100,7 @@
             <objects>
                 <tableViewController id="c2h-qt-hiT" customClass="ResultTableViewController" customModule="CombineCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="RFI-HH-5Kf">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="706"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="701.5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>

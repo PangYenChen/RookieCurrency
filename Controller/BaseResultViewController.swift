@@ -11,12 +11,9 @@ import UIKit
 /// This class is designed to be subclassed.
 class BaseResultViewController: UIViewController {
     // MARK: - Property
-    @IBOutlet weak var numberOfDayTitle: UILabel!
-    @IBOutlet weak var numberOfDayTextField: UITextField!
+    @IBOutlet weak var numberOfDayLabel: UILabel!
     @IBOutlet weak var stepper: UIStepper!
-    @IBOutlet weak var latestUpdateTimeTitle: UILabel!
     @IBOutlet weak var latestUpdateTimeLabel: UILabel!
-    @IBOutlet weak var baseCurrencyTitleLabel: UILabel!
     @IBOutlet weak var baseCurrencyLabel: UILabel!
     @IBOutlet weak var baseCurrencyChangingButton: UIButton!
     
@@ -26,9 +23,9 @@ class BaseResultViewController: UIViewController {
     }
     // MARK: - methods
     private func localized() {
-        numberOfDayTitle.text = R.string.localizable.numberOfConsideredDay()
-        latestUpdateTimeTitle.text = R.string.localizable.latestUpdateTime()
-        baseCurrencyTitleLabel.text = R.string.localizable.baseCurrency()
+        numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("-")
+        latestUpdateTimeLabel.text = R.string.localizable.latestUpdateTime("-")
+        baseCurrencyLabel.text = R.string.localizable.baseCurrency("-")
         baseCurrencyChangingButton.setTitle(R.string.localizable.changeBaseCurrency(),
                                             for: .normal)
     }

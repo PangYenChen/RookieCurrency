@@ -13,8 +13,8 @@ class ResultViewController: BaseResultViewController {
     private var baseCurrency: ResponseDataModel.RateList.Currency = .TWD {
         didSet {
             UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
-            baseCurrencyLabel.text = baseCurrency.name
-            
+            baseCurrencyLabel.text = R.string.localizable.baseCurrency(baseCurrency.name)
+
             if let resultTableViewController = children.first as? ResultTableViewController {
                 resultTableViewController.getDataAndUpdateUI()
             }
@@ -25,17 +25,15 @@ class ResultViewController: BaseResultViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        numberOfDayTitle.text = R.string.localizable.numberOfConsideredDay()
-        
         guard let resultTableViewController = children.first as? ResultTableViewController else {
             fatalError()
         }
         resultTableViewController.delegate = self
         
-        let numberOfDay = UserDefaults.standard.double(forKey: "numberOfDay")
+        let numberOfDay = UserDefaults.standard.double(forKey: "numberOfDay") // TODO: 這好像不應該用 Double
         stepper.value = (numberOfDay > 0) ? numberOfDay : 30
         
-        numberOfDayTextField.text = "\(Int(stepper.value))"
+        numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("\(Int(stepper.value))")
         
         if let baseCurrencyString = UserDefaults.standard.string(forKey: "baseCurrency"),
            let baseCurrency = ResponseDataModel.RateList.Currency(rawValue: baseCurrencyString) {
@@ -46,7 +44,7 @@ class ResultViewController: BaseResultViewController {
     }
     
     override func stepperValueDidChange(_ sender: UIStepper) {
-        numberOfDayTextField.text = "\(Int(stepper.value))"
+        numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("\(Int(stepper.value))")
         UserDefaults.standard.set(stepper.value, forKey: "numberOfDay")
     }
     
@@ -76,7 +74,7 @@ extension ResultViewController: ResultDelegate {
     func updateLatestTime(_ timestamp: Int) {
         let date = Date(timeIntervalSince1970: Double(timestamp))
         let dateString = DateFormatter.uiDateFormatter.string(from: date)
-        latestUpdateTimeLabel.text = dateString
+        latestUpdateTimeLabel.text = R.string.localizable.latestUpdateTime(dateString)
     }
     
     func getNumberOfDay() -> Int { Int(stepper.value) }
