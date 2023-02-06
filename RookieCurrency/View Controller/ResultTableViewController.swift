@@ -84,11 +84,8 @@ class ResultTableViewController: UITableViewController {
 
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         
-        var cell: UITableViewCell! = tableView.dequeueReusableCell(withIdentifier: "reuseIdentifier")
-        
-        if cell == nil {
-            cell = UITableViewCell(style: .subtitle, reuseIdentifier: "reuseIdentifier")
-        }
+        let reusedIdentifier = R.reuseIdentifier.currencyCell.identifier
+        let cell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
         
         let data = analyzedDataArray[indexPath.item]
         let currency = data.currency
@@ -99,7 +96,7 @@ class ResultTableViewController: UITableViewController {
         cell.textLabel?.text = "\(currency) " + currency.name + deviationString
         cell.detailTextLabel?.text = "過去平均：" + meanString + "，今天匯率：" + latestString
             
-        cell.textLabel?.textColor = data.deviation < 0 ? .green : .red
+        cell.textLabel?.textColor = data.deviation < 0 ? .systemGreen : .systemRed
         
         return cell
     }

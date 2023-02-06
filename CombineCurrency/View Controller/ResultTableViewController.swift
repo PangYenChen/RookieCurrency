@@ -117,7 +117,7 @@ class ResultTableViewController: UITableViewController {
         cell.textLabel?.text = "\(currency) " + currency.name + deviationString
         cell.detailTextLabel?.text = "過去平均：" + meanString + "，今天匯率：" + latestString
             
-        cell.textLabel?.textColor = data.deviation < 0 ? .green : .red
+        cell.textLabel?.textColor = data.deviation < 0 ? .systemGreen : .systemRed
         
         return cell
     }
