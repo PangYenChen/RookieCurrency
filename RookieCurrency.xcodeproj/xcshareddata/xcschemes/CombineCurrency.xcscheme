@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1130"
+   LastUpgradeVersion = "1420"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -14,9 +14,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E13B274124758ACB00E0A07D"
-               BuildableName = "RookieCurrency.app"
-               BlueprintName = "RookieCurrency"
+               BlueprintIdentifier = "E15BA6AA24FCA66600CA5B1B"
+               BuildableName = "CombineCurrency.app"
+               BlueprintName = "CombineCurrency"
                ReferencedContainer = "container:RookieCurrency.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -32,9 +32,9 @@
             skipped = "NO">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "E13B275724758ACF00E0A07D"
-               BuildableName = "RookieCurrencyTests.xctest"
-               BlueprintName = "RookieCurrencyTests"
+               BlueprintIdentifier = "E15BA6BF24FCA66900CA5B1B"
+               BuildableName = "CombineCurrencyTests.xctest"
+               BlueprintName = "CombineCurrencyTests"
                ReferencedContainer = "container:RookieCurrency.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -50,15 +50,14 @@
       ignoresPersistentStateOnLaunch = "NO"
       debugDocumentVersioning = "YES"
       debugServiceExtension = "internal"
-      allowLocationSimulation = "YES"
-      showNonLocalizedStrings = "YES">
+      allowLocationSimulation = "YES">
       <BuildableProductRunnable
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E13B274124758ACB00E0A07D"
-            BuildableName = "RookieCurrency.app"
-            BlueprintName = "RookieCurrency"
+            BlueprintIdentifier = "E15BA6AA24FCA66600CA5B1B"
+            BuildableName = "CombineCurrency.app"
+            BlueprintName = "CombineCurrency"
             ReferencedContainer = "container:RookieCurrency.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -73,9 +72,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "E13B274124758ACB00E0A07D"
-            BuildableName = "RookieCurrency.app"
-            BlueprintName = "RookieCurrency"
+            BlueprintIdentifier = "E15BA6AA24FCA66600CA5B1B"
+            BuildableName = "CombineCurrency.app"
+            BlueprintName = "CombineCurrency"
             ReferencedContainer = "container:RookieCurrency.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

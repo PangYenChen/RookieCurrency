@@ -6,4 +6,7 @@
   Copyright © 2023 Pang-yen Chen. All rights reserved.
 */
 
-"numberOfConsideredDay" = "考慮過去天數";
+"numberOfConsideredDay" = "考慮過去天數：";
+"latestUpdateTime" = "最後更新時間：";
+"baseCurrency" = "基準幣別：";
+"changeBaseCurrency" = "變更";

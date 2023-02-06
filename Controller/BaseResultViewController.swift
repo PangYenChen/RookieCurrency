@@ -18,11 +18,21 @@ class BaseResultViewController: UIViewController {
     @IBOutlet weak var latestUpdateTimeLabel: UILabel!
     @IBOutlet weak var baseCurrencyTitleLabel: UILabel!
     @IBOutlet weak var baseCurrencyLabel: UILabel!
+    @IBOutlet weak var baseCurrencyChangingButton: UIButton!
     
     override func viewDidLoad() {
         
+        localized()
     }
     // MARK: - methods
+    private func localized() {
+        numberOfDayTitle.text = R.string.localizable.numberOfConsideredDay()
+        latestUpdateTimeTitle.text = R.string.localizable.latestUpdateTime()
+        baseCurrencyTitleLabel.text = R.string.localizable.baseCurrency()
+        baseCurrencyChangingButton.setTitle(R.string.localizable.changeBaseCurrency(),
+                                            for: .normal)
+    }
+    
     @IBAction func stepperValueDidChange(_ sender: UIStepper) {
         fatalError("stepperValueDidChange(_:) has not been implemented")
     }

@@ -101,6 +101,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="baseCurrencyChangingButton" destination="rMe-Uz-Dnn" id="NtX-ls-U2g"/>
                         <outlet property="baseCurrencyLabel" destination="ata-M6-Xbs" id="f27-2H-FEN"/>
                         <outlet property="baseCurrencyTitleLabel" destination="4fs-lU-ZK6" id="Sif-V7-gkv"/>
                         <outlet property="latestUpdateTimeLabel" destination="420-at-sAo" id="t92-G7-1GW"/>

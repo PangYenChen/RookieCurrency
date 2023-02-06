@@ -22,8 +22,6 @@ class ResultViewController: BaseResultViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        numberOfDayTitle.text = R.string.localizable.numberOfConsideredDay()
-        
         setupSubscription()
     }
     
