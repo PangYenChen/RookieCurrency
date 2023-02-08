@@ -12,10 +12,7 @@ import Combine
 /// 讀寫 RateListSet 的類別
 enum RateListSetArchiver {
     /// app 的路徑
-    private static let documentsDirectory =
-        FileManager
-            .default.urls(for: .documentDirectory,
-                          in: .userDomainMask).first!
+    private static let documentsDirectory = URL.documentsDirectory
     
     /// 存放資料的路徑
     private static let archiveURL = documentsDirectory.appendingPathComponent("rateListSet.json")
@@ -37,7 +34,7 @@ extension RateListSetArchiver {
     /// - Returns: timeout interval 為 5 秒的 data task publisher
     static func unarchive() throws -> Set<ResponseDataModel.RateList> {
 
-        guard FileManager.default.fileExists(atPath: archiveURL.path) else { return []}
+        guard FileManager.default.fileExists(atPath: archiveURL.path) else { return [] }
         
         let data = try Data(contentsOf: archiveURL)
         let rateListSet = try jsonDecoder.decode(Set<ResponseDataModel.RateList>.self, from: data)
