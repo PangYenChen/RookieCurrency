@@ -75,9 +75,13 @@ class BaseResultTableViewController: UITableViewController {
         let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
         
         cell.textLabel?.text = "\(currency) " + currency.name + deviationString
-        cell.detailTextLabel?.text = R.string.localizable.currencyCellDetail(meanString, latestString)
-        
+        cell.textLabel?.adjustsFontForContentSizeCategory = true
+        cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
         cell.textLabel?.textColor = data.deviation < 0 ? .systemGreen : .systemRed
+        
+        cell.detailTextLabel?.text = R.string.localizable.currencyCellDetail(meanString, latestString)
+        cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
+        cell.detailTextLabel?.font = UIFont.preferredFont(forTextStyle: .subheadline)
         
         return cell
     }

@@ -20,15 +20,26 @@ class BaseResultViewController: UIViewController {
     
     override func viewDidLoad() {
         
-        localized()
+        setUpFontAndLocalize()
     }
     // MARK: - methods
-    private func localized() {
+    private func setUpFontAndLocalize() {
         numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("-")
+        numberOfDayLabel.adjustsFontForContentSizeCategory = true
+        numberOfDayLabel.font = UIFont.preferredFont(forTextStyle: .body)
+        
         latestUpdateTimeLabel.text = R.string.localizable.latestUpdateTime("-")
+        latestUpdateTimeLabel.adjustsFontForContentSizeCategory = true
+        latestUpdateTimeLabel.font = UIFont.preferredFont(forTextStyle: .body)
+                                                     
         baseCurrencyLabel.text = R.string.localizable.baseCurrency("-")
+        baseCurrencyLabel.adjustsFontForContentSizeCategory = true
+        baseCurrencyLabel.font = UIFont.preferredFont(forTextStyle: .body)
+                                                     
         baseCurrencyChangingButton.setTitle(R.string.localizable.changeBaseCurrency(),
                                             for: .normal)
+        baseCurrencyChangingButton.titleLabel?.adjustsFontForContentSizeCategory = true
+        baseCurrencyChangingButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
     }
     
     @IBAction func stepperValueDidChange(_ sender: UIStepper) {
