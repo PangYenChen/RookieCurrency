@@ -38,8 +38,17 @@ extension ResponseDataModel {
             currency == .EUR ? 1 : rates[currency.rawValue]
         }
         
-        private init(historical: Bool, date: Date, timestamp: Int, rates: Dictionary<String, Double>) {
-            fatalError("不應該用 decode 之外的方式產生 instance。")
+        private init(historical: Bool,
+                     date: Date,
+                     timestamp: Int,
+                     rates: Dictionary<String, Double>) {
+#warning("這個 initializer 好像可以刪掉")
+            assertionFailure("不應該用 decode 之外的方式產生 instance。")
+            
+            self.historical = historical
+            self.date = date
+            self.timestamp = timestamp
+            self.rates = rates
         }
         
         /// 表示幣別的 enum
@@ -191,10 +200,15 @@ extension ResponseDataModel {
         let type: String?
         /// 服務商的文件沒說這是什麼，望文生義吧。
         let info: String
-    }
-    
-    private init(code: Int, type: String?, info: String) {
-        fatalError("不應該用 decode 之外的方式產生 instance。")
+        
+        private init(code: Int, type: String? = nil, info: String) {
+#warning("這個 initializer 好像可以刪掉")
+            assertionFailure("不應該用 decode 之外的方式產生 instance。")
+            
+            self.code = code
+            self.type = type
+            self.info = info
+        }
     }
 }
 

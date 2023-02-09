@@ -32,10 +32,10 @@ class BaseResultViewController: UIViewController {
     }
     
     @IBAction func stepperValueDidChange(_ sender: UIStepper) {
-        fatalError("stepperValueDidChange(_:) has not been implemented")
+        assertionFailure("stepperValueDidChange(_:) has not been implemented")
     }
     
     @IBAction func chooseBaseCurrency(_ sender: UIButton) {
-        fatalError(".chooseBaseCurrency(_:) has not been implemented")
+        assertionFailure(".chooseBaseCurrency(_:) has not been implemented")
     }
 }

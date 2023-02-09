@@ -29,7 +29,7 @@ class BaseResultTableViewController: UITableViewController {
     }
     
     @objc func getDataAndUpdateUI() {
-        fatalError("getDataAndUpdateUI() has not been implemented")
+        assertionFailure("getDataAndUpdateUI() has not been implemented")
     }
     
     func showErrorAlert(error: Error) {

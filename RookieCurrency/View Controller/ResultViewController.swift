@@ -26,11 +26,13 @@ class ResultViewController: BaseResultViewController {
         super.viewDidLoad()
         
         guard let resultTableViewController = children.first as? ResultTableViewController else {
-            fatalError()
+            assertionFailure("The only child should be the ResultTableViewController.")
+            return
         }
         resultTableViewController.delegate = self
         
-        let numberOfDay = UserDefaults.standard.double(forKey: "numberOfDay") // TODO: 這好像不應該用 Double
+        let numberOfDay = UserDefaults.standard.double(forKey: "numberOfDay")
+#warning("好像不應該用 double")
         stepper.value = (numberOfDay > 0) ? numberOfDay : 30
         
         numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("\(Int(stepper.value))")
