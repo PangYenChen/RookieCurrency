@@ -42,7 +42,7 @@ extension ResponseDataModel {
                      date: Date,
                      timestamp: Int,
                      rates: Dictionary<String, Double>) {
-#warning("這個 initializer 好像可以刪掉")
+#warning("寫 unit test 的時候再看看要不要把這個 init 打開")
             assertionFailure("不應該用 decode 之外的方式產生 instance。")
             
             self.historical = historical
@@ -202,7 +202,7 @@ extension ResponseDataModel {
         let info: String
         
         private init(code: Int, type: String? = nil, info: String) {
-#warning("這個 initializer 好像可以刪掉")
+#warning("寫 unit test 的時候再看看要不要把這個 init 打開")
             assertionFailure("不應該用 decode 之外的方式產生 instance。")
             
             self.code = code
