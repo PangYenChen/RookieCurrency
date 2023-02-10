@@ -66,7 +66,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Brr-Ch-dxb">
                                 <rect key="frame" x="0.0" y="160.5" width="414" height="701.5"/>
                                 <connections>
-                                    <segue destination="c2h-qt-hiT" kind="embed" identifier="embedResultTableViewController" id="nhs-0K-sp2"/>
+                                    <segue destination="c2h-qt-hiT" kind="embed" identifier="embedResultTableViewController" destinationCreationSelector="embedTableView:" id="8oe-Qq-kFg"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -99,7 +99,7 @@
             <objects>
                 <tableViewController id="c2h-qt-hiT" customClass="ResultTableViewController" customModule="CombineCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="RFI-HH-5Kf">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="701"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="701.5"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>

@@ -12,6 +12,16 @@ class ResultTableViewController: BaseResultTableViewController {
     // MARK: - Property
     weak var delegate: ResultDelegate!
     
+    required init?(coder: NSCoder, delegate: ResultDelegate) {
+        self.delegate = delegate
+        
+        super.init(coder: coder)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
