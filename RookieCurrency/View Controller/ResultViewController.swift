@@ -11,8 +11,8 @@ import UIKit
 class ResultViewController: BaseResultViewController {
     // MARK: - private property
     private var baseCurrency: ResponseDataModel.RateList.Currency
-#warning("好像不應該用 double")
-    private var numberOfDay: Double
+
+    private var numberOfDay: Int
     
     // MARK: - Methods
     required init?(coder: NSCoder) {
@@ -23,7 +23,7 @@ class ResultViewController: BaseResultViewController {
             baseCurrency = .TWD
         }
         
-        numberOfDay = UserDefaults.standard.double(forKey: "numberOfDay")
+        numberOfDay = UserDefaults.standard.integer(forKey: "numberOfDay")
         
         super.init(coder: coder)
     }
@@ -33,7 +33,7 @@ class ResultViewController: BaseResultViewController {
         
         resultTableViewController.delegate = self
         
-        stepper.value = (numberOfDay > 0) ? numberOfDay : 30
+        stepper.value = (numberOfDay > 0) ? Double(numberOfDay) : 30
         
         numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("\(Int(numberOfDay))")
         baseCurrencyLabel.text = R.string.localizable.baseCurrency(baseCurrency.name)
@@ -42,7 +42,7 @@ class ResultViewController: BaseResultViewController {
     }
     
     override func stepperValueDidChange(_ sender: UIStepper) {
-        numberOfDay = sender.value
+        numberOfDay = Int(sender.value)
         numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("\(Int(stepper.value))")
         UserDefaults.standard.set(stepper.value, forKey: "numberOfDay")
     }

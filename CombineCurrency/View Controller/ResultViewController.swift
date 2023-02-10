@@ -10,13 +10,12 @@ import UIKit
 import Combine
 
 class ResultViewController: BaseResultViewController {
-    
     // MARK: - property
-    private var anyCancellableSet = Set<AnyCancellable>()
-    
     private var numberOfDay: CurrentValueSubject<Int, Never>
     
     private var baseCurrency: CurrentValueSubject<ResponseDataModel.RateList.Currency, Never>
+    
+    private var anyCancellableSet = Set<AnyCancellable>()
        
     // MARK: - Method
     required init?(coder: NSCoder) {
@@ -32,7 +31,7 @@ class ResultViewController: BaseResultViewController {
         if userSettingNumber > 0 {
             numberOfDay = CurrentValueSubject(userSettingNumber)
         } else {
-            let defaultNumber = 33
+            let defaultNumber = 30
             numberOfDay = CurrentValueSubject(defaultNumber)
         }
         
