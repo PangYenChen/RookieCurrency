@@ -12,6 +12,10 @@ class ResultTableViewController: BaseResultTableViewController {
     // MARK: - Property
     weak var delegate: ResultDelegate!
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+    }
+    
     override func getDataAndUpdateUI() {
         tableView.refreshControl?.beginRefreshing()
         
