@@ -13,6 +13,8 @@
 "alertTitle" = "Oops, something goes wrong.";
 "alertActionTitle" = "ok";
 "currencyCellDetail" = "historical mean：%2$@，today：%1$@";
+"pleaseChooseBaseCurrency" = "please Choose Base Currency";
+"cancel" = "cancel";
 // MARK: - 幣別
 "TWD" = "New Taiwan Dollar";
 "USD" = "United States Dollar";

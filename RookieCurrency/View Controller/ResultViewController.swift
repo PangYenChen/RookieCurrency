@@ -57,9 +57,6 @@ class ResultViewController: BaseResultViewController {
     @IBSegueAction func embedTableView(_ coder: NSCoder) -> ResultTableViewController? {
         return ResultTableViewController(coder: coder, delegate: self)
     }
-//    @IBSegueAction func embedTableView(_ coder: NSCoder) -> ResultTableViewController? {
-//        return ResultTableViewController(coder: coder, delegate: self)
-//    }
 }
 
 // MARK: - 跟 child view controller 溝通

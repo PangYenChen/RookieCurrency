@@ -13,6 +13,8 @@
 "alertTitle" = "唉呀！出錯啦！";
 "alertActionTitle" = "喔，是喔。";
 "currencyCellDetail" = "過去平均：%1$@，今天匯率：%2$@";
+"pleaseChooseBaseCurrency" = "請選擇基準幣別";
+"cancel" = "取消";
 // MARK: - 幣別
 "TWD" = "新台幣";
 "USD" = "美金";

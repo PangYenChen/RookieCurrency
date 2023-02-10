@@ -49,7 +49,8 @@ class BaseResultViewController: UIViewController {
     }
     
     @IBAction func chooseBaseCurrency(_ sender: UIButton) {
-        let alertController = UIAlertController(title: "請選擇基準備別", message: nil, preferredStyle: .actionSheet)
+        let alertTitle = R.string.localizable.pleaseChooseBaseCurrency()
+        let alertController = UIAlertController(title: alertTitle, message: nil, preferredStyle: .actionSheet)
         
         for currency in ResponseDataModel.RateList.Currency.allCases {
             let alertAction = UIAlertAction(title: currency.name, style: .default) { [unowned self] (_) in
@@ -59,7 +60,8 @@ class BaseResultViewController: UIViewController {
             alertController.addAction(alertAction)
         }
         
-        let cancelAlertAction = UIAlertAction(title: "取消", style: .cancel) { (_) in
+        let cancelTitle = R.string.localizable.cancel()
+        let cancelAlertAction = UIAlertAction(title: cancelTitle, style: .cancel) { (_) in
             self.dismiss(animated: true)
         }
         
