@@ -49,7 +49,27 @@ class BaseResultViewController: UIViewController {
     }
     
     @IBAction func chooseBaseCurrency(_ sender: UIButton) {
-        assertionFailure(".chooseBaseCurrency(_:) has not been implemented")
+        let alertController = UIAlertController(title: "請選擇基準備別", message: nil, preferredStyle: .actionSheet)
+        
+        for currency in ResponseDataModel.RateList.Currency.allCases {
+            let alertAction = UIAlertAction(title: currency.name, style: .default) { [unowned self] (_) in
+                didChooseBaseCurrency(currency)
+            }
+            
+            alertController.addAction(alertAction)
+        }
+        
+        let cancelAlertAction = UIAlertAction(title: "取消", style: .cancel) { (_) in
+            self.dismiss(animated: true)
+        }
+        
+        alertController.addAction(cancelAlertAction)
+        
+        present(alertController, animated: true)
+    }
+    
+    func didChooseBaseCurrency(_ currency: Currency) {
+        assertionFailure("didChooseBaseCurrency(_:) has not been implemented.")
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {

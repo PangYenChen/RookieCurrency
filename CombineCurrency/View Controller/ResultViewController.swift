@@ -98,23 +98,7 @@ class ResultViewController: BaseResultViewController {
         numberOfDay.send(Int(sender.value))
     }
     
-    override func chooseBaseCurrency(_ sender: UIButton) {
-        let alertController = UIAlertController(title: "請選擇基準備別", message: nil, preferredStyle: .actionSheet)
-        
-        for currency in ResponseDataModel.RateList.Currency.allCases {
-            let alertAction = UIAlertAction(title: currency.name, style: .default) { [unowned self] (_) in
-                self.baseCurrency.send(currency)
-            }
-            
-            alertController.addAction(alertAction)
-        }
-        
-        let cancelAlertAction = UIAlertAction(title: "取消", style: .cancel) { (_) in
-            self.dismiss(animated: true)
-        }
-        
-        alertController.addAction(cancelAlertAction)
-        
-        present(alertController, animated: true)
+    override func didChooseBaseCurrency(_ currency: Currency) {
+        baseCurrency.send(currency)
     }
 }
