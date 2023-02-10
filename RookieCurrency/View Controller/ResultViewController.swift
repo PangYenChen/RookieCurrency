@@ -15,9 +15,7 @@ class ResultViewController: BaseResultViewController {
             UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
             baseCurrencyLabel.text = R.string.localizable.baseCurrency(baseCurrency.name)
 
-            if let resultTableViewController = children.first as? ResultTableViewController {
-                resultTableViewController.getDataAndUpdateUI()
-            }
+            resultTableViewController.getDataAndUpdateUI()
         }
     }
     
@@ -25,10 +23,6 @@ class ResultViewController: BaseResultViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let resultTableViewController = children.first as? ResultTableViewController else {
-            assertionFailure("The only child should be the ResultTableViewController.")
-            return
-        }
         resultTableViewController.delegate = self
         
         let numberOfDay = UserDefaults.standard.double(forKey: "numberOfDay")

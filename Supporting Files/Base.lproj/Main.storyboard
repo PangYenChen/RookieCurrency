@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="dbP-sf-lll">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
@@ -67,7 +66,7 @@
                             <containerView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Brr-Ch-dxb">
                                 <rect key="frame" x="0.0" y="160.5" width="414" height="701.5"/>
                                 <connections>
-                                    <segue destination="c2h-qt-hiT" kind="embed" id="nhs-0K-sp2"/>
+                                    <segue destination="c2h-qt-hiT" kind="embed" identifier="embedResultTableViewController" id="nhs-0K-sp2"/>
                                 </connections>
                             </containerView>
                         </subviews>
@@ -100,7 +99,7 @@
             <objects>
                 <tableViewController id="c2h-qt-hiT" customClass="ResultTableViewController" customModule="CombineCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="RFI-HH-5Kf">
-                        <rect key="frame" x="0.0" y="0.0" width="414" height="701.5"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="701"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>

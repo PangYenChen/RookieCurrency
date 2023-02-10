@@ -18,11 +18,13 @@ class BaseResultViewController: UIViewController {
     @IBOutlet weak var baseCurrencyLabel: UILabel!
     @IBOutlet weak var baseCurrencyChangingButton: UIButton!
     
+    var resultTableViewController: ResultTableViewController!
+    
+    // MARK: - methods
     override func viewDidLoad() {
-        
         setUpFontAndLocalize()
     }
-    // MARK: - methods
+    
     private func setUpFontAndLocalize() {
         numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("-")
         numberOfDayLabel.adjustsFontForContentSizeCategory = true
@@ -48,5 +50,15 @@ class BaseResultViewController: UIViewController {
     
     @IBAction func chooseBaseCurrency(_ sender: UIButton) {
         assertionFailure(".chooseBaseCurrency(_:) has not been implemented")
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        
+        let identifier = R.segue.resultViewController.embedResultTableViewController.identifier
+        
+        if segue.identifier == identifier,
+           let resultTableViewController = segue.destination as? ResultTableViewController {
+            self.resultTableViewController = resultTableViewController
+        }
     }
 }

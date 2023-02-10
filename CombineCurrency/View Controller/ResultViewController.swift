@@ -26,16 +26,13 @@ class ResultViewController: BaseResultViewController {
     }
     
     private func setupSubscription() {
-        
-        if let child = children.first as? ResultTableViewController {
-            child.latestUpdateTimeStampPublisher
-                .map(Double.init)
-                .map(Date.init(timeIntervalSince1970:))
-                .map(DateFormatter.uiDateFormatter.string(from:))
-                .map { R.string.localizable.latestUpdateTime($0) }
-                .assign(to: \.text, on: latestUpdateTimeLabel)
-                .store(in: &anyCancellableSet)
-        }
+        resultTableViewController.latestUpdateTimeStampPublisher
+            .map(Double.init)
+            .map(Date.init(timeIntervalSince1970:))
+            .map(DateFormatter.uiDateFormatter.string(from:))
+            .map { R.string.localizable.latestUpdateTime($0) }
+            .assign(to: \.text, on: latestUpdateTimeLabel)
+            .store(in: &anyCancellableSet)
         
         // number of day
         do {
@@ -57,15 +54,11 @@ class ResultViewController: BaseResultViewController {
             
             numberOfDay
                 .dropFirst()
-                .sink { UserDefaults.standard.set($0, forKey: "numberOfDay")}
+                .sink { UserDefaults.standard.set($0, forKey: "numberOfDay") }
                 .store(in: &anyCancellableSet)
             
             numberOfDay
-                .sink { [unowned self] numberOfDay in
-                    if let resultTableViewController = self.children.first as? ResultTableViewController {
-                        resultTableViewController.numberOfDay = numberOfDay
-                    }
-                }
+                .sink { [unowned self] numberOfDay in resultTableViewController.numberOfDay = numberOfDay }
                 .store(in: &anyCancellableSet)
         }
         
@@ -94,10 +87,8 @@ class ResultViewController: BaseResultViewController {
             
             baseCurrency
                 .sink { [unowned self] baseCurrency in
-                    if let resultTableViewController = self.children.first as? ResultTableViewController {
-                        resultTableViewController.baseCurrency = baseCurrency
-                        resultTableViewController.updateData.send((baseCurrency, self.numberOfDay.value))
-                    }
+                    resultTableViewController.baseCurrency = baseCurrency
+                    resultTableViewController.updateData.send((baseCurrency, self.numberOfDay.value))
                 }
             .store(in: &anyCancellableSet)
         }
