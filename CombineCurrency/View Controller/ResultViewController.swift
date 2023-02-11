@@ -99,7 +99,7 @@ class ResultViewController: BaseResultViewController {
         }
     }
     
-    override func stepperValueDidChange(_ sender: UIStepper) {
+    @IBAction func stepperValueDidChange(_ sender: UIStepper) {
         numberOfDay.send(Int(sender.value))
     }
     

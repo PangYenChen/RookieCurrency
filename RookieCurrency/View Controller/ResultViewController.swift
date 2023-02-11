@@ -39,7 +39,7 @@ class ResultViewController: BaseResultViewController {
         resultTableViewController.getDataAndUpdateUI()
     }
     
-    override func stepperValueDidChange(_ sender: UIStepper) {
+    @IBAction  func stepperValueDidChange(_ sender: UIStepper) {
         numberOfDay = Int(sender.value)
         numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("\(Int(stepper.value))")
         UserDefaults.standard.set(stepper.value, forKey: "numberOfDay")

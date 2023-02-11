@@ -44,10 +44,6 @@ class BaseResultViewController: UIViewController {
         baseCurrencyChangingButton.titleLabel?.font = UIFont.preferredFont(forTextStyle: .body)
     }
     
-    @IBAction func stepperValueDidChange(_ sender: UIStepper) {
-        assertionFailure("stepperValueDidChange(_:) has not been implemented")
-    }
-    
     @IBAction func chooseBaseCurrency(_ sender: UIButton) {
         let alertTitle = R.string.localizable.pleaseChooseBaseCurrency()
         let alertController = UIAlertController(title: alertTitle, message: nil, preferredStyle: .actionSheet)
