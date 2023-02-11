@@ -12,6 +12,7 @@ class ResultTableViewController: UITableViewController {
     // MARK: - Private Property
     
     /// 分析過的匯率資料
+    @IBOutlet weak var latestUpdateTimeItem: UIBarButtonItem!
     private var analyzedDataArray: Array<(currency: ResponseDataModel.RateList.Currency, latest: Double, mean: Double, deviation: Double)> = [] {
         didSet {
             tableView.reloadData()
@@ -24,15 +25,26 @@ class ResultTableViewController: UITableViewController {
         
         do { // search controller
             navigationItem.searchController = UISearchController()
+            navigationItem.hidesSearchBarWhenScrolling = false
         }
-        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.refreshControl = UIRefreshControl()
-        tableView.refreshControl?.beginRefreshing()
+        do { // latestUpdateTimeItem
+            let label = UILabel()
+            label.numberOfLines = 0
+            label.font = UIFont.preferredFont(forTextStyle: .footnote)
+            label.adjustsFontForContentSizeCategory = true
+            label.text = "## 用code設定"
+            latestUpdateTimeItem.customView = label
+        }
+        
+        do { // table view
+            tableView.refreshControl = UIRefreshControl()
+            tableView.refreshControl?.beginRefreshing()
+        }
         
         RateListSetController.getRatesSetForDays(numberOfDay: 30) { [unowned self] result in
             switch result {
