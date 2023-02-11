@@ -31,8 +31,6 @@ class ResultViewController: BaseResultViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        resultTableViewController.delegate = self
-        
         stepper.value = (numberOfDay > 0) ? Double(numberOfDay) : 30
         
         numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("\(Int(numberOfDay))")
@@ -55,12 +53,12 @@ class ResultViewController: BaseResultViewController {
         resultTableViewController.getDataAndUpdateUI()
     }
     @IBSegueAction func embedTableView(_ coder: NSCoder) -> ResultTableViewController? {
-        return ResultTableViewController(coder: coder, delegate: self)
+        return ResultTableViewController(coder: coder, resultViewController: self)
     }
 }
 
 // MARK: - 跟 child view controller 溝通
-extension ResultViewController: ResultDelegate {
+extension ResultViewController {
     func updateLatestTime(_ timestamp: Int) {
         let date = Date(timeIntervalSince1970: Double(timestamp))
         let dateString = DateFormatter.uiDateFormatter.string(from: date)

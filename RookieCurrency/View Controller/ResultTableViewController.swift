@@ -10,10 +10,11 @@ import UIKit
 
 class ResultTableViewController: BaseResultTableViewController {
     // MARK: - Property
-    weak var delegate: ResultDelegate!
+    let resultViewController: ResultViewController
     
-    required init?(coder: NSCoder, delegate: ResultDelegate) {
-        self.delegate = delegate
+    // MARK: - Methods
+    init?(coder: NSCoder, resultViewController: ResultViewController) {
+        self.resultViewController = resultViewController
         
         super.init(coder: coder)
     }
@@ -22,26 +23,22 @@ class ResultTableViewController: BaseResultTableViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-    }
-    
     override func getDataAndUpdateUI() {
         tableView.refreshControl?.beginRefreshing()
         
-        let numberOfDay = delegate.getNumberOfDay()
+        let numberOfDay = resultViewController.getNumberOfDay()
         
         RateListSetController.getRatesSetForDays(numberOfDay: numberOfDay) { [unowned self] result in
             switch result {
             case .success(let (latestRateList, historicalRateListSet)):
                 let timestamp = latestRateList.timestamp
                 
-                self.delegate.updateLatestTime(timestamp)
+                resultViewController.updateLatestTime(timestamp)
                 
-                self.analyzedDataArray = RateListSetAnalyst
+                analyzedDataArray = RateListSetAnalyst
                     .analyze(latestRateList: latestRateList,
                              historicalRateListSet: historicalRateListSet,
-                             baseCurrency: self.delegate.getBaseCurrency())
+                             baseCurrency: resultViewController.getBaseCurrency())
                     .sorted { $0.value.deviation > $1.value.deviation}
                     .map { (currency: $0.key, latest: $0.value.latest, mean: $0.value.mean, $0.value.deviation)}
                 

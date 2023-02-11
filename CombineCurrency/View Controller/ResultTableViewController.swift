@@ -78,7 +78,7 @@ class ResultTableViewController: BaseResultTableViewController {
                             self.analyzedDataArray = analyzedData
                     })
             })
-            .sink(receiveValue: { _ in})
+            .sink(receiveValue: { _ in })
             .store(in: &anyCancellableSet)
         
     }
