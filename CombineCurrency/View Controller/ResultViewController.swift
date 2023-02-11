@@ -107,6 +107,8 @@ class ResultViewController: BaseResultViewController {
         baseCurrency.send(currency)
     }
     @IBSegueAction func embedTableView(_ coder: NSCoder) -> ResultTableViewController? {
-        return ResultTableViewController(coder: coder, resultViewController: self)
+        resultTableViewController = ResultTableViewController(coder: coder, resultViewController: self)
+        
+        return resultTableViewController
     }
 }

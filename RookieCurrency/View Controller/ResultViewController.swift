@@ -39,7 +39,7 @@ class ResultViewController: BaseResultViewController {
         resultTableViewController.getDataAndUpdateUI()
     }
     
-    @IBAction  func stepperValueDidChange(_ sender: UIStepper) {
+    @IBAction func stepperValueDidChange(_ sender: UIStepper) {
         numberOfDay = Int(sender.value)
         numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("\(Int(stepper.value))")
         UserDefaults.standard.set(stepper.value, forKey: "numberOfDay")
@@ -53,7 +53,9 @@ class ResultViewController: BaseResultViewController {
         resultTableViewController.getDataAndUpdateUI()
     }
     @IBSegueAction func embedTableView(_ coder: NSCoder) -> ResultTableViewController? {
-        return ResultTableViewController(coder: coder, resultViewController: self)
+        resultTableViewController = ResultTableViewController(coder: coder, resultViewController: self)
+        
+        return resultTableViewController
     }
 }
 

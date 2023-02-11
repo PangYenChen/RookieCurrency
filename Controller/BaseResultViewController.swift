@@ -69,14 +69,4 @@ class BaseResultViewController: UIViewController {
     func didChooseBaseCurrency(_ currency: Currency) {
         assertionFailure("didChooseBaseCurrency(_:) has not been implemented.")
     }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        
-        let identifier = R.segue.resultViewController.embedResultTableViewController.identifier
-        
-        if segue.identifier == identifier,
-           let resultTableViewController = segue.destination as? ResultTableViewController {
-            self.resultTableViewController = resultTableViewController
-        }
-    }
 }
