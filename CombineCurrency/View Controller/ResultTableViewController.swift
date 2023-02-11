@@ -20,10 +20,9 @@ class ResultTableViewController: BaseResultTableViewController {
         latestUpdateTimeStampSubject.eraseToAnyPublisher()
     }()
     
-    #warning("這不舒服，不應該給這樣的預設值，但要天大的錯誤才會沒被覆蓋掉。")
-    var numberOfDay: Int = -1
+    var numberOfDay: Int
     
-    var baseCurrency: ResponseDataModel.RateList.Currency = .TWD
+    var baseCurrency: ResponseDataModel.RateList.Currency
     
     private var anyCancellableSet = Set<AnyCancellable>()
     
@@ -31,14 +30,16 @@ class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - Method
     
-//    required init?(coder: NSCoder, numberOfDay: Int) {
-//        self.numberOfDay = numberOfDay
-//        super.init(coder: coder)
-//    }
-//    
-//    required init?(coder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
+    required init?(coder: NSCoder, resultViewController: ResultViewController) {
+        numberOfDay = resultViewController.numberOfDay.value
+        baseCurrency = resultViewController.baseCurrency.value
+        
+        super.init(coder: coder)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()

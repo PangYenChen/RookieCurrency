@@ -11,9 +11,9 @@ import Combine
 
 class ResultViewController: BaseResultViewController {
     // MARK: - property
-    private var numberOfDay: CurrentValueSubject<Int, Never>
+    var numberOfDay: CurrentValueSubject<Int, Never>
     
-    private var baseCurrency: CurrentValueSubject<ResponseDataModel.RateList.Currency, Never>
+    var baseCurrency: CurrentValueSubject<ResponseDataModel.RateList.Currency, Never>
     
     private var anyCancellableSet = Set<AnyCancellable>()
        
@@ -105,5 +105,8 @@ class ResultViewController: BaseResultViewController {
     
     override func didChooseBaseCurrency(_ currency: Currency) {
         baseCurrency.send(currency)
+    }
+    @IBSegueAction func embedTableView(_ coder: NSCoder) -> ResultTableViewController? {
+        return ResultTableViewController(coder: coder, resultViewController: self)
     }
 }
