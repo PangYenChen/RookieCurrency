@@ -9,10 +9,15 @@
 import UIKit
 
 class ResultTableViewController: UITableViewController {
+
     // MARK: - Private Property
+    @IBOutlet private weak var latestUpdateTimeItem: UIBarButtonItem!
+    
+    private var numberOfDay: Int
+    
+    private var baseCurrency: Currency
     
     /// 分析過的匯率資料
-    @IBOutlet weak var latestUpdateTimeItem: UIBarButtonItem!
     private var analyzedDataArray: Array<(currency: ResponseDataModel.RateList.Currency, latest: Double, mean: Double, deviation: Double)> = [] {
         didSet {
             tableView.reloadData()
@@ -21,6 +26,22 @@ class ResultTableViewController: UITableViewController {
     
     // MARK: - Methods
     required init?(coder: NSCoder) {
+        
+        do { // numberOfDay
+            let numberOfDayInUserDefaults = UserDefaults.standard.integer(forKey: "numberOfDay")
+            let defaultNumberOfDay = 30
+            numberOfDay = numberOfDayInUserDefaults > 0 ? numberOfDayInUserDefaults : defaultNumberOfDay
+        }
+        
+        do { // baseCurrency
+            if let baseCurrencyString = UserDefaults.standard.string(forKey: "baseCurrency"),
+               let baseCurrency = ResponseDataModel.RateList.Currency(rawValue: baseCurrencyString) {
+                self.baseCurrency = baseCurrency
+            } else {
+                baseCurrency = .TWD
+            }
+        }
+        
         super.init(coder: coder)
         
         do { // search controller
@@ -33,12 +54,9 @@ class ResultTableViewController: UITableViewController {
         super.viewDidLoad()
         
         do { // latestUpdateTimeItem
-            let label = UILabel()
-            label.numberOfLines = 0
-            label.font = UIFont.preferredFont(forTextStyle: .footnote)
-            label.adjustsFontForContentSizeCategory = true
-            label.text = "## 用code設定"
-            latestUpdateTimeItem.customView = label
+            latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime("-")
+            latestUpdateTimeItem.tintColor = UIColor.label
+            latestUpdateTimeItem.isEnabled = false
         }
         
         do { // table view
@@ -46,17 +64,21 @@ class ResultTableViewController: UITableViewController {
             tableView.refreshControl?.beginRefreshing()
         }
         
-        RateListSetController.getRatesSetForDays(numberOfDay: 30) { [unowned self] result in
+        RateListSetController.getRatesSetForDays(numberOfDay: numberOfDay) { [unowned self] result in
             switch result {
             case .success(let (latestRateList, historicalRateListSet)):
-                let timestamp = latestRateList.timestamp
                 
-//                resultViewController.updateLatestTime(timestamp)
-                #warning("暫時先 hard code base currency")
+                do { // update latestUpdateTimeItem
+                    let timestamp = Double(latestRateList.timestamp)
+                    let date = Date(timeIntervalSince1970: timestamp)
+                    let dateString = DateFormatter.uiDateFormatter.string(from: date)
+                    latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(dateString)
+                }
+
                 analyzedDataArray = RateListSetAnalyst
                     .analyze(latestRateList: latestRateList,
                              historicalRateListSet: historicalRateListSet,
-                             baseCurrency: .TWD)
+                             baseCurrency: baseCurrency)
                     .sorted { $0.value.deviation > $1.value.deviation }
                     .map { (currency: $0.key, latest: $0.value.latest, mean: $0.value.mean, $0.value.deviation)}
                 
