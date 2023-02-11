@@ -57,5 +57,5 @@ protocol ResultDelegate: AnyObject {
     
     func getNumberOfDay() -> Int
     
-    func getBaseCurrency() -> ResponseDataModel.RateList.Currency
+    func getBaseCurrency() -> Currency
 }

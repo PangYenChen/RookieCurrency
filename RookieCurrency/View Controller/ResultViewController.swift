@@ -9,21 +9,29 @@
 import UIKit
 
 class ResultViewController: BaseResultViewController {
-    // MARK: - private property
+    // MARK: - Private Property
     private var baseCurrency: ResponseDataModel.RateList.Currency
 
     private var numberOfDay: Int
     
     // MARK: - Methods
     required init?(coder: NSCoder) {
-        if let baseCurrencyString = UserDefaults.standard.string(forKey: "baseCurrency"),
-           let baseCurrency = ResponseDataModel.RateList.Currency(rawValue: baseCurrencyString) {
-            self.baseCurrency = baseCurrency
-        } else {
-            baseCurrency = .TWD
+        
+        do { // baseCurrency
+            if let baseCurrencyString = UserDefaults.standard.string(forKey: "baseCurrency"),
+               let baseCurrency = ResponseDataModel.RateList.Currency(rawValue: baseCurrencyString) {
+                self.baseCurrency = baseCurrency
+            } else {
+                baseCurrency = .TWD
+            }
         }
         
-        numberOfDay = UserDefaults.standard.integer(forKey: "numberOfDay")
+        do { // numberOfDay
+            let numberOfDayInUserDefaults = UserDefaults.standard.integer(forKey: "numberOfDay")
+            let defaultNumberOfDay = 30
+            numberOfDay = numberOfDayInUserDefaults > 0 ? numberOfDayInUserDefaults : defaultNumberOfDay
+        }
+        
         
         super.init(coder: coder)
     }
@@ -31,7 +39,7 @@ class ResultViewController: BaseResultViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        stepper.value = (numberOfDay > 0) ? Double(numberOfDay) : 30
+        stepper.value = Double(numberOfDay)
         
         numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("\(Int(numberOfDay))")
         baseCurrencyLabel.text = R.string.localizable.baseCurrency(baseCurrency.name)

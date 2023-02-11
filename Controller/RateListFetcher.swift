@@ -75,7 +75,6 @@ enum RateListFetcher {
 
 // MARK: - Imperative Part
 extension RateListFetcher {
-    #warning("好長的 method...... 拆拆看吧")
     /// 向伺服器請求資料
     /// - Parameters:
     ///   - endPoint: 請求資料的種類
@@ -92,8 +91,10 @@ extension RateListFetcher {
                         return
                     }
                     
-                    #warning("這個不知道怎麼處理，應該不會再沒有 error 的情況下也沒有 data 吧？")
-                    guard let data = data else { print("###", self, #function, "沒有data"); return}
+                    guard let data = data else {
+                        print("###", self, #function, "沒有 data 也沒有 error，應該不會有這種情況。")
+                        return
+                    }
                     
                     prettyPrint(data)
                     

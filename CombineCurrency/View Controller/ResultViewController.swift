@@ -19,20 +19,24 @@ class ResultViewController: BaseResultViewController {
        
     // MARK: - Method
     required init?(coder: NSCoder) {
-        if let baseCurrencyString = UserDefaults.standard.string(forKey: "baseCurrency"),
-           let baseCurrency = ResponseDataModel.RateList.Currency.init(rawValue: baseCurrencyString) {
-            self.baseCurrency = CurrentValueSubject(baseCurrency)
-        } else {
-            let defaultCurrency = Currency.TWD
-            baseCurrency = CurrentValueSubject(.TWD)
+        do { // baseCurrency
+            if let baseCurrencyString = UserDefaults.standard.string(forKey: "baseCurrency"),
+               let baseCurrency = ResponseDataModel.RateList.Currency.init(rawValue: baseCurrencyString) {
+                self.baseCurrency = CurrentValueSubject(baseCurrency)
+            } else {
+                let defaultCurrency = Currency.TWD
+                baseCurrency = CurrentValueSubject(.TWD)
+            }
         }
         
-        let userSettingNumber = UserDefaults.standard.integer(forKey: "numberOfDay")
-        if userSettingNumber > 0 {
-            numberOfDay = CurrentValueSubject(userSettingNumber)
-        } else {
-            let defaultNumber = 30
-            numberOfDay = CurrentValueSubject(defaultNumber)
+        do { // numberOfDay
+            let userSettingNumber = UserDefaults.standard.integer(forKey: "numberOfDay")
+            if userSettingNumber > 0 {
+                numberOfDay = CurrentValueSubject(userSettingNumber)
+            } else {
+                let defaultNumber = 30
+                numberOfDay = CurrentValueSubject(defaultNumber)
+            }
         }
         
         super.init(coder: coder)
@@ -106,6 +110,7 @@ class ResultViewController: BaseResultViewController {
     override func didChooseBaseCurrency(_ currency: Currency) {
         baseCurrency.send(currency)
     }
+    
     @IBSegueAction func embedTableView(_ coder: NSCoder) -> ResultTableViewController? {
         resultTableViewController = ResultTableViewController(coder: coder, resultViewController: self)
         

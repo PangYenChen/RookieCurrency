@@ -11,6 +11,8 @@ import UIKit
 /// An abstract base class for view controller displaying analyzed result.
 /// This class is designed to be subclassed.
 class BaseResultTableViewController: UITableViewController {
+    // MARK: - Property
+    
     /// 分析過的匯率資料
     var analyzedDataArray: Array<(currency: ResponseDataModel.RateList.Currency, latest: Double, mean: Double, deviation: Double)> = [] {
         didSet {
@@ -56,8 +58,10 @@ class BaseResultTableViewController: UITableViewController {
         self.present(alertController, animated: true)
     }
     
-    // MARK: - Table view data source
-    
+}
+
+// MARK: - Table view data source
+extension BaseResultTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return analyzedDataArray.count

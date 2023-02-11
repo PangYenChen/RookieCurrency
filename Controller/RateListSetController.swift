@@ -127,8 +127,8 @@ extension RateListSetController {
                             try RateListSetArchiver.archive(rateListSet)
                             return fetchRateListArray
                         }
-                        .map { Set($0).union(historicalRateListNeededSet)}
-                        .map { (latestRateList, $0)}
+                        .map { Set($0).union(historicalRateListNeededSet) }
+                        .map { (latestRateList, $0) }
                         .eraseToAnyPublisher()
                 }
             }

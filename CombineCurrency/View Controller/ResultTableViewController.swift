@@ -26,7 +26,7 @@ class ResultTableViewController: BaseResultTableViewController {
     
     private var anyCancellableSet = Set<AnyCancellable>()
     
-    var anyCancellable: AnyCancellable?
+    private var anyCancellable: AnyCancellable?
     
     // MARK: - Method
     
@@ -50,7 +50,7 @@ class ResultTableViewController: BaseResultTableViewController {
         updateData
             .handleEvents(receiveOutput: { [unowned self] (baseCurrency, numberOfDay) in
                 
-                self.anyCancellable = RateListSetController.rateListSetPublisher(forDays: numberOfDay)
+                anyCancellable = RateListSetController.rateListSetPublisher(forDays: numberOfDay)
                     .handleEvents(receiveSubscription: { [unowned self] _ in
                         self.tableView.refreshControl?.beginRefreshing()
                     })
@@ -61,23 +61,25 @@ class ResultTableViewController: BaseResultTableViewController {
                         return RateListSetAnalyst.analyze(latestRateList: latestRateList,
                                                           historicalRateListSet: historicalRateListSet,
                                                           baseCurrency: baseCurrency)
-                            .sorted { $0.value.deviation > $1.value.deviation}
+                            .sorted { $0.value.deviation > $1.value.deviation }
                             .map { (currency: $0.key, latest: $0.value.latest, mean: $0.value.mean, $0.value.deviation)}
                     }
                     .eraseToAnyPublisher()
-                    .sink(receiveCompletion: { [unowned self] completion in
-                        self.tableView.refreshControl?.endRefreshing()
-                        switch completion {
-                        case .finished:
-                            break
-                        case .failure(let error):
-                            self.showErrorAlert(error: error)
-                        }
+                    .sink(
+                        receiveCompletion: { [unowned self] completion in
+                            self.tableView.refreshControl?.endRefreshing()
+                            switch completion {
+                            case .finished:
+                                break
+                            case .failure(let error):
+                                self.showErrorAlert(error: error)
+                            }
                         },
-                          receiveValue: { [unowned self] analyzedData in
+                        receiveValue: { [unowned self] analyzedData in
                             self.tableView.refreshControl?.endRefreshing()
                             self.analyzedDataArray = analyzedData
-                    })
+                        }
+                    )
             })
             .sink(receiveValue: { _ in })
             .store(in: &anyCancellableSet)

@@ -20,7 +20,7 @@ class BaseResultViewController: UIViewController {
     
     var resultTableViewController: ResultTableViewController!
     
-    // MARK: - methods
+    // MARK: - Methods
     override func viewDidLoad() {
         setUpFontAndLocalize()
     }
