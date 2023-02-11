@@ -36,7 +36,6 @@
 		E1CE96AA248555680029ED73 /* RateListFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96A9248555680029ED73 /* RateListFetcher.swift */; };
 		E1CE96AC248555C30029ED73 /* RateListSetAnalyst.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AB248555C30029ED73 /* RateListSetAnalyst.swift */; };
 		E1CE96AE248555E10029ED73 /* RateListSetController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AD248555E10029ED73 /* RateListSetController.swift */; };
-		E1CE96B2248558E10029ED73 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96B1248558E10029ED73 /* ResultTableViewController.swift */; };
 		E1FB993524FCDC270096FE2C /* Response Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B276824758BCB00E0A07D /* Response Data.swift */; };
 		E1FB993624FCE1270096FE2C /* DateFormatter + Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96A4248554BB0029ED73 /* DateFormatter + Helper.swift */; };
 		E1FB993924FCF4F20096FE2C /* RookieURLSessionController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1133336248CDD1500B8E67F /* RookieURLSessionController.swift */; };
@@ -96,7 +95,6 @@
 		E1CE96A9248555680029ED73 /* RateListFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateListFetcher.swift; sourceTree = "<group>"; };
 		E1CE96AB248555C30029ED73 /* RateListSetAnalyst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateListSetAnalyst.swift; sourceTree = "<group>"; };
 		E1CE96AD248555E10029ED73 /* RateListSetController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateListSetController.swift; sourceTree = "<group>"; };
-		E1CE96B1248558E10029ED73 /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 		E1FB993E24FF554C0096FE2C /* ResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -270,7 +268,6 @@
 			isa = PBXGroup;
 			children = (
 				5129D7A2298FA3D9005F5DE5 /* ResultViewController.swift */,
-				E1CE96B1248558E10029ED73 /* ResultTableViewController.swift */,
 			);
 			path = "View Controller";
 			sourceTree = "<group>";
@@ -468,7 +465,6 @@
 				51DE5EF729913855001E7193 /* BaseResultTableViewController.swift in Sources */,
 				E1CE96AC248555C30029ED73 /* RateListSetAnalyst.swift in Sources */,
 				E13B274624758ACB00E0A07D /* AppDelegate.swift in Sources */,
-				E1CE96B2248558E10029ED73 /* ResultTableViewController.swift in Sources */,
 				E1133337248CDD1500B8E67F /* RookieURLSessionController.swift in Sources */,
 				E13B274824758ACB00E0A07D /* SceneDelegate.swift in Sources */,
 				E111736624C8863600F1A0EB /* BaseResultViewController.swift in Sources */,

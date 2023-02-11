@@ -8,74 +8,83 @@
 
 import UIKit
 
-class ResultViewController: BaseResultViewController {
+class ResultTableViewController: UITableViewController {
     // MARK: - Private Property
-    private var baseCurrency: ResponseDataModel.RateList.Currency
-
-    private var numberOfDay: Int
+    
+    /// 分析過的匯率資料
+    private var analyzedDataArray: Array<(currency: ResponseDataModel.RateList.Currency, latest: Double, mean: Double, deviation: Double)> = [] {
+        didSet {
+            tableView.reloadData()
+        }
+    }
     
     // MARK: - Methods
     required init?(coder: NSCoder) {
-        
-        do { // baseCurrency
-            if let baseCurrencyString = UserDefaults.standard.string(forKey: "baseCurrency"),
-               let baseCurrency = ResponseDataModel.RateList.Currency(rawValue: baseCurrencyString) {
-                self.baseCurrency = baseCurrency
-            } else {
-                baseCurrency = .TWD
-            }
-        }
-        
-        do { // numberOfDay
-            let numberOfDayInUserDefaults = UserDefaults.standard.integer(forKey: "numberOfDay")
-            let defaultNumberOfDay = 30
-            numberOfDay = numberOfDayInUserDefaults > 0 ? numberOfDayInUserDefaults : defaultNumberOfDay
-        }
-        
-        
         super.init(coder: coder)
+        
+        do { // search controller
+            navigationItem.searchController = UISearchController()
+        }
+        
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        stepper.value = Double(numberOfDay)
+        tableView.refreshControl = UIRefreshControl()
+        tableView.refreshControl?.beginRefreshing()
         
-        numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("\(Int(numberOfDay))")
-        baseCurrencyLabel.text = R.string.localizable.baseCurrency(baseCurrency.name)
-        
-        resultTableViewController.getDataAndUpdateUI()
-    }
-    
-    @IBAction func stepperValueDidChange(_ sender: UIStepper) {
-        numberOfDay = Int(sender.value)
-        numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("\(Int(stepper.value))")
-        UserDefaults.standard.set(stepper.value, forKey: "numberOfDay")
-    }
-    
-    override func didChooseBaseCurrency(_ currency: Currency) {
-        baseCurrency = currency
-        UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
-        baseCurrencyLabel.text = R.string.localizable.baseCurrency(baseCurrency.name)
-        
-        resultTableViewController.getDataAndUpdateUI()
-    }
-    @IBSegueAction func embedTableView(_ coder: NSCoder) -> ResultTableViewController? {
-        resultTableViewController = ResultTableViewController(coder: coder, resultViewController: self)
-        
-        return resultTableViewController
+        RateListSetController.getRatesSetForDays(numberOfDay: 30) { [unowned self] result in
+            switch result {
+            case .success(let (latestRateList, historicalRateListSet)):
+                let timestamp = latestRateList.timestamp
+                
+//                resultViewController.updateLatestTime(timestamp)
+                #warning("暫時先 hard code base currency")
+                analyzedDataArray = RateListSetAnalyst
+                    .analyze(latestRateList: latestRateList,
+                             historicalRateListSet: historicalRateListSet,
+                             baseCurrency: .TWD)
+                    .sorted { $0.value.deviation > $1.value.deviation }
+                    .map { (currency: $0.key, latest: $0.value.latest, mean: $0.value.mean, $0.value.deviation)}
+                
+            case .failure(let error):
+//                self.showErrorAlert(error: error)
+                break
+            }
+            
+            self.tableView.refreshControl?.endRefreshing()
+        }
     }
 }
 
-// MARK: - 跟 child view controller 溝通
-extension ResultViewController {
-    func updateLatestTime(_ timestamp: Int) {
-        let date = Date(timeIntervalSince1970: Double(timestamp))
-        let dateString = DateFormatter.uiDateFormatter.string(from: date)
-        latestUpdateTimeLabel.text = R.string.localizable.latestUpdateTime(dateString)
+extension ResultTableViewController {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        return analyzedDataArray.count
     }
     
-    func getNumberOfDay() -> Int { Int(stepper.value) }
-    
-    func getBaseCurrency() -> ResponseDataModel.RateList.Currency { baseCurrency }
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        
+        let reusedIdentifier = R.reuseIdentifier.currencyCell.identifier
+        let cell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
+        
+        let data = analyzedDataArray[indexPath.item]
+        let currency = data.currency
+        let deviationString = NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
+        let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
+        let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
+        
+        cell.textLabel?.text = "\(currency) " + currency.name + deviationString
+        cell.textLabel?.adjustsFontForContentSizeCategory = true
+        cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+        cell.textLabel?.textColor = data.deviation < 0 ? .systemGreen : .systemRed
+        
+        cell.detailTextLabel?.text = R.string.localizable.currencyCellDetail(meanString, latestString)
+        cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
+        cell.detailTextLabel?.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        
+        return cell
+    }
 }
+    
