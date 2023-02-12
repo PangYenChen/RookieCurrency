@@ -10,12 +10,15 @@ import UIKit
 
 class ResultTableViewController: UITableViewController {
 
-    // MARK: - Property
+    // MARK: - IBOutlet
     @IBOutlet private weak var latestUpdateTimeItem: UIBarButtonItem!
     
+    // MARK: - stored properties
     var numberOfDay: Int
     
     var baseCurrency: Currency
+    
+    private var searchText: String
     
     /// 分析過的匯率資料
     private var analyzedDataArray: [(currency: Currency, latest: Double, mean: Double, deviation: Double)] = []
@@ -38,6 +41,10 @@ class ResultTableViewController: UITableViewController {
             } else {
                 baseCurrency = .TWD
             }
+        }
+        
+        do { // search Text
+            searchText = ""
         }
         
         super.init(coder: coder)
@@ -70,6 +77,7 @@ class ResultTableViewController: UITableViewController {
         refresh()
     }
     
+    /// 更新資料
     private func refresh() {
         tableView.refreshControl?.beginRefreshing()
         
@@ -92,9 +100,7 @@ class ResultTableViewController: UITableViewController {
                         .sorted { $0.value.deviation > $1.value.deviation }
                         .map { (currency: $0.key, latest: $0.value.latest, mean: $0.value.mean, $0.value.deviation)}
                     
-                    filteredAnalyzedDataArray = analyzedDataArray
-                    
-                    tableView.reloadData()
+                    updateTableView()
                 }
                 
             case .failure(let error):
@@ -108,14 +114,36 @@ class ResultTableViewController: UITableViewController {
     
     func refreshWith(baseCurrency: Currency, andNumberOfDay numberOfDay: Int) {
         #warning("有 side effect 要改名字，跟 refresh 整合")
-        UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
-        UserDefaults.standard.set(numberOfDay, forKey: "numberOfDay")
+        do { // base currency
+            self.baseCurrency = baseCurrency
+            UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
+        }
+        
+        do { // number Of Day
+            self.numberOfDay = numberOfDay
+            UserDefaults.standard.set(numberOfDay, forKey: "numberOfDay")
+        }
         
         refresh()
     }
     
     @IBSegueAction private func showSetting(_ coder: NSCoder) -> SettingNavigationController? {
         return SettingNavigationController(coder: coder, resultTableViewController: self)
+    }
+    
+    /// 更新 table view，純粹把資料填入 table view，不動資料。
+    private func updateTableView() {
+        if searchText.isEmpty {
+            filteredAnalyzedDataArray = analyzedDataArray
+        } else {
+            filteredAnalyzedDataArray = analyzedDataArray
+                .filter { (currency, _, _, _) in
+                    [currency.code, currency.localizedString]
+                        .contains { text in text.lowercased().contains(searchText.lowercased()) }
+                }
+        }
+        
+        tableView.reloadData()
     }
 }
 
@@ -153,17 +181,8 @@ extension ResultTableViewController {
 // MARK: - Search Bar Delegate
 extension ResultTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        if searchText.isEmpty {
-            filteredAnalyzedDataArray = analyzedDataArray
-        } else {
-            filteredAnalyzedDataArray = analyzedDataArray
-                .filter { (currency, _, _, _) in
-                    [currency.code, currency.localizedString]
-                        .contains { text in text.lowercased().contains(searchText.lowercased()) }
-                }
-        }
-        
-        tableView.reloadData()
+        self.searchText = searchText
+        updateTableView()
     }
 }
 
