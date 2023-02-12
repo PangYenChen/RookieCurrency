@@ -104,8 +104,16 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="## 設定" id="HbV-JF-i9L">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="SGG-hC-yVY"/>
-                        <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="save" id="4h0-rJ-PQn"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="SGG-hC-yVY">
+                            <connections>
+                                <action selector="didTapCancelButton" destination="X98-8g-3Jf" id="rA9-mc-rie"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="save" id="4h0-rJ-PQn">
+                            <connections>
+                                <action selector="save:" destination="X98-8g-3Jf" id="04a-QS-5C5"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="saveButton" destination="4h0-rJ-PQn" id="BSJ-OI-thw"/>

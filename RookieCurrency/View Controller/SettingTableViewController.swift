@@ -59,13 +59,26 @@ class SettingTableViewController: UITableViewController {
         editedNumberOfDay = Int(sender.value)
         #warning("改拿row的方式")
         tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+        saveButton.isEnabled = hasChange
     }
+    
     @IBSegueAction func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
         CurrencyTableViewController(coder: coder) { [unowned self] selectedCurrency in
             editedBaseCurrency = selectedCurrency
+#warning("改拿row的方式")
+            saveButton.isEnabled = hasChange
             tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .none)
         }
     }
+    
+    @IBAction func save(_ sender: Any) {
+        
+    }
+    
+    @IBAction func didTapCancelButton() {
+        dismiss(animated: true)
+    }
+    
 }
 
 // MARK: - Table view data source
