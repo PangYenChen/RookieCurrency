@@ -35,6 +35,12 @@ class SettingTableViewController: UITableViewController {
     private var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
     
     // MARK: - methods
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+        
+        title = R.string.localizable.setting()
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -148,7 +154,7 @@ extension SettingTableViewController {
                 cell.textLabel?.text = R.string.localizable.baseCurrency()
                 cell.detailTextLabel?.text = editedBaseCurrency.localizedString
                 cell.accessoryType = .disclosureIndicator
-                cell.imageView?.image = UIImage(systemName: "dollarsign.square")
+                cell.imageView?.image = UIImage(systemName: "dollarsign.circle")
             case .language:
                 cell.textLabel?.text = R.string.localizable.language()
                 if let languageCode = Bundle.main.preferredLocalizations.first {

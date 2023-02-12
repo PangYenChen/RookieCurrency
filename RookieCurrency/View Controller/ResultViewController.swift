@@ -56,6 +56,10 @@ class ResultTableViewController: UITableViewController {
             navigationItem.hidesSearchBarWhenScrolling = false
             
         }
+        
+        do {
+            title = R.string.localizable.analyzedResult()
+        }
     }
     
     override func viewDidLoad() {

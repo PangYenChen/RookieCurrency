@@ -85,7 +85,7 @@ extension ResponseDataModel {
             case XAG
             /// 黃金 Gold (troy ounce)
             case XAU
-            
+            #warning("考慮搬到其他地方去，這好像不屬於 data model，已經跟業務邏輯有關了。")
             var localizedString: String {
                 if let localizedString =  Locale.current.localizedString(forCurrencyCode: self.rawValue) {
                     return localizedString

@@ -29,6 +29,10 @@ class CurrencyTableViewController: UITableViewController {
             navigationItem.searchController = searchController
             searchController.searchBar.delegate = self
         }
+        
+        do {
+            title = R.string.localizable.currency()
+        }
     }
     
     required init?(coder: NSCoder) {

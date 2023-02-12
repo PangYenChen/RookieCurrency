@@ -19,6 +19,9 @@
 "cancelAlertSavingTitle" = "Save changes";
 "cancelAlertDiscardTitle" = "Discard changes";
 "cancelAlertContinueTitle" = "Continue editing";
+"analyzedResult" = "Analyzed Result";
+"setting" = "Setting";
+"currency" = "Currency";
 // MARK: - 幣別
 "TWD" = "New Taiwan Dollar";
 "USD" = "United States Dollar";
