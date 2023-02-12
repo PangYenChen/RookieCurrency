@@ -150,7 +150,6 @@
                             </tableViewCell>
                         </prototypes>
                         <connections>
-                            <outlet property="dataSource" destination="I3t-1P-vym" id="Kro-g9-62j"/>
                             <outlet property="delegate" destination="I3t-1P-vym" id="pJM-76-tcS"/>
                         </connections>
                     </tableView>
