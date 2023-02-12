@@ -44,7 +44,7 @@ class ResultTableViewController: UITableViewController {
         }
         
         do { // search Text
-            searchText = ""
+            searchText = String()
         }
         
         super.init(coder: coder)
