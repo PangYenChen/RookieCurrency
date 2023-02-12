@@ -62,13 +62,14 @@ class ResultTableViewController: UITableViewController {
         do { // table view
             let refreshControl = UIRefreshControl()
             tableView.refreshControl = refreshControl
-            refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
+            let handler = UIAction { [unowned self] _ in refresh() }
+            refreshControl.addAction(handler, for: .primaryActionTriggered)
         }
         
         refresh()
     }
     
-    @objc func refresh() {
+    private func refresh() {
         tableView.refreshControl?.beginRefreshing()
         
         RateListSetController.getRatesSetForDays(numberOfDay: numberOfDay) { [unowned self] result in
@@ -106,7 +107,7 @@ class ResultTableViewController: UITableViewController {
         refresh()
     }
     
-    @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingNavigationController? {
+    @IBSegueAction private func showSetting(_ coder: NSCoder) -> SettingNavigationController? {
         return SettingNavigationController(coder: coder, resultTableViewController: self)
     }
 }

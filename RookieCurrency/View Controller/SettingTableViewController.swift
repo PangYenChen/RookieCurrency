@@ -50,9 +50,13 @@ class SettingTableViewController: UITableViewController {
         
         do { // stepper
             stepper = UIStepper()
-            stepper.addTarget(self,
-                              action: #selector(stepperValueDidChange),
-                              for: .valueChanged)
+            let handler = UIAction { [unowned self] _ in
+                editedNumberOfDay = Int(stepper.value)
+                tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
+                saveButton.isEnabled = hasChange
+                isModalInPresentation = hasChange
+            }
+            stepper.addAction(handler, for: .primaryActionTriggered)
             stepper.value = Double(resultTableViewController.numberOfDay)
         }
         
@@ -60,13 +64,6 @@ class SettingTableViewController: UITableViewController {
             isModalInPresentation = hasChange
         }
         
-    }
-    
-    @objc private func stepperValueDidChange(_ sender: UIStepper) {
-        editedNumberOfDay = Int(sender.value)
-        tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
-        saveButton.isEnabled = hasChange
-        isModalInPresentation = hasChange
     }
     
     @IBSegueAction private func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
