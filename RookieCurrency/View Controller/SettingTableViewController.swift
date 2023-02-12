@@ -99,8 +99,7 @@ extension SettingTableViewController {
         case .numberOfDay:
             break
         case .baseCurrency:
-            break
-            #warning("開新的一頁")
+            performSegue(withIdentifier: R.segue.settingTableViewController.shwoCurrencyTable, sender: self)
         case .language:
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             #warning("要再確認一下")

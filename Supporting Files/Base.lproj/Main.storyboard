@@ -107,10 +107,42 @@
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="SGG-hC-yVY"/>
                         <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="save" id="4h0-rJ-PQn"/>
                     </navigationItem>
+                    <connections>
+                        <segue destination="I3t-1P-vym" kind="show" identifier="shwoCurrencyTable" id="Np9-zw-Nph"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bN2-6g-ejU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3335" y="119"/>
+        </scene>
+        <!--## 基準幣別-->
+        <scene sceneID="Wzb-4c-N6y">
+            <objects>
+                <tableViewController id="I3t-1P-vym" customClass="CurrencyTableViewController" customModule="RookieCurrency" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="ran-0e-Rf3">
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="currencyCell" id="xbW-9R-N6E">
+                                <rect key="frame" x="0.0" y="50" width="414" height="43.5"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="xbW-9R-N6E" id="EnL-cp-zBs">
+                                    <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="I3t-1P-vym" id="Kro-g9-62j"/>
+                            <outlet property="delegate" destination="I3t-1P-vym" id="pJM-76-tcS"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="## 基準幣別" id="lSU-Hm-LaO"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Tgn-yx-MYn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="4074" y="119"/>
         </scene>
         <!--Setting Navigation Controller-->
         <scene sceneID="dSx-sB-KOg">

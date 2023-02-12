@@ -14,6 +14,7 @@
 		5129D7A8298FAAC5005F5DE5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5129D7AA298FAAC5005F5DE5 /* Localizable.strings */; };
 		513803222998746A00D54E46 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513803212998746A00D54E46 /* SettingTableViewController.swift */; };
 		513803252998809000D54E46 /* SettingNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513803242998809000D54E46 /* SettingNavigationController.swift */; };
+		5138032829988BC300D54E46 /* CurrencyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5138032729988BC300D54E46 /* CurrencyTableViewController.swift */; };
 		51433D33298FD7BF00F2B4E6 /* RswiftLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 51433D32298FD7BF00F2B4E6 /* RswiftLibrary */; };
 		51433D3B298FD8C400F2B4E6 /* RswiftLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 51433D3A298FD8C400F2B4E6 /* RswiftLibrary */; };
 		51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274524758ACB00E0A07D /* AppDelegate.swift */; };
@@ -72,6 +73,7 @@
 		5129D7AC298FABAF005F5DE5 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/Localizable.strings"; sourceTree = "<group>"; };
 		513803212998746A00D54E46 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
 		513803242998809000D54E46 /* SettingNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingNavigationController.swift; sourceTree = "<group>"; };
+		5138032729988BC300D54E46 /* CurrencyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyTableViewController.swift; sourceTree = "<group>"; };
 		516916B92983D4C800547B60 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		51DE5EF629913855001E7193 /* BaseResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResultTableViewController.swift; sourceTree = "<group>"; };
 		E111736524C8863600F1A0EB /* BaseResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResultViewController.swift; sourceTree = "<group>"; };
@@ -274,6 +276,7 @@
 				5129D7A2298FA3D9005F5DE5 /* ResultViewController.swift */,
 				513803212998746A00D54E46 /* SettingTableViewController.swift */,
 				513803242998809000D54E46 /* SettingNavigationController.swift */,
+				5138032729988BC300D54E46 /* CurrencyTableViewController.swift */,
 			);
 			path = "View Controller";
 			sourceTree = "<group>";
@@ -472,6 +475,7 @@
 				513803252998809000D54E46 /* SettingNavigationController.swift in Sources */,
 				51DE5EF729913855001E7193 /* BaseResultTableViewController.swift in Sources */,
 				E1CE96AC248555C30029ED73 /* RateListSetAnalyst.swift in Sources */,
+				5138032829988BC300D54E46 /* CurrencyTableViewController.swift in Sources */,
 				E13B274624758ACB00E0A07D /* AppDelegate.swift in Sources */,
 				E1133337248CDD1500B8E67F /* RookieURLSessionController.swift in Sources */,
 				E13B274824758ACB00E0A07D /* SceneDelegate.swift in Sources */,
