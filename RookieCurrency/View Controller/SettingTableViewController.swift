@@ -53,6 +53,10 @@ class SettingTableViewController: UITableViewController {
             stepper.value = Double(resultTableViewController.numberOfDay)
         }
         
+        do { // other set up
+            isModalInPresentation = hasChange
+        }
+        
     }
     
     @objc func stepperValueDidChange(_ sender: UIStepper) {
@@ -60,6 +64,7 @@ class SettingTableViewController: UITableViewController {
         #warning("改拿row的方式")
         tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
         saveButton.isEnabled = hasChange
+        isModalInPresentation = hasChange
     }
     
     @IBSegueAction func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
@@ -67,11 +72,12 @@ class SettingTableViewController: UITableViewController {
             editedBaseCurrency = selectedCurrency
 #warning("改拿row的方式")
             saveButton.isEnabled = hasChange
+            isModalInPresentation = hasChange
             tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .none)
         }
     }
     
-    @IBAction func save(_ sender: Any) {
+    @IBAction func save() {
         resultTableViewController.numberOfDay = editedNumberOfDay
         resultTableViewController.baseCurrency = editedBaseCurrency
         resultTableViewController.refresh()
@@ -79,7 +85,32 @@ class SettingTableViewController: UITableViewController {
     }
     
     @IBAction func didTapCancelButton() {
-        dismiss(animated: true)
+        if hasChange {
+            presentCancelAlert(showingSave: false)
+        } else {
+            dismiss(animated: true)
+        }
+    }
+    
+    private func presentCancelAlert(showingSave: Bool) {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        if showingSave {
+            let saveAction = UIAlertAction(title: "## 儲存",
+                                           style: .default) { [unowned self] _ in save() }
+            alertController.addAction(saveAction)
+        }
+        
+        let discardChangeAction = UIAlertAction(title: "## 捨棄變更",
+                                                style: .default) { [unowned self] _ in dismiss(animated: true) }
+        
+        alertController.addAction(discardChangeAction)
+        
+        let continueSettingAction = UIAlertAction(title: "## 繼續設定", style: .cancel)
+        
+        alertController.addAction(continueSettingAction)
+        
+        present(alertController, animated: true)
     }
     
 }
@@ -151,5 +182,13 @@ extension SettingTableViewController {
         let row = Row.allCases[indexPath.row]
         
         return row != .numberOfDay
+    }
+}
+
+// MARK: - Adaptive Presentation Controller Delegate
+extension SettingTableViewController: UIAdaptivePresentationControllerDelegate {
+    
+    func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
+        presentCancelAlert(showingSave: true)
     }
 }

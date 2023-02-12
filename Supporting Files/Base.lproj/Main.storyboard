@@ -118,7 +118,7 @@
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="save" id="4h0-rJ-PQn">
                             <connections>
-                                <action selector="save:" destination="X98-8g-3Jf" id="04a-QS-5C5"/>
+                                <action selector="save" destination="X98-8g-3Jf" id="Fqy-cm-ffo"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
