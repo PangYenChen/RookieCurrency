@@ -99,18 +99,19 @@ class ResultTableViewController: UITableViewController {
     }
     
     func refreshWith(baseCurrency: Currency, andNumberOfDay numberOfDay: Int) {
+        #warning("有 side effect 要改名字，跟 refresh 整合")
         UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
         UserDefaults.standard.set(numberOfDay, forKey: "numberOfDay")
         
         refresh()
     }
     
-    
     @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingNavigationController? {
         return SettingNavigationController(coder: coder, resultTableViewController: self)
     }
 }
 
+// MARK: - Table view data source
 extension ResultTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         

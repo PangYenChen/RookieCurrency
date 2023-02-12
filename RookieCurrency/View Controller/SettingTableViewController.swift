@@ -10,28 +10,31 @@ import UIKit
 
 class SettingTableViewController: UITableViewController {
     
-    enum Row: CaseIterable {
-        case numberOfDay
+    /// 表示 table view 的 row
+    enum Row: Int, CaseIterable {
+        case numberOfDay = 0
         case baseCurrency
         case language
     }
-    
+    // MARK: - properties
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
-    var stepper: UIStepper!
 #warning("forced unwrap")
+    private var stepper: UIStepper!
+    
     var resultTableViewController: ResultTableViewController!
     
-    var originalNumberOfDay: Int = 0
+    private var originalNumberOfDay: Int = 0
     
-    var editedNumberOfDay: Int = 0
+    private var editedNumberOfDay: Int = 0
     
-    var originalBaseCurrency: Currency = .TWD
+    private var originalBaseCurrency: Currency = .TWD
     
-    var editedBaseCurrency: Currency = .TWD
+    private var editedBaseCurrency: Currency = .TWD
     
-    var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
+    private var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
     
+    // MARK: - methods
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -59,30 +62,28 @@ class SettingTableViewController: UITableViewController {
         
     }
     
-    @objc func stepperValueDidChange(_ sender: UIStepper) {
+    @objc private func stepperValueDidChange(_ sender: UIStepper) {
         editedNumberOfDay = Int(sender.value)
-        #warning("改拿row的方式")
-        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
+        tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
         saveButton.isEnabled = hasChange
         isModalInPresentation = hasChange
     }
     
-    @IBSegueAction func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
+    @IBSegueAction private func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
         CurrencyTableViewController(coder: coder) { [unowned self] selectedCurrency in
             editedBaseCurrency = selectedCurrency
-#warning("改拿row的方式")
             saveButton.isEnabled = hasChange
             isModalInPresentation = hasChange
-            tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .none)
+            tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none)
         }
     }
     
-    @IBAction func save() {
+    @IBAction private func save() {
         resultTableViewController.refreshWith(baseCurrency: editedBaseCurrency, andNumberOfDay: editedNumberOfDay)
         dismiss(animated: true)
     }
     
-    @IBAction func didTapCancelButton() {
+    @IBAction private func didTapCancelButton() {
         if hasChange {
             presentCancelAlert(showingSave: false)
         } else {
@@ -124,30 +125,34 @@ extension SettingTableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
         let row = Row.allCases[indexPath.row]
         
-        cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-        cell.textLabel?.adjustsFontForContentSizeCategory = true
+        do { // font
+            cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
+            cell.textLabel?.adjustsFontForContentSizeCategory = true
+            
+            cell.detailTextLabel?.font = UIFont.preferredFont(forTextStyle: .subheadline)
+            cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
+        }
         
-        cell.detailTextLabel?.font = UIFont.preferredFont(forTextStyle: .subheadline)
-        cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
-        
-        switch row {
-        case .numberOfDay:
-            cell.textLabel?.text = R.string.localizable.numberOfConsideredDay()
-            cell.detailTextLabel?.text = "\(editedNumberOfDay)"
-            cell.accessoryView = stepper
-            cell.imageView?.image = UIImage(systemName: "calendar")
-        case .baseCurrency:
-            cell.textLabel?.text = R.string.localizable.baseCurrency()
-            cell.detailTextLabel?.text = editedBaseCurrency.name
-            cell.accessoryType = .disclosureIndicator
-            cell.imageView?.image = UIImage(systemName: "dollarsign.square")
-        case .language:
-            cell.textLabel?.text = R.string.localizable.language()
-            if let languageCode = Bundle.main.preferredLocalizations.first {
-                cell.detailTextLabel?.text = Locale.current.localizedString(forLanguageCode: languageCode)
+        do { // content
+            switch row {
+            case .numberOfDay:
+                cell.textLabel?.text = R.string.localizable.numberOfConsideredDay()
+                cell.detailTextLabel?.text = "\(editedNumberOfDay)"
+                cell.accessoryView = stepper
+                cell.imageView?.image = UIImage(systemName: "calendar")
+            case .baseCurrency:
+                cell.textLabel?.text = R.string.localizable.baseCurrency()
+                cell.detailTextLabel?.text = editedBaseCurrency.name
+                cell.accessoryType = .disclosureIndicator
+                cell.imageView?.image = UIImage(systemName: "dollarsign.square")
+            case .language:
+                cell.textLabel?.text = R.string.localizable.language()
+                if let languageCode = Bundle.main.preferredLocalizations.first {
+                    cell.detailTextLabel?.text = Locale.current.localizedString(forLanguageCode: languageCode)
+                }
+                cell.accessoryType = .disclosureIndicator
+                cell.imageView?.image = UIImage(systemName: "character")
             }
-            cell.accessoryType = .disclosureIndicator
-            cell.imageView?.image = UIImage(systemName: "character")
         }
         
         return cell

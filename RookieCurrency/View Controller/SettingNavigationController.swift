@@ -10,10 +10,7 @@ import UIKit
 
 class SettingNavigationController: UINavigationController {
     
-    private let resultTableViewController: ResultTableViewController
-    
     init?(coder aDecoder: NSCoder, resultTableViewController: ResultTableViewController) {
-        self.resultTableViewController = resultTableViewController
         
         super.init(coder: aDecoder)
         
@@ -21,26 +18,9 @@ class SettingNavigationController: UINavigationController {
             settingTableViewController.resultTableViewController = resultTableViewController
             presentationController?.delegate = settingTableViewController
         }
-        
-        print("###, \(#function), \(self), ")
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-
-    }
-    
-//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-//        print("###, \(#function), \(self)")
-//    }
-    
-//    @IBSegueAction func embedSetting(_ coder: NSCoder) -> SettingTableViewController? {
-//        return SettingTableViewController(coder: coder, resultTableViewController: resultTableViewController)
-//    }
 }
