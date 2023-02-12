@@ -108,8 +108,7 @@ class ResultTableViewController: UITableViewController {
                 }
                 
             case .failure(let error):
-                //                self.showErrorAlert(error: error)
-                break
+                showErrorAlert(error: error)
             }
             
             self.tableView.refreshControl?.endRefreshing()
@@ -148,6 +147,37 @@ class ResultTableViewController: UITableViewController {
         }
         
         tableView.reloadData()
+    }
+    
+    private func showErrorAlert(error: Error) {
+#warning("這出乎我的意料，要向下轉型才讀得到正確的 localizedDescription，要查一下資料。")
+        
+        let alertController: UIAlertController
+        
+        do { // alert controller
+            let message: String
+            
+            if let errorMessage = error as? ResponseDataModel.ServerError {
+                message = errorMessage.localizedDescription
+            } else {
+                message = error.localizedDescription
+            }
+            
+            let alertTitle = R.string.localizable.alertTitle()
+            alertController = UIAlertController(title: alertTitle,
+                                                message: message,
+                                                preferredStyle: .alert)
+        }
+        
+        do { // alert action
+            let alertActionTitle = R.string.localizable.alertActionTitle()
+            let alertAction = UIAlertAction(title: alertActionTitle, style: .cancel) { _ in
+                alertController.dismiss(animated: true)
+            }
+            alertController.addAction(alertAction)
+        }
+        
+        present(alertController, animated: true)
     }
 }
 
