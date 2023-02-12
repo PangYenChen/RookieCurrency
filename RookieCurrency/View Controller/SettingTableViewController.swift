@@ -17,35 +17,46 @@ class SettingTableViewController: UITableViewController {
     }
     
     var stepper: UIStepper!
+#warning("forced unwrap")
+    var resultTableViewController: ResultTableViewController!
     
-    var resultTableViewController: ResultTableViewController?
+    var originalNumberOfDay: Int = 0
     
-    init?(coder: NSCoder, resultTableViewController: ResultTableViewController) {
-        self.resultTableViewController = resultTableViewController
-        
-        super.init(coder: coder)
-    }
+    var editedNumberOfDay: Int = 0
     
-    required init?(coder: NSCoder) {
-        self.resultTableViewController = nil
-        
-        super.init(coder: coder)
-    }
+    var originalBaseCurrency: Currency = .TWD
+    
+    var editedBaseCurrency: Currency = .TWD
+    
+    var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        do { // number Of Day
+            originalNumberOfDay = resultTableViewController.numberOfDay
+            editedNumberOfDay = resultTableViewController.numberOfDay
+        }
+        
+        do { // base currency
+            originalBaseCurrency = resultTableViewController.baseCurrency
+            editedBaseCurrency = resultTableViewController.baseCurrency
+        }
         
         do { // stepper
             stepper = UIStepper()
             stepper.addTarget(self,
                               action: #selector(stepperValueDidChange),
                               for: .valueChanged)
+            stepper.value = Double(resultTableViewController.numberOfDay)
         }
         
     }
     
     @objc func stepperValueDidChange(_ sender: UIStepper) {
-        print("###, \(#function), \(self), ")
+        editedNumberOfDay = Int(sender.value)
+        #warning("改拿row的方式")
+        tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
     }
     
 }
@@ -63,14 +74,10 @@ extension SettingTableViewController {
         
         switch row {
         case .numberOfDay:
-            #warning("forced unwarp")
-            let numberOfDay = resultTableViewController!.numberOfDay
-            cell.textLabel?.text = R.string.localizable.numberOfConsideredDay("\(numberOfDay)")
+            cell.textLabel?.text = R.string.localizable.numberOfConsideredDay("\(editedNumberOfDay)")
             cell.accessoryView = stepper
         case .baseCurrency:
-#warning("forced unwarp")
-            let baseCurrency = resultTableViewController!.baseCurrency
-            cell.textLabel?.text = R.string.localizable.baseCurrency(baseCurrency.name)
+            cell.textLabel?.text = R.string.localizable.baseCurrency(editedBaseCurrency.name)
             cell.accessoryType = .disclosureIndicator
         case .language:
             cell.textLabel?.text = "## 語言"

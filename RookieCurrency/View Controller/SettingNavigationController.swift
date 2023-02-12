@@ -35,11 +35,11 @@ class SettingNavigationController: UINavigationController {
 
     }
     
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        print("###, \(#function), \(self)")
-    }
+//    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+//        print("###, \(#function), \(self)")
+//    }
     
-    @IBSegueAction func embedSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        return SettingTableViewController(coder: coder, resultTableViewController: resultTableViewController)
-    }
+//    @IBSegueAction func embedSetting(_ coder: NSCoder) -> SettingTableViewController? {
+//        return SettingTableViewController(coder: coder, resultTableViewController: resultTableViewController)
+//    }
 }
