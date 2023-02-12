@@ -36,7 +36,7 @@ extension CurrencyTableViewController {
         let identifier = R.reuseIdentifier.currencyCell.identifier
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
         
-        cell.textLabel?.text = Currency.allCases[indexPath.row].name
+        cell.textLabel?.text = Currency.allCases[indexPath.row].localizedString
         
         return cell
     }

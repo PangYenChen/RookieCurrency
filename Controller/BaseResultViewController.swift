@@ -49,7 +49,7 @@ class BaseResultViewController: UIViewController {
         let alertController = UIAlertController(title: alertTitle, message: nil, preferredStyle: .actionSheet)
         
         for currency in ResponseDataModel.RateList.Currency.allCases {
-            let alertAction = UIAlertAction(title: currency.name, style: .default) { [unowned self] (_) in
+            let alertAction = UIAlertAction(title: currency.localizedString, style: .default) { [unowned self] (_) in
                 didChooseBaseCurrency(currency)
             }
             

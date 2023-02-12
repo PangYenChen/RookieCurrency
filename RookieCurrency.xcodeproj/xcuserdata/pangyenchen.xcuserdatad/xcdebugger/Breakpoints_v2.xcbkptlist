@@ -3,4 +3,54 @@
    uuid = "FA6453AB-E753-4328-86DF-2F654CCAA8C4"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5CEC9ECD-07C1-44C2-A1CA-41A2F9C143CC"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RookieCurrency/View Controller/ResultViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
+            landmarkName = "searchBar(_:textDidChange:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "5CEC9ECD-07C1-44C2-A1CA-41A2F9C143CC - 93d50753583887e5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (RookieCurrency.ResponseDataModel.RateList.Currency, Swift.Double, Swift.Double, Swift.Double) -&gt; Swift.Bool in RookieCurrency.ResultTableViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/View%20Controller/ResultViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "162"
+                  endingLineNumber = "162"
+                  offsetFromSymbolStart = "236">
+               </Location>
+               <Location
+                  uuid = "5CEC9ECD-07C1-44C2-A1CA-41A2F9C143CC - 2efbeb7b6731438d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.String) -&gt; Swift.Bool in closure #1 (RookieCurrency.ResponseDataModel.RateList.Currency, Swift.Double, Swift.Double, Swift.Double) -&gt; Swift.Bool in RookieCurrency.ResultTableViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/View%20Controller/ResultViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "162"
+                  endingLineNumber = "162"
+                  offsetFromSymbolStart = "76">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

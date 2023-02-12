@@ -52,7 +52,7 @@ extension ResponseDataModel {
         }
         
         /// 表示幣別的 enum
-        enum Currency:String, CaseIterable {
+        enum Currency: String, CaseIterable {
             /// 新台幣
             case TWD
             /// 美金
@@ -86,7 +86,7 @@ extension ResponseDataModel {
             /// 黃金 Gold (troy ounce)
             case XAU
             
-            var name: String {
+            var localizedString: String {
                 if let localizedString =  Locale.current.localizedString(forCurrencyCode: self.rawValue) {
                     return localizedString
                 } else {
@@ -110,6 +110,8 @@ extension ResponseDataModel {
                     }
                 }
             }
+            
+            var code: String { self.rawValue }
         }
     }
 }

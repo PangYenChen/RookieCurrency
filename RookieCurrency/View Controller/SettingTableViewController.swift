@@ -146,7 +146,7 @@ extension SettingTableViewController {
                 cell.imageView?.image = UIImage(systemName: "calendar")
             case .baseCurrency:
                 cell.textLabel?.text = R.string.localizable.baseCurrency()
-                cell.detailTextLabel?.text = editedBaseCurrency.name
+                cell.detailTextLabel?.text = editedBaseCurrency.localizedString
                 cell.accessoryType = .disclosureIndicator
                 cell.imageView?.image = UIImage(systemName: "dollarsign.square")
             case .language:
