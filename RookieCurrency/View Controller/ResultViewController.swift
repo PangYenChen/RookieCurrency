@@ -60,9 +60,16 @@ class ResultTableViewController: UITableViewController {
         }
         
         do { // table view
-            tableView.refreshControl = UIRefreshControl()
-            tableView.refreshControl?.beginRefreshing()
+            let refreshControl = UIRefreshControl()
+            tableView.refreshControl = refreshControl
+            refreshControl.addTarget(self, action: #selector(refresh), for: .valueChanged)
         }
+        
+        refresh()
+    }
+    
+    @objc func refresh() {
+        tableView.refreshControl?.beginRefreshing()
         
         RateListSetController.getRatesSetForDays(numberOfDay: numberOfDay) { [unowned self] result in
             switch result {
@@ -74,7 +81,7 @@ class ResultTableViewController: UITableViewController {
                     let dateString = DateFormatter.uiDateFormatter.string(from: date)
                     latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(dateString)
                 }
-
+                
                 analyzedDataArray = RateListSetAnalyst
                     .analyze(latestRateList: latestRateList,
                              historicalRateListSet: historicalRateListSet,
@@ -83,13 +90,15 @@ class ResultTableViewController: UITableViewController {
                     .map { (currency: $0.key, latest: $0.value.latest, mean: $0.value.mean, $0.value.deviation)}
                 
             case .failure(let error):
-//                self.showErrorAlert(error: error)
+                //                self.showErrorAlert(error: error)
                 break
             }
             
             self.tableView.refreshControl?.endRefreshing()
         }
     }
+    
+    
     @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingNavigationController? {
         return SettingNavigationController(coder: coder, resultTableViewController: self)
     }

@@ -72,7 +72,10 @@ class SettingTableViewController: UITableViewController {
     }
     
     @IBAction func save(_ sender: Any) {
-        
+        resultTableViewController.numberOfDay = editedNumberOfDay
+        resultTableViewController.baseCurrency = editedBaseCurrency
+        resultTableViewController.refresh()
+        dismiss(animated: true)
     }
     
     @IBAction func didTapCancelButton() {
