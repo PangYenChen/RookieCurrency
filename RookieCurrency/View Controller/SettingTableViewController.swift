@@ -60,7 +60,12 @@ class SettingTableViewController: UITableViewController {
         #warning("改拿row的方式")
         tableView.reloadRows(at: [IndexPath(row: 0, section: 0)], with: .none)
     }
-    
+    @IBSegueAction func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
+        CurrencyTableViewController(coder: coder) { [unowned self] selectedCurrency in
+            editedBaseCurrency = selectedCurrency
+            tableView.reloadRows(at: [IndexPath(row: 1, section: 0)], with: .none)
+        }
+    }
 }
 
 // MARK: - Table view data source

@@ -109,7 +109,7 @@
                     </navigationItem>
                     <connections>
                         <outlet property="saveButton" destination="4h0-rJ-PQn" id="BSJ-OI-thw"/>
-                        <segue destination="I3t-1P-vym" kind="show" identifier="showCurrencyTable" id="Np9-zw-Nph"/>
+                        <segue destination="I3t-1P-vym" kind="show" identifier="showCurrencyTable" destinationCreationSelector="showCurrencyTable:" id="Np9-zw-Nph"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bN2-6g-ejU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

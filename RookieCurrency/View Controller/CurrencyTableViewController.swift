@@ -10,6 +10,18 @@ import UIKit
 
 class CurrencyTableViewController: UITableViewController {
     
+    let completionHandler: (Currency) -> Void
+    
+    init?(coder: NSCoder, completionHandler: @escaping (Currency) -> Void) {
+        self.completionHandler = completionHandler
+        
+        super.init(coder: coder)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -30,5 +42,16 @@ extension CurrencyTableViewController {
         cell.textLabel?.text = Currency.allCases[indexPath.row].name
         
         return cell
+    }
+}
+
+// MARK: - Table view delegate
+extension CurrencyTableViewController {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
+        let selectedCurrency = Currency.allCases[indexPath.row]
+        
+        completionHandler(selectedCurrency)
+        navigationController?.popViewController(animated: true)
     }
 }
