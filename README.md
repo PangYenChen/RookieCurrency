@@ -13,3 +13,5 @@
 使用SPM。
 
 顯示的文字隨系統大小改變。
+
+使用 Locale 顯示幣別的 localized string。

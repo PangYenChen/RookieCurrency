@@ -94,20 +94,27 @@ class SettingTableViewController: UITableViewController {
     private func presentCancelAlert(showingSave: Bool) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        if showingSave {
-            let saveAction = UIAlertAction(title: "## 儲存",
+        if showingSave { // 儲存的 action
+            let title = R.string.localizable.cancelAlertSavingTitle()
+            let saveAction = UIAlertAction(title: title,
                                            style: .default) { [unowned self] _ in save() }
             alertController.addAction(saveAction)
         }
         
-        let discardChangeAction = UIAlertAction(title: "## 捨棄變更",
-                                                style: .default) { [unowned self] _ in dismiss(animated: true) }
+        do { // 捨棄變更的 action
+            let title = R.string.localizable.cancelAlertDiscardTitle()
+            let discardChangeAction = UIAlertAction(title: title,
+                                                    style: .default) { [unowned self] _ in dismiss(animated: true) }
+            
+            alertController.addAction(discardChangeAction)
+        }
         
-        alertController.addAction(discardChangeAction)
-        
-        let continueSettingAction = UIAlertAction(title: "## 繼續設定", style: .cancel)
-        
-        alertController.addAction(continueSettingAction)
+        do { // 繼續編輯的 action
+            let title = R.string.localizable.cancelAlertContinueTitle()
+            let continueSettingAction = UIAlertAction(title: title, style: .cancel)
+            
+            alertController.addAction(continueSettingAction)
+        }
         
         present(alertController, animated: true)
     }

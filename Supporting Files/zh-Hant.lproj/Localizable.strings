@@ -16,6 +16,9 @@
 "pleaseChooseBaseCurrency" = "請選擇基準幣別";
 "cancel" = "取消";
 "language" = "語言";
+"cancelAlertSavingTitle" = "儲存變更";
+"cancelAlertDiscardTitle" = "捨棄變更";
+"cancelAlertContinueTitle" = "繼續編輯";
 // MARK: - 幣別
 "TWD" = "新台幣";
 "USD" = "美金";

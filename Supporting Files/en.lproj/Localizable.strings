@@ -16,6 +16,9 @@
 "pleaseChooseBaseCurrency" = "please Choose Base Currency";
 "cancel" = "cancel";
 "language" = "Language";
+"cancelAlertSavingTitle" = "Save changes";
+"cancelAlertDiscardTitle" = "Discard changes";
+"cancelAlertContinueTitle" = "Continue editing";
 // MARK: - 幣別
 "TWD" = "New Taiwan Dollar";
 "USD" = "United States Dollar";
