@@ -10,12 +10,12 @@ import UIKit
 
 class ResultTableViewController: UITableViewController {
 
-    // MARK: - Private Property
+    // MARK: - Property
     @IBOutlet private weak var latestUpdateTimeItem: UIBarButtonItem!
     
-    private var numberOfDay: Int
+    var numberOfDay: Int
     
-    private var baseCurrency: Currency
+    var baseCurrency: Currency
     
     /// 分析過的匯率資料
     private var analyzedDataArray: Array<(currency: ResponseDataModel.RateList.Currency, latest: Double, mean: Double, deviation: Double)> = [] {
@@ -89,6 +89,9 @@ class ResultTableViewController: UITableViewController {
             
             self.tableView.refreshControl?.endRefreshing()
         }
+    }
+    @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingNavigationController? {
+        return SettingNavigationController(coder: coder, resultTableViewController: self)
     }
 }
 
