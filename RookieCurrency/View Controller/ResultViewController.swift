@@ -18,7 +18,7 @@ class ResultTableViewController: UITableViewController {
     var baseCurrency: Currency
     
     /// 分析過的匯率資料
-    private var analyzedDataArray: Array<(currency: ResponseDataModel.RateList.Currency, latest: Double, mean: Double, deviation: Double)> = [] {
+    private var analyzedDataArray: Array<(currency: Currency, latest: Double, mean: Double, deviation: Double)> = [] {
         didSet {
             tableView.reloadData()
         }
@@ -35,7 +35,7 @@ class ResultTableViewController: UITableViewController {
         
         do { // baseCurrency
             if let baseCurrencyString = UserDefaults.standard.string(forKey: "baseCurrency"),
-               let baseCurrency = ResponseDataModel.RateList.Currency(rawValue: baseCurrencyString) {
+               let baseCurrency = Currency(rawValue: baseCurrencyString) {
                 self.baseCurrency = baseCurrency
             } else {
                 baseCurrency = .TWD
