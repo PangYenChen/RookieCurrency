@@ -6,15 +6,16 @@
   Copyright © 2023 Pang-yen Chen. All rights reserved.
 */
 
-"numberOfConsideredDay" = "number of considered day: %@";
+"numberOfConsideredDay" = "Number of considered day";
 "latestUpdateTime" = "latest update time: %@";
-"baseCurrency" = "base currency: %@";
+"baseCurrency" = "Base currency";
 "changeBaseCurrency" = "change";
 "alertTitle" = "Oops, something goes wrong.";
 "alertActionTitle" = "ok";
 "currencyCellDetail" = "historical mean：%2$@，today：%1$@";
 "pleaseChooseBaseCurrency" = "please Choose Base Currency";
 "cancel" = "cancel";
+"language" = "Language";
 // MARK: - 幣別
 "TWD" = "New Taiwan Dollar";
 "USD" = "United States Dollar";

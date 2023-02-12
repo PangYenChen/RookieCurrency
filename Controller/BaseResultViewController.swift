@@ -26,7 +26,7 @@ class BaseResultViewController: UIViewController {
     }
     
     private func setUpFontAndLocalize() {
-        numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("-")
+//        numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("-")
         numberOfDayLabel.adjustsFontForContentSizeCategory = true
         numberOfDayLabel.font = UIFont.preferredFont(forTextStyle: .body)
         
@@ -34,7 +34,7 @@ class BaseResultViewController: UIViewController {
         latestUpdateTimeLabel.adjustsFontForContentSizeCategory = true
         latestUpdateTimeLabel.font = UIFont.preferredFont(forTextStyle: .body)
                                                      
-        baseCurrencyLabel.text = R.string.localizable.baseCurrency("-")
+//        baseCurrencyLabel.text = R.string.localizable.baseCurrency("-")
         baseCurrencyLabel.adjustsFontForContentSizeCategory = true
         baseCurrencyLabel.font = UIFont.preferredFont(forTextStyle: .body)
                                                      

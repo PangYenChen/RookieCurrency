@@ -92,15 +92,26 @@ extension SettingTableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
         let row = Row.allCases[indexPath.row]
         
+        cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+        cell.textLabel?.adjustsFontForContentSizeCategory = true
+        
+        cell.detailTextLabel?.font = UIFont.preferredFont(forTextStyle: .subheadline)
+        cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
+        
         switch row {
         case .numberOfDay:
-            cell.textLabel?.text = R.string.localizable.numberOfConsideredDay("\(editedNumberOfDay)")
+            cell.textLabel?.text = R.string.localizable.numberOfConsideredDay()
+            cell.detailTextLabel?.text = "\(editedNumberOfDay)"
             cell.accessoryView = stepper
         case .baseCurrency:
-            cell.textLabel?.text = R.string.localizable.baseCurrency(editedBaseCurrency.name)
+            cell.textLabel?.text = R.string.localizable.baseCurrency()
+            cell.detailTextLabel?.text = editedBaseCurrency.name
             cell.accessoryType = .disclosureIndicator
         case .language:
-            cell.textLabel?.text = "## 語言"
+            cell.textLabel?.text = R.string.localizable.language()
+            if let languageCode = Bundle.main.preferredLocalizations.first {
+                cell.detailTextLabel?.text = Locale.current.localizedString(forLanguageCode: languageCode)
+            }
             cell.accessoryType = .disclosureIndicator
         }
         
