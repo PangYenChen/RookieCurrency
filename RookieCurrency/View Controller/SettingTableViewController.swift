@@ -16,6 +16,8 @@ class SettingTableViewController: UITableViewController {
         case language
     }
     
+    @IBOutlet weak var saveButton: UIBarButtonItem!
+    
     var stepper: UIStepper!
 #warning("forced unwrap")
     var resultTableViewController: ResultTableViewController!
@@ -106,10 +108,10 @@ extension SettingTableViewController {
         case .numberOfDay:
             break
         case .baseCurrency:
-            performSegue(withIdentifier: R.segue.settingTableViewController.shwoCurrencyTable, sender: self)
+            performSegue(withIdentifier: R.segue.settingTableViewController.showCurrencyTable, sender: self)
         case .language:
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
-            #warning("要再確認一下")
+            tableView.deselectRow(at: indexPath, animated: true)
         }
     }
     

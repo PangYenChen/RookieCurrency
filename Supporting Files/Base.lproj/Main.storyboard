@@ -12,7 +12,7 @@
         <scene sceneID="gOw-Sv-fsH">
             <objects>
                 <tableViewController id="VOV-BZ-lbE" customClass="ResultTableViewController" customModule="CombineCurrency" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="eOa-7D-C5F">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="eOa-7D-C5F">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
@@ -108,7 +108,8 @@
                         <barButtonItem key="rightBarButtonItem" enabled="NO" systemItem="save" id="4h0-rJ-PQn"/>
                     </navigationItem>
                     <connections>
-                        <segue destination="I3t-1P-vym" kind="show" identifier="shwoCurrencyTable" id="Np9-zw-Nph"/>
+                        <outlet property="saveButton" destination="4h0-rJ-PQn" id="BSJ-OI-thw"/>
+                        <segue destination="I3t-1P-vym" kind="show" identifier="showCurrencyTable" id="Np9-zw-Nph"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bN2-6g-ejU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
