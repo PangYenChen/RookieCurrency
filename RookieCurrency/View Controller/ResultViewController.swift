@@ -98,6 +98,13 @@ class ResultTableViewController: UITableViewController {
         }
     }
     
+    func refreshWith(baseCurrency: Currency, andNumberOfDay numberOfDay: Int) {
+        UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
+        UserDefaults.standard.set(numberOfDay, forKey: "numberOfDay")
+        
+        refresh()
+    }
+    
     
     @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingNavigationController? {
         return SettingNavigationController(coder: coder, resultTableViewController: self)

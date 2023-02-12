@@ -78,9 +78,7 @@ class SettingTableViewController: UITableViewController {
     }
     
     @IBAction func save() {
-        resultTableViewController.numberOfDay = editedNumberOfDay
-        resultTableViewController.baseCurrency = editedBaseCurrency
-        resultTableViewController.refresh()
+        resultTableViewController.refreshWith(baseCurrency: editedBaseCurrency, andNumberOfDay: editedNumberOfDay)
         dismiss(animated: true)
     }
     
@@ -126,7 +124,7 @@ extension SettingTableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
         let row = Row.allCases[indexPath.row]
         
-        cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+        cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
         cell.textLabel?.adjustsFontForContentSizeCategory = true
         
         cell.detailTextLabel?.font = UIFont.preferredFont(forTextStyle: .subheadline)
@@ -137,16 +135,19 @@ extension SettingTableViewController {
             cell.textLabel?.text = R.string.localizable.numberOfConsideredDay()
             cell.detailTextLabel?.text = "\(editedNumberOfDay)"
             cell.accessoryView = stepper
+            cell.imageView?.image = UIImage(systemName: "calendar")
         case .baseCurrency:
             cell.textLabel?.text = R.string.localizable.baseCurrency()
             cell.detailTextLabel?.text = editedBaseCurrency.name
             cell.accessoryType = .disclosureIndicator
+            cell.imageView?.image = UIImage(systemName: "dollarsign.square")
         case .language:
             cell.textLabel?.text = R.string.localizable.language()
             if let languageCode = Bundle.main.preferredLocalizations.first {
                 cell.detailTextLabel?.text = Locale.current.localizedString(forLanguageCode: languageCode)
             }
             cell.accessoryType = .disclosureIndicator
+            cell.imageView?.image = UIImage(systemName: "character")
         }
         
         return cell
