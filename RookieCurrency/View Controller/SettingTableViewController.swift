@@ -10,16 +10,9 @@ import UIKit
 
 class SettingTableViewController: UITableViewController {
     
-    /// 表示 table view 的 row
-    enum Row: Int, CaseIterable {
-        case numberOfDay = 0
-        case baseCurrency
-        case language
-    }
     // MARK: - properties
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
-#warning("forced unwrap")
     private var stepper: UIStepper!
     
     var resultTableViewController: ResultTableViewController!
@@ -133,7 +126,6 @@ extension SettingTableViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let identifier = R.reuseIdentifier.settingCell.identifier
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
-        let row = Row.allCases[indexPath.row]
         
         do { // font
             cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
@@ -144,6 +136,7 @@ extension SettingTableViewController {
         }
         
         do { // content
+            let row = Row(rawValue: indexPath.row)
             switch row {
             case .numberOfDay:
                 cell.textLabel?.text = R.string.localizable.numberOfConsideredDay()
@@ -162,6 +155,8 @@ extension SettingTableViewController {
                 }
                 cell.accessoryType = .disclosureIndicator
                 cell.imageView?.image = UIImage(systemName: "character")
+            default:
+                assertionFailure("###, \(#function), \(self), SettingTableViewController.Row 新增了 case，未處理新增的 case。")
             }
         }
         
@@ -172,32 +167,30 @@ extension SettingTableViewController {
 // MARK: - Table view delegate
 extension SettingTableViewController {
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        let row = Row.allCases[indexPath.row]
+        let row = Row(rawValue: indexPath.row)
         switch row {
-        case .numberOfDay:
-            return nil
         case .baseCurrency, .language:
             return indexPath
+        default:
+            return nil
         }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let row = Row.allCases[indexPath.row]
+        let row = Row(rawValue: indexPath.row)
         switch row {
-        case .numberOfDay:
-            break
         case .baseCurrency:
             performSegue(withIdentifier: R.segue.settingTableViewController.showCurrencyTable, sender: self)
         case .language:
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             tableView.deselectRow(at: indexPath, animated: true)
+        default:
+            break
         }
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        let row = Row.allCases[indexPath.row]
-        
-        return row != .numberOfDay
+        Row(rawValue: indexPath.row) != .numberOfDay
     }
 }
 
@@ -206,5 +199,15 @@ extension SettingTableViewController: UIAdaptivePresentationControllerDelegate {
     
     func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
         presentCancelAlert(showingSave: true)
+    }
+}
+
+// MARK: - name space
+extension SettingTableViewController {
+    /// 表示 table view 的 row
+    enum Row: Int, CaseIterable {
+        case numberOfDay = 0
+        case baseCurrency
+        case language
     }
 }

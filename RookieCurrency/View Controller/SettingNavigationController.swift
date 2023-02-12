@@ -16,6 +16,7 @@ class SettingNavigationController: UINavigationController {
         
         if let settingTableViewController = viewControllers.first as? SettingTableViewController {
             settingTableViewController.resultTableViewController = resultTableViewController
+            
             presentationController?.delegate = settingTableViewController
         }
     }

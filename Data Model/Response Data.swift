@@ -43,7 +43,7 @@ extension ResponseDataModel {
                      timestamp: Int,
                      rates: Dictionary<String, Double>) {
 #warning("寫 unit test 的時候再看看要不要把這個 init 打開")
-            assertionFailure("不應該用 decode 之外的方式產生 instance。")
+            assertionFailure("###, \(#function), 不應該用 decode 之外的方式產生 instance。")
             
             self.historical = historical
             self.date = date
@@ -209,7 +209,7 @@ extension ResponseDataModel {
         
         private init(code: Int, type: String? = nil, info: String) {
 #warning("寫 unit test 的時候再看看要不要把這個 init 打開")
-            assertionFailure("不應該用 decode 之外的方式產生 instance。")
+            assertionFailure("###, \(#function), 不應該用 decode 之外的方式產生 instance。")
             
             self.code = code
             self.type = type

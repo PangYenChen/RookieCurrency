@@ -21,10 +21,6 @@ class ResultTableViewController: UITableViewController {
     private var searchText: String
     
     /// 分析過的匯率資料
-    private var analyzedDataArray: [(currency: Currency, latest: Double, mean: Double, deviation: Double)] = []
-    
-    private var filteredAnalyzedDataArray: [(currency: Currency, latest: Double, mean: Double, deviation: Double)] = []
-    
     private var analyzedDataDictionary: [Currency: (latest: Double, mean: Double, deviation: Double)]
     
     private var dataSource: DataSource!
@@ -141,7 +137,7 @@ class ResultTableViewController: UITableViewController {
                 showErrorAlert(error: error)
             }
             
-            self.tableView.refreshControl?.endRefreshing()
+            tableView.refreshControl?.endRefreshing()
         }
     }
     
