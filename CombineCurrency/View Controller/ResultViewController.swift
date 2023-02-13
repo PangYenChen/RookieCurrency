@@ -49,58 +49,58 @@ class ResultViewController: BaseResultViewController {
     }
     
     private func setupSubscription() {
-        resultTableViewController.latestUpdateTimeStampPublisher
-            .map(Double.init)
-            .map(Date.init(timeIntervalSince1970:))
-            .map(DateFormatter.uiDateFormatter.string(from:))
-            .map { R.string.localizable.latestUpdateTime($0) }
-            .assign(to: \.text, on: latestUpdateTimeLabel)
-            .store(in: &anyCancellableSet)
-        
-        
-        do { // number of day
-            numberOfDay
-                .first()
-                .map(Double.init)
-                .assign(to: \.value, on: stepper)
-                .store(in: &anyCancellableSet)
-            
-            numberOfDay
-                .map(String.init)
-                .map { R.string.localizable.numberOfConsideredDay($0) }
-                .assign(to: \.text, on: numberOfDayLabel)
-                .store(in: &anyCancellableSet)
-            
-            numberOfDay
-                .dropFirst()
-                .sink { UserDefaults.standard.set($0, forKey: "numberOfDay") }
-                .store(in: &anyCancellableSet)
-            
-            numberOfDay
-                .sink { [unowned self] numberOfDay in resultTableViewController.numberOfDay = numberOfDay }
-                .store(in: &anyCancellableSet)
-        }
-        
-        
-        do { // base currency
-            baseCurrency
-                .dropFirst()
-                .map { baseCurrency -> String in baseCurrency.rawValue}
-                .sink { UserDefaults.standard.set($0, forKey: "baseCurrency") }
-                .store(in: &anyCancellableSet)
-            
-            baseCurrency
-                .map { R.string.localizable.baseCurrency($0.name) }
-                .assign(to: \.text, on: baseCurrencyLabel)
-                .store(in: &anyCancellableSet)
-            
-            baseCurrency
-                .sink { [unowned self] baseCurrency in
-                    resultTableViewController.baseCurrency = baseCurrency
-                    resultTableViewController.updateData.send((baseCurrency, self.numberOfDay.value))
-                }
-            .store(in: &anyCancellableSet)
-        }
+//        resultTableViewController.latestUpdateTimeStampPublisher
+//            .map(Double.init)
+//            .map(Date.init(timeIntervalSince1970:))
+//            .map(DateFormatter.uiDateFormatter.string(from:))
+//            .map { R.string.localizable.latestUpdateTime($0) }
+//            .assign(to: \.text, on: latestUpdateTimeLabel)
+//            .store(in: &anyCancellableSet)
+//        
+//        
+//        do { // number of day
+//            numberOfDay
+//                .first()
+//                .map(Double.init)
+//                .assign(to: \.value, on: stepper)
+//                .store(in: &anyCancellableSet)
+//            
+//            numberOfDay
+//                .map(String.init)
+//                .map { R.string.localizable.numberOfConsideredDay($0) }
+//                .assign(to: \.text, on: numberOfDayLabel)
+//                .store(in: &anyCancellableSet)
+//            
+//            numberOfDay
+//                .dropFirst()
+//                .sink { UserDefaults.standard.set($0, forKey: "numberOfDay") }
+//                .store(in: &anyCancellableSet)
+//            
+//            numberOfDay
+//                .sink { [unowned self] numberOfDay in resultTableViewController.numberOfDay = numberOfDay }
+//                .store(in: &anyCancellableSet)
+//        }
+//        
+//        
+//        do { // base currency
+//            baseCurrency
+//                .dropFirst()
+//                .map { baseCurrency -> String in baseCurrency.rawValue}
+//                .sink { UserDefaults.standard.set($0, forKey: "baseCurrency") }
+//                .store(in: &anyCancellableSet)
+//            
+//            baseCurrency
+//                .map { R.string.localizable.baseCurrency($0.name) }
+//                .assign(to: \.text, on: baseCurrencyLabel)
+//                .store(in: &anyCancellableSet)
+//            
+//            baseCurrency
+//                .sink { [unowned self] baseCurrency in
+//                    resultTableViewController.baseCurrency = baseCurrency
+//                    resultTableViewController.updateData.send((baseCurrency, self.numberOfDay.value))
+//                }
+//            .store(in: &anyCancellableSet)
+//        }
     }
     
     @IBAction func stepperValueDidChange(_ sender: UIStepper) {

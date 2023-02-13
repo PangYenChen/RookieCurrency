@@ -67,26 +67,26 @@ extension BaseResultTableViewController {
         return analyzedDataArray.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        
-        let reusedIdentifier = R.reuseIdentifier.currencyCell.identifier
-        let cell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
-        
-        let data = analyzedDataArray[indexPath.item]
-        let currency = data.currency
-        let deviationString = NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
-        let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
-        let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
-        
-        cell.textLabel?.text = "\(currency) " + currency.name + deviationString
-        cell.textLabel?.adjustsFontForContentSizeCategory = true
-        cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-        cell.textLabel?.textColor = data.deviation < 0 ? .systemGreen : .systemRed
-        
-        cell.detailTextLabel?.text = R.string.localizable.currencyCellDetail(meanString, latestString)
-        cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
-        cell.detailTextLabel?.font = UIFont.preferredFont(forTextStyle: .subheadline)
-        
-        return cell
-    }
+//    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+//        
+//        let reusedIdentifier = R.reuseIdentifier.currencyCell.identifier
+//        let cell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
+//        
+//        let data = analyzedDataArray[indexPath.item]
+//        let currency = data.currency
+//        let deviationString = NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
+//        let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
+//        let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
+//        
+//        cell.textLabel?.text = "\(currency) " + currency.name + deviationString
+//        cell.textLabel?.adjustsFontForContentSizeCategory = true
+//        cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+//        cell.textLabel?.textColor = data.deviation < 0 ? .systemGreen : .systemRed
+//        
+//        cell.detailTextLabel?.text = R.string.localizable.currencyCellDetail(meanString, latestString)
+//        cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
+//        cell.detailTextLabel?.font = UIFont.preferredFont(forTextStyle: .subheadline)
+//        
+//        return cell
+//    }
 }

@@ -6,15 +6,22 @@
   Copyright © 2023 Pang-yen Chen. All rights reserved.
 */
 
-"numberOfConsideredDay" = "考慮過去天數：%@";
+"numberOfConsideredDay" = "考慮過去天數";
 "latestUpdateTime" = "最後更新時間：%@";
-"baseCurrency" = "基準幣別：%@";
+"baseCurrency" = "基準幣別";
 "changeBaseCurrency" = "變更";
 "alertTitle" = "唉呀！出錯啦！";
 "alertActionTitle" = "喔，是喔。";
 "currencyCellDetail" = "過去平均：%1$@，今天匯率：%2$@";
 "pleaseChooseBaseCurrency" = "請選擇基準幣別";
 "cancel" = "取消";
+"language" = "語言";
+"cancelAlertSavingTitle" = "儲存變更";
+"cancelAlertDiscardTitle" = "捨棄變更";
+"cancelAlertContinueTitle" = "繼續編輯";
+"analyzedResult" = "分析結果";
+"setting" = "設定";
+"currency" = "貨幣";
 // MARK: - 幣別
 "TWD" = "新台幣";
 "USD" = "美金";

@@ -26,7 +26,7 @@ class BaseResultViewController: UIViewController {
     }
     
     private func setUpFontAndLocalize() {
-        numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("-")
+//        numberOfDayLabel.text = R.string.localizable.numberOfConsideredDay("-")
         numberOfDayLabel.adjustsFontForContentSizeCategory = true
         numberOfDayLabel.font = UIFont.preferredFont(forTextStyle: .body)
         
@@ -34,7 +34,7 @@ class BaseResultViewController: UIViewController {
         latestUpdateTimeLabel.adjustsFontForContentSizeCategory = true
         latestUpdateTimeLabel.font = UIFont.preferredFont(forTextStyle: .body)
                                                      
-        baseCurrencyLabel.text = R.string.localizable.baseCurrency("-")
+//        baseCurrencyLabel.text = R.string.localizable.baseCurrency("-")
         baseCurrencyLabel.adjustsFontForContentSizeCategory = true
         baseCurrencyLabel.font = UIFont.preferredFont(forTextStyle: .body)
                                                      
@@ -49,7 +49,7 @@ class BaseResultViewController: UIViewController {
         let alertController = UIAlertController(title: alertTitle, message: nil, preferredStyle: .actionSheet)
         
         for currency in ResponseDataModel.RateList.Currency.allCases {
-            let alertAction = UIAlertAction(title: currency.name, style: .default) { [unowned self] (_) in
+            let alertAction = UIAlertAction(title: currency.localizedString, style: .default) { [unowned self] (_) in
                 didChooseBaseCurrency(currency)
             }
             

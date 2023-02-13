@@ -43,7 +43,7 @@ extension ResponseDataModel {
                      timestamp: Int,
                      rates: Dictionary<String, Double>) {
 #warning("寫 unit test 的時候再看看要不要把這個 init 打開")
-            assertionFailure("不應該用 decode 之外的方式產生 instance。")
+            assertionFailure("###, \(#function), 不應該用 decode 之外的方式產生 instance。")
             
             self.historical = historical
             self.date = date
@@ -52,7 +52,7 @@ extension ResponseDataModel {
         }
         
         /// 表示幣別的 enum
-        enum Currency:String, CaseIterable {
+        enum Currency: String, CaseIterable {
             /// 新台幣
             case TWD
             /// 美金
@@ -85,27 +85,33 @@ extension ResponseDataModel {
             case XAG
             /// 黃金 Gold (troy ounce)
             case XAU
-            
-            var name: String {
-                switch self {
-                case .TWD: return R.string.localizable.twD()
-                case .USD: return R.string.localizable.usD()
-                case .JPY: return R.string.localizable.jpY()
-                case .EUR: return R.string.localizable.euR()
-                case .CNY: return R.string.localizable.cnY()
-                case .GBP: return R.string.localizable.gbP()
-                case .SEK: return R.string.localizable.seK()
-                case .CAD: return R.string.localizable.caD()
-                case .ZAR: return R.string.localizable.zaR()
-                case .HKD: return R.string.localizable.hkD()
-                case .SGD: return R.string.localizable.sgD()
-                case .CHF: return R.string.localizable.chF()
-                case .NZD: return R.string.localizable.nzD()
-                case .AUD: return R.string.localizable.auD()
-                case .XAG: return R.string.localizable.xaG()
-                case .XAU: return R.string.localizable.xaU()
+            #warning("考慮搬到其他地方去，這好像不屬於 data model，已經跟業務邏輯有關了。")
+            var localizedString: String {
+                if let localizedString =  Locale.current.localizedString(forCurrencyCode: self.rawValue) {
+                    return localizedString
+                } else {
+                    switch self {
+                    case .TWD: return R.string.localizable.twD()
+                    case .USD: return R.string.localizable.usD()
+                    case .JPY: return R.string.localizable.jpY()
+                    case .EUR: return R.string.localizable.euR()
+                    case .CNY: return R.string.localizable.cnY()
+                    case .GBP: return R.string.localizable.gbP()
+                    case .SEK: return R.string.localizable.seK()
+                    case .CAD: return R.string.localizable.caD()
+                    case .ZAR: return R.string.localizable.zaR()
+                    case .HKD: return R.string.localizable.hkD()
+                    case .SGD: return R.string.localizable.sgD()
+                    case .CHF: return R.string.localizable.chF()
+                    case .NZD: return R.string.localizable.nzD()
+                    case .AUD: return R.string.localizable.auD()
+                    case .XAG: return R.string.localizable.xaG()
+                    case .XAU: return R.string.localizable.xaU()
+                    }
                 }
             }
+            
+            var code: String { self.rawValue }
         }
     }
 }
@@ -203,7 +209,7 @@ extension ResponseDataModel {
         
         private init(code: Int, type: String? = nil, info: String) {
 #warning("寫 unit test 的時候再看看要不要把這個 init 打開")
-            assertionFailure("不應該用 decode 之外的方式產生 instance。")
+            assertionFailure("###, \(#function), 不應該用 decode 之外的方式產生 instance。")
             
             self.code = code
             self.type = type
