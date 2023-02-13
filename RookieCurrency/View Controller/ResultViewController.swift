@@ -219,6 +219,7 @@ class ResultTableViewController: UITableViewController {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(sortedCurrencies)
+        snapshot.reloadSections([.main])
         
         dataSource.apply(snapshot)
     }
