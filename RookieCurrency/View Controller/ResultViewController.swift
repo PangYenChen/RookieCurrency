@@ -142,7 +142,7 @@ class ResultTableViewController: UITableViewController {
         refreshDataAndPopulateTableView()
     }
     
-    /// 更新資料
+    /// 更新資料並且填入 table view
     private func refreshDataAndPopulateTableView() {
         tableView.refreshControl?.beginRefreshing()
         
@@ -193,7 +193,6 @@ class ResultTableViewController: UITableViewController {
             refreshDataAndPopulateTableView()
         }
     }
-    
     
     /// 更新 table view，純粹把資料填入 table view，不動資料。
     private func populateTableView() {
@@ -279,8 +278,10 @@ private extension ResultTableViewController {
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Currency>
     
 }
-
+// MARK: - name space
 extension ResultTableViewController {
+    /// 資料的排序方式。
+    /// 因為要儲存在 UserDefaults，所以 access control 不能是 private。
     enum Order: String {
         case increasing
         case decreasing
