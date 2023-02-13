@@ -6,7 +6,7 @@
 
 這個 project 檔中有兩個 target，實作出的是同樣的邏輯，一個用 imperative 的方式寫，一個用 reactive(Combine) 的方式寫。
 
-有實作多國語系。
+有實作多國語系，並將使用者帶到系統設定畫面更改語言。
 
 使用R.swift。
 
@@ -15,3 +15,11 @@
 顯示的文字隨系統大小改變。
 
 使用 Locale 顯示幣別的 localized string。
+
+使用 diffable data source。
+
+custom segue
+
+讓使用者決定排序的方向。
+
+若使用者在 present 的設定頁面未更改設定，阻止使用者下拉離開。

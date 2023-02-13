@@ -119,7 +119,7 @@ class ResultTableViewController: UITableViewController {
                 let reusedIdentifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
                 
-                guard let data = analyzedDataDictionary[currency] else { return nil }
+                guard let data = analyzedDataDictionary[currency] else { return cell }
                 
                 let deviationString = NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
                 let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
@@ -166,9 +166,6 @@ class ResultTableViewController: UITableViewController {
                 }
                 
             case .failure(let error):
-                analyzedDataDictionary = [:]
-                populateTableView()
-                
                 showErrorAlert(error: error)
             }
             
