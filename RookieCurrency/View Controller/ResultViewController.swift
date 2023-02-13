@@ -219,6 +219,11 @@ extension ResultTableViewController: UISearchBarDelegate {
         self.searchText = searchText
         populateTableView()
     }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchText = ""
+        populateTableView()
+    }
 }
 
 // MARK: - name space
