@@ -13,42 +13,27 @@ class SettingTableViewController: UITableViewController {
     // MARK: - properties
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
-    private var stepper: UIStepper!
+    private let stepper: UIStepper
     
-    var resultTableViewController: ResultTableViewController!
+    private var delegate: SettingTableViewControllerDelegate!
     
-    private var originalNumberOfDay: Int = 0
+    private var originalNumberOfDay: Int!
     
-    private var editedNumberOfDay: Int = 0
+    private var editedNumberOfDay: Int!
     
-    private var originalBaseCurrency: Currency = .TWD
+    private var originalBaseCurrency: Currency!
     
-    private var editedBaseCurrency: Currency = .TWD
+    private var editedBaseCurrency: Currency!
     
     private var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
     
     // MARK: - methods
     required init?(coder: NSCoder) {
+        stepper = UIStepper()
+
         super.init(coder: coder)
         
-        title = R.string.localizable.setting()
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        do { // number Of Day
-            originalNumberOfDay = resultTableViewController.numberOfDay
-            editedNumberOfDay = resultTableViewController.numberOfDay
-        }
-        
-        do { // base currency
-            originalBaseCurrency = resultTableViewController.baseCurrency
-            editedBaseCurrency = resultTableViewController.baseCurrency
-        }
-        
         do { // stepper
-            stepper = UIStepper()
             let handler = UIAction { [unowned self] _ in
                 editedNumberOfDay = Int(stepper.value)
                 tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
@@ -56,13 +41,12 @@ class SettingTableViewController: UITableViewController {
                 isModalInPresentation = hasChange
             }
             stepper.addAction(handler, for: .primaryActionTriggered)
-            stepper.value = Double(resultTableViewController.numberOfDay)
         }
         
         do { // other set up
             isModalInPresentation = hasChange
+            title = R.string.localizable.setting()
         }
-        
     }
     
     @IBSegueAction private func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
@@ -74,8 +58,20 @@ class SettingTableViewController: UITableViewController {
         }
     }
     
+    func set(delegate: SettingTableViewControllerDelegate) {
+        self.delegate = delegate
+        
+        originalNumberOfDay = delegate.numberOfDay
+        editedNumberOfDay = delegate.numberOfDay
+        stepper.value = Double(delegate.numberOfDay)
+        
+        originalBaseCurrency = delegate.baseCurrency
+        editedBaseCurrency = delegate.baseCurrency
+        
+    }
+    
     @IBAction private func save() {
-        resultTableViewController.refreshWith(baseCurrency: editedBaseCurrency, andNumberOfDay: editedNumberOfDay)
+        delegate.update(numberOfDay: editedNumberOfDay, andBaseCurrency: editedBaseCurrency)
         dismiss(animated: true)
     }
     
@@ -140,7 +136,7 @@ extension SettingTableViewController {
             switch row {
             case .numberOfDay:
                 cell.textLabel?.text = R.string.localizable.numberOfConsideredDay()
-                cell.detailTextLabel?.text = "\(editedNumberOfDay)"
+                cell.detailTextLabel?.text = editedNumberOfDay.map(String.init)
                 cell.accessoryView = stepper
                 cell.imageView?.image = UIImage(systemName: "calendar")
             case .baseCurrency:
@@ -210,4 +206,10 @@ extension SettingTableViewController {
         case baseCurrency
         case language
     }
+}
+
+protocol SettingTableViewControllerDelegate {
+    var numberOfDay: Int { get }
+    var baseCurrency: Currency { get }
+    func update(numberOfDay: Int, andBaseCurrency baseCurrency: Currency)
 }

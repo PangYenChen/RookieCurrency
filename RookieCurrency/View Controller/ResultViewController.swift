@@ -141,23 +141,8 @@ class ResultTableViewController: UITableViewController {
         }
     }
     
-    func refreshWith(baseCurrency: Currency, andNumberOfDay numberOfDay: Int) {
-        #warning("有 side effect 要改名字，跟 refresh 整合")
-        do { // base currency
-            self.baseCurrency = baseCurrency
-            UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
-        }
-        
-        do { // number Of Day
-            self.numberOfDay = numberOfDay
-            UserDefaults.standard.set(numberOfDay, forKey: "numberOfDay")
-        }
-        
-        refresh()
-    }
-    
     @IBSegueAction private func showSetting(_ coder: NSCoder) -> SettingNavigationController? {
-        return SettingNavigationController(coder: coder, resultTableViewController: self)
+        return SettingNavigationController(coder: coder, settingTableViewControllerDelegate: self)
     }
     
     /// 更新 table view，純粹把資料填入 table view，不動資料。
@@ -231,4 +216,19 @@ extension ResultTableViewController {
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Currency>
 }
 
-
+// MARK: - Setting Table View Controller Delegate
+extension ResultTableViewController: SettingTableViewControllerDelegate {
+    func update(numberOfDay: Int, andBaseCurrency baseCurrency: Currency) {
+        do { // base currency
+            self.baseCurrency = baseCurrency
+            UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
+        }
+        
+        do { // number Of Day
+            self.numberOfDay = numberOfDay
+            UserDefaults.standard.set(numberOfDay, forKey: "numberOfDay")
+        }
+        
+        refresh()
+    }
+}

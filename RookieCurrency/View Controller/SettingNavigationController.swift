@@ -10,12 +10,12 @@ import UIKit
 
 class SettingNavigationController: UINavigationController {
     
-    init?(coder aDecoder: NSCoder, resultTableViewController: ResultTableViewController) {
+    init?(coder aDecoder: NSCoder, settingTableViewControllerDelegate: SettingTableViewControllerDelegate) {
         
         super.init(coder: aDecoder)
         
         if let settingTableViewController = viewControllers.first as? SettingTableViewController {
-            settingTableViewController.resultTableViewController = resultTableViewController
+            settingTableViewController.set(delegate: settingTableViewControllerDelegate)
             
             presentationController?.delegate = settingTableViewController
         }
