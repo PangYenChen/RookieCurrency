@@ -11,25 +11,50 @@ import UIKit
 class SettingTableViewController: UITableViewController {
     
     // MARK: - properties
-    @IBOutlet weak var saveButton: UIBarButtonItem!
+    @IBOutlet private weak var saveButton: UIBarButtonItem!
     
     private let stepper: UIStepper
     
-    private var delegate: SettingTableViewControllerDelegate!
+    private let completionHandler: (Int, Currency) -> Void
     
-    private var originalNumberOfDay: Int!
+    private let originalNumberOfDay: Int
     
-    private var editedNumberOfDay: Int!
+    private var editedNumberOfDay: Int?
     
-    private var originalBaseCurrency: Currency!
+    private var numberOfDay: Int { editedNumberOfDay ?? originalNumberOfDay }
     
-    private var editedBaseCurrency: Currency!
+    private let originalBaseCurrency: Currency
+    
+    private var editedBaseCurrency: Currency?
+    
+    private var baseCurrency: Currency { editedBaseCurrency ?? originalBaseCurrency }
     
     private var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
     
     // MARK: - methods
-    required init?(coder: NSCoder) {
-        stepper = UIStepper()
+    required init?(coder: NSCoder,
+                   numberOfDay: Int,
+                   baseCurrency: Currency,
+                   completionHandler: @escaping (Int, Currency) -> Void) {
+        
+        do { // number of day
+            originalNumberOfDay = numberOfDay
+            editedNumberOfDay = numberOfDay
+        }
+        
+        do { // stepper
+            stepper = UIStepper()
+            stepper.value = Double(numberOfDay)
+        }
+        
+        do { // base currency
+            originalBaseCurrency = baseCurrency
+            editedBaseCurrency = baseCurrency
+        }
+        
+        do {
+            self.completionHandler = completionHandler
+        }
 
         super.init(coder: coder)
         
@@ -49,6 +74,10 @@ class SettingTableViewController: UITableViewController {
         }
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     @IBSegueAction private func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
         CurrencyTableViewController(coder: coder) { [unowned self] selectedCurrency in
             editedBaseCurrency = selectedCurrency
@@ -58,20 +87,8 @@ class SettingTableViewController: UITableViewController {
         }
     }
     
-    func set(delegate: SettingTableViewControllerDelegate) {
-        self.delegate = delegate
-        
-        originalNumberOfDay = delegate.numberOfDay
-        editedNumberOfDay = delegate.numberOfDay
-        stepper.value = Double(delegate.numberOfDay)
-        
-        originalBaseCurrency = delegate.baseCurrency
-        editedBaseCurrency = delegate.baseCurrency
-        
-    }
-    
     @IBAction private func save() {
-        delegate.update(numberOfDay: editedNumberOfDay, andBaseCurrency: editedBaseCurrency)
+        completionHandler(numberOfDay, baseCurrency)
         dismiss(animated: true)
     }
     
@@ -86,7 +103,7 @@ class SettingTableViewController: UITableViewController {
     private func presentCancelAlert(showingSave: Bool) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        if showingSave { // 儲存的 action
+        if showingSave { // 儲存的 action，只有在下拉的時候加上這個 action。
             let title = R.string.localizable.cancelAlertSavingTitle()
             let saveAction = UIAlertAction(title: title,
                                            style: .default) { [unowned self] _ in save() }
@@ -136,12 +153,12 @@ extension SettingTableViewController {
             switch row {
             case .numberOfDay:
                 cell.textLabel?.text = R.string.localizable.numberOfConsideredDay()
-                cell.detailTextLabel?.text = editedNumberOfDay.map(String.init)
+                cell.detailTextLabel?.text = String(numberOfDay)
                 cell.accessoryView = stepper
                 cell.imageView?.image = UIImage(systemName: "calendar")
             case .baseCurrency:
                 cell.textLabel?.text = R.string.localizable.baseCurrency()
-                cell.detailTextLabel?.text = editedBaseCurrency.localizedString
+                cell.detailTextLabel?.text = baseCurrency.localizedString
                 cell.accessoryType = .disclosureIndicator
                 cell.imageView?.image = UIImage(systemName: "dollarsign.circle")
             case .language:
@@ -199,17 +216,11 @@ extension SettingTableViewController: UIAdaptivePresentationControllerDelegate {
 }
 
 // MARK: - name space
-extension SettingTableViewController {
+private extension SettingTableViewController {
     /// 表示 table view 的 row
     enum Row: Int, CaseIterable {
         case numberOfDay = 0
         case baseCurrency
         case language
     }
-}
-
-protocol SettingTableViewControllerDelegate {
-    var numberOfDay: Int { get }
-    var baseCurrency: Currency { get }
-    func update(numberOfDay: Int, andBaseCurrency baseCurrency: Currency)
 }

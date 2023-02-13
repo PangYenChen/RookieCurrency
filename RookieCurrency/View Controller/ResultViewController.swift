@@ -14,9 +14,9 @@ class ResultTableViewController: UITableViewController {
     @IBOutlet private weak var latestUpdateTimeItem: UIBarButtonItem!
     
     // MARK: - stored properties
-    var numberOfDay: Int
+    private(set) var numberOfDay: Int
     
-    var baseCurrency: Currency
+    private(set) var baseCurrency: Currency
     
     private var searchText: String
     
@@ -77,7 +77,7 @@ class ResultTableViewController: UITableViewController {
         do { // table view
             let refreshControl = UIRefreshControl()
             tableView.refreshControl = refreshControl
-            let handler = UIAction { [unowned self] _ in refresh() }
+            let handler = UIAction { [unowned self] _ in refreshDataAndPopulateTableView() }
             refreshControl.addAction(handler, for: .primaryActionTriggered)
             
             dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currency in
@@ -104,11 +104,11 @@ class ResultTableViewController: UITableViewController {
             dataSource.defaultRowAnimation = .fade
         }
         
-        refresh()
+        refreshDataAndPopulateTableView()
     }
     
     /// 更新資料
-    private func refresh() {
+    private func refreshDataAndPopulateTableView() {
         tableView.refreshControl?.beginRefreshing()
         
         RateListSetController.getRatesSetForDays(numberOfDay: numberOfDay) { [unowned self] result in
@@ -127,12 +127,12 @@ class ResultTableViewController: UITableViewController {
                         .analyze(latestRateList: latestRateList,
                                  historicalRateListSet: historicalRateListSet,
                                  baseCurrency: baseCurrency)
-                    updateTableView()
+                    populateTableView()
                 }
                 
             case .failure(let error):
                 analyzedDataDictionary = [:]
-                updateTableView()
+                populateTableView()
                 
                 showErrorAlert(error: error)
             }
@@ -141,12 +141,27 @@ class ResultTableViewController: UITableViewController {
         }
     }
     
-    @IBSegueAction private func showSetting(_ coder: NSCoder) -> SettingNavigationController? {
-        return SettingNavigationController(coder: coder, settingTableViewControllerDelegate: self)
+    @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
+        SettingTableViewController(coder: coder,
+                                   numberOfDay: numberOfDay,
+                                   baseCurrency: baseCurrency) { [unowned self] editedNumberOfDay, editedBaseCurrency in
+            do { // base currency
+                baseCurrency = editedBaseCurrency
+                UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
+            }
+            
+            do { // number Of Day
+                numberOfDay = editedNumberOfDay
+                UserDefaults.standard.set(numberOfDay, forKey: "numberOfDay")
+            }
+            
+            refreshDataAndPopulateTableView()
+        }
     }
     
+    
     /// 更新 table view，純粹把資料填入 table view，不動資料。
-    private func updateTableView() {
+    private func populateTableView() {
         
         var sortedTuple = analyzedDataDictionary
             .sorted { $0.value.deviation > $1.value.deviation }
@@ -202,33 +217,16 @@ class ResultTableViewController: UITableViewController {
 extension ResultTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText = searchText
-        updateTableView()
+        populateTableView()
     }
 }
 
 // MARK: - name space
-extension ResultTableViewController {
+private extension ResultTableViewController {
     enum Section {
         case main
     }
     
     typealias DataSource = UITableViewDiffableDataSource<Section, Currency>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Currency>
-}
-
-// MARK: - Setting Table View Controller Delegate
-extension ResultTableViewController: SettingTableViewControllerDelegate {
-    func update(numberOfDay: Int, andBaseCurrency baseCurrency: Currency) {
-        do { // base currency
-            self.baseCurrency = baseCurrency
-            UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
-        }
-        
-        do { // number Of Day
-            self.numberOfDay = numberOfDay
-            UserDefaults.standard.set(numberOfDay, forKey: "numberOfDay")
-        }
-        
-        refresh()
-    }
 }

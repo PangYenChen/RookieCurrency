@@ -95,7 +95,7 @@ extension CurrencyTableViewController: UISearchBarDelegate {
 }
 
 // MARK: - name space
-extension CurrencyTableViewController {
+private extension CurrencyTableViewController {
     enum Section {
         case main
     }
