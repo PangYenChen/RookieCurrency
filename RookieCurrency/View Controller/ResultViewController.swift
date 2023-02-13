@@ -20,7 +20,7 @@ class ResultTableViewController: UITableViewController {
     
     private(set) var baseCurrency: Currency
     
-    private var order: Order = .increasing
+    private var order: Order
     
     private var searchText: String
     
@@ -33,18 +33,15 @@ class ResultTableViewController: UITableViewController {
     required init?(coder: NSCoder) {
         
         do { // numberOfDay
-            let numberOfDayInUserDefaults = UserDefaults.standard.integer(forKey: "numberOfDay")
-            let defaultNumberOfDay = 30
-            numberOfDay = numberOfDayInUserDefaults > 0 ? numberOfDayInUserDefaults : defaultNumberOfDay
+            numberOfDay = UserDefaults.numberOfDay
         }
         
         do { // baseCurrency
-            if let baseCurrencyString = UserDefaults.standard.string(forKey: "baseCurrency"),
-               let baseCurrency = Currency(rawValue: baseCurrencyString) {
-                self.baseCurrency = baseCurrency
-            } else {
-                baseCurrency = .TWD
-            }
+            baseCurrency = UserDefaults.baseCurrency
+        }
+        
+        do { // order
+            order = UserDefaults.order
         }
         
         do { // search Text
@@ -81,6 +78,7 @@ class ResultTableViewController: UITableViewController {
         do { // sort item menu
             let handler = { [unowned self] (order: Order) in
                 self.order = order
+                UserDefaults.order = order
                 sortItem.menu?.children.first?.subtitle = "## 目前採用 \(order)"
                 populateTableView()
             }
@@ -184,12 +182,12 @@ class ResultTableViewController: UITableViewController {
                                    baseCurrency: baseCurrency) { [unowned self] editedNumberOfDay, editedBaseCurrency in
             do { // base currency
                 baseCurrency = editedBaseCurrency
-                UserDefaults.standard.set(baseCurrency.rawValue, forKey: "baseCurrency")
+                UserDefaults.baseCurrency = baseCurrency
             }
             
             do { // number Of Day
                 numberOfDay = editedNumberOfDay
-                UserDefaults.standard.set(numberOfDay, forKey: "numberOfDay")
+                UserDefaults.numberOfDay = numberOfDay
             }
             
             refreshDataAndPopulateTableView()
@@ -279,7 +277,10 @@ private extension ResultTableViewController {
     typealias DataSource = UITableViewDiffableDataSource<Section, Currency>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Currency>
     
-    enum Order {
+}
+
+extension ResultTableViewController {
+    enum Order: String {
         case increasing
         case decreasing
     }
