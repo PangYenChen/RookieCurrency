@@ -13,10 +13,14 @@ class ResultTableViewController: UITableViewController {
     // MARK: - IBOutlet
     @IBOutlet private weak var latestUpdateTimeItem: UIBarButtonItem!
     
+    @IBOutlet weak var sortItem: UIBarButtonItem!
+    
     // MARK: - stored properties
     private(set) var numberOfDay: Int
     
     private(set) var baseCurrency: Currency
+    
+    private var order: Order = .increasing
     
     private var searchText: String
     
@@ -72,6 +76,39 @@ class ResultTableViewController: UITableViewController {
             latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime("-")
             latestUpdateTimeItem.tintColor = UIColor.label
             latestUpdateTimeItem.isEnabled = false
+        }
+        
+        do { // sort item menu
+            let handler = { [unowned self] (order: Order) in
+                self.order = order
+                sortItem.menu?.children.first?.subtitle = "## 目前採用 \(order)"
+                populateTableView()
+            }
+            
+            let increasingAction = UIAction(title: "## 從小排到大",
+                                           image: UIImage(systemName: "arrow.up.right"),
+                                           handler: { _ in handler(.increasing) })
+            
+            let decreasingAction = UIAction(title: "## 從大排到小",
+                                            image: UIImage(systemName: "arrow.down.right"),
+                                            handler: { _ in handler(.decreasing) })
+            
+            switch order {
+            case .increasing:
+                increasingAction.state = .on
+            case .decreasing:
+                decreasingAction.state = .on
+            }
+            
+            let sortMenu = UIMenu(title: "## 排序方式",
+                                  subtitle: "## 目前採用 \(order)",
+                                  image: UIImage(systemName: "arrow.up.arrow.down"),
+                                  options: .singleSelection,
+                                  children: [increasingAction, decreasingAction])
+        
+            sortItem.menu = UIMenu(title: "",
+                                   options: .singleSelection,
+                                   children: [sortMenu])
         }
         
         do { // table view
@@ -164,7 +201,14 @@ class ResultTableViewController: UITableViewController {
     private func populateTableView() {
         
         var sortedTuple = analyzedDataDictionary
-            .sorted { $0.value.deviation > $1.value.deviation }
+            .sorted { lhs, rhs in
+                switch order {
+                case .increasing:
+                    return lhs.value.deviation < rhs.value.deviation
+                case .decreasing:
+                    return lhs.value.deviation > rhs.value.deviation
+                }
+            }
          
         if !searchText.isEmpty { // filtering if needed
             sortedTuple = sortedTuple
@@ -234,4 +278,9 @@ private extension ResultTableViewController {
     
     typealias DataSource = UITableViewDiffableDataSource<Section, Currency>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Currency>
+    
+    enum Order {
+        case increasing
+        case decreasing
+    }
 }
