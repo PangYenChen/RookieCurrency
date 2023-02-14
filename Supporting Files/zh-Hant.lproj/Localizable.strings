@@ -22,6 +22,9 @@
 "analyzedResult" = "分析結果";
 "setting" = "設定";
 "currency" = "貨幣";
+"increasing" = "遞增";
+"decreasing" = "遞減";
+"sortedBy" = "排序方式";
 // MARK: - 幣別
 "TWD" = "新台幣";
 "USD" = "美金";

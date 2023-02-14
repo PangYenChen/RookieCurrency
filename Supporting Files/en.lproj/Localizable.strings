@@ -22,6 +22,9 @@
 "analyzedResult" = "Analyzed Result";
 "setting" = "Setting";
 "currency" = "Currency";
+"increasing" = "increasing";
+"decreasing" = "decreasing";
+"sortedBy" = "Sort by";
 // MARK: - 幣別
 "TWD" = "New Taiwan Dollar";
 "USD" = "United States Dollar";

@@ -76,30 +76,36 @@ class ResultTableViewController: UITableViewController {
         }
         
         do { // sort item menu
-            let handler = { [unowned self] (order: Order) in
-                self.order = order
-                UserDefaults.order = order
-                sortItem.menu?.children.first?.subtitle = "## 目前採用 \(order)"
-                populateTableView()
-            }
+            let increasingAction: UIAction
+            let decreasingAction: UIAction
             
-            let increasingAction = UIAction(title: "## 從小排到大",
-                                           image: UIImage(systemName: "arrow.up.right"),
-                                           handler: { _ in handler(.increasing) })
-            
-            let decreasingAction = UIAction(title: "## 從大排到小",
+            do { // action
+                let handler = { [unowned self] (order: Order) in
+                    self.order = order
+                    UserDefaults.order = order
+                    sortItem.menu?.children.first?.subtitle = order.localizedName
+                    populateTableView()
+                }
+                
+                increasingAction = UIAction(title: Order.increasing.localizedName,
+                                            image: UIImage(systemName: "arrow.up.right"),
+                                            handler: { _ in handler(.increasing) })
+                
+                decreasingAction = UIAction(title: Order.decreasing.localizedName,
                                             image: UIImage(systemName: "arrow.down.right"),
                                             handler: { _ in handler(.decreasing) })
-            
-            switch order {
-            case .increasing:
-                increasingAction.state = .on
-            case .decreasing:
-                decreasingAction.state = .on
+                
+                switch order {
+                case .increasing:
+                    increasingAction.state = .on
+                case .decreasing:
+                    decreasingAction.state = .on
+                }
+                
             }
             
-            let sortMenu = UIMenu(title: "## 排序方式",
-                                  subtitle: "## 目前採用 \(order)",
+            let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
+                                  subtitle: order.localizedName,
                                   image: UIImage(systemName: "arrow.up.arrow.down"),
                                   options: .singleSelection,
                                   children: [increasingAction, decreasingAction])
@@ -282,5 +288,13 @@ extension ResultTableViewController {
     enum Order: String {
         case increasing
         case decreasing
+        
+        var localizedName: String {
+            switch self {
+            case .increasing: return R.string.localizable.increasing()
+            case .decreasing: return R.string.localizable.decreasing()
+            }
+        }
+        
     }
 }
