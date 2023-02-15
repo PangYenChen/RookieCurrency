@@ -71,8 +71,8 @@ class ResultTableViewController: UITableViewController {
         
         do { // latestUpdateTimeItem
             latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime("-")
-            latestUpdateTimeItem.tintColor = UIColor.label
             latestUpdateTimeItem.isEnabled = false
+            latestUpdateTimeItem.setTitleTextAttributes([.foregroundColor: UIColor.label], for: .disabled)
         }
         
         do { // sort item menu
