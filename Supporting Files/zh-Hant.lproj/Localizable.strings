@@ -25,6 +25,7 @@
 "increasing" = "遞增";
 "decreasing" = "遞減";
 "sortedBy" = "排序方式";
+"updating" = "正在更新";
 // MARK: - 幣別
 "TWD" = "新台幣";
 "USD" = "美金";

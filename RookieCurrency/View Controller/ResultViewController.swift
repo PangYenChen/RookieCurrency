@@ -24,6 +24,8 @@ class ResultTableViewController: UITableViewController {
     
     private var searchText: String
     
+    private var latestUpdateTime: Date?
+    
     /// 分析過的匯率資料
     private var analyzedDataDictionary: [Currency: (latest: Double, mean: Double, deviation: Double)]
     
@@ -51,6 +53,10 @@ class ResultTableViewController: UITableViewController {
         do { // analyzed data
             analyzedDataDictionary = [:]
         }
+        
+        do { // latest update time
+            latestUpdateTime =  nil
+        }
         super.init(coder: coder)
         
         do { // search controller
@@ -58,7 +64,6 @@ class ResultTableViewController: UITableViewController {
             searchController.searchBar.delegate = self
             navigationItem.searchController = searchController
             navigationItem.hidesSearchBarWhenScrolling = false
-            
         }
         
         do {
@@ -116,10 +121,10 @@ class ResultTableViewController: UITableViewController {
         }
         
         do { // table view
-            let refreshControl = UIRefreshControl()
+            refreshControl = UIRefreshControl()
             tableView.refreshControl = refreshControl
             let handler = UIAction { [unowned self] _ in refreshDataAndPopulateTableView() }
-            refreshControl.addAction(handler, for: .primaryActionTriggered)
+            refreshControl?.addAction(handler, for: .primaryActionTriggered)
             
             dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currency in
                 let reusedIdentifier = R.reuseIdentifier.currencyCell.identifier
@@ -151,16 +156,15 @@ class ResultTableViewController: UITableViewController {
     /// 更新資料並且填入 table view
     private func refreshDataAndPopulateTableView() {
         tableView.refreshControl?.beginRefreshing()
+        latestUpdateTimeItem.title = R.string.localizable.updating()
         
         RateListSetController.getRatesSetForDays(numberOfDay: numberOfDay) { [unowned self] result in
             switch result {
             case .success(let (latestRateList, historicalRateListSet)):
                 
-                do { // update latestUpdateTimeItem
+                do { // update latestUpdateTime
                     let timestamp = Double(latestRateList.timestamp)
-                    let date = Date(timeIntervalSince1970: timestamp)
-                    let dateString = DateFormatter.uiDateFormatter.string(from: date)
-                    latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(dateString)
+                    latestUpdateTime = Date(timeIntervalSince1970: timestamp)
                 }
                 
                 do { // update table view
@@ -173,6 +177,11 @@ class ResultTableViewController: UITableViewController {
                 
             case .failure(let error):
                 showErrorAlert(error: error)
+            }
+            
+            do { // update latestUpdateTimeItem
+                let dateString = latestUpdateTime.map(DateFormatter.uiDateFormatter.string(from:)) ?? "-"
+                latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(dateString)
             }
             
             tableView.refreshControl?.endRefreshing()
