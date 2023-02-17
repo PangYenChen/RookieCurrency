@@ -1,5 +1,5 @@
 //
-//  ResultViewController.swift
+//  ResultTableViewController.swift
 //  RookieCurrency
 //
 //  Created by 陳邦彥 on 2023/2/5.

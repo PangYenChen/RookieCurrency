@@ -18,7 +18,7 @@ enum RateListSetAnalyst {
     static func analyze(latestRateList: ResponseDataModel.RateList,
                         historicalRateListSet: Set<ResponseDataModel.RateList>,
                         baseCurrency: Currency)
-        -> Dictionary<Currency, (latest: Double, mean: Double, deviation: Double)> {
+    -> [Currency: (latest: Double, mean: Double, deviation: Double)] {
             
             var result = Dictionary<Currency, (latest: Double, mean: Double, deviation: Double)>()
             
