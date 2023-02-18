@@ -48,6 +48,8 @@ class BaseCurrencyTableViewController: UITableViewController {
                 return cell
             }
             
+            dataSource.defaultRowAnimation = .fade
+            
             var snapshot = Snapshot()
             snapshot.appendSections([.main])
             snapshot.appendItems(currencies)
