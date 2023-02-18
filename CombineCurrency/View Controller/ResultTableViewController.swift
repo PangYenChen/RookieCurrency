@@ -244,22 +244,29 @@ class ResultTableViewController: UITableViewController {
     }
     
     @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        fatalError("not yet implemented")
-//        SettingTableViewController(coder: coder,
-//                                   numberOfDay: numberOfDay,
-//                                   baseCurrency: baseCurrency) { [unowned self] editedNumberOfDay, editedBaseCurrency in
-//            do { // base currency
-//                baseCurrency = editedBaseCurrency
-//                UserDefaults.baseCurrency = baseCurrency
-//            }
-//
-//            do { // number Of Day
-//                numberOfDay = editedNumberOfDay
-//                UserDefaults.numberOfDay = numberOfDay
-//            }
-//
-//            refreshDataAndPopulateTableView()
-//        }
+        
+        let updateSetting = PassthroughSubject<(numberOfDay: Int, baseCurrency: Currency), Never>()
+        
+        updateSetting
+            .sink { [unowned self] (editedNumberOfDay: Int, editedBaseCurrency: Currency) in
+                do { // base currency
+                    baseCurrency.send(editedBaseCurrency)
+                    UserDefaults.baseCurrency = editedBaseCurrency
+                }
+                
+                do { // number Of Day
+                    numberOfDay.send(editedNumberOfDay)
+                    UserDefaults.numberOfDay = editedNumberOfDay
+                }
+                
+                refresh.send()
+            }
+            .store(in: &anyCancellableSet)
+        
+        return SettingTableViewController(coder: coder,
+                                          numberOfDay: numberOfDay.value,
+                                          baseCurrency: baseCurrency.value,
+                                          updateSetting: updateSetting)
     }
     
     

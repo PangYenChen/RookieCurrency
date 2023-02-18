@@ -57,7 +57,7 @@
                         <barButtonItem title="Item" style="plain" id="mZf-7V-PJM">
                             <imageReference key="image" image="gear" catalog="system" variableValue="0.0"/>
                             <connections>
-                                <segue destination="X98-8g-3Jf" kind="custom" destinationCreationSelector="showSetting:" customClass="PresentWithNavigationController" customModule="RookieCurrency" id="nvw-q8-nW6"/>
+                                <segue destination="X98-8g-3Jf" kind="custom" destinationCreationSelector="showSetting:" customClass="PresentWithNavigationController" customModule="CombineCurrency" customModuleProvider="target" id="nvw-q8-nW6"/>
                             </connections>
                         </barButtonItem>
                     </toolbarItems>

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Combine
 
 class SettingTableViewController: UITableViewController {
     
@@ -15,31 +16,35 @@ class SettingTableViewController: UITableViewController {
     
     private let stepper: UIStepper
     
-    private let completionHandler: (Int, Currency) -> Void
+//    private let completionHandler: (Int, Currency) -> Void
     
     private let originalNumberOfDay: Int
     
-    private var editedNumberOfDay: Int?
-    
-    private var numberOfDay: Int { editedNumberOfDay ?? originalNumberOfDay }
+    private let editedNumberOfDay: CurrentValueSubject<Int, Never>
     
     private let originalBaseCurrency: Currency
     
-    private var editedBaseCurrency: Currency?
+    private let editedBaseCurrency: CurrentValueSubject<Currency, Never>
     
-    private var baseCurrency: Currency { editedBaseCurrency ?? originalBaseCurrency }
+    private let hasChanges: AnyPublisher<Bool, Never>
     
-    private var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
+    private let didTapCancelButtonSubject: PassthroughSubject<Void, Never>
+    
+    private let didTapSaveButtonSubject: PassthroughSubject<Void, Never>
+    
+    private let updateSetting: PassthroughSubject<(numberOfDay: Int, baseCurrency: Currency), Never>
+    
+    private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - methods
     required init?(coder: NSCoder,
                    numberOfDay: Int,
                    baseCurrency: Currency,
-                   completionHandler: @escaping (Int, Currency) -> Void) {
+                   updateSetting: PassthroughSubject<(numberOfDay: Int, baseCurrency: Currency), Never>) {
         
         do { // number of day
             originalNumberOfDay = numberOfDay
-            editedNumberOfDay = numberOfDay
+            editedNumberOfDay = CurrentValueSubject(numberOfDay)
         }
         
         do { // stepper
@@ -49,29 +54,78 @@ class SettingTableViewController: UITableViewController {
         
         do { // base currency
             originalBaseCurrency = baseCurrency
-            editedBaseCurrency = baseCurrency
+            editedBaseCurrency = CurrentValueSubject(baseCurrency)
         }
         
         do {
-            self.completionHandler = completionHandler
+            self.updateSetting = updateSetting
         }
+        
+        didTapCancelButtonSubject = PassthroughSubject()
+        
+        didTapSaveButtonSubject = PassthroughSubject()
+        
+        do {
+            let numberOfDayHasChanges = editedNumberOfDay.map { $0 != numberOfDay }
+            let baseCurrencyHasChanges = editedBaseCurrency.map { $0 != baseCurrency }
+            hasChanges = Publishers.CombineLatest(numberOfDayHasChanges, baseCurrencyHasChanges)
+                .map { $0 || $1 }
+                .eraseToAnyPublisher()
+        }
+
+        anyCancellableSet = Set<AnyCancellable>()
         
         super.init(coder: coder)
         
+        
+        
+        
+        
         do { // stepper
             let handler = UIAction { [unowned self] _ in
-                editedNumberOfDay = Int(stepper.value)
-                tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
-                saveButton.isEnabled = hasChange
-                isModalInPresentation = hasChange
+                editedNumberOfDay.send(Int(stepper.value))
+//                tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
+//                saveButton.isEnabled = hasChange
+//                isModalInPresentation = hasChange
             }
             stepper.addAction(handler, for: .primaryActionTriggered)
         }
         
         do { // other set up
-            isModalInPresentation = hasChange
+//            isModalInPresentation = hasChange
             title = R.string.localizable.setting()
         }
+        
+        didTapCancelButtonSubject
+            .withLatestFrom(hasChanges)
+            .sink { [unowned self] _, hasChanges in hasChanges ? presentCancelAlert(showingSave: false) : dismiss(animated: true) }
+            .store(in: &anyCancellableSet)
+        
+        didTapSaveButtonSubject
+            .withLatestFrom(editedNumberOfDay)
+            .map { $1 }
+            .withLatestFrom(editedBaseCurrency)
+            .sink { [unowned self] (numberOfDay, baseCurrency) in
+                updateSetting.send((numberOfDay, baseCurrency))
+                dismiss(animated: true)
+            }
+            .store(in: &anyCancellableSet)
+            
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        do {
+            hasChanges
+                .sink { [unowned self] hasChanges in
+                    tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
+                    saveButton.isEnabled = hasChanges
+                    isModalInPresentation = hasChanges
+                }
+                .store(in: &anyCancellableSet)
+        }
+        
     }
     
     required init?(coder: NSCoder) {
@@ -88,16 +142,12 @@ class SettingTableViewController: UITableViewController {
 //    }
     
     @IBAction private func save() {
-        completionHandler(numberOfDay, baseCurrency)
-        dismiss(animated: true)
+        didTapSaveButtonSubject.send()
     }
     
     @IBAction private func didTapCancelButton() {
-        if hasChange {
-            presentCancelAlert(showingSave: false)
-        } else {
-            dismiss(animated: true)
-        }
+        didTapCancelButtonSubject.send()
+        
     }
     
     private func presentCancelAlert(showingSave: Bool) {
@@ -153,12 +203,12 @@ extension SettingTableViewController {
             switch row {
             case .numberOfDay:
                 cell.textLabel?.text = R.string.localizable.numberOfConsideredDay()
-                cell.detailTextLabel?.text = String(numberOfDay)
+                cell.detailTextLabel?.text = String(editedNumberOfDay.value)
                 cell.accessoryView = stepper
                 cell.imageView?.image = UIImage(systemName: "calendar")
             case .baseCurrency:
                 cell.textLabel?.text = R.string.localizable.baseCurrency()
-                cell.detailTextLabel?.text = baseCurrency.localizedString
+                cell.detailTextLabel?.text = editedBaseCurrency.value.localizedString
                 cell.accessoryType = .disclosureIndicator
                 cell.imageView?.image = UIImage(systemName: "dollarsign.circle")
             case .language:
