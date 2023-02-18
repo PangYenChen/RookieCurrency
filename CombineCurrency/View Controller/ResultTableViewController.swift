@@ -88,7 +88,8 @@ class ResultTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        do { // latestUpdateTimeItem
+        // latestUpdateTimeItem
+        do {
             latestUpdateTime
                 .map { latestUpdateTime in latestUpdateTime.map(DateFormatter.uiDateFormatter.string(from:)) }
                 .map { latestUpdateTimeString in latestUpdateTimeString ?? "-" }
@@ -99,7 +100,8 @@ class ResultTableViewController: UITableViewController {
             latestUpdateTimeItem.setTitleTextAttributes([.foregroundColor: UIColor.label], for: .disabled)
         }
         
-        do { // sort item menu
+        // sort item menu
+        do {
             let increasingAction = UIAction(title: Order.increasing.localizedName,
                                                    image: UIImage(systemName: "arrow.up.right"),
                                                    handler: { [unowned self] _ in order.send(.increasing) })
@@ -135,7 +137,8 @@ class ResultTableViewController: UITableViewController {
                 .store(in: &anyCancellableSet)
         }
         
-        do { // table view
+        // table view
+        do {
             refreshControl = UIRefreshControl()
             let handler = UIAction { [unowned self] _ in refresh.send() }
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
@@ -202,8 +205,8 @@ class ResultTableViewController: UITableViewController {
                                                       baseCurrency: baseCurrency.value)
                 }
             
-            Publishers.CombineLatest(analyzedDataDictionaryPublisher, order)
-                .sink { [unowned self] analyzedDataDictionary, order in
+            Publishers.CombineLatest3(analyzedDataDictionaryPublisher, order, searchText)
+                .sink { [unowned self] analyzedDataDictionary, order, searchText in
                     self.analyzedDataDictionary = analyzedDataDictionary
                     
                     var sortedTuple = analyzedDataDictionary
@@ -216,6 +219,12 @@ class ResultTableViewController: UITableViewController {
                             }
                         }
                     
+                    if !(searchText.isEmpty) {
+                        sortedTuple = sortedTuple
+                            .filter { (currency,_) in
+                                [currency.code, currency.localizedString].contains { text in text.lowercased().contains(searchText.lowercased()) }
+                            }
+                    }
                     
                     let sortedCurrencies = sortedTuple.map { $0.key }
                     var snapshot = Snapshot()
@@ -287,15 +296,13 @@ class ResultTableViewController: UITableViewController {
 
 // MARK: - Search Bar Delegate
 extension ResultTableViewController: UISearchBarDelegate {
-//    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-//        self.searchText = searchText
-//        populateTableView()
-//    }
-//
-//    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-//        searchText = ""
-//        populateTableView()
-//    }
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.searchText.send(searchText)
+    }
+
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        self.searchText.send("")
+    }
 }
 
 // MARK: - name space
