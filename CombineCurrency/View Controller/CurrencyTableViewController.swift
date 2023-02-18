@@ -12,14 +12,16 @@ import Combine
 class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     // MARK: - property
-    private let editedBaseCurrency: CurrentValueSubject<Currency, Never>
+    private let currencySubject: PassthroughSubject<Currency, Never>
     
     // MARK: - methods
-    init?(coder: NSCoder, editedBaseCurrency: CurrentValueSubject<Currency, Never>) {
+    init?(coder: NSCoder, currencySubscriber: AnySubscriber<Currency, Never>) {
         
-        self.editedBaseCurrency = editedBaseCurrency
+        currencySubject = PassthroughSubject()
         
         super.init(coder: coder)
+        
+        currencySubject.subscribe(currencySubscriber)
     }
     
     required init?(coder: NSCoder) {
@@ -32,7 +34,7 @@ extension CurrencyTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedCurrency = Currency.allCases[indexPath.row]
         
-        editedBaseCurrency.send(selectedCurrency)
+        currencySubject.send(selectedCurrency)
         
         super.tableView(tableView, didSelectRowAt: indexPath)
     }
