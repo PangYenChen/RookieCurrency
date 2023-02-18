@@ -16,8 +16,6 @@ class SettingTableViewController: UITableViewController {
     
     private let stepper: UIStepper
     
-//    private let completionHandler: (Int, Currency) -> Void
-    
     private let originalNumberOfDay: Int
     
     private let editedNumberOfDay: CurrentValueSubject<Int, Never>
@@ -77,22 +75,12 @@ class SettingTableViewController: UITableViewController {
         
         super.init(coder: coder)
         
-        
-        
-        
-        
         do { // stepper
-            let handler = UIAction { [unowned self] _ in
-                editedNumberOfDay.send(Int(stepper.value))
-//                tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
-//                saveButton.isEnabled = hasChange
-//                isModalInPresentation = hasChange
-            }
+            let handler = UIAction { [unowned self] _ in editedNumberOfDay.send(Int(stepper.value)) }
             stepper.addAction(handler, for: .primaryActionTriggered)
         }
         
         do { // other set up
-//            isModalInPresentation = hasChange
             title = R.string.localizable.setting()
         }
         
@@ -110,16 +98,26 @@ class SettingTableViewController: UITableViewController {
                 dismiss(animated: true)
             }
             .store(in: &anyCancellableSet)
-            
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         do {
+            editedNumberOfDay
+                .sink { [unowned self] editedNumberOfDay in
+                    tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
+                }
+                .store(in: &anyCancellableSet)
+            
+            editedBaseCurrency
+                .sink { [unowned self] editedBaseCurrency in
+                    tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none)
+                }
+                .store(in: &anyCancellableSet)
+            
             hasChanges
                 .sink { [unowned self] hasChanges in
-                    tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
                     saveButton.isEnabled = hasChanges
                     isModalInPresentation = hasChanges
                 }
@@ -147,7 +145,6 @@ class SettingTableViewController: UITableViewController {
     
     @IBAction private func didTapCancelButton() {
         didTapCancelButtonSubject.send()
-        
     }
     
     private func presentCancelAlert(showingSave: Bool) {
