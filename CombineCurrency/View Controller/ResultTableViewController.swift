@@ -145,7 +145,7 @@ class ResultTableViewController: UITableViewController {
                 let reusedIdentifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
                 
-                guard let data = analyzedDataDictionary.value[currency] else { return cell }
+                guard let data = analyzedDataDictionary[currency] else { return cell }
                 
                 let deviationString = NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
                 let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
@@ -187,8 +187,7 @@ class ResultTableViewController: UITableViewController {
                     receiveValue: { [unowned self] analyzedDataDictionary in
                         self.analyzedDataDictionary = analyzedDataDictionary
 
-
-                        var sortedTuple = analyzedDataDictionary.value
+                        var sortedTuple = analyzedDataDictionary
                             .sorted { lhs, rhs in
                                 switch order.value {
                                 case .increasing:
