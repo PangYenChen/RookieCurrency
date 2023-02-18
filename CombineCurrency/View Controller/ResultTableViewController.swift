@@ -173,9 +173,10 @@ class ResultTableViewController: UITableViewController {
                     refreshControl?.beginRefreshing()
                     latestUpdateTimeItem.title = R.string.localizable.updating()
                 })
-                .flatMap { [unowned self] _ in
+                .withLatestFrom(numberOfDay)
+                .flatMap { _, numberOfDay in
                     RateListSetController
-                        .rateListSetPublisher(forDays: numberOfDay.value)
+                        .rateListSetPublisher(forDays: numberOfDay)
                         .convertOutputToResult()
                 }
                 .share()
@@ -198,11 +199,12 @@ class ResultTableViewController: UITableViewController {
                 .store(in: &anyCancellableSet)
             
             let analyzedDataDictionaryPublisher = sharedRateListSetPublisher
-                .map { [unowned self] tuple -> [Currency: (latest: Double, mean: Double, deviation: Double)] in
-                    let (latestRateList, historicalRateListSet) = tuple
+                .withLatestFrom(baseCurrency)
+                .map { output -> [Currency: (latest: Double, mean: Double, deviation: Double)] in
+                    let ((latestRateList, historicalRateListSet), baseCurrency) = output
                     return RateListSetAnalyst.analyze(latestRateList: latestRateList,
                                                       historicalRateListSet: historicalRateListSet,
-                                                      baseCurrency: baseCurrency.value)
+                                                      baseCurrency: baseCurrency)
                 }
             
             Publishers.CombineLatest3(analyzedDataDictionaryPublisher, order, searchText)

@@ -26,4 +26,14 @@ extension Publisher {
         }
         .eraseToAnyPublisher()
     }
+    
+    func withLatestFrom<Other: Publisher>(_ other: Other) -> AnyPublisher<(Output, Other.Output), Self.Failure>
+    where Self.Failure == Other.Failure
+    {
+        map { output in (output, Date()) }
+            .combineLatest(other)
+            .removeDuplicates(by: { lhs, rhs in lhs.0.1 == rhs.0.1 })
+            .map { ($0.0, $1) }
+            .eraseToAnyPublisher()
+    }
 }
