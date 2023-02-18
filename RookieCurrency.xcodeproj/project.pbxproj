@@ -37,7 +37,6 @@
 		E15BA6B724FCA66900CA5B1B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E15BA6B624FCA66900CA5B1B /* Assets.xcassets */; };
 		E15BA6BA24FCA66900CA5B1B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E15BA6B824FCA66900CA5B1B /* LaunchScreen.storyboard */; };
 		E15BA6C524FCA66900CA5B1B /* CombineCurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15BA6C424FCA66900CA5B1B /* CombineCurrencyTests.swift */; };
-		E15BA6CE24FCCFAC00CA5B1B /* aResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15BA6CD24FCCFAC00CA5B1B /* aResultTableViewController.swift */; };
 		E1CE96A5248554BB0029ED73 /* DateFormatter + Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96A4248554BB0029ED73 /* DateFormatter + Helper.swift */; };
 		E1CE96AA248555680029ED73 /* RateListFetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96A9248555680029ED73 /* RateListFetcher.swift */; };
 		E1CE96AC248555C30029ED73 /* RateListSetAnalyst.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AB248555C30029ED73 /* RateListSetAnalyst.swift */; };
@@ -103,7 +102,6 @@
 		E15BA6C024FCA66900CA5B1B /* CombineCurrencyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CombineCurrencyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E15BA6C424FCA66900CA5B1B /* CombineCurrencyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineCurrencyTests.swift; sourceTree = "<group>"; };
 		E15BA6C624FCA66900CA5B1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E15BA6CD24FCCFAC00CA5B1B /* aResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = aResultTableViewController.swift; sourceTree = "<group>"; };
 		E1CE96A4248554BB0029ED73 /* DateFormatter + Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "DateFormatter + Helper.swift"; sourceTree = "<group>"; };
 		E1CE96A9248555680029ED73 /* RateListFetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateListFetcher.swift; sourceTree = "<group>"; };
 		E1CE96AB248555C30029ED73 /* RateListSetAnalyst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateListSetAnalyst.swift; sourceTree = "<group>"; };
@@ -304,7 +302,6 @@
 				E1FB993E24FF554C0096FE2C /* ResultTableViewController.swift */,
 				51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */,
 				51DF9169299FD0C100CEA5A6 /* CurrencyTableViewController.swift */,
-				E15BA6CD24FCCFAC00CA5B1B /* aResultTableViewController.swift */,
 			);
 			path = "View Controller";
 			sourceTree = "<group>";
@@ -517,7 +514,6 @@
 			files = (
 				51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */,
 				E1FB993F24FF554C0096FE2C /* ResultTableViewController.swift in Sources */,
-				E15BA6CE24FCCFAC00CA5B1B /* aResultTableViewController.swift in Sources */,
 				E1FB9944250084760096FE2C /* RateListSetController.swift in Sources */,
 				E1FB993524FCDC270096FE2C /* Response Data.swift in Sources */,
 				51E0DEB5299FD4980046652B /* PresentWithNavigationController.swift in Sources */,
