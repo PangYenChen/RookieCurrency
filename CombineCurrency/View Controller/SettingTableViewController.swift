@@ -32,7 +32,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     required init?(coder: NSCoder,
                    numberOfDay: Int,
                    baseCurrency: Currency,
-                   updateSetting: PassthroughSubject<(numberOfDay: Int, baseCurrency: Currency), Never>) {
+                   updateSetting: AnySubscriber<(numberOfDay: Int, baseCurrency: Currency), Never>) {
         
         editedNumberOfDay = CurrentValueSubject(numberOfDay)
         
@@ -66,8 +66,8 @@ class SettingTableViewController: BaseSettingTableViewController {
             .withLatestFrom(editedNumberOfDay)
             .map { $1 }
             .withLatestFrom(editedBaseCurrency)
-            .sink { (numberOfDay, baseCurrency) in updateSetting.send((numberOfDay, baseCurrency)) }
-            .store(in: &anyCancellableSet)
+            .map { (numberOfDay: $0, baseCurrency: $1) }
+            .subscribe(updateSetting)
     }
     
     required init?(coder: NSCoder) {

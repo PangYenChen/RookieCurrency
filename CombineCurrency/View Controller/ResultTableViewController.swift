@@ -266,7 +266,7 @@ class ResultTableViewController: UITableViewController {
         return SettingTableViewController(coder: coder,
                                           numberOfDay: numberOfDay.value,
                                           baseCurrency: baseCurrency.value,
-                                          updateSetting: updateSetting)
+                                          updateSetting: AnySubscriber(updateSetting))
     }
     
     
