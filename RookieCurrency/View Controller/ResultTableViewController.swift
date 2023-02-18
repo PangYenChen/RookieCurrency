@@ -122,7 +122,6 @@ class ResultTableViewController: UITableViewController {
         
         do { // table view
             refreshControl = UIRefreshControl()
-            tableView.refreshControl = refreshControl
             let handler = UIAction { [unowned self] _ in refreshDataAndPopulateTableView() }
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
             
@@ -156,7 +155,7 @@ class ResultTableViewController: UITableViewController {
     /// 更新資料並且填入 table view
     private func refreshDataAndPopulateTableView() {
         if refreshControl?.isRefreshing == false {
-            tableView.refreshControl?.beginRefreshing()
+            refreshControl?.beginRefreshing()
         }
         
         latestUpdateTimeItem.title = R.string.localizable.updating()
@@ -187,7 +186,7 @@ class ResultTableViewController: UITableViewController {
                 latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(dateString)
             }
             
-            tableView.refreshControl?.endRefreshing()
+            refreshControl?.endRefreshing()
         }
     }
     

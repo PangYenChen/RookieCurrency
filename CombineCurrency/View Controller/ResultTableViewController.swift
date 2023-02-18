@@ -30,7 +30,7 @@ class ResultTableViewController: UITableViewController {
     private let refreshDataAndPopulateTableView: CurrentValueSubject<Void, Never>
     
     /// 分析過的匯率資料
-    private let analyzedDataDictionary: CurrentValueSubject<[Currency: (latest: Double, mean: Double, deviation: Double)], Never>
+    private var analyzedDataDictionary: [Currency: (latest: Double, mean: Double, deviation: Double)]
     
     private var anyCancellableSet: Set<AnyCancellable>
     
@@ -56,7 +56,7 @@ class ResultTableViewController: UITableViewController {
         }
         
         do { // analyzed data
-            analyzedDataDictionary = CurrentValueSubject([:])
+            analyzedDataDictionary = [:]
         }
         
         do { // latest update time
@@ -138,7 +138,6 @@ class ResultTableViewController: UITableViewController {
         
         do { // table view
             refreshControl = UIRefreshControl()
-            tableView.refreshControl = refreshControl
             let handler = UIAction { [unowned self] _ in refreshDataAndPopulateTableView.send() }
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
             
@@ -169,7 +168,7 @@ class ResultTableViewController: UITableViewController {
         do {
             refreshDataAndPopulateTableView
                 .handleEvents(receiveOutput: { [unowned self] _ in
-                    tableView.refreshControl?.beginRefreshing()
+                    refreshControl?.beginRefreshing()
                     latestUpdateTimeItem.title = R.string.localizable.updating()
                 })
                 .flatMap { [unowned self] _ in RateListSetController.rateListSetPublisher(forDays: numberOfDay.value) }
@@ -185,8 +184,8 @@ class ResultTableViewController: UITableViewController {
                 }
                 .sink(
                     receiveCompletion: { _ in },
-                    receiveValue: { [unowned self] output in
-                        analyzedDataDictionary.value = output
+                    receiveValue: { [unowned self] analyzedDataDictionary in
+                        self.analyzedDataDictionary = analyzedDataDictionary
 
 
                         var sortedTuple = analyzedDataDictionary.value
@@ -207,6 +206,8 @@ class ResultTableViewController: UITableViewController {
                         snapshot.reloadSections([.main])
 
                         dataSource.apply(snapshot)
+                        
+                        refreshControl?.endRefreshing()
                     }
                 )
                 .store(in: &anyCancellableSet)
