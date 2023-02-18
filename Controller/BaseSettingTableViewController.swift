@@ -19,49 +19,19 @@ class BaseSettingTableViewController: UITableViewController {
     
     var editedBaseCurrencyString: String { fatalError("editedBaseCurrencyString has not been implemented") }
     
-//    private let originalNumberOfDay: Int
-//
-//    private var editedNumberOfDay: Int
-//
-//    private let originalBaseCurrency: Currency
-//
-//    private var editedBaseCurrency: Currency
-//
-//    private var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
-    
     // MARK: - methods
     required init?(coder: NSCoder) {
         
-//        do { // number of day
-//            originalNumberOfDay = numberOfDay
-//            editedNumberOfDay = numberOfDay
-//        }
-        
-        do { // stepper
-            stepper = UIStepper()
-//            stepper.value = Double(numberOfDay)
-        }
-        
-//        do { // base currency
-//            originalBaseCurrency = baseCurrency
-//            editedBaseCurrency = baseCurrency
-//        }
+        stepper = UIStepper()
         
         super.init(coder: coder)
         
         do { // stepper
-            let handler = UIAction { [unowned self] _ in
-                stepperValueDidChange()
-//                editedNumberOfDay = Int(stepper.value)
-//                tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
-//                saveButton.isEnabled = hasChange
-//                isModalInPresentation = hasChange
-            }
+            let handler = UIAction { [unowned self] _ in stepperValueDidChange() }
             stepper.addAction(handler, for: .primaryActionTriggered)
         }
         
         do { // other set up
-//            isModalInPresentation = hasChange
             title = R.string.localizable.setting()
         }
     }
@@ -72,28 +42,13 @@ class BaseSettingTableViewController: UITableViewController {
     
     @IBSegueAction func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
         fatalError("showCurrencyTable(_:) has not been implemented")
-//        CurrencyTableViewController(coder: coder) { [unowned self] selectedCurrency in
-//            editedBaseCurrency = selectedCurrency
-//            saveButton.isEnabled = hasChange
-//            isModalInPresentation = hasChange
-//            tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none)
-//        }
     }
     
     @IBAction func save() {
-//        completionHandler(editedNumberOfDay, editedBaseCurrency)
         dismiss(animated: true)
     }
     
-//    @IBAction private func didTapCancelButton() {
-//        if hasChange {
-//            presentCancelAlert(showingSave: false)
-//        } else {
-//            dismiss(animated: true)
-//        }
-//    }
-    
-    private func presentCancelAlert(showingSave: Bool) {
+    func presentCancelAlert(showingSave: Bool) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         // 儲存的 action，只有在下拉的時候加上這個 action。

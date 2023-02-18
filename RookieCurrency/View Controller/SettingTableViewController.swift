@@ -51,11 +51,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         stepper.value = Double(numberOfDay)
 
-        // other set up
-        do {
-            isModalInPresentation = hasChange
-            title = R.string.localizable.setting()
-        }
+        isModalInPresentation = hasChange
     }
     
     required init?(coder: NSCoder) {
@@ -85,36 +81,5 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     @IBAction private func didTapCancelButton() {
         hasChange ? presentCancelAlert(showingSave: false) : dismiss(animated: true)
-    }
-    
-    private func presentCancelAlert(showingSave: Bool) {
-        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        // 儲存的 action，只有在下拉的時候加上這個 action。
-        if showingSave {
-            let title = R.string.localizable.cancelAlertSavingTitle()
-            let saveAction = UIAlertAction(title: title,
-                                           style: .default) { [unowned self] _ in save() }
-            alertController.addAction(saveAction)
-        }
-        
-        // 捨棄變更的 action
-        do {
-            let title = R.string.localizable.cancelAlertDiscardTitle()
-            let discardChangeAction = UIAlertAction(title: title,
-                                                    style: .default) { [unowned self] _ in dismiss(animated: true) }
-            
-            alertController.addAction(discardChangeAction)
-        }
-        
-        // 繼續編輯的 action
-        do {
-            let title = R.string.localizable.cancelAlertContinueTitle()
-            let continueSettingAction = UIAlertAction(title: title, style: .cancel)
-            
-            alertController.addAction(continueSettingAction)
-        }
-        
-        present(alertController, animated: true)
     }
 }
