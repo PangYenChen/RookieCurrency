@@ -107,15 +107,6 @@ class ResultTableViewController: UITableViewController {
                                              image: UIImage(systemName: "arrow.down.right"),
                                              handler: { [unowned self] _ in order.send(.decreasing) })
             
-            let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
-                                  image: UIImage(systemName: "arrow.up.arrow.down"),
-                                  options: .singleSelection,
-                                  children: [increasingAction, decreasingAction])
-            
-            sortItem.menu = UIMenu(title: "",
-                                   options: .singleSelection,
-                                   children: [sortMenu])
-            
             order.first()
                 .sink { order in
                     switch order {
@@ -127,11 +118,19 @@ class ResultTableViewController: UITableViewController {
                 }
                 .store(in: &anyCancellableSet)
             
+            let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
+                                  image: UIImage(systemName: "arrow.up.arrow.down"),
+                                  options: .singleSelection,
+                                  children: [increasingAction, decreasingAction])
+            
+            sortItem.menu = UIMenu(title: "",
+                                   options: .singleSelection,
+                                   children: [sortMenu])
+            
             order
                 .sink { [unowned self] order in
                     UserDefaults.order = order
                     sortItem.menu?.children.first?.subtitle = order.localizedName
-                    //                        populateTableView()
                 }
                 .store(in: &anyCancellableSet)
         }
@@ -166,12 +165,17 @@ class ResultTableViewController: UITableViewController {
         }
         
         do {
-            refreshDataAndPopulateTableView
+            let analyzedDataDictionaryPublisher = refreshDataAndPopulateTableView
                 .handleEvents(receiveOutput: { [unowned self] _ in
                     refreshControl?.beginRefreshing()
                     latestUpdateTimeItem.title = R.string.localizable.updating()
                 })
-                .flatMap { [unowned self] _ in RateListSetController.rateListSetPublisher(forDays: numberOfDay.value) }
+                .flatMap { [unowned self] _ in
+                    RateListSetController
+                        .rateListSetPublisher(forDays: numberOfDay.value)
+                        .convertOutputToResult()
+                }
+                .compactMap { try? $0.get() } // TODO: 這裡要分流
                 .handleEvents(receiveOutput: { [unowned self] (latestRateList, historicalRateListSet) in
                     let timestamp = Double(latestRateList.timestamp)
                     latestUpdateTime.send(Date(timeIntervalSince1970: timestamp))
@@ -182,35 +186,33 @@ class ResultTableViewController: UITableViewController {
                                                       historicalRateListSet: historicalRateListSet,
                                                       baseCurrency: baseCurrency.value)
                 }
-                .sink(
-                    receiveCompletion: { _ in },
-                    receiveValue: { [unowned self] analyzedDataDictionary in
-                        self.analyzedDataDictionary = analyzedDataDictionary
-
-                        var sortedTuple = analyzedDataDictionary
-                            .sorted { lhs, rhs in
-                                switch order.value {
-                                case .increasing:
-                                    return lhs.value.deviation < rhs.value.deviation
-                                case .decreasing:
-                                    return lhs.value.deviation > rhs.value.deviation
-                                }
+            
+            Publishers.CombineLatest(analyzedDataDictionaryPublisher, order)
+                .sink { [unowned self] analyzedDataDictionary, order in
+                    self.analyzedDataDictionary = analyzedDataDictionary
+                    
+                    var sortedTuple = analyzedDataDictionary
+                        .sorted { lhs, rhs in
+                            switch order {
+                            case .increasing:
+                                return lhs.value.deviation < rhs.value.deviation
+                            case .decreasing:
+                                return lhs.value.deviation > rhs.value.deviation
                             }
-
-
-                        let sortedCurrencies = sortedTuple.map { $0.key }
-                        var snapshot = Snapshot()
-                        snapshot.appendSections([.main])
-                        snapshot.appendItems(sortedCurrencies)
-                        snapshot.reloadSections([.main])
-
-                        dataSource.apply(snapshot)
-                        
-                        refreshControl?.endRefreshing()
-                    }
-                )
+                        }
+                    
+                    
+                    let sortedCurrencies = sortedTuple.map { $0.key }
+                    var snapshot = Snapshot()
+                    snapshot.appendSections([.main])
+                    snapshot.appendItems(sortedCurrencies)
+                    snapshot.reloadSections([.main])
+                    
+                    dataSource.apply(snapshot)
+                    
+                    refreshControl?.endRefreshing()
+                }
                 .store(in: &anyCancellableSet)
-
             
         }
         
