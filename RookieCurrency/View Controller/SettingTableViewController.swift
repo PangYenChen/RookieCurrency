@@ -19,15 +19,11 @@ class SettingTableViewController: UITableViewController {
     
     private let originalNumberOfDay: Int
     
-    private var editedNumberOfDay: Int?
-    
-    private var numberOfDay: Int { editedNumberOfDay ?? originalNumberOfDay }
+    private var editedNumberOfDay: Int
     
     private let originalBaseCurrency: Currency
     
-    private var editedBaseCurrency: Currency?
-    
-    private var baseCurrency: Currency { editedBaseCurrency ?? originalBaseCurrency }
+    private var editedBaseCurrency: Currency
     
     private var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
     
@@ -88,7 +84,7 @@ class SettingTableViewController: UITableViewController {
     }
     
     @IBAction private func save() {
-        completionHandler(numberOfDay, baseCurrency)
+        completionHandler(editedNumberOfDay, editedBaseCurrency)
         dismiss(animated: true)
     }
     
@@ -153,12 +149,12 @@ extension SettingTableViewController {
             switch row {
             case .numberOfDay:
                 cell.textLabel?.text = R.string.localizable.numberOfConsideredDay()
-                cell.detailTextLabel?.text = String(numberOfDay)
+                cell.detailTextLabel?.text = String(editedNumberOfDay)
                 cell.accessoryView = stepper
                 cell.imageView?.image = UIImage(systemName: "calendar")
             case .baseCurrency:
                 cell.textLabel?.text = R.string.localizable.baseCurrency()
-                cell.detailTextLabel?.text = baseCurrency.localizedString
+                cell.detailTextLabel?.text = editedBaseCurrency.localizedString
                 cell.accessoryType = .disclosureIndicator
                 cell.imageView?.image = UIImage(systemName: "dollarsign.circle")
             case .language:
