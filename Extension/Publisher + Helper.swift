@@ -15,4 +15,15 @@ extension Publisher {
             .catch { failure in Just(Result<Output, Failure>.failure(failure)) }
             .eraseToAnyPublisher()
     }
+    
+    func resultFailure<Success, Failure>() -> AnyPublisher<Failure, Never>
+    where Self.Output == Result<Success, Failure>,
+          Self.Failure == Never
+    {
+        compactMap { result in
+            guard case .failure(let failure) = result else { return nil }
+            return failure
+        }
+        .eraseToAnyPublisher()
+    }
 }

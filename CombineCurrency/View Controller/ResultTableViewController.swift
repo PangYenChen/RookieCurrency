@@ -14,7 +14,7 @@ class ResultTableViewController: UITableViewController {
     // MARK: - IBOutlet
     @IBOutlet private weak var latestUpdateTimeItem: UIBarButtonItem!
     
-    @IBOutlet weak var sortItem: UIBarButtonItem!
+    @IBOutlet private weak var sortItem: UIBarButtonItem!
     
     // MARK: - stored properties
     private let numberOfDay: CurrentValueSubject<Int, Never>
@@ -165,7 +165,7 @@ class ResultTableViewController: UITableViewController {
         }
         
         do {
-            let analyzedDataDictionaryPublisher = refreshDataAndPopulateTableView
+            let sharedRateListSetResultPublisher = refreshDataAndPopulateTableView
                 .handleEvents(receiveOutput: { [unowned self] _ in
                     refreshControl?.beginRefreshing()
                     latestUpdateTimeItem.title = R.string.localizable.updating()
@@ -175,17 +175,34 @@ class ResultTableViewController: UITableViewController {
                         .rateListSetPublisher(forDays: numberOfDay.value)
                         .convertOutputToResult()
                 }
-                .compactMap { try? $0.get() } // TODO: 這裡要分流
-                .handleEvents(receiveOutput: { [unowned self] (latestRateList, historicalRateListSet) in
+                .share()
+            
+            sharedRateListSetResultPublisher
+                .resultFailure()
+                .sink(receiveValue: showErrorAlert(error:))
+                .store(in: &anyCancellableSet)
+            
+            
+            let sharedRateListSetPublisher = sharedRateListSetResultPublisher
+                .compactMap { try? $0.get() }
+                .share()
+            
+            sharedRateListSetPublisher
+                .sink  { [unowned self] (latestRateList, _) in
                     let timestamp = Double(latestRateList.timestamp)
                     latestUpdateTime.send(Date(timeIntervalSince1970: timestamp))
-                })
+                }
+                .store(in: &anyCancellableSet)
+            
+            let analyzedDataDictionaryPublisher = sharedRateListSetPublisher
                 .map { [unowned self] tuple -> [Currency: (latest: Double, mean: Double, deviation: Double)] in
                     let (latestRateList, historicalRateListSet) = tuple
                     return RateListSetAnalyst.analyze(latestRateList: latestRateList,
                                                       historicalRateListSet: historicalRateListSet,
                                                       baseCurrency: baseCurrency.value)
                 }
+            
+            
             
             Publishers.CombineLatest(analyzedDataDictionaryPublisher, order)
                 .sink { [unowned self] analyzedDataDictionary, order in

@@ -13,7 +13,7 @@ class ResultTableViewController: UITableViewController {
     // MARK: - IBOutlet
     @IBOutlet private weak var latestUpdateTimeItem: UIBarButtonItem!
     
-    @IBOutlet weak var sortItem: UIBarButtonItem!
+    @IBOutlet private weak var sortItem: UIBarButtonItem!
     
     // MARK: - stored properties
     private var numberOfDay: Int
