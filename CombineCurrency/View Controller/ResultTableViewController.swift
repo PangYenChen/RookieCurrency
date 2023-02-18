@@ -27,7 +27,7 @@ class ResultTableViewController: UITableViewController {
     
     private let latestUpdateTime: CurrentValueSubject<Date?, Never>
     
-    private let refreshDataAndPopulateTableView: CurrentValueSubject<Void, Never>
+    private let refresh: CurrentValueSubject<Void, Never>
     
     /// 分析過的匯率資料
     private var analyzedDataDictionary: [Currency: (latest: Double, mean: Double, deviation: Double)]
@@ -68,7 +68,7 @@ class ResultTableViewController: UITableViewController {
         }
         
         do {
-            refreshDataAndPopulateTableView = CurrentValueSubject(())
+            refresh = CurrentValueSubject(())
         }
         
         super.init(coder: coder)
@@ -137,7 +137,7 @@ class ResultTableViewController: UITableViewController {
         
         do { // table view
             refreshControl = UIRefreshControl()
-            let handler = UIAction { [unowned self] _ in refreshDataAndPopulateTableView.send() }
+            let handler = UIAction { [unowned self] _ in refresh.send() }
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
             
             dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currency in
@@ -165,7 +165,7 @@ class ResultTableViewController: UITableViewController {
         }
         
         do {
-            let sharedRateListSetResultPublisher = refreshDataAndPopulateTableView
+            let sharedRateListSetResultPublisher = refresh
                 .handleEvents(receiveOutput: { [unowned self] _ in
                     refreshControl?.beginRefreshing()
                     latestUpdateTimeItem.title = R.string.localizable.updating()
@@ -202,8 +202,6 @@ class ResultTableViewController: UITableViewController {
                                                       baseCurrency: baseCurrency.value)
                 }
             
-            
-            
             Publishers.CombineLatest(analyzedDataDictionaryPublisher, order)
                 .sink { [unowned self] analyzedDataDictionary, order in
                     self.analyzedDataDictionary = analyzedDataDictionary
@@ -232,44 +230,7 @@ class ResultTableViewController: UITableViewController {
                 .store(in: &anyCancellableSet)
             
         }
-        
-        refreshDataAndPopulateTableView.send()
     }
-    
-    /// 更新資料並且填入 table view
-//    private func refreshDataAndPopulateTableView() {
-//        tableView.refreshControl?.beginRefreshing()
-//        latestUpdateTimeItem.title = R.string.localizable.updating()
-//
-//        RateListSetController.getRatesSetForDays(numberOfDay: numberOfDay) { [unowned self] result in
-//            switch result {
-//            case .success(let (latestRateList, historicalRateListSet)):
-//
-//                do { // update latestUpdateTime
-//                    let timestamp = Double(latestRateList.timestamp)
-//                    latestUpdateTime = Date(timeIntervalSince1970: timestamp)
-//                }
-//
-//                do { // update table view
-//                    analyzedDataDictionary = RateListSetAnalyst
-//                        .analyze(latestRateList: latestRateList,
-//                                 historicalRateListSet: historicalRateListSet,
-//                                 baseCurrency: baseCurrency)
-//                    populateTableView()
-//                }
-//
-//            case .failure(let error):
-//                showErrorAlert(error: error)
-//            }
-//
-//            do { // update latestUpdateTimeItem
-//                let dateString = latestUpdateTime.map(DateFormatter.uiDateFormatter.string(from:)) ?? "-"
-//                latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(dateString)
-//            }
-//
-//            tableView.refreshControl?.endRefreshing()
-//        }
-//    }
     
     @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
         fatalError("not yet implemented")
@@ -290,34 +251,7 @@ class ResultTableViewController: UITableViewController {
 //        }
     }
     
-    /// 更新 table view，純粹把資料填入 table view，不動資料。
-    private func populateTableView() {
-        
-//        var sortedTuple = analyzedDataDictionary
-//            .sorted { lhs, rhs in
-//                switch order {
-//                case .increasing:
-//                    return lhs.value.deviation < rhs.value.deviation
-//                case .decreasing:
-//                    return lhs.value.deviation > rhs.value.deviation
-//                }
-//            }
-//
-//        if !searchText.isEmpty { // filtering if needed
-//            sortedTuple = sortedTuple
-//                .filter { (currency,_) in
-//                    [currency.code, currency.localizedString].contains { text in text.lowercased().contains(searchText.lowercased()) }
-//                }
-//        }
-//
-//        let sortedCurrencies = sortedTuple.map { $0.key }
-//        var snapshot = Snapshot()
-//        snapshot.appendSections([.main])
-//        snapshot.appendItems(sortedCurrencies)
-//        snapshot.reloadSections([.main])
-//
-//        dataSource.apply(snapshot)
-    }
+    
     
     private func showErrorAlert(error: Error) {
 #warning("這出乎我的意料，要向下轉型才讀得到正確的 localizedDescription，要查一下資料。")
