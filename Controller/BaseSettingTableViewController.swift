@@ -40,10 +40,6 @@ class BaseSettingTableViewController: UITableViewController {
         fatalError("stepperValueDidChange() has not been implemented")
     }
     
-    @IBSegueAction func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
-        fatalError("showCurrencyTable(_:) has not been implemented")
-    }
-    
     @IBAction func save() {
         dismiss(animated: true)
     }
@@ -79,6 +75,10 @@ class BaseSettingTableViewController: UITableViewController {
         present(alertController, animated: true)
     }
     
+    // MARK: - Navigation
+    @IBSegueAction func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
+        fatalError("showCurrencyTable(_:) has not been implemented")
+    }
 }
 
 // MARK: - Table view data source

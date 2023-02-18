@@ -15,8 +15,6 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     override var editedBaseCurrencyString: String { editedBaseCurrency.localizedString }
     
-    private let completionHandler: (Int, Currency) -> Void
-    
     private let originalNumberOfDay: Int
     
     private var editedNumberOfDay: Int
@@ -26,6 +24,8 @@ class SettingTableViewController: BaseSettingTableViewController {
     private var editedBaseCurrency: Currency
     
     private var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
+    
+    private let completionHandler: (Int, Currency) -> Void
     
     // MARK: - methods
     required init?(coder: NSCoder,
@@ -65,6 +65,16 @@ class SettingTableViewController: BaseSettingTableViewController {
         isModalInPresentation = hasChange
     }
     
+    @IBAction override func save() {
+        completionHandler(editedNumberOfDay, editedBaseCurrency)
+        super.save()
+    }
+    
+    @IBAction private func didTapCancelButton() {
+        hasChange ? presentCancelAlert(showingSave: false) : dismiss(animated: true)
+    }
+    
+    // MARK: - Navigation
     @IBSegueAction override func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
         CurrencyTableViewController(coder: coder) { [unowned self] selectedCurrency in
             editedBaseCurrency = selectedCurrency
@@ -74,12 +84,4 @@ class SettingTableViewController: BaseSettingTableViewController {
         }
     }
     
-    @IBAction override func save() {
-        completionHandler(editedNumberOfDay, editedBaseCurrency)
-        super.save()
-    }
-    
-    @IBAction private func didTapCancelButton() {
-        hasChange ? presentCancelAlert(showingSave: false) : dismiss(animated: true)
-    }
 }

@@ -16,21 +16,17 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     override var editedBaseCurrencyString: String { editedBaseCurrency.value.localizedString }
     
-    private let originalNumberOfDay: Int
-    
     private let editedNumberOfDay: CurrentValueSubject<Int, Never>
-    
-    private let originalBaseCurrency: Currency
     
     private let editedBaseCurrency: CurrentValueSubject<Currency, Never>
     
     private let hasChanges: AnyPublisher<Bool, Never>
     
+    private let updateSetting: PassthroughSubject<(numberOfDay: Int, baseCurrency: Currency), Never>
+    
     private let didTapCancelButtonSubject: PassthroughSubject<Void, Never>
     
     private let didTapSaveButtonSubject: PassthroughSubject<Void, Never>
-    
-    private let updateSetting: PassthroughSubject<(numberOfDay: Int, baseCurrency: Currency), Never>
     
     private var anyCancellableSet: Set<AnyCancellable>
     
@@ -40,25 +36,17 @@ class SettingTableViewController: BaseSettingTableViewController {
                    baseCurrency: Currency,
                    updateSetting: PassthroughSubject<(numberOfDay: Int, baseCurrency: Currency), Never>) {
         
-        do { // number of day
-            originalNumberOfDay = numberOfDay
-            editedNumberOfDay = CurrentValueSubject(numberOfDay)
-        }
+        editedNumberOfDay = CurrentValueSubject(numberOfDay)
         
+        editedBaseCurrency = CurrentValueSubject(baseCurrency)
         
-        do { // base currency
-            originalBaseCurrency = baseCurrency
-            editedBaseCurrency = CurrentValueSubject(baseCurrency)
-        }
-        
-        do {
-            self.updateSetting = updateSetting
-        }
+        self.updateSetting = updateSetting
         
         didTapCancelButtonSubject = PassthroughSubject()
         
         didTapSaveButtonSubject = PassthroughSubject()
         
+        // has changes
         do {
             let numberOfDayHasChanges = editedNumberOfDay.map { $0 != numberOfDay }
             let baseCurrencyHasChanges = editedBaseCurrency.map { $0 != baseCurrency }
@@ -71,17 +59,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         super.init(coder: coder)
         
-        do { // stepper
-            stepper.value = Double(numberOfDay)
-        }
-        do { // stepper
-            let handler = UIAction { [unowned self] _ in editedNumberOfDay.send(Int(stepper.value)) }
-            stepper.addAction(handler, for: .primaryActionTriggered)
-        }
-        
-        do { // other set up
-            title = R.string.localizable.setting()
-        }
+        stepper.value = Double(numberOfDay)
         
         didTapCancelButtonSubject
             .withLatestFrom(hasChanges)
@@ -99,36 +77,43 @@ class SettingTableViewController: BaseSettingTableViewController {
             .store(in: &anyCancellableSet)
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        do {
-            editedNumberOfDay
-                .sink { [unowned self] editedNumberOfDay in
-                    tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
-                }
-                .store(in: &anyCancellableSet)
-            
-            editedBaseCurrency
-                .sink { [unowned self] editedBaseCurrency in
-                    tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none)
-                }
-                .store(in: &anyCancellableSet)
-            
-            hasChanges
-                .sink { [unowned self] hasChanges in
-                    saveButton.isEnabled = hasChanges
-                    isModalInPresentation = hasChanges
-                }
-                .store(in: &anyCancellableSet)
-        }
-        
-    }
-    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        editedNumberOfDay
+            .sink { [unowned self] _ in tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none) }
+            .store(in: &anyCancellableSet)
+        
+        editedBaseCurrency
+            .sink { [unowned self] _ in tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none) }
+            .store(in: &anyCancellableSet)
+        
+        hasChanges
+            .sink { [unowned self] hasChanges in
+                saveButton.isEnabled = hasChanges
+                isModalInPresentation = hasChanges
+            }
+            .store(in: &anyCancellableSet)
+    }
+    
+    override func stepperValueDidChange() {
+        editedNumberOfDay.send(Int(stepper.value))
+    }
+
+    @IBAction override func save() {
+        didTapSaveButtonSubject.send()
+        super.save()
+    }
+    
+    @IBAction private func didTapCancelButton() {
+        didTapCancelButtonSubject.send()
+    }
+    
+    // MARK: - Navigation
     @IBSegueAction override func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
         let editedBaseCurrency = PassthroughSubject<Currency, Never>()
         
@@ -137,14 +122,5 @@ class SettingTableViewController: BaseSettingTableViewController {
             .store(in: &anyCancellableSet)
         
         return CurrencyTableViewController(coder: coder, editedBaseCurrency: editedBaseCurrency)
-    }
-    
-    @IBAction override func save() {
-        didTapSaveButtonSubject.send()
-        super.save()
-    }
-    
-    @IBAction private func didTapCancelButton() {
-        didTapCancelButtonSubject.send()
     }
 }
