@@ -21,6 +21,8 @@
 		514C4CFF29A07A7B0049E192 /* Publisher + Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514C4CFD29A07A7B0049E192 /* Publisher + Helper.swift */; };
 		514C4D0529A0D6570049E192 /* BaseCurrencyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514C4D0429A0D6570049E192 /* BaseCurrencyTableViewController.swift */; };
 		514C4D0629A0D6570049E192 /* BaseCurrencyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514C4D0429A0D6570049E192 /* BaseCurrencyTableViewController.swift */; };
+		514C4D0A29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514C4D0929A0D9FA0049E192 /* BaseSettingTableViewController.swift */; };
+		514C4D0B29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514C4D0929A0D9FA0049E192 /* BaseSettingTableViewController.swift */; };
 		51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274524758ACB00E0A07D /* AppDelegate.swift */; };
 		51D67ED42975922D008B8928 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274724758ACB00E0A07D /* SceneDelegate.swift */; };
 		51DF9165299E635F00CEA5A6 /* UserDefaults + Helper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51119A1C299A3608002758B3 /* UserDefaults + Helper.swift */; };
@@ -81,11 +83,10 @@
 		5138032729988BC300D54E46 /* CurrencyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyTableViewController.swift; sourceTree = "<group>"; };
 		514C4CFD29A07A7B0049E192 /* Publisher + Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher + Helper.swift"; sourceTree = "<group>"; };
 		514C4D0429A0D6570049E192 /* BaseCurrencyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCurrencyTableViewController.swift; sourceTree = "<group>"; };
+		514C4D0929A0D9FA0049E192 /* BaseSettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSettingTableViewController.swift; sourceTree = "<group>"; };
 		516916B92983D4C800547B60 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
-		51DE5EF629913855001E7193 /* BaseResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResultTableViewController.swift; sourceTree = "<group>"; };
 		51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
 		51DF9169299FD0C100CEA5A6 /* CurrencyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyTableViewController.swift; sourceTree = "<group>"; };
-		E111736524C8863600F1A0EB /* BaseResultViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResultViewController.swift; sourceTree = "<group>"; };
 		E1133334248A924D00B8E67F /* RateListSetArchiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateListSetArchiver.swift; sourceTree = "<group>"; };
 		E1133336248CDD1500B8E67F /* RookieURLSessionController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RookieURLSessionController.swift; sourceTree = "<group>"; };
 		E13B274224758ACB00E0A07D /* RookieCurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RookieCurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -283,8 +284,7 @@
 				E1CE96AD248555E10029ED73 /* RateListSetController.swift */,
 				E1133334248A924D00B8E67F /* RateListSetArchiver.swift */,
 				E1133336248CDD1500B8E67F /* RookieURLSessionController.swift */,
-				E111736524C8863600F1A0EB /* BaseResultViewController.swift */,
-				51DE5EF629913855001E7193 /* BaseResultTableViewController.swift */,
+				514C4D0929A0D9FA0049E192 /* BaseSettingTableViewController.swift */,
 				514C4D0429A0D6570049E192 /* BaseCurrencyTableViewController.swift */,
 			);
 			path = Controller;
@@ -496,6 +496,7 @@
 				E1CE96AA248555680029ED73 /* RateListFetcher.swift in Sources */,
 				51119A1D299A3608002758B3 /* UserDefaults + Helper.swift in Sources */,
 				E1CE96AC248555C30029ED73 /* RateListSetAnalyst.swift in Sources */,
+				514C4D0A29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */,
 				5138032829988BC300D54E46 /* CurrencyTableViewController.swift in Sources */,
 				E13B274624758ACB00E0A07D /* AppDelegate.swift in Sources */,
 				E1133337248CDD1500B8E67F /* RookieURLSessionController.swift in Sources */,
@@ -527,6 +528,7 @@
 				E1FB993924FCF4F20096FE2C /* RookieURLSessionController.swift in Sources */,
 				51DF9167299FD0B200CEA5A6 /* SettingTableViewController.swift in Sources */,
 				51DF916A299FD0C100CEA5A6 /* CurrencyTableViewController.swift in Sources */,
+				514C4D0B29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */,
 				51D67ED42975922D008B8928 /* SceneDelegate.swift in Sources */,
 				514C4CFF29A07A7B0049E192 /* Publisher + Helper.swift in Sources */,
 				E1FB993C24FF45250096FE2C /* RateListSetAnalyst.swift in Sources */,
