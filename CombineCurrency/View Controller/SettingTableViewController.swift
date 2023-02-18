@@ -130,14 +130,15 @@ class SettingTableViewController: UITableViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-//    @IBSegueAction private func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
-//        CurrencyTableViewController(coder: coder) { [unowned self] selectedCurrency in
-//            editedBaseCurrency = selectedCurrency
-//            saveButton.isEnabled = hasChange
-//            isModalInPresentation = hasChange
-//            tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none)
-//        }
-//    }
+    @IBSegueAction private func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
+        let editedBaseCurrency = PassthroughSubject<Currency, Never>()
+        
+        editedBaseCurrency
+            .sink { [unowned self] editedBaseCurrency in self.editedBaseCurrency.send(editedBaseCurrency) }
+            .store(in: &anyCancellableSet)
+        
+        return CurrencyTableViewController(coder: coder, editedBaseCurrency: editedBaseCurrency)
+    }
     
     @IBAction private func save() {
         didTapSaveButtonSubject.send()
