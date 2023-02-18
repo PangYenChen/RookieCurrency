@@ -32,7 +32,7 @@ extension ResponseDataModel {
         
         /// Returns the three-letter currency code of the base currency used for this request.
         /// 幣別跟匯率的鍵值對，1 歐元等於多少其他幣別
-        let rates: Dictionary<String, Double>
+        let rates: [String: Double]
         
         subscript(_ currency: Currency) -> Double? {
             currency == .EUR ? 1 : rates[currency.rawValue]
@@ -41,7 +41,7 @@ extension ResponseDataModel {
         private init(historical: Bool,
                      date: Date,
                      timestamp: Int,
-                     rates: Dictionary<String, Double>) {
+                     rates: [String: Double]) {
 #warning("寫 unit test 的時候再看看要不要把這個 init 打開")
             assertionFailure("###, \(#function), 不應該用 decode 之外的方式產生 instance。")
             
@@ -158,7 +158,7 @@ extension ResponseDataModel.RateList: Codable {
         
         timestamp = try container.decode(Int.self, forKey: .timestamp)
         
-        rates = try container.decode(Dictionary<String, Double>.self, forKey: .rates)
+        rates = try container.decode([String: Double].self, forKey: .rates)
         
         for currency in ResponseDataModel.RateList.Currency.allCases where currency != .EUR {
             guard rates[currency.rawValue] != nil else {

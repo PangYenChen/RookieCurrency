@@ -186,7 +186,6 @@ class ResultTableViewController: UITableViewController {
                 .sink(
                     receiveCompletion: { _ in },
                     receiveValue: { [unowned self] output in
-//                        var output = output
                         analyzedDataDictionary.value = output
 
 

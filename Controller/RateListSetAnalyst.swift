@@ -20,7 +20,7 @@ enum RateListSetAnalyst {
                         baseCurrency: Currency)
     -> [Currency: (latest: Double, mean: Double, deviation: Double)] {
             
-            var result = Dictionary<Currency, (latest: Double, mean: Double, deviation: Double)>()
+        var result = [Currency: (latest: Double, mean: Double, deviation: Double)]()
             
             for currency in Currency.allCases {
                 for rateList in historicalRateListSet {
