@@ -16,9 +16,9 @@ class ResultTableViewController: UITableViewController {
     @IBOutlet weak var sortItem: UIBarButtonItem!
     
     // MARK: - stored properties
-    private(set) var numberOfDay: Int
+    private var numberOfDay: Int
     
-    private(set) var baseCurrency: Currency
+    private var baseCurrency: Currency
     
     private var order: Order
     

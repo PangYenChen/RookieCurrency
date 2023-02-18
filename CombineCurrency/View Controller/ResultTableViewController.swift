@@ -17,9 +17,9 @@ class ResultTableViewController: UITableViewController {
     @IBOutlet weak var sortItem: UIBarButtonItem!
     
     // MARK: - stored properties
-    let numberOfDay: CurrentValueSubject<Int, Never>
+    private let numberOfDay: CurrentValueSubject<Int, Never>
     
-    let baseCurrency: CurrentValueSubject<Currency, Never>
+    private let baseCurrency: CurrentValueSubject<Currency, Never>
     
     private let order: CurrentValueSubject<Order, Never>
     
