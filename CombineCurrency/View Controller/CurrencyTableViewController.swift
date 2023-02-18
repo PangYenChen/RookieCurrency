@@ -12,10 +12,10 @@ import Combine
 class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     // MARK: - property
-    private let editedBaseCurrency: PassthroughSubject<Currency, Never>
+    private let editedBaseCurrency: CurrentValueSubject<Currency, Never>
     
-    // MARK: - method
-    init?(coder: NSCoder, editedBaseCurrency: PassthroughSubject<Currency, Never>) {
+    // MARK: - methods
+    init?(coder: NSCoder, editedBaseCurrency: CurrentValueSubject<Currency, Never>) {
         
         self.editedBaseCurrency = editedBaseCurrency
         

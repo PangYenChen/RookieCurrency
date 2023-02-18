@@ -28,15 +28,14 @@ class BaseCurrencyTableViewController: UITableViewController {
             searchController.searchBar.delegate = self
         }
         
-        do {
-            title = R.string.localizable.currency()
-        }
+        title = R.string.localizable.currency()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        do { // table view data source
+        // table view data source
+        do {
             dataSource = DataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
                 let identifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)

@@ -22,8 +22,6 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     private let hasChanges: AnyPublisher<Bool, Never>
     
-    private let updateSetting: PassthroughSubject<(numberOfDay: Int, baseCurrency: Currency), Never>
-    
     private let didTapCancelButtonSubject: PassthroughSubject<Void, Never>
     
     private let didTapSaveButtonSubject: PassthroughSubject<Void, Never>
@@ -39,8 +37,6 @@ class SettingTableViewController: BaseSettingTableViewController {
         editedNumberOfDay = CurrentValueSubject(numberOfDay)
         
         editedBaseCurrency = CurrentValueSubject(baseCurrency)
-        
-        self.updateSetting = updateSetting
         
         didTapCancelButtonSubject = PassthroughSubject()
         
@@ -70,10 +66,7 @@ class SettingTableViewController: BaseSettingTableViewController {
             .withLatestFrom(editedNumberOfDay)
             .map { $1 }
             .withLatestFrom(editedBaseCurrency)
-            .sink { [unowned self] (numberOfDay, baseCurrency) in
-                updateSetting.send((numberOfDay, baseCurrency))
-                dismiss(animated: true)
-            }
+            .sink { (numberOfDay, baseCurrency) in updateSetting.send((numberOfDay, baseCurrency)) }
             .store(in: &anyCancellableSet)
     }
     
@@ -115,12 +108,6 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - Navigation
     @IBSegueAction override func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
-        let editedBaseCurrency = PassthroughSubject<Currency, Never>()
-        
-        editedBaseCurrency
-            .sink { [unowned self] editedBaseCurrency in self.editedBaseCurrency.send(editedBaseCurrency) }
-            .store(in: &anyCancellableSet)
-        
-        return CurrencyTableViewController(coder: coder, editedBaseCurrency: editedBaseCurrency)
+        CurrencyTableViewController(coder: coder, editedBaseCurrency: editedBaseCurrency)
     }
 }

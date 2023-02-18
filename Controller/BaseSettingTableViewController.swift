@@ -26,14 +26,13 @@ class BaseSettingTableViewController: UITableViewController {
         
         super.init(coder: coder)
         
-        do { // stepper
+        // stepper
+        do {
             let handler = UIAction { [unowned self] _ in stepperValueDidChange() }
             stepper.addAction(handler, for: .primaryActionTriggered)
         }
         
-        do { // other set up
-            title = R.string.localizable.setting()
-        }
+        title = R.string.localizable.setting()
     }
     
     func stepperValueDidChange() {
@@ -91,7 +90,8 @@ extension BaseSettingTableViewController {
         let identifier = R.reuseIdentifier.settingCell.identifier
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
         
-        do { // font
+        // font
+        do {
             cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
             cell.textLabel?.adjustsFontForContentSizeCategory = true
             
@@ -99,7 +99,8 @@ extension BaseSettingTableViewController {
             cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
         }
         
-        do { // content
+        // content
+        do {
             let row = Row(rawValue: indexPath.row)
             switch row {
             case .numberOfDay:

@@ -13,7 +13,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     // MARK: - property
     private let completionHandler: (Currency) -> Void
     
-    // MARK: - method
+    // MARK: - methods
     init?(coder: NSCoder, completionHandler: @escaping (Currency) -> Void) {
         self.completionHandler = completionHandler
         
