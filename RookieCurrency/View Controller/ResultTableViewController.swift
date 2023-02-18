@@ -155,7 +155,10 @@ class ResultTableViewController: UITableViewController {
     
     /// 更新資料並且填入 table view
     private func refreshDataAndPopulateTableView() {
-        tableView.refreshControl?.beginRefreshing()
+        if refreshControl?.isRefreshing == false {
+            tableView.refreshControl?.beginRefreshing()
+        }
+        
         latestUpdateTimeItem.title = R.string.localizable.updating()
         
         RateListSetController.getRatesSetForDays(numberOfDay: numberOfDay) { [unowned self] result in
