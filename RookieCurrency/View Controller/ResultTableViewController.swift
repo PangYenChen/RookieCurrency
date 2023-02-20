@@ -36,6 +36,9 @@ class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        
+        latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime("-")
+        
         // sort Item
         do {
             let increasingAction = UIAction(title: Order.increasing.localizedName,

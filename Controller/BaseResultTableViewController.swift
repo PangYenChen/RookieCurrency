@@ -49,7 +49,6 @@ class BaseResultTableViewController: UITableViewController {
         
         // latestUpdateTimeItem
         do {
-            latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime("-")
             latestUpdateTimeItem.isEnabled = false
             latestUpdateTimeItem.setTitleTextAttributes([.foregroundColor: UIColor.label], for: .disabled)
         }
