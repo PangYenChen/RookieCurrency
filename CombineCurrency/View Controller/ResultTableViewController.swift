@@ -10,45 +10,31 @@ import UIKit
 import Combine
 
 class ResultTableViewController: BaseResultTableViewController {
-    // MARK: - stored properties
-    private let numberOfDay: CurrentValueSubject<Int, Never>
     
-    private let baseCurrency: CurrentValueSubject<Currency, Never>
+    // MARK: - stored properties
+    private let numberOfDayAndBaseCurrency: CurrentValueSubject<(numberOfDay: Int, baseCurrency: Currency), Never>
     
     private let order: CurrentValueSubject<Order, Never>
     
     private let searchText: CurrentValueSubject<String, Never>
     
-    private let latestUpdateTime: CurrentValueSubject<Date?, Never>
-    
     private let refresh: CurrentValueSubject<Void, Never>
     
-    /// 分析過的匯率資料
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - Methods
     required init?(coder: NSCoder) {
-        
-        numberOfDay = CurrentValueSubject(UserDefaults.numberOfDay)
-        baseCurrency = CurrentValueSubject(UserDefaults.baseCurrency)
+        numberOfDayAndBaseCurrency = CurrentValueSubject((numberOfDay: UserDefaults.numberOfDay, baseCurrency: UserDefaults.baseCurrency))
         order = CurrentValueSubject(UserDefaults.order)
         searchText = CurrentValueSubject(String())
-        latestUpdateTime =  CurrentValueSubject(nil)
         anyCancellableSet = Set<AnyCancellable>()
         refresh = CurrentValueSubject(())
-
+        
         super.init(coder: coder)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        latestUpdateTime
-            .map { latestUpdateTime in latestUpdateTime.map(DateFormatter.uiDateFormatter.string(from:)) }
-            .map { latestUpdateTimeString in latestUpdateTimeString ?? "-" }
-            .map { R.string.localizable.latestUpdateTime($0) }
-            .assign(to: \.title, on: latestUpdateTimeItem)
-            .store(in: &anyCancellableSet)
         
         // sort item menu
         do {
@@ -79,6 +65,7 @@ class ResultTableViewController: BaseResultTableViewController {
                 .store(in: &anyCancellableSet)
             
             order
+                .dropFirst()
                 .sink { [unowned self] order in
                     UserDefaults.order = order
                     sortItem.menu?.children.first?.subtitle = order.localizedName
@@ -86,57 +73,82 @@ class ResultTableViewController: BaseResultTableViewController {
                 .store(in: &anyCancellableSet)
         }
         
+        numberOfDayAndBaseCurrency
+            .dropFirst()
+            .sink { numberOfDay, baseCurrency in
+                UserDefaults.numberOfDay = numberOfDay
+                UserDefaults.baseCurrency = baseCurrency
+            }
+            .store(in: &anyCancellableSet)
+        
+        numberOfDayAndBaseCurrency
+            .sink { [unowned self] _ in refreshControl?.beginRefreshing() }
+            .store(in: &anyCancellableSet)
+        
         // refresh
         do {
-            let sharedRateListSetResultPublisher = refresh
-                .handleEvents(receiveOutput: { [unowned self] _ in
-                    refreshControl?.beginRefreshing()
-                    latestUpdateTimeItem.title = R.string.localizable.updating()
-                })
-                .withLatestFrom(numberOfDay)
-                .flatMap { _, numberOfDay in
+            let rateListSetResult = Publishers.CombineLatest(refresh, numberOfDayAndBaseCurrency)
+                .flatMap { _, numberOfDayAndBaseCurrency in
                     RateListSetController
-                        .rateListSetPublisher(forDays: numberOfDay)
+                        .rateListSetPublisher(forDays: numberOfDayAndBaseCurrency.numberOfDay)
                         .convertOutputToResult()
                 }
                 .share()
             
-            sharedRateListSetResultPublisher
+            let rateListSetFailure = rateListSetResult
                 .resultFailure()
-                .sink(receiveValue: showErrorAlert(error:))
-                .store(in: &anyCancellableSet)
-            
-            
-            let sharedRateListSetPublisher = sharedRateListSetResultPublisher
-                .compactMap { try? $0.get() }
                 .share()
             
-            sharedRateListSetPublisher
-                .sink  { [unowned self] (latestRateList, _) in
-                    let timestamp = Double(latestRateList.timestamp)
-                    latestUpdateTime.send(Date(timeIntervalSince1970: timestamp))
-                }
+            rateListSetFailure
+                .sink { [unowned self] failure in showErrorAlert(error: failure) }
                 .store(in: &anyCancellableSet)
             
-            let analyzedDataDictionaryPublisher = sharedRateListSetPublisher
-                .withLatestFrom(baseCurrency)
-                .map { output -> [Currency: (latest: Double, mean: Double, deviation: Double)] in
-                    let ((latestRateList, historicalRateListSet), baseCurrency) = output
-                    return RateListSetAnalyst.analyze(latestRateList: latestRateList,
-                                                      historicalRateListSet: historicalRateListSet,
-                                                      baseCurrency: baseCurrency)
+            let rateListSetSuccess = rateListSetResult
+                .resultSuccess()
+                .share()
+            
+            let latestUpdateTimeString = rateListSetSuccess
+                .map { rateListSet in rateListSet.latestRateList.timestamp }
+                .map(Double.init)
+                .map(Date.init(timeIntervalSince1970:))
+                .map(DateFormatter.uiDateFormatter.string(from:))
+                .prepend("-")
+            
+            let analyzedDataDictionary = rateListSetSuccess
+                .withLatestFrom(numberOfDayAndBaseCurrency)
+                .map { rateListSet, numberOfDayAndBaseCurrency in
+                    RateListSetAnalyst.analyze(latestRateList: rateListSet.latestRateList,
+                                               historicalRateListSet: rateListSet.historicalRateListSet,
+                                               baseCurrency: numberOfDayAndBaseCurrency.baseCurrency)
                 }
             
-            Publishers.CombineLatest3(analyzedDataDictionaryPublisher, order, searchText)
-                .sink { [unowned self] analyzedDataDictionary, order, searchText in
+            let shouldPopulateTableView = Publishers.CombineLatest3(analyzedDataDictionary, order, searchText).share()
+            
+            shouldPopulateTableView
+                .sink { [unowned self] analyzedDataDictionary, order, searchText  in
                     self.analyzedDataDictionary = analyzedDataDictionary
                     populateTableView(analyzedDataDictionary: analyzedDataDictionary,
                                       order: order,
                                       searchText: searchText)
-                    refreshControl?.endRefreshing()
                 }
                 .store(in: &anyCancellableSet)
             
+            let shouldEndRefreshingControl = Publishers.Merge(rateListSetFailure.map { _ in () },
+                                                              shouldPopulateTableView.map { _ in () })
+            
+            shouldEndRefreshingControl
+                .sink { [unowned self] _ in refreshControl?.endRefreshing() }
+                .store(in: &anyCancellableSet)
+            
+            let shouldUpdateLatestUpdateTime = shouldPopulateTableView
+                .withLatestFrom(latestUpdateTimeString)
+                .map { $1 }
+            
+            shouldUpdateLatestUpdateTime
+                .sink { [unowned self] latestUpdateTimeString in
+                    latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(latestUpdateTimeString)
+                }
+                .store(in: &anyCancellableSet)
         }
     }
     
@@ -149,29 +161,10 @@ class ResultTableViewController: BaseResultTableViewController {
     }
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        
-        let updateSetting = PassthroughSubject<(numberOfDay: Int, baseCurrency: Currency), Never>()
-        
-        updateSetting
-            .sink { [unowned self] (editedNumberOfDay: Int, editedBaseCurrency: Currency) in
-                do { // base currency
-                    baseCurrency.send(editedBaseCurrency)
-                    UserDefaults.baseCurrency = editedBaseCurrency
-                }
-                
-                do { // number Of Day
-                    numberOfDay.send(editedNumberOfDay)
-                    UserDefaults.numberOfDay = editedNumberOfDay
-                }
-                
-                refresh.send()
-            }
-            .store(in: &anyCancellableSet)
-        
-        return SettingTableViewController(coder: coder,
-                                          numberOfDay: numberOfDay.value,
-                                          baseCurrency: baseCurrency.value,
-                                          updateSetting: AnySubscriber(updateSetting))
+        SettingTableViewController(coder: coder,
+                                   numberOfDay: numberOfDayAndBaseCurrency.value.numberOfDay,
+                                   baseCurrency: numberOfDayAndBaseCurrency.value.baseCurrency,
+                                   updateSetting: AnySubscriber(numberOfDayAndBaseCurrency))
     }
 }
 
@@ -180,7 +173,7 @@ extension ResultTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText.send(searchText)
     }
-
+    
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         self.searchText.send("")
     }
