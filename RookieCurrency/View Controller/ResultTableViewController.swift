@@ -36,7 +36,6 @@ class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        
         latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime("-")
         
         // sort Item
@@ -112,13 +111,15 @@ class ResultTableViewController: BaseResultTableViewController {
         RateListSetController.getRatesSetForDays(numberOfDay: numberOfDay) { [unowned self] result in
             switch result {
             case .success(let (latestRateList, historicalRateListSet)):
-
-                do { // update latestUpdateTime
+                
+                // update latestUpdateTime
+                do {
                     let timestamp = Double(latestRateList.timestamp)
                     latestUpdateTime = Date(timeIntervalSince1970: timestamp)
                 }
 
-                do { // update table view
+                // update table view
+                do {
                     analyzedDataDictionary = RateListSetAnalyst
                         .analyze(latestRateList: latestRateList,
                                  historicalRateListSet: historicalRateListSet,

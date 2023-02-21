@@ -87,7 +87,12 @@ class ResultTableViewController: BaseResultTableViewController {
         
         // refresh
         do {
-            let rateListSetResult = Publishers.CombineLatest(refresh, numberOfDayAndBaseCurrency)
+            let updating = Publishers.CombineLatest(refresh, numberOfDayAndBaseCurrency)
+            
+            let updatingString = updating
+                .map { _, _  in R.string.localizable.updating() }
+            
+            let rateListSetResult = updating
                 .flatMap { _, numberOfDayAndBaseCurrency in
                     RateListSetController
                         .rateListSetPublisher(forDays: numberOfDayAndBaseCurrency.numberOfDay)
@@ -142,12 +147,11 @@ class ResultTableViewController: BaseResultTableViewController {
             
             let shouldUpdateLatestUpdateTime = shouldPopulateTableView
                 .withLatestFrom(latestUpdateTimeString)
-                .map { $1 }
+                .map { R.string.localizable.latestUpdateTime($1) }
+                .merge(with: updatingString)
             
             shouldUpdateLatestUpdateTime
-                .sink { [unowned self] latestUpdateTimeString in
-                    latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(latestUpdateTimeString)
-                }
+                .sink { [unowned self] latestUpdateTimeString in latestUpdateTimeItem.title = latestUpdateTimeString }
                 .store(in: &anyCancellableSet)
         }
     }
