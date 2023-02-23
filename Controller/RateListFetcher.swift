@@ -21,20 +21,17 @@ enum RateListFetcher {
         private static let urlComponents: URLComponents? = {
             
             /// 拿匯率的 base url，我使用的免費方案不支援 https。
-            /// 提供資料的服務商： https://fixer.io
-            let baseURL = "http://data.fixer.io/api/"
+            /// 提供資料的服務商： https://apilayer.com
+            /// "https://api.apilayer.com/exchangerates_data/"
+            /// "https://api.apilayer.com/fixer/"
+            ///
+            let baseURL = "https://api.apilayer.com/fixer/"
             
             var urlComponents = URLComponents(string: baseURL)
             
-            let accessKey = "cab92b8eb8df1c00d9913e9701776955"
-            let symbolQueryValue = Currency.allCases
-                .compactMap { $0 == .EUR ? nil : $0.rawValue } // 以歐元為匯率基準幣別，所以 query 不帶歐元
-                .joined(separator: ",")
+            urlComponents?.queryItems = [URLQueryItem(name: "base", value: "EUR")]
             
-            urlComponents?.queryItems = [
-                URLQueryItem(name: "access_key", value: accessKey),
-                URLQueryItem(name: "symbols", value: symbolQueryValue)
-            ]
+            #warning("之後要改成以新台幣為基準幣別，這樣出錯的時候我比較看得出來，目前本地存的資料還是以歐元為基準")
             
             return urlComponents
         }()
@@ -60,6 +57,43 @@ enum RateListFetcher {
         }
     }
     
+    /// 不暫存的 session
+    private static let urlSession: URLSession = {
+        let configuration = URLSessionConfiguration.default
+        configuration.urlCache = nil
+        
+        let urlSession = URLSession(configuration: configuration)
+        return urlSession
+    }()
+    
+}
+
+// MARK: - api keys
+extension RateListFetcher {
+    private static var apiKeys: [String] = [
+        "pT4L8AtpKOIWiGoE0ouiak003mdE0Wvg"
+    ]
+    
+    private static var apiKey: String = "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"
+    
+    static func createRequest(url: URL) -> URLRequest {
+        var urlRequest = URLRequest(url: url, timeoutInterval: 5)
+        urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
+        return urlRequest
+    }
+    
+    static func updateAPIKeySuccess() -> Bool {
+        if let apiKey = apiKeys.popLast() {
+            Self.apiKey = apiKey
+            return true
+        } else {
+            return false
+        }
+    }
+}
+
+// MARK: - helper method
+extension RateListFetcher {
     /// 印出好看的 JSON 格式字串
     /// - Parameter data: 要轉成字串的 data
     private static func prettyPrint(_ data: Data) {
@@ -82,41 +116,54 @@ extension RateListFetcher {
     static func fetchRateList(for endPoint: EndPoint,
                               completionHandler: @escaping (Result<ResponseDataModel.RateList, Error>) -> ()) {
         
-        RookieURLSessionController
-            .dataTask(with: endPoint.url) { (data, response, error) in
-                DispatchQueue.main.async {
-                    if let error = error {
-                        completionHandler(.failure(error))
-                        print("###", self, #function, "網路錯誤", error.localizedDescription, error)
+        let urlRequest = createRequest(url: endPoint.url)
+        
+        urlSession.dataTask(with: urlRequest) { (data, response, error) in
+            DispatchQueue.main.async {
+                
+                // 當下的帳號（當下的 api key）的免費額度用完了
+                if let httpURLResponse = response as? HTTPURLResponse,
+                   httpURLResponse.statusCode == 429 {
+                    // 換一個帳號（的 api key）打
+                    if updateAPIKeySuccess() {
+                        fetchRateList(for: endPoint, completionHandler: completionHandler)
                         return
-                    }
-                    
-                    guard let data = data else {
-                        print("###", self, #function, "沒有 data 也沒有 error，應該不會有這種情況。")
-                        return
-                    }
-                    
-                    prettyPrint(data)
-                    
-                    if let responseError = try? jsonDecoder.decode(ResponseDataModel.ServerError.self, from: data) {
-                        // 伺服器回傳一個錯誤訊息
-                        completionHandler(.failure(responseError))
-                        print("###", self, #function, "服務商表示錯誤", responseError.localizedDescription, responseError)
-                        return
-                    }
-                    
-                    do {
-                        let rateList = try jsonDecoder.decode(ResponseDataModel.RateList.self, from: data)
-                        // 伺服器回傳正常的匯率資料
-                        completionHandler(.success(rateList))
-                        
-                    } catch {
-                        completionHandler(.failure(error))
-                        print("###", self, #function, "decode 失敗", error.localizedDescription, error)
                     }
                 }
+                
+                // 網路錯誤，包含 timeout 跟所有帳號的免費額度都用完了
+                if let error = error {
+                    completionHandler(.failure(error))
+                    print("###", self, #function, "網路錯誤", error.localizedDescription, error)
+                    return
+                }
+                
+                guard let data = data else {
+                    print("###", self, #function, "沒有 data 也沒有 error，應該不會有這種情況。")
+                    return
+                }
+                
+                prettyPrint(data)
+                
+                if let responseError = try? jsonDecoder.decode(ResponseDataModel.ServerError.self, from: data) {
+                    // 伺服器回傳一個錯誤訊息
+                    completionHandler(.failure(responseError))
+                    print("###", self, #function, "服務商表示錯誤", responseError.localizedDescription, responseError)
+                    return
+                }
+                
+                do {
+                    let rateList = try jsonDecoder.decode(ResponseDataModel.RateList.self, from: data)
+                    // 伺服器回傳正常的匯率資料
+                    completionHandler(.success(rateList))
+                    
+                } catch {
+                    completionHandler(.failure(error))
+                    print("###", self, #function, "decode 失敗", error.localizedDescription, error)
+                }
             }
-            .resume()
+        }
+        .resume()
     }
 }
 
@@ -128,8 +175,30 @@ extension RateListFetcher {
     /// - Parameter endPoint: 請求資料的種類
     /// - Returns: 送出伺服器回傳的 rate list 的 publisher
     static func rateListPublisher(for endPoint: EndPoint) -> AnyPublisher<ResponseDataModel.RateList, Error> {
-        RookieURLSessionController.dataTaskPublish(with: endPoint.url)
-            .receive(on: DispatchQueue.main)
+        
+        func dataTaskPublisherWithLimitHandling(for endPoint: EndPoint) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+            let urlRequest = createRequest(url: endPoint.url)
+            
+            return urlSession.dataTaskPublisher(for: urlRequest)
+                .receive(on: DispatchQueue.main)
+                .flatMap { output -> AnyPublisher<(data: Data, response: URLResponse), URLError> in
+                    if let httpURLResponse = output.response as? HTTPURLResponse,
+                       httpURLResponse.statusCode == 429,
+                       updateAPIKeySuccess() {
+                        
+                        return dataTaskPublisherWithLimitHandling(for: endPoint)
+                            .eraseToAnyPublisher()
+                        
+                    } else {
+                        return Just((data: output.data, response: output.response))
+                            .setFailureType(to: URLError.self)
+                            .eraseToAnyPublisher()
+                    }
+                }
+                .eraseToAnyPublisher()
+        }
+        
+        return dataTaskPublisherWithLimitHandling(for: endPoint)
             .map { $0.0 }
             .handleEvents(receiveOutput: prettyPrint)
             .tryMap { (data) -> Data in
