@@ -23,3 +23,7 @@ custom segue
 讓使用者決定排序的方向。
 
 若使用者在 present 的設定頁面未更改設定，阻止使用者下拉離開。
+
+用 run script 在 build 之前拿到當下的 git commit hash 跟日期，在設定頁面顯示出來。
+
+在 debug build configuration 顯示模擬器的路徑，以便查看儲存的資料跟 UserDefault。
