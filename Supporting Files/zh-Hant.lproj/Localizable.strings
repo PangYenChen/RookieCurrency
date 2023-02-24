@@ -28,6 +28,7 @@
 "updating" = "正在更新";
 "version" = "版本號：%1$@(%2$@)";
 "versionDate" = "版本日期：%@";
+"debugInfo" = "偵錯資訊";
 // MARK: - 幣別
 "TWD" = "新台幣";
 "USD" = "美金";

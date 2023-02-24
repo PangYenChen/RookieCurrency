@@ -28,6 +28,7 @@
 "updating" = "updating";
 "version" = "version：$1$@($2$@)";
 "versionDate" = "version date：%@";
+"debugInfo" = "debug info";
 // MARK: - 幣別
 "TWD" = "New Taiwan Dollar";
 "USD" = "United States Dollar";

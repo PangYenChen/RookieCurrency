@@ -151,7 +151,14 @@ extension BaseSettingTableViewController {
                 }
                 cell.accessoryType = .disclosureIndicator
                 cell.imageView?.image = UIImage(systemName: "character")
-            default:
+#if DEBUG
+            case .debugInfo:
+                cell.textLabel?.text = R.string.localizable.debugInfo()
+                cell.detailTextLabel?.text = nil
+                cell.accessoryType = .disclosureIndicator
+                cell.imageView?.image = UIImage(systemName: "ladybug")
+#endif
+            case nil:
                 assertionFailure("###, \(#function), \(self), SettingTableViewController.Row 新增了 case，未處理新增的 case。")
             }
         }
@@ -165,9 +172,16 @@ extension BaseSettingTableViewController {
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         let row = Row(rawValue: indexPath.row)
         switch row {
+        case .numberOfDay:
+            return nil
         case .baseCurrency, .language:
             return indexPath
-        default:
+#if DEBUG
+        case .debugInfo:
+            return indexPath
+#endif
+        case nil:
+            assertionFailure("###, \(#function), \(self), SettingTableViewController.Row 新增了 case，未處理新增的 case。")
             return nil
         }
     }
@@ -175,14 +189,20 @@ extension BaseSettingTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let row = Row(rawValue: indexPath.row)
         switch row {
+        case .numberOfDay:
+            assertionFailure("###, \(#function), \(self), number of day 這個 row 在 tableView(_:willSelectRowAt:) 被設定成不能被點")
         case .baseCurrency:
             let identifier = R.segue.settingTableViewController.showCurrencyTable.identifier
             performSegue(withIdentifier: identifier, sender: self)
         case .language:
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             tableView.deselectRow(at: indexPath, animated: true)
-        default:
-            break
+#if DEBUG
+        case .debugInfo:
+            print("###, \(#function), \(self), index path 被點啦, \(indexPath)")
+#endif
+        case nil:
+            assertionFailure("###, \(#function), \(self), SettingTableViewController.Row 新增了 case，未處理新增的 case。")
         }
     }
     
@@ -214,5 +234,8 @@ extension BaseSettingTableViewController {
         case numberOfDay = 0
         case baseCurrency
         case language
+#if DEBUG
+        case debugInfo
+#endif
     }
 }

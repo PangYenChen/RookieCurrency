@@ -138,16 +138,16 @@
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
                     <subviews>
                         <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Zto-CX-iEV">
-                            <rect key="frame" x="16" y="48" width="208" height="80"/>
+                            <rect key="frame" x="16" y="68" width="208" height="60"/>
                             <subviews>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Fv-BA-uyf">
-                                    <rect key="frame" x="0.0" y="0.0" width="208" height="51.5"/>
+                                    <rect key="frame" x="0.0" y="0.0" width="208" height="31.5"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
                                 </label>
                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2sQ-9v-4P7">
-                                    <rect key="frame" x="0.0" y="59.5" width="208" height="20.5"/>
+                                    <rect key="frame" x="0.0" y="39.5" width="208" height="20.5"/>
                                     <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                     <nil key="textColor"/>
                                     <nil key="highlightedColor"/>
@@ -160,7 +160,7 @@
                         <constraint firstAttribute="trailingMargin" secondItem="Zto-CX-iEV" secondAttribute="trailing" id="BgM-Ie-9Wj"/>
                         <constraint firstAttribute="bottomMargin" secondItem="Zto-CX-iEV" secondAttribute="bottom" id="m3u-f8-JF5"/>
                         <constraint firstItem="Zto-CX-iEV" firstAttribute="leading" secondItem="01U-2C-QVd" secondAttribute="leadingMargin" id="tDP-O0-XjM"/>
-                        <constraint firstItem="Zto-CX-iEV" firstAttribute="top" secondItem="01U-2C-QVd" secondAttribute="topMargin" id="voP-Vg-4Sr"/>
+                        <constraint firstItem="Zto-CX-iEV" firstAttribute="top" secondItem="01U-2C-QVd" secondAttribute="topMargin" constant="20" id="voP-Vg-4Sr"/>
                     </constraints>
                 </view>
             </objects>
