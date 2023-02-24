@@ -199,7 +199,8 @@ extension BaseSettingTableViewController {
             tableView.deselectRow(at: indexPath, animated: true)
 #if DEBUG
         case .debugInfo:
-            print("###, \(#function), \(self), index path 被點啦, \(indexPath)")
+            let identifier = R.segue.settingTableViewController.showDebugInfo.identifier
+            performSegue(withIdentifier: identifier, sender: self)
 #endif
         case nil:
             assertionFailure("###, \(#function), \(self), SettingTableViewController.Row 新增了 case，未處理新增的 case。")
