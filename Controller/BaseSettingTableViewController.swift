@@ -126,6 +126,7 @@ extension BaseSettingTableViewController {
             cell.textLabel?.adjustsFontForContentSizeCategory = true
             
             cell.detailTextLabel?.font = UIFont.preferredFont(forTextStyle: .subheadline)
+            cell.detailTextLabel?.textColor = UIColor.secondaryLabel
             cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
         }
         
