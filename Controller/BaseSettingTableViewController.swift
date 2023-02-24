@@ -13,7 +13,12 @@ class BaseSettingTableViewController: UITableViewController {
     // MARK: - properties
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
+    @IBOutlet weak var sectionFooterView: UIView!
     let stepper: UIStepper
+    
+    @IBOutlet weak var versionLabel: UILabel!
+    
+    @IBOutlet weak var dateLabel: UILabel!
     
     var editedNumberOfDayString: String { fatalError("editedNumberOfDayString has not been implemented") }
     
@@ -33,6 +38,31 @@ class BaseSettingTableViewController: UITableViewController {
         }
         
         title = R.string.localizable.setting()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        do {
+            versionLabel.font = UIFont.preferredFont(forTextStyle: .callout)
+            versionLabel.textColor = UIColor.secondaryLabel
+            versionLabel.adjustsFontForContentSizeCategory = true
+            let appVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+            versionLabel.text = R.string.localizable.version(appVersionString ?? "", gitHash)
+        }
+        
+        do {
+            dateLabel.font = UIFont.preferredFont(forTextStyle: .callout)
+            dateLabel.textColor = UIColor.secondaryLabel
+            dateLabel.adjustsFontForContentSizeCategory = true
+            let formatter = DateFormatter()
+            formatter.locale = Locale.current
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .short
+            let commitDate = Date(timeIntervalSince1970: Double(commitTimestamp))
+            let dateString = formatter.string(from: commitDate)
+            dateLabel.text = R.string.localizable.versionDate(dateString)
+        }
     }
     
     func stepperValueDidChange() {
@@ -157,6 +187,14 @@ extension BaseSettingTableViewController {
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
         Row(rawValue: indexPath.row) != .numberOfDay
+    }
+    
+    override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        section == 0 ? sectionFooterView : nil
+    }
+    
+    override func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        section == 0 ? UITableView.automaticDimension : 0
     }
 }
 

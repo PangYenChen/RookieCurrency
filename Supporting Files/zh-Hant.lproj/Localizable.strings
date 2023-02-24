@@ -26,6 +26,8 @@
 "decreasing" = "遞減";
 "sortedBy" = "排序方式";
 "updating" = "正在更新";
+"version" = "版本號：%1$@(%2$@)";
+"versionDate" = "版本日期：%@";
 // MARK: - 幣別
 "TWD" = "新台幣";
 "USD" = "美金";

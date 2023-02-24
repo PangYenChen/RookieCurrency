@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="WKW-3X-IXk">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21507" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="WKW-3X-IXk">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21505"/>
         <capability name="Image references" minToolsVersion="12.0"/>
+        <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
         <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -124,13 +125,46 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
+                        <outlet property="dateLabel" destination="2sQ-9v-4P7" id="ZqC-hG-Pnv"/>
                         <outlet property="saveButton" destination="4h0-rJ-PQn" id="BSJ-OI-thw"/>
+                        <outlet property="sectionFooterView" destination="01U-2C-QVd" id="I4m-7Q-W3n"/>
+                        <outlet property="versionLabel" destination="1Fv-BA-uyf" id="DNk-e0-foc"/>
                         <segue destination="I3t-1P-vym" kind="show" identifier="showCurrencyTable" destinationCreationSelector="showCurrencyTable:" id="Np9-zw-Nph"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bN2-6g-ejU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <view contentMode="scaleToFill" id="01U-2C-QVd">
+                    <rect key="frame" x="0.0" y="0.0" width="240" height="128"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                    <subviews>
+                        <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Zto-CX-iEV">
+                            <rect key="frame" x="16" y="48" width="208" height="80"/>
+                            <subviews>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1Fv-BA-uyf">
+                                    <rect key="frame" x="0.0" y="0.0" width="208" height="51.5"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Label" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2sQ-9v-4P7">
+                                    <rect key="frame" x="0.0" y="59.5" width="208" height="20.5"/>
+                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                    <nil key="textColor"/>
+                                    <nil key="highlightedColor"/>
+                                </label>
+                            </subviews>
+                        </stackView>
+                    </subviews>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                    <constraints>
+                        <constraint firstAttribute="trailingMargin" secondItem="Zto-CX-iEV" secondAttribute="trailing" id="BgM-Ie-9Wj"/>
+                        <constraint firstAttribute="bottomMargin" secondItem="Zto-CX-iEV" secondAttribute="bottom" id="m3u-f8-JF5"/>
+                        <constraint firstItem="Zto-CX-iEV" firstAttribute="leading" secondItem="01U-2C-QVd" secondAttribute="leadingMargin" id="tDP-O0-XjM"/>
+                        <constraint firstItem="Zto-CX-iEV" firstAttribute="top" secondItem="01U-2C-QVd" secondAttribute="topMargin" id="voP-Vg-4Sr"/>
+                    </constraints>
+                </view>
             </objects>
-            <point key="canvasLocation" x="3335" y="119"/>
+            <point key="canvasLocation" x="3334.7826086956525" y="118.52678571428571"/>
         </scene>
         <!--## 基準幣別-->
         <scene sceneID="Wzb-4c-N6y">
