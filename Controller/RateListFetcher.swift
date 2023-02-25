@@ -84,6 +84,11 @@ extension RateListFetcher {
         }
     }
     
+    /// 用來接著不明錯誤
+    enum FetcherError: Error {
+    case noDataNoError
+    }
+    
 }
 
 // MARK: - static property
@@ -129,6 +134,8 @@ extension RateListFetcher {
 }
 #endif
 
+
+// MARK: - RateListSession
 protocol RateListSession {
     func rateListDataTask(with request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
@@ -136,6 +143,7 @@ protocol RateListSession {
     func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError>
 }
 
+// MARK: - make url session confirm RateListSession
 extension URLSession: RateListSession {
     func rateListDataTask(with request: URLRequest,
                         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {

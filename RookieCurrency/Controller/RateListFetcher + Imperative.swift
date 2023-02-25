@@ -62,4 +62,45 @@ extension RateListFetcher {
             }
         }
     }
+    
+    func rateList(for endPoint: EndPoint,
+                  completionHandler: @escaping (Result<(data: Data, response: URLResponse), Error>) -> ()) {
+        
+        let urlRequest = createRequest(url: endPoint.url)
+        
+        rateListSession.rateListDataTask(with: urlRequest) { [unowned self] data, response, error in
+            
+            // 當下的帳號（當下的 api key）的免費額度用完了
+            if let httpURLResponse = response as? HTTPURLResponse,
+               httpURLResponse.statusCode == 429 {
+                // 換一個帳號（的 api key）打
+                if updateAPIKeySuccess() {
+                    rateList(for: endPoint, completionHandler: completionHandler)
+                    return
+                }
+            }
+            
+            // 網路錯誤，包含 timeout 跟所有帳號的免費額度都用完了
+            if let error = error {
+                completionHandler(.failure(error))
+                print("###", self, #function, "網路錯誤", error.localizedDescription, error)
+                return
+            }
+            
+            guard let data = data else {
+                print("###", self, #function, "沒有 data 也沒有 error，一般來說如果碰到 status code 204 確實有可能沒有 data 跟 error，但這個服務商沒有這種情況。")
+                completionHandler(.failure(FetcherError.noDataNoError))
+                return
+            }
+            
+            prettyPrint(data)
+            
+            if let responseError = try? jsonDecoder.decode(ResponseDataModel.ServerError.self, from: data) {
+                // 伺服器回傳一個錯誤訊息
+                completionHandler(.failure(responseError))
+                print("###", self, #function, "服務商表示錯誤", responseError.localizedDescription, responseError)
+                return
+            }
+        }
+    }
 }
