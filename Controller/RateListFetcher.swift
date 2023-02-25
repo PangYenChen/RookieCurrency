@@ -304,7 +304,9 @@ extension RateListFetcher {
 
 protocol RookieURLSession {
     func rookieDataTask(with request: URLRequest,
-        completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void)
+        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
+    
+    func rookieDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError>
 }
 
 extension URLSession: RookieURLSession {
@@ -312,6 +314,10 @@ extension URLSession: RookieURLSession {
     func rookieDataTask(with request: URLRequest,
                   completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
         dataTask(with: request, completionHandler: completionHandler).resume()
+    }
+    
+    func rookieDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+        dataTaskPublisher(for: request).eraseToAnyPublisher()
     }
 }
 

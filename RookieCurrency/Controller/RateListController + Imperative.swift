@@ -7,7 +7,7 @@
 //
 
 import Foundation
-
+#warning("這裡的 method 好長 看能不能拆開")
 extension RateListController {
     /// 獲得當下以及指定天數的歷史幣別匯率的資料
     /// - Parameters:

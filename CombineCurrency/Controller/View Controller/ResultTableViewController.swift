@@ -94,7 +94,7 @@ class ResultTableViewController: BaseResultTableViewController {
             
             let rateListSetResult = updating
                 .flatMap { _, numberOfDayAndBaseCurrency in
-                    RateListController
+                    RateListController.shared
                         .rateListSetPublisher(forDays: numberOfDayAndBaseCurrency.numberOfDay)
                         .convertOutputToResult()
                 }
