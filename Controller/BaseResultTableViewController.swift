@@ -27,11 +27,20 @@ class BaseResultTableViewController: UITableViewController {
         
         super.init(coder: coder)
         
-        do { // search controller
+        // search controller
+        do {
             let searchController = UISearchController()
             searchController.searchBar.delegate = self
             navigationItem.searchController = searchController
             navigationItem.hidesSearchBarWhenScrolling = false
+        }
+        
+        // 在 app 內顯示 app icon，以便看出是哪個 target
+        do {
+            let imageView = UIImageView(image: UIImage(named: "AppIcon"))
+            let rightBarButton = UIBarButtonItem(customView: imageView)
+            rightBarButton.isEnabled = false
+            navigationItem.setRightBarButton(rightBarButton, animated: false)
         }
         
         title = R.string.localizable.analyzedResult()
