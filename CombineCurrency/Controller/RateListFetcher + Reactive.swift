@@ -15,7 +15,7 @@ extension RateListFetcher {
         func dataTaskPublisherWithLimitHandling(for endPoint: EndPoint) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
             let urlRequest = createRequest(url: endPoint.url)
             
-            return  rookieURLSession.rookieDataTaskPublisher(for: urlRequest)
+            return  rateListSession.rateListDataTaskPublisher(for: urlRequest)
                 .receive(on: DispatchQueue.main)
                 .flatMap { [unowned self] output -> AnyPublisher<(data: Data, response: URLResponse), URLError> in
                     if let httpURLResponse = output.response as? HTTPURLResponse,

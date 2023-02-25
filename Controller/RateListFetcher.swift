@@ -15,12 +15,12 @@ class RateListFetcher {
     /// singleton object
     static let shared: RateListFetcher = .init()
     
-    let rookieURLSession: RookieURLSession
+    let rateListSession: RateListSession
     #warning("之後要改成在 rate list controller decode")
     let jsonDecoder = JSONDecoder()
     
-    init(rookieURLSession: RookieURLSession = RateListFetcher.rookieURLSession) {
-        self.rookieURLSession = rookieURLSession
+    init(rateListSession: RateListSession = RateListFetcher.rateListSession) {
+        self.rateListSession = rateListSession
     }
     
     // MARK: - api key 相關
@@ -89,7 +89,7 @@ extension RateListFetcher {
 // MARK: - static property
 extension RateListFetcher {
     /// 不暫存的 session
-    private static let rookieURLSession: URLSession = {
+    private static let rateListSession: URLSession = {
         let configuration = URLSessionConfiguration.default
         configuration.urlCache = nil
         
@@ -129,20 +129,20 @@ extension RateListFetcher {
 }
 #endif
 
-protocol RookieURLSession {
-    func rookieDataTask(with request: URLRequest,
+protocol RateListSession {
+    func rateListDataTask(with request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
     
-    func rookieDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError>
+    func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError>
 }
 
-extension URLSession: RookieURLSession {
-    func rookieDataTask(with request: URLRequest,
+extension URLSession: RateListSession {
+    func rateListDataTask(with request: URLRequest,
                         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
         dataTask(with: request, completionHandler: completionHandler).resume()
     }
     
-    func rookieDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+    func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
         dataTaskPublisher(for: request).eraseToAnyPublisher()
     }
 }

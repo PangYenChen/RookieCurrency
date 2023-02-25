@@ -41,7 +41,7 @@ class RateListFetcherTests: XCTestCase {
     }
 }
 
-class RookieURLSessionStub: RookieURLSession {
+class RookieURLSessionStub: RateListSession {
     
     
     func rookieDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {

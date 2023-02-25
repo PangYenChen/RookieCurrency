@@ -14,7 +14,7 @@ extension RateListFetcher {
         
         let urlRequest = createRequest(url: endPoint.url)
         
-        rookieURLSession.rookieDataTask(with: urlRequest) { [unowned self] data, response, error in
+        rateListSession.rateListDataTask(with: urlRequest) { [unowned self] data, response, error in
             DispatchQueue.main.async { [unowned self] in
                 
                 // 當下的帳號（當下的 api key）的免費額度用完了

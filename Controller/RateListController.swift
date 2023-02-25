@@ -16,5 +16,7 @@ class RateListController {
     let rateListFetcher = RateListFetcher.shared
     #warning("之後要用注入的")
     
+    let jsonDecoder = JSONDecoder()
+    
     init() {}
 }
