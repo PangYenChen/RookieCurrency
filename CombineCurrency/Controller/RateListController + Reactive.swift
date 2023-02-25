@@ -19,7 +19,7 @@ extension RateListController {
         
         rateListFetcher.rateListPublisher(for: .latest)
             .combineLatest(RateListSetArchiver.unarchivedRateListSetPublisher())
-            .flatMap { (latestRateList, unarchivedRateListSet) -> AnyPublisher<(latestRateList: ResponseDataModel.RateList, historicalRateListSet: Set<ResponseDataModel.RateList>), Error> in
+            .flatMap { [unowned self] latestRateList, unarchivedRateListSet -> AnyPublisher<(latestRateList: ResponseDataModel.RateList, historicalRateListSet: Set<ResponseDataModel.RateList>), Error> in
                 
                 /// 在日期範圍內，需要向伺服器拿的資料
                 var needToFetchRateListPublisherArray = [AnyPublisher<ResponseDataModel.RateList, Error>]()
@@ -33,7 +33,7 @@ extension RateListController {
                     if let historicalRateList = unarchivedRateListSet.first(where: { $0.date == historicalDate}) {
                         historicalRateListNeededSet.insert(historicalRateList)
                     } else {
-                        needToFetchRateListPublisherArray.append(RateListFetcher.rateListPublisher(for: .historical(date: historicalDate)))
+                        needToFetchRateListPublisherArray.append(rateListFetcher.rateListPublisher(for: .historical(date: historicalDate)))
                     }
                 }
                 
