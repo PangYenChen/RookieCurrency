@@ -1,5 +1,5 @@
 //
-//  RateListSetController.swift
+//  RateListController.swift
 //  RookieCurrency
 //
 //  Created by Pang-yen Chen on 2020/6/1.
@@ -10,10 +10,10 @@ import Foundation
 import Combine
 #warning("這裡的 method 好長 看能不能拆開")
 /// 用來獲得各幣別匯率資料的類別
-enum RateListSetController {}
+enum RateListController {}
 
 // MARK: - Imperative Part
-extension RateListSetController {
+extension RateListController {
     /// 獲得當下以及指定天數的歷史幣別匯率的資料
     /// - Parameters:
     ///   - numberOfDay: 除了當下，所需歷史資料的天數
@@ -86,7 +86,7 @@ extension RateListSetController {
 }
 
 // MARK: - Combine Part
-extension RateListSetController {
+extension RateListController {
     /// 獲得當下以及指定天數的歷史幣別匯率的資料
     /// - Parameter numberOfDay: 除了當下，所需歷史資料的天數
     /// - Returns: 送出所需的資料的 publisher

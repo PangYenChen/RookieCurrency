@@ -17,9 +17,9 @@ class RateListFetcher {
     /// singleton object
     static let shared: RateListFetcher = .init()
     
-    private let rookieURLSession: RookieURLSession
+    let rookieURLSession: RookieURLSession
     #warning("之後要改成在 rate list controller decode")
-    private let jsonDecoder = JSONDecoder()
+    let jsonDecoder = JSONDecoder()
     
     init(rookieURLSession: RookieURLSession = RateListFetcher.rookieURLSession) {
         self.rookieURLSession = rookieURLSession
@@ -37,7 +37,7 @@ class RateListFetcher {
         return urlRequest
     }
     
-    private func updateAPIKeySuccess() -> Bool {
+    func updateAPIKeySuccess() -> Bool {
         if let apiKey = apiKeys.popLast() {
             Self.apiKey = apiKey
             return true
@@ -162,7 +162,7 @@ extension RateListFetcher {
 // MARK: - helper method
 extension RateListFetcher {
     #warning("考慮這個方法要不要跟 archiver 共用")
-    private func prettyPrint(_ data: Data) {
+    func prettyPrint(_ data: Data) {
         if let jsonObject = try? JSONSerialization.jsonObject(with: data),
            let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted) {
             let jsonString = String(decoding: jsonData, as: UTF8.self)
@@ -187,59 +187,7 @@ extension RateListFetcher {
 // MARK: - Imperative Part
 extension RateListFetcher {
     ////////////////這是新版本
-    func fetchRateList(for endPoint: EndPoint,
-                       completionHandler: @escaping (Result<ResponseDataModel.RateList, Error>) -> ()) {
-        
-        let urlRequest = createRequest(url: endPoint.url)
-        
-        rookieURLSession.rookieDataTask(with: urlRequest) { [unowned self] data, response, error in
-            DispatchQueue.main.async { [unowned self] in
-                
-                // 當下的帳號（當下的 api key）的免費額度用完了
-                if let httpURLResponse = response as? HTTPURLResponse,
-                   httpURLResponse.statusCode == 429 {
-                    // 換一個帳號（的 api key）打
-                    if updateAPIKeySuccess() {
-                        fetchRateList(for: endPoint, completionHandler: completionHandler)
-                        return
-                    }
-                }
-                
-                // 網路錯誤，包含 timeout 跟所有帳號的免費額度都用完了
-                if let error = error {
-                    completionHandler(.failure(error))
-                    print("###", self, #function, "網路錯誤", error.localizedDescription, error)
-                    return
-                }
-                
-                guard let data = data else {
-                    print("###", self, #function, "沒有 data 也沒有 error，應該不會有這種情況。")
-                    #warning("204 no content?")
-                    #warning("這邊應該要硬 call completion handler 讓外面知道")
-                    return
-                }
-                
-                prettyPrint(data)
-                
-                if let responseError = try? jsonDecoder.decode(ResponseDataModel.ServerError.self, from: data) {
-                    // 伺服器回傳一個錯誤訊息
-                    completionHandler(.failure(responseError))
-                    print("###", self, #function, "服務商表示錯誤", responseError.localizedDescription, responseError)
-                    return
-                }
-                
-                do {
-                    let rateList = try jsonDecoder.decode(ResponseDataModel.RateList.self, from: data)
-                    // 伺服器回傳正常的匯率資料
-                    completionHandler(.success(rateList))
-                    
-                } catch {
-                    completionHandler(.failure(error))
-                    print("###", self, #function, "decode 失敗", error.localizedDescription, error)
-                }
-            }
-        }
-    }
+    
     ////////////////這是舊版本
     ///
     ///
