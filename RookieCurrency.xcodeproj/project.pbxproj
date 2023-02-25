@@ -45,7 +45,7 @@
 		E13B274D24758ACB00E0A07D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E13B274B24758ACB00E0A07D /* Main.storyboard */; };
 		E13B274F24758ACF00E0A07D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E13B274E24758ACF00E0A07D /* Assets.xcassets */; };
 		E13B275224758ACF00E0A07D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E13B275024758ACF00E0A07D /* LaunchScreen.storyboard */; };
-		E13B275D24758ACF00E0A07D /* RookieCurrencyTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B275C24758ACF00E0A07D /* RookieCurrencyTests.swift */; };
+		E13B275D24758ACF00E0A07D /* RateListFetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B275C24758ACF00E0A07D /* RateListFetcherTests.swift */; };
 		E13B276924758BCB00E0A07D /* Response Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B276824758BCB00E0A07D /* Response Data.swift */; };
 		E15BA6B724FCA66900CA5B1B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E15BA6B624FCA66900CA5B1B /* Assets.xcassets */; };
 		E15BA6BA24FCA66900CA5B1B /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E15BA6B824FCA66900CA5B1B /* LaunchScreen.storyboard */; };
@@ -108,7 +108,7 @@
 		E13B274E24758ACF00E0A07D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E13B275124758ACF00E0A07D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E13B275824758ACF00E0A07D /* RookieCurrencyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RookieCurrencyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E13B275C24758ACF00E0A07D /* RookieCurrencyTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RookieCurrencyTests.swift; sourceTree = "<group>"; };
+		E13B275C24758ACF00E0A07D /* RateListFetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateListFetcherTests.swift; sourceTree = "<group>"; };
 		E13B275E24758ACF00E0A07D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E13B276824758BCB00E0A07D /* Response Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Response Data.swift"; sourceTree = "<group>"; };
 		E15BA6AB24FCA66600CA5B1B /* CombineCurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CombineCurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -247,7 +247,7 @@
 		E13B275B24758ACF00E0A07D /* RookieCurrencyTests */ = {
 			isa = PBXGroup;
 			children = (
-				E13B275C24758ACF00E0A07D /* RookieCurrencyTests.swift */,
+				E13B275C24758ACF00E0A07D /* RateListFetcherTests.swift */,
 				E13B275E24758ACF00E0A07D /* Info.plist */,
 			);
 			path = RookieCurrencyTests;
@@ -552,7 +552,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E13B275D24758ACF00E0A07D /* RookieCurrencyTests.swift in Sources */,
+				E13B275D24758ACF00E0A07D /* RateListFetcherTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -818,7 +818,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RookieCurrencyTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -839,7 +839,7 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				INFOPLIST_FILE = RookieCurrencyTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -899,7 +899,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6VUDHSKKA2;
 				INFOPLIST_FILE = CombineCurrencyTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -921,7 +921,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6VUDHSKKA2;
 				INFOPLIST_FILE = CombineCurrencyTests/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

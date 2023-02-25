@@ -37,7 +37,7 @@ class RateListFetcher {
         return urlRequest
     }
     
-    func updateAPIKeySuccess() -> Bool {
+    private func updateAPIKeySuccess() -> Bool {
         if let apiKey = apiKeys.popLast() {
             Self.apiKey = apiKey
             return true
@@ -192,7 +192,7 @@ extension RateListFetcher {
         
         let urlRequest = createRequest(url: endPoint.url)
         
-        urlSession.dataTask(with: urlRequest) { [unowned self] data, response, error in
+        rookieURLSession.rookieDataTask(with: urlRequest) { [unowned self] data, response, error in
             DispatchQueue.main.async { [unowned self] in
                 
                 // 當下的帳號（當下的 api key）的免費額度用完了
@@ -214,6 +214,8 @@ extension RateListFetcher {
                 
                 guard let data = data else {
                     print("###", self, #function, "沒有 data 也沒有 error，應該不會有這種情況。")
+                    #warning("204 no content?")
+                    #warning("這邊應該要硬 call completion handler 讓外面知道")
                     return
                 }
                 
@@ -237,7 +239,6 @@ extension RateListFetcher {
                 }
             }
         }
-        .resume()
     }
     ////////////////這是舊版本
     ///
@@ -358,10 +359,10 @@ protocol RookieURLSession {
         completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void)
 }
 
-private extension URLSession: RookieURLSession {
+extension URLSession: RookieURLSession {
 #warning("想一下是不是要放在這，因為只有這用到")
     func rookieDataTask(with request: URLRequest,
-                  completionHandler: @escaping @Sendable (Data?, URLResponse?, Error?) -> Void) {
+                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
         dataTask(with: request, completionHandler: completionHandler).resume()
     }
 }
