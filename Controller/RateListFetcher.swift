@@ -12,8 +12,6 @@ import Combine
 /// 跟伺服器拿資料的物件
 class RateListFetcher {
     
-    /// /////////////這是新版本
-    
     /// singleton object
     static let shared: RateListFetcher = .init()
     
@@ -39,14 +37,12 @@ class RateListFetcher {
     
     func updateAPIKeySuccess() -> Bool {
         if let apiKey = apiKeys.popLast() {
-            Self.apiKey = apiKey
+            self.apiKey = apiKey
             return true
         } else {
             return false
         }
     }
-    
-    
     
 #if DEBUG
 #warning("改成singleton的時候要改邏輯")
@@ -55,8 +51,6 @@ class RateListFetcher {
         return Double(apiKeys.count) / Double(apiKeyCount)
     }
 #endif
-    
-    ////////////////這是舊版本
     
     /// 解析伺服器回傳的資料的共用 JSON decoder
     private static let jsonDecoder = JSONDecoder()
@@ -104,14 +98,6 @@ class RateListFetcher {
     }
     
     /// 不暫存的 session
-    private static let urlSession: URLSession = {
-        let configuration = URLSessionConfiguration.default
-        configuration.urlCache = nil
-        
-        let urlSession = URLSession(configuration: configuration)
-        return urlSession
-    }()
-    
     private static let rookieURLSession: URLSession = {
         let configuration = URLSessionConfiguration.default
         configuration.urlCache = nil
@@ -122,42 +108,6 @@ class RateListFetcher {
     
 }
 
-// MARK: - api keys
-extension RateListFetcher {
-    
-    
-    ////////////////這是新版本
-    
-    ////////////////這是舊版本
-    private static var apiKeys: [String] = [
-        "pT4L8AtpKOIWiGoE0ouiak003mdE0Wvg"
-    ]
-    
-    private static var apiKey: String = "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"
-    
-    static func createRequest(url: URL) -> URLRequest {
-        var urlRequest = URLRequest(url: url, timeoutInterval: 5)
-        urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
-        return urlRequest
-    }
-    
-    static func updateAPIKeySuccess() -> Bool {
-        if let apiKey = apiKeys.popLast() {
-            Self.apiKey = apiKey
-            return true
-        } else {
-            return false
-        }
-    }
-    
-#if DEBUG
-    #warning("改成singleton的時候要改邏輯")
-    static var apiKeysUsage: Double {
-        let apiKeyCount = apiKeys.count + 1
-        return Double(apiKeys.count) / Double(apiKeyCount)
-    }
-#endif
-}
 
 // MARK: - helper method
 extension RateListFetcher {
