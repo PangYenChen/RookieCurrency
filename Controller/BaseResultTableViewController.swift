@@ -156,9 +156,7 @@ class BaseResultTableViewController: UITableViewController {
         // alert action
         do {
             let alertActionTitle = R.string.localizable.alertActionTitle()
-            let alertAction = UIAlertAction(title: alertActionTitle, style: .cancel) { _ in
-                alertController.dismiss(animated: true)
-            }
+            let alertAction = UIAlertAction(title: alertActionTitle, style: .cancel)
             alertController.addAction(alertAction)
         }
         
