@@ -23,17 +23,12 @@ class RateListFetcher {
         self.rookieURLSession = rookieURLSession
     }
     
+    // MARK: - api key 相關
     private var apiKeys: [String] = [
         "pT4L8AtpKOIWiGoE0ouiak003mdE0Wvg"
     ]
     
     private var apiKey: String = "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"
-    
-    func createRequest(url: URL) -> URLRequest {
-        var urlRequest = URLRequest(url: url, timeoutInterval: 5)
-        urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
-        return urlRequest
-    }
     
     func updateAPIKeySuccess() -> Bool {
         if let apiKey = apiKeys.popLast() {
@@ -43,18 +38,10 @@ class RateListFetcher {
             return false
         }
     }
-    
-#if DEBUG
-#warning("改成singleton的時候要改邏輯")
-    var apiKeysUsage: Double {
-        let apiKeyCount = apiKeys.count + 1
-        return Double(apiKeys.count) / Double(apiKeyCount)
-    }
-#endif
-    
-    /// 解析伺服器回傳的資料的共用 JSON decoder
-    private static let jsonDecoder = JSONDecoder()
-    
+}
+
+// MARK: - name space
+extension RateListFetcher {
     /// 拿的資料的種類
     enum EndPoint {
         /// 組裝出 url 的 url components
@@ -71,7 +58,7 @@ class RateListFetcher {
             
             urlComponents?.queryItems = [URLQueryItem(name: "base", value: "EUR")]
             
-            #warning("之後要改成以新台幣為基準幣別，這樣出錯的時候我比較看得出來，目前本地存的資料還是以歐元為基準")
+#warning("之後要改成以新台幣為基準幣別，這樣出錯的時候我比較看得出來，目前本地存的資料還是以歐元為基準")
             
             return urlComponents
         }()
@@ -92,11 +79,15 @@ class RateListFetcher {
                 urlComponents?.path += dateString
             }
             
-            #warning("雖然說不應該 forced unwrap，但我想不到什麼時候會是 nil。")
+#warning("雖然說不應該 forced unwrap，但我想不到什麼時候會是 nil。")
             return (urlComponents?.url)!
         }
     }
     
+}
+
+// MARK: - static property
+extension RateListFetcher {
     /// 不暫存的 session
     private static let rookieURLSession: URLSession = {
         let configuration = URLSessionConfiguration.default
@@ -105,12 +96,16 @@ class RateListFetcher {
         let urlSession = URLSession(configuration: configuration)
         return urlSession
     }()
-    
 }
-
 
 // MARK: - helper method
 extension RateListFetcher {
+    func createRequest(url: URL) -> URLRequest {
+        var urlRequest = URLRequest(url: url, timeoutInterval: 5)
+        urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
+        return urlRequest
+    }
+    
     #warning("考慮這個方法要不要跟 archiver 共用")
     func prettyPrint(_ data: Data) {
         if let jsonObject = try? JSONSerialization.jsonObject(with: data),
@@ -123,6 +118,17 @@ extension RateListFetcher {
     }
 }
 
+// MARK: - 在 debug build configuration 顯示用量
+#if DEBUG
+extension RateListFetcher {
+#warning("改成singleton的時候要改邏輯")
+    var apiKeysUsage: Double {
+        let apiKeyCount = apiKeys.count + 1
+        return Double(apiKeys.count) / Double(apiKeyCount)
+    }
+}
+#endif
+
 protocol RookieURLSession {
     func rookieDataTask(with request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
@@ -131,9 +137,8 @@ protocol RookieURLSession {
 }
 
 extension URLSession: RookieURLSession {
-#warning("想一下是不是要放在這，因為只有這用到")
     func rookieDataTask(with request: URLRequest,
-                  completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+                        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
         dataTask(with: request, completionHandler: completionHandler).resume()
     }
     
