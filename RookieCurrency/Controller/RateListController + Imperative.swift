@@ -13,7 +13,7 @@ extension RateListController {
     /// - Parameters:
     ///   - numberOfDay: 除了當下，所需歷史資料的天數
     ///   - completionHandler: 拿到資料後要執行的 completion handler
-    static func getRatesSetForDays(numberOfDay: Int,
+    func getRatesSetForDays(numberOfDay: Int,
                                    completionHandler: @escaping (Result<(latestRateList: ResponseDataModel.RateList, historicalRateListSet: Set<ResponseDataModel.RateList>), Error>) -> ()) {
         
         /// 硬碟中全部的資料

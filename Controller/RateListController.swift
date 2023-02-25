@@ -10,7 +10,14 @@ import Foundation
 import Combine
 #warning("這裡的 method 好長 看能不能拆開")
 /// 用來獲得各幣別匯率資料的類別
-enum RateListController {}
+class RateListController {
+    static let shared: RateListController = .init()
+    
+    let rateListFetcher = RateListFetcher.shared
+    #warning("之後要用注入的")
+    
+    init() {}
+}
 
 // MARK: - Imperative Part
 extension RateListController {
