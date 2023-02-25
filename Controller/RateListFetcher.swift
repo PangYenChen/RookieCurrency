@@ -16,7 +16,7 @@ class RateListFetcher {
     static let shared: RateListFetcher = .init()
     
     let rateListSession: RateListSession
-    #warning("之後要改成在 rate list controller decode")
+#warning("之後要改成在 rate list controller decode")
     let jsonDecoder = JSONDecoder()
     
     init(rateListSession: RateListSession = RateListFetcher.rateListSession) {
@@ -124,10 +124,9 @@ extension RateListFetcher {
             // api key 的額度正常，不需要重打 api。
             return false
         }
-
     }
     
-    #warning("考慮這個方法要不要跟 archiver 共用")
+#warning("考慮這個方法要不要跟 archiver 共用")
     func prettyPrint(_ data: Data) {
         if let jsonObject = try? JSONSerialization.jsonObject(with: data),
            let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted) {
@@ -154,7 +153,7 @@ extension RateListFetcher {
 // MARK: - RateListSession
 protocol RateListSession {
     func rateListDataTask(with request: URLRequest,
-        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
+                          completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
     
     func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError>
 }
@@ -162,7 +161,7 @@ protocol RateListSession {
 // MARK: - make url session confirm RateListSession
 extension URLSession: RateListSession {
     func rateListDataTask(with request: URLRequest,
-                        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+                          completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
         dataTask(with: request, completionHandler: completionHandler).resume()
     }
     

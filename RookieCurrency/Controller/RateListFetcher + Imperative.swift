@@ -19,13 +19,13 @@ extension RateListFetcher {
         let urlRequest = createRequest(url: endPoint.url)
         
         rateListSession.rateListDataTask(with: urlRequest) { [unowned self] data, response, error in
-            
+            // api key 的額度是否用完
             if let response, shouldMakeNewAPICall(for: response) {
                     rateList(for: endPoint, completionHandler: completionHandler)
                     return
             }
             
-            // 網路錯誤，包含 timeout 跟所有帳號的免費額度都用完了
+            // 網路錯誤，包含 timeout
             if let error = error {
                 completionHandler(.failure(error))
                 print("###", self, #function, "網路錯誤", error.localizedDescription, error)
