@@ -20,6 +20,5 @@ class DebugInfoViewController: UIViewController {
         apiKeyUsageProgressView.setProgress(Float(RateListFetcher.apiKeysUsage), animated: true)
         homeDirectoryTextView.text = NSHomeDirectory()
     }
-
 #endif
 }
