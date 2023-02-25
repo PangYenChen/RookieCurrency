@@ -10,12 +10,12 @@ import Foundation
 import Combine
 
 extension RateListFetcher {
-    func rateListPublisher(for endPoint: EndPoint) -> AnyPublisher<ResponseDataModel.RateList, Error> {
+    func rateListPublisher(for endPoint: EndPoint) -> AnyPublisher<Data, Error> {
         
         func dataTaskPublisherWithLimitHandling(for endPoint: EndPoint) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
             let urlRequest = createRequest(url: endPoint.url)
             
-            return  rateListSession.rateListDataTaskPublisher(for: urlRequest)
+            return rateListSession.rateListDataTaskPublisher(for: urlRequest)
                 .receive(on: DispatchQueue.main)
                 .flatMap { [unowned self] output -> AnyPublisher<(data: Data, response: URLResponse), URLError> in
                     
@@ -44,7 +44,6 @@ extension RateListFetcher {
                     return data
                 }
             }
-            .decode(type: ResponseDataModel.RateList.self, decoder: jsonDecoder)
             .eraseToAnyPublisher()
     }
 }
