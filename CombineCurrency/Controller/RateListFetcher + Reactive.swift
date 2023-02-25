@@ -18,10 +18,8 @@ extension RateListFetcher {
             return  rateListSession.rateListDataTaskPublisher(for: urlRequest)
                 .receive(on: DispatchQueue.main)
                 .flatMap { [unowned self] output -> AnyPublisher<(data: Data, response: URLResponse), URLError> in
-                    if let httpURLResponse = output.response as? HTTPURLResponse,
-                       httpURLResponse.statusCode == 429,
-                       updateAPIKeySuccess() {
-                        
+                    
+                    if shouldMakeNewAPICall(for: output.response) {
                         return dataTaskPublisherWithLimitHandling(for: endPoint)
                             .eraseToAnyPublisher()
                         
