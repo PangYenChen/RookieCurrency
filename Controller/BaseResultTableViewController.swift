@@ -169,7 +169,6 @@ class BaseResultTableViewController: UITableViewController {
 // MARK: - Search Bar Delegate
 extension BaseResultTableViewController: UISearchBarDelegate {}
 
-
 // MARK: - name space
 extension BaseResultTableViewController {
     /// 資料的排序方式。
@@ -187,8 +186,9 @@ extension BaseResultTableViewController {
         
     }
 }
+
 // MARK: - name space
-extension BaseResultTableViewController {
+private extension BaseResultTableViewController {
     enum Section {
         case main
     }
