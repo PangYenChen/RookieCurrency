@@ -63,8 +63,12 @@ extension RateListFetcher {
         }
     }
     
+    /// <#Description#>
+    /// - Parameters:
+    ///   - endPoint: <#endPoint description#>
+    ///   - completionHandler: <#completionHandler description#>
     func rateList(for endPoint: EndPoint,
-                  completionHandler: @escaping (Result<(data: Data, response: URLResponse), Error>) -> ()) {
+                  completionHandler: @escaping (Result<Data, Error>) -> ()) {
         
         let urlRequest = createRequest(url: endPoint.url)
         
@@ -100,6 +104,8 @@ extension RateListFetcher {
                 completionHandler(.failure(responseError))
                 print("###", self, #function, "服務商表示錯誤", responseError.localizedDescription, responseError)
                 return
+            } else {
+                completionHandler(.success(data))
             }
         }
     }
