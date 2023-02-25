@@ -10,10 +10,14 @@ import UIKit
 
 class DebugInfoViewController: UIViewController {
 #if DEBUG
+    // MARK: - IBOutlet
+    @IBOutlet weak var apiKeyUsageProgressView: UIProgressView!
+    
     @IBOutlet weak var homeDirectoryTextView: UITextView!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        apiKeyUsageProgressView.setProgress(Float(RateListFetcher.apiKeysUsage), animated: true)
         homeDirectoryTextView.text = NSHomeDirectory()
     }
 

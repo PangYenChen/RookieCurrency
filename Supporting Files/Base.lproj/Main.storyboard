@@ -207,25 +207,34 @@
                         <rect key="frame" x="0.0" y="0.0" width="414" height="838"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="oFI-aB-95q">
-                                <rect key="frame" x="95" y="8" width="240" height="788"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor"/>
-                                <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
-                                <color key="textColor" systemColor="labelColor"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="14"/>
-                                <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
-                            </textView>
+                            <stackView opaque="NO" contentMode="scaleToFill" axis="vertical" spacingType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="nng-IR-iab">
+                                <rect key="frame" x="20" y="8" width="374" height="810"/>
+                                <subviews>
+                                    <progressView opaque="NO" contentMode="scaleToFill" verticalHuggingPriority="750" progress="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="aKQ-Yt-DTJ">
+                                        <rect key="frame" x="0.0" y="0.0" width="374" height="4"/>
+                                    </progressView>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" editable="NO" textAlignment="natural" translatesAutoresizingMaskIntoConstraints="NO" id="oFI-aB-95q">
+                                        <rect key="frame" x="0.0" y="12" width="374" height="798"/>
+                                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
+                                        <string key="text">Lorem ipsum dolor sit er elit lamet, consectetaur cillium adipisicing pecu, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Nam liber te conscient to factor tum poen legum odioque civiuda.</string>
+                                        <color key="textColor" systemColor="labelColor"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                        <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
+                                    </textView>
+                                </subviews>
+                            </stackView>
                         </subviews>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="oFI-aB-95q" secondAttribute="trailing" constant="59" id="9jt-gI-zfd"/>
-                            <constraint firstItem="oFI-aB-95q" firstAttribute="leading" secondItem="8Fc-xx-cnE" secondAttribute="leadingMargin" constant="75" id="Ev0-TF-fDW"/>
-                            <constraint firstItem="oFI-aB-95q" firstAttribute="top" secondItem="zPF-FK-lT6" secondAttribute="bottom" constant="8" symbolic="YES" id="S0f-De-Yl7"/>
-                            <constraint firstItem="tze-qN-3dm" firstAttribute="top" secondItem="oFI-aB-95q" secondAttribute="bottom" constant="8" symbolic="YES" id="xPm-DZ-Rrf"/>
+                            <constraint firstItem="nng-IR-iab" firstAttribute="leading" secondItem="8Fc-xx-cnE" secondAttribute="leading" constant="20" symbolic="YES" id="Bus-9V-pag"/>
+                            <constraint firstItem="nng-IR-iab" firstAttribute="top" secondItem="zPF-FK-lT6" secondAttribute="bottom" constant="8" symbolic="YES" id="G8R-D1-urM"/>
+                            <constraint firstAttribute="bottom" secondItem="nng-IR-iab" secondAttribute="bottom" constant="20" symbolic="YES" id="MAT-iW-e0H"/>
+                            <constraint firstAttribute="trailing" secondItem="nng-IR-iab" secondAttribute="trailing" constant="20" symbolic="YES" id="NMo-Xd-RTQ"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" id="fiK-LG-XrP"/>
                     <connections>
+                        <outlet property="apiKeyUsageProgressView" destination="aKQ-Yt-DTJ" id="g5h-Ks-iPe"/>
                         <outlet property="homeDirectoryTextView" destination="oFI-aB-95q" id="cUH-hr-wAh"/>
                     </connections>
                 </viewController>

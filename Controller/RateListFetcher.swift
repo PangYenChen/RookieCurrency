@@ -90,6 +90,14 @@ extension RateListFetcher {
             return false
         }
     }
+    
+#if DEBUG
+    #warning("改成singleton的時候要改邏輯")
+    static var apiKeysUsage: Double {
+        let apiKeyCount = apiKeys.count + 1
+        return Double(apiKeys.count) / Double(apiKeyCount)
+    }
+#endif
 }
 
 // MARK: - helper method
