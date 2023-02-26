@@ -97,6 +97,7 @@ class ResultTableViewController: BaseResultTableViewController {
                     RateListController.shared
                         .rateListSetPublisher(forDays: numberOfDayAndBaseCurrency.numberOfDay)
                         .convertOutputToResult()
+                        .receive(on: DispatchQueue.main)
                 }
                 .share()
             
