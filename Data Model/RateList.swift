@@ -17,7 +17,7 @@ extension ResponseDataModel {
         
         /// Returns the date for which rates were requested.
         var dateString: String {
-            DateFormatter.requestDateFormatter.string(from: date)
+            AppSetting.requestDateFormatter.string(from: date)
         }
         
         /// 在拿到伺服器回傳的日期字串後，將該字串轉成 Date
@@ -146,7 +146,7 @@ extension ResponseDataModel.RateList: Codable {
         let dateString = try container.decode(String.self, forKey: .date)
         
         // 客製化 init from decoder 就是為了檢查日期字串的格式
-        if let dateDummy = DateFormatter.requestDateFormatter.date(from: dateString) {
+        if let dateDummy = AppSetting.requestDateFormatter.date(from: dateString) {
             date = dateDummy
         } else {
             throw ServerDateError.serverDateInvalid(dateString: dateString)

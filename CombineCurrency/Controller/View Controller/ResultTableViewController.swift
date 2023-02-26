@@ -24,8 +24,8 @@ class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - Methods
     required init?(coder: NSCoder) {
-        numberOfDayAndBaseCurrency = CurrentValueSubject((numberOfDay: UserDefaults.numberOfDay, baseCurrency: UserDefaults.baseCurrency))
-        order = CurrentValueSubject(UserDefaults.order)
+        numberOfDayAndBaseCurrency = CurrentValueSubject((numberOfDay: AppSetting.numberOfDay, baseCurrency: AppSetting.baseCurrency))
+        order = CurrentValueSubject(AppSetting.order)
         searchText = CurrentValueSubject(String())
         anyCancellableSet = Set<AnyCancellable>()
         refresh = CurrentValueSubject(())
@@ -67,7 +67,7 @@ class ResultTableViewController: BaseResultTableViewController {
             order
                 .dropFirst()
                 .sink { [unowned self] order in
-                    UserDefaults.order = order
+                    AppSetting.order = order
                     sortItem.menu?.children.first?.subtitle = order.localizedName
                 }
                 .store(in: &anyCancellableSet)
@@ -76,8 +76,8 @@ class ResultTableViewController: BaseResultTableViewController {
         numberOfDayAndBaseCurrency
             .dropFirst()
             .sink { numberOfDay, baseCurrency in
-                UserDefaults.numberOfDay = numberOfDay
-                UserDefaults.baseCurrency = baseCurrency
+                AppSetting.numberOfDay = numberOfDay
+                AppSetting.baseCurrency = baseCurrency
             }
             .store(in: &anyCancellableSet)
         
@@ -116,7 +116,7 @@ class ResultTableViewController: BaseResultTableViewController {
                 .map { rateListSet in rateListSet.latestRateList.timestamp }
                 .map(Double.init)
                 .map(Date.init(timeIntervalSince1970:))
-                .map(DateFormatter.uiDateFormatter.string(from:))
+                .map(AppSetting.uiDateFormatter.string(from:))
                 .prepend("-")
             
             let analyzedDataDictionary = rateListSetSuccess

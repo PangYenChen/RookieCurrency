@@ -24,9 +24,9 @@ class ResultTableViewController: BaseResultTableViewController {
     // MARK: - Methods
     required init?(coder: NSCoder) {
         
-        numberOfDay = UserDefaults.numberOfDay
-        baseCurrency = UserDefaults.baseCurrency
-        order = UserDefaults.order
+        numberOfDay = AppSetting.numberOfDay
+        baseCurrency = AppSetting.baseCurrency
+        order = AppSetting.order
         searchText = String()
         latestUpdateTime =  nil
         
@@ -70,6 +70,7 @@ class ResultTableViewController: BaseResultTableViewController {
     
     override func setOrder(_ order: BaseResultTableViewController.Order) {
         self.order = order
+        AppSetting.order = order
         sortItem.menu?.children.first?.subtitle = order.localizedName
         populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
                           order: self.order,
@@ -87,13 +88,13 @@ class ResultTableViewController: BaseResultTableViewController {
             // base currency
             do {
                 baseCurrency = editedBaseCurrency
-                UserDefaults.baseCurrency = baseCurrency
+                AppSetting.baseCurrency = baseCurrency
             }
             
             // number Of Day
             do {
                 numberOfDay = editedNumberOfDay
-                UserDefaults.numberOfDay = numberOfDay
+                AppSetting.numberOfDay = numberOfDay
             }
             
             refreshDataAndPopulateTableView()
@@ -105,9 +106,9 @@ class ResultTableViewController: BaseResultTableViewController {
         if refreshControl?.isRefreshing == false {
             refreshControl?.beginRefreshing()
         }
-
+        
         latestUpdateTimeItem.title = R.string.localizable.updating()
-
+        
         RateListController.shared.getRateListFor(numberOfDay: numberOfDay) { [unowned self] result in
             switch result {
             case .success(let (latestRateList, historicalRateListSet)):
@@ -117,7 +118,7 @@ class ResultTableViewController: BaseResultTableViewController {
                     let timestamp = Double(latestRateList.timestamp)
                     latestUpdateTime = Date(timeIntervalSince1970: timestamp)
                 }
-
+                
                 // update table view
                 do {
                     analyzedDataDictionary = RateListSetAnalyst
@@ -128,21 +129,21 @@ class ResultTableViewController: BaseResultTableViewController {
                                       order: self.order,
                                       searchText: self.searchText)
                 }
-
+                
             case .failure(let error):
                 showErrorAlert(error: error)
             }
-
+            
             do { // update latestUpdateTimeItem
-                let dateString = latestUpdateTime.map(DateFormatter.uiDateFormatter.string(from:)) ?? "-"
+                let dateString = latestUpdateTime.map(AppSetting.uiDateFormatter.string(from:)) ?? "-"
                 latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(dateString)
             }
-
+            
             refreshControl?.endRefreshing()
         }
     }
 }
-    
+
 // MARK: - Search Bar Delegate
 extension ResultTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {

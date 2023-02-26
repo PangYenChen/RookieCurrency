@@ -66,7 +66,7 @@ extension RateListFetcher {
             case .latest:
                 urlComponents?.path += "latest"
             case .historical(date: let date):
-                let dateString = DateFormatter.requestDateFormatter.string(from: date)
+                let dateString = AppSetting.requestDateFormatter.string(from: date)
                 urlComponents?.path += dateString
             }
             
