@@ -27,3 +27,5 @@ custom segue
 用 run script 在 build 之前拿到當下的 git commit hash 跟日期，在設定頁面顯示出來。
 
 在 debug build configuration 顯示模擬器的路徑，以便查看儲存的資料跟 UserDefault。
+
+在服務商回傳 status code 429(too many request) 時，更換 api key 重打。 
