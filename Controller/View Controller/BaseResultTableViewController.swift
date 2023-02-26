@@ -141,11 +141,11 @@ class BaseResultTableViewController: UITableViewController {
         do {
             let message: String
             
-            if let errorMessage = error as? ResponseDataModel.ServerError {
-                message = errorMessage.localizedDescription
-            } else {
+//            if let errorMessage = error as? ResponseDataModel.ServerError {
+//                message = errorMessage.localizedDescription
+//            } else {
                 message = error.localizedDescription
-            }
+//            }
             
             let alertTitle = R.string.localizable.alertTitle()
             alertController = UIAlertController(title: alertTitle,

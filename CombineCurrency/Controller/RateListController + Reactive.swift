@@ -18,7 +18,6 @@ extension RateListController {
     -> AnyPublisher<(latestRateList: ResponseDataModel.RateList, historicalRateListSet: Set<ResponseDataModel.RateList>), Error> {
         
         rateListFetcher.rateListPublisher(for: .latest)
-            .decode(type: ResponseDataModel.RateList.self, decoder: jsonDecoder)
             .combineLatest(RateListSetArchiver.unarchivedRateListSetPublisher())
             .flatMap { [unowned self] latestRateList, unarchivedRateListSet -> AnyPublisher<(latestRateList: ResponseDataModel.RateList, historicalRateListSet: Set<ResponseDataModel.RateList>), Error> in
                 
@@ -35,10 +34,7 @@ extension RateListController {
                         historicalRateListNeededSet.insert(historicalRateList)
                     } else {
                         needToFetchRateListPublisherArray.append(
-                            rateListFetcher
-                                .rateListPublisher(for: .historical(date: historicalDate))
-                                .decode(type: ResponseDataModel.RateList.self, decoder: jsonDecoder)
-                                .eraseToAnyPublisher()
+                            rateListFetcher.rateListPublisher(for: .historical(date: historicalDate))
                         )
                     }
                 }

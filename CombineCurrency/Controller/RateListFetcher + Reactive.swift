@@ -10,7 +10,7 @@ import Foundation
 import Combine
 
 extension RateListFetcher {
-    func rateListPublisher(for endPoint: EndPoint) -> AnyPublisher<Data, Error> {
+    func rateListPublisher(for endPoint: EndPoint) -> AnyPublisher<ResponseDataModel.RateList, Error> {
         
         func dataTaskPublisherWithLimitHandling(for endPoint: EndPoint) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
             let urlRequest = createRequest(url: endPoint.url)
@@ -35,15 +35,7 @@ extension RateListFetcher {
         return dataTaskPublisherWithLimitHandling(for: endPoint)
             .map { $0.0 }
             .handleEvents(receiveOutput: prettyPrint)
-            .tryMap { [unowned self] data -> Data in
-                if let responseError = try? jsonDecoder.decode(ResponseDataModel.ServerError.self, from: data) {
-                    // 伺服器回傳一個錯誤訊息
-                    print("###", self, #function, "服務商表示錯誤", responseError.localizedDescription, responseError)
-                    throw responseError
-                } else {
-                    return data
-                }
-            }
+            .decode(type: ResponseDataModel.RateList.self, decoder: jsonDecoder)
             .eraseToAnyPublisher()
     }
 }

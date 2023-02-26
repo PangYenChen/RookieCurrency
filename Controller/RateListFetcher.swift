@@ -16,7 +16,7 @@ class RateListFetcher {
     static let shared: RateListFetcher = .init()
     
     let rateListSession: RateListSession
-#warning("之後要改成在 rate list controller decode")
+
     let jsonDecoder = JSONDecoder()
     
     init(rateListSession: RateListSession = RateListFetcher.rateListSession) {
