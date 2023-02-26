@@ -15,6 +15,7 @@ extension RateListController {
     ///   - numberOfDay: 除了當下，所需歷史資料的天數
     ///   - completionHandler: 拿到資料後要執行的 completion handler
     func getRateListFor(numberOfDay: Int,
+                        queue: DispatchQueue,
                         completionHandler: @escaping (Result<(latestRateList: ResponseDataModel.RateList, historicalRateListSet: Set<ResponseDataModel.RateList>), Error>) -> ()) {
         
         /// 硬碟中全部的資料
@@ -63,7 +64,7 @@ extension RateListController {
                 }
                 
                 // 所需的資料全部拿到後
-                dispatchGroup?.notify(queue: .main) {
+                dispatchGroup?.notify(queue: queue) {
                     print("###", self, #function, "全部的資料是\n\t", historicalRateListSet.sorted { lhs, rhs in lhs.date < rhs.date })
                     completionHandler(.success((latestRateList, historicalRateListSet)))
                     

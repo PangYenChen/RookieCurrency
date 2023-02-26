@@ -16,7 +16,6 @@ extension RateListFetcher {
             let urlRequest = createRequest(url: endPoint.url)
             
             return rateListSession.rateListDataTaskPublisher(for: urlRequest)
-//                .receive(on: DispatchQueue.main)
                 .flatMap { [unowned self] output -> AnyPublisher<(data: Data, response: URLResponse), URLError> in
                     
                     if shouldMakeNewAPICall(for: output.response) {

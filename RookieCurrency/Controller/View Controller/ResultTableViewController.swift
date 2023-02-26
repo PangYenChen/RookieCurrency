@@ -109,7 +109,7 @@ class ResultTableViewController: BaseResultTableViewController {
         
         latestUpdateTimeItem.title = R.string.localizable.updating()
         
-        RateListController.shared.getRateListFor(numberOfDay: numberOfDay) { [unowned self] result in
+        RateListController.shared.getRateListFor(numberOfDay: numberOfDay, queue: .main) { [unowned self] result in
             switch result {
             case .success(let (latestRateList, historicalRateListSet)):
                 
