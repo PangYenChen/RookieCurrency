@@ -32,57 +32,47 @@ extension RateListController {
         // 抓取當下的 rate list
         rateListFetcher.rateList(for: .latest) { [unowned self] result in
             switch result {
-            case .success(let data):
-                do {
-                    let latestRateList = try jsonDecoder.decode(ResponseDataModel.RateList.self, from: data)
-                    
-                    var dispatchGroup: DispatchGroup? = DispatchGroup()
-                    
-                    // 取得歷史資料
-                    for numberOfDayAgo in 1...numberOfDay {
-                        let historicalDate = latestRateList.date.advanced(by: 24 * 60 * 60 * Double(-numberOfDayAgo))
-                        if let historicalRateList = unarchivedRateListSet.first(where: { $0.date == historicalDate}) {
-                            // 有既有資料可以用
-                            historicalRateListSet.insert(historicalRateList)
-                            print("###", self, #function, "從既有的資料中找到：", historicalDate)
-                        } else {
-                            // 沒有既有資料，要透過網路拿取
-                            print("###", self, #function, "向伺服器拿取資料：", historicalDate)
-                            
-                            dispatchGroup?.enter()
-                            rateListFetcher.rateList(for: .historical(date: historicalDate) ) { [unowned self] result in
-                                switch result {
-                                case .success(let data):
-                                    do {
-                                        let fetchedRateList = try jsonDecoder.decode(ResponseDataModel.RateList.self, from: data)
-                                        historicalRateListSet.insert(fetchedRateList)
-                                        unarchivedRateListSet.insert(fetchedRateList)
-                                        dispatchGroup?.leave()
-                                    } catch {
-                                        completionHandler(.failure(error))
-                                    }
-                                case .failure(let error):
-                                    completionHandler(.failure(error))
-                                    dispatchGroup = nil
-                                }
+            case .success(let latestRateList):
+                
+                var dispatchGroup: DispatchGroup? = DispatchGroup()
+                
+                // 取得歷史資料
+                for numberOfDayAgo in 1...numberOfDay {
+                    let historicalDate = latestRateList.date.advanced(by: 24 * 60 * 60 * Double(-numberOfDayAgo))
+                    if let historicalRateList = unarchivedRateListSet.first(where: { $0.date == historicalDate}) {
+                        // 有既有資料可以用
+                        historicalRateListSet.insert(historicalRateList)
+                        print("###", self, #function, "從既有的資料中找到：", historicalDate)
+                    } else {
+                        // 沒有既有資料，要透過網路拿取
+                        print("###", self, #function, "向伺服器拿取資料：", historicalDate)
+                        
+                        dispatchGroup?.enter()
+                        rateListFetcher.rateList(for: .historical(date: historicalDate) ) { result in
+                            switch result {
+                            case .success(let fetchedRateList):
+                                historicalRateListSet.insert(fetchedRateList)
+                                unarchivedRateListSet.insert(fetchedRateList)
+                                dispatchGroup?.leave()
+                            case .failure(let error):
+                                completionHandler(.failure(error))
+                                dispatchGroup = nil
                             }
                         }
                     }
+                }
+                
+                // 所需的資料全部拿到後
+                dispatchGroup?.notify(queue: .main) {
+                    print("###", self, #function, "全部的資料是\n\t", historicalRateListSet.sorted { lhs, rhs in lhs.date < rhs.date })
+                    completionHandler(.success((latestRateList, historicalRateListSet)))
                     
-                    // 所需的資料全部拿到後
-                    dispatchGroup?.notify(queue: .main) {
-                        print("###", self, #function, "全部的資料是\n\t", historicalRateListSet.sorted { lhs, rhs in lhs.date < rhs.date })
-                        completionHandler(.success((latestRateList, historicalRateListSet)))
-                        
-                        do {
-                            try RateListSetArchiver.archive(unarchivedRateListSet)
-                        } catch {
+                    do {
+                        try RateListSetArchiver.archive(unarchivedRateListSet)
+                    } catch {
 #warning("存檔失敗不知道要幹嘛？？ 考慮改成 `try?`")
-                            completionHandler(.failure(error))
-                        }
+                        completionHandler(.failure(error))
                     }
-                } catch {
-                    completionHandler(.failure(error))
                 }
             case .failure(let error):
                 completionHandler(.failure(error))

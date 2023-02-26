@@ -14,7 +14,7 @@ extension RateListFetcher {
     ///   - endPoint: <#endPoint description#>
     ///   - completionHandler: <#completionHandler description#>
     func rateList(for endPoint: EndPoint,
-                  completionHandler: @escaping (Result<Data, Error>) -> ()) {
+                  completionHandler: @escaping (Result<ResponseDataModel.RateList, Error>) -> ()) {
         
         let urlRequest = createRequest(url: endPoint.url)
         
@@ -40,13 +40,11 @@ extension RateListFetcher {
             
             prettyPrint(data)
             
-            if let responseError = try? jsonDecoder.decode(ResponseDataModel.ServerError.self, from: data) {
-                // 伺服器回傳一個錯誤訊息
-                completionHandler(.failure(responseError))
-                print("###", self, #function, "服務商表示錯誤", responseError.localizedDescription, responseError)
-                return
-            } else {
-                completionHandler(.success(data))
+            do {
+                let rateList = try jsonDecoder.decode(ResponseDataModel.RateList.self, from: data)
+                completionHandler(.success(rateList))
+            } catch {
+                completionHandler(.failure(error))
             }
         }
     }
