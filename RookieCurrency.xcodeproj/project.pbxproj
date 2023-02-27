@@ -176,7 +176,6 @@
 				514C4D0929A0D9FA0049E192 /* BaseSettingTableViewController.swift */,
 				514C4D0429A0D6570049E192 /* BaseCurrencyTableViewController.swift */,
 				5120879729A8DC71005ED87A /* DebugInfoViewController.swift */,
-				514F72FD29AB682D0080DD8B /* AppSetting.swift */,
 			);
 			path = "View Controller";
 			sourceTree = "<group>";
@@ -236,6 +235,7 @@
 				E13B274B24758ACB00E0A07D /* Main.storyboard */,
 				5129D7AA298FAAC5005F5DE5 /* Localizable.strings */,
 				51578B7029A85A1000BE890F /* Git Commit Info.swift */,
+				514F72FD29AB682D0080DD8B /* AppSetting.swift */,
 			);
 			path = "Supporting Files";
 			sourceTree = "<group>";
