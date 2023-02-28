@@ -9,6 +9,19 @@
 import Foundation
 import Combine
 
+// MARK: - RateListSession
+protocol RateListSession {
+    func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError>
+}
+
+// MARK: - make url session confirm RateListSession
+extension URLSession: RateListSession {
+    func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+        dataTaskPublisher(for: request).eraseToAnyPublisher()
+    }
+}
+
+
 extension RateListFetcher {
     func rateListPublisher(for endPoint: EndPoint) -> AnyPublisher<ResponseDataModel.RateList, Error> {
         

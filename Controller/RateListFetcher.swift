@@ -148,25 +148,3 @@ extension RateListFetcher {
     }
 }
 #endif
-
-
-// MARK: - RateListSession
-protocol RateListSession {
-    func rateListDataTask(with request: URLRequest,
-                          completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
-    
-    func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError>
-}
-
-// MARK: - make url session confirm RateListSession
-extension URLSession: RateListSession {
-    func rateListDataTask(with request: URLRequest,
-                          completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
-        dataTask(with: request, completionHandler: completionHandler).resume()
-    }
-    
-    func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
-        dataTaskPublisher(for: request).eraseToAnyPublisher()
-    }
-}
-

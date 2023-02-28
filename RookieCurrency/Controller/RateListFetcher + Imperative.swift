@@ -8,6 +8,24 @@
 
 import Foundation
 
+// MARK: - RateListSession
+protocol RateListSession {
+    func rateListDataTask(with request: URLRequest,
+                          completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
+}
+
+// MARK: - make url session confirm RateListSession
+extension URLSession: RateListSession {
+    func rateListDataTask(with request: URLRequest,
+                          completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+        dataTask(with: request, completionHandler: completionHandler).resume()
+    }
+}
+
+
+
+
+
 extension RateListFetcher {
     /// <#Description#>
     /// - Parameters:

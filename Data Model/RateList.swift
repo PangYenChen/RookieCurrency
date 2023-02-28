@@ -114,6 +114,7 @@ extension ResponseDataModel {
 
 /// 整個 app 在處理的幣別，以資料結構來說應該定義在`ResponseDataModel.RateList.Currency`，但整個 app 的業務邏輯都會用到，所以拉出來。
 typealias Currency = ResponseDataModel.RateList.Currency
+#warning("看要不要改成 Foundation 裡面的 Currency")
 
 extension ResponseDataModel.RateList: Codable {
     

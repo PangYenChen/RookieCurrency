@@ -41,6 +41,8 @@
 		51DF9167299FD0B200CEA5A6 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */; };
 		51DF916A299FD0C100CEA5A6 /* CurrencyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DF9169299FD0C100CEA5A6 /* CurrencyTableViewController.swift */; };
 		51E0DEB5299FD4980046652B /* PresentWithNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51119A192999D79C002758B3 /* PresentWithNavigationController.swift */; };
+		51E1B4B929ADADD800D75669 /* RateList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4B629ADAD7F00D75669 /* RateList.swift */; };
+		51E1B4BA29ADADD800D75669 /* RateList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4B629ADAD7F00D75669 /* RateList.swift */; };
 		E1133335248A924D00B8E67F /* RateListSetArchiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1133334248A924D00B8E67F /* RateListSetArchiver.swift */; };
 		E13B274624758ACB00E0A07D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274524758ACB00E0A07D /* AppDelegate.swift */; };
 		E13B274824758ACB00E0A07D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274724758ACB00E0A07D /* SceneDelegate.swift */; };
@@ -103,6 +105,7 @@
 		516916B92983D4C800547B60 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
 		51DF9169299FD0C100CEA5A6 /* CurrencyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyTableViewController.swift; sourceTree = "<group>"; };
+		51E1B4B629ADAD7F00D75669 /* RateList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateList.swift; sourceTree = "<group>"; };
 		E1133334248A924D00B8E67F /* RateListSetArchiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateListSetArchiver.swift; sourceTree = "<group>"; };
 		E13B274224758ACB00E0A07D /* RookieCurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RookieCurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E13B274524758ACB00E0A07D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -240,6 +243,14 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		51E1B4B529ADAD5300D75669 /* TestingData */ = {
+			isa = PBXGroup;
+			children = (
+				51E1B4B629ADAD7F00D75669 /* RateList.swift */,
+			);
+			path = TestingData;
+			sourceTree = "<group>";
+		};
 		E13B273924758ACB00E0A07D = {
 			isa = PBXGroup;
 			children = (
@@ -251,6 +262,7 @@
 				E1CE96A32485549D0029ED73 /* Extension */,
 				51119A172999D3C8002758B3 /* Segue */,
 				E1CE96A02485535D0029ED73 /* Data Model */,
+				51E1B4B529ADAD5300D75669 /* TestingData */,
 				E13B275B24758ACF00E0A07D /* RookieCurrencyTests */,
 				E15BA6C324FCA66900CA5B1B /* CombineCurrencyTests */,
 				E13B274324758ACB00E0A07D /* Products */,
@@ -581,6 +593,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E13B275D24758ACF00E0A07D /* RateListFetcherTests.swift in Sources */,
+				51E1B4B929ADADD800D75669 /* RateList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -617,6 +630,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E15BA6C524FCA66900CA5B1B /* CombineCurrencyTests.swift in Sources */,
+				51E1B4BA29ADADD800D75669 /* RateList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
