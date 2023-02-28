@@ -39,8 +39,20 @@ class FetcherTests: XCTestCase {
         sut
             .fetch(Endpoint.Latest()) { result in
                 switch result {
-                case .success(let rateList):
-                    XCTAssertFalse(rateList.rates.isEmpty)
+                case .success(let rate):
+                    XCTAssertFalse(rate.rates.isEmpty)
+                case .failure:
+                    XCTFail()
+                }
+            }
+    }
+    
+    func testFetchHistorical() {
+        sut
+            .fetch(Endpoint.Historical(date: .now)) { result in
+                switch result {
+                case .success(let rate):
+                    XCTAssertFalse(rate.rates.isEmpty)
                 case .failure:
                     XCTFail()
                 }
