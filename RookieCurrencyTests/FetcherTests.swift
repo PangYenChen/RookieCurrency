@@ -9,12 +9,12 @@
 import XCTest
 @testable import RookieCurrency
 
-class RateListFetcherTests: XCTestCase {
+class FetcherTests: XCTestCase {
     
-    var sut: RateListFetcher!
+    var sut: Fetcher!
     
     override func setUp() {
-        sut = RateListFetcher(rateListSession: RateListSessionStub())
+        sut = Fetcher(rateListSession: RateListSessionStub())
     }
     
     override func tearDown() {
@@ -23,7 +23,7 @@ class RateListFetcherTests: XCTestCase {
     
     func testLatest() {
 #warning("要改名字")
-        let dummyEndpoint = RateListFetcher.Endpoint.latest
+        let dummyEndpoint = Fetcher.Endpoint.latest
         
         sut.rateList(for: dummyEndpoint) { result in
             switch result {

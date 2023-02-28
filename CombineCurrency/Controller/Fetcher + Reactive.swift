@@ -1,5 +1,5 @@
 //
-//  RateListFetcher + Reactive.swift
+//  Fetcher + Reactive.swift
 //  CombineCurrency
 //
 //  Created by 陳邦彥 on 2023/2/25.
@@ -21,8 +21,7 @@ extension URLSession: RateListSession {
     }
 }
 
-
-extension RateListFetcher {
+extension Fetcher {
     func rateListPublisher(for endPoint: Endpoint) -> AnyPublisher<ResponseDataModel.RateList, Error> {
         
         func dataTaskPublisherWithLimitHandling(for endPoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {

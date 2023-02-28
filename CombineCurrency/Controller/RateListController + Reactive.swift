@@ -17,7 +17,7 @@ extension RateListController {
     func rateListSetPublisher(forDays numberOfDay: Int)
     -> AnyPublisher<(latestRateList: ResponseDataModel.RateList, historicalRateListSet: Set<ResponseDataModel.RateList>), Error> {
         
-        rateListFetcher.rateListPublisher(for: .latest)
+        fetcher.rateListPublisher(for: .latest)
             .combineLatest(RateListSetArchiver.unarchivedRateListSetPublisher())
             .flatMap { [unowned self] latestRateList, unarchivedRateListSet -> AnyPublisher<(latestRateList: ResponseDataModel.RateList, historicalRateListSet: Set<ResponseDataModel.RateList>), Error> in
                 
@@ -34,7 +34,7 @@ extension RateListController {
                         historicalRateListNeededSet.insert(historicalRateList)
                     } else {
                         needToFetchRateListPublisherArray.append(
-                            rateListFetcher.rateListPublisher(for: .historical(date: historicalDate))
+                            fetcher.rateListPublisher(for: .historical(date: historicalDate))
                         )
                     }
                 }

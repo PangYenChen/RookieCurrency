@@ -12,12 +12,12 @@ import Combine
 
 class CombineCurrencyTests: XCTestCase {
     
-    private var sut: RateListFetcher!
+    private var sut: Fetcher!
     
     private var anyCancellableSet = Set<AnyCancellable>()
 
     override func setUp() {
-        sut = RateListFetcher(rateListSession: RateListSessionStub())
+        sut = Fetcher(rateListSession: RateListSessionStub())
     }
 
     override func tearDown() {
@@ -26,7 +26,7 @@ class CombineCurrencyTests: XCTestCase {
 
     func testRateList() {
         
-        let dummyEndpoint = RateListFetcher.Endpoint.latest
+        let dummyEndpoint = Fetcher.Endpoint.latest
         
         sut.rateListPublisher(for: dummyEndpoint)
             .sink(

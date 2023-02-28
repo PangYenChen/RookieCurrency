@@ -1,5 +1,5 @@
 //
-//  RateListFetcher + Imperative.swift
+//  Fetcher + Imperative.swift
 //  RookieCurrency
 //
 //  Created by 陳邦彥 on 2023/2/25.
@@ -22,11 +22,7 @@ extension URLSession: RateListSession {
     }
 }
 
-
-
-
-
-extension RateListFetcher {
+extension Fetcher {
     /// <#Description#>
     /// - Parameters:
     ///   - endPoint: <#endPoint description#>

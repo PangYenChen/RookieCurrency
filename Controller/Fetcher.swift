@@ -1,5 +1,5 @@
 //
-//  RateListFetcher.swift
+//  Fetcher.swift
 //  RookieCurrency
 //
 //  Created by Pang-yen Chen on 2020/6/1.
@@ -7,19 +7,18 @@
 //
 
 import Foundation
-import Combine
 
 /// 跟伺服器拿資料的物件
-class RateListFetcher {
+class Fetcher {
     
     /// singleton object
-    static let shared: RateListFetcher = .init()
+    static let shared: Fetcher = .init()
     
     let rateListSession: RateListSession
 
     let jsonDecoder = JSONDecoder()
     
-    init(rateListSession: RateListSession = RateListFetcher.rateListSession) {
+    init(rateListSession: RateListSession = Fetcher.rateListSession) {
         self.rateListSession = rateListSession
     }
     
@@ -32,7 +31,7 @@ class RateListFetcher {
 }
 
 // MARK: - name space
-extension RateListFetcher {
+extension Fetcher {
     /// 拿的資料的種類
     enum Endpoint {
         /// 組裝出 url 的 url components
@@ -83,7 +82,7 @@ extension RateListFetcher {
 }
 
 // MARK: - static property
-extension RateListFetcher {
+extension Fetcher {
     /// 不暫存的 session
     private static let rateListSession: URLSession = {
         let configuration = URLSessionConfiguration.default
@@ -95,7 +94,7 @@ extension RateListFetcher {
 }
 
 // MARK: - helper method
-extension RateListFetcher {
+extension Fetcher {
     func createRequest(url: URL) -> URLRequest {
         var urlRequest = URLRequest(url: url, timeoutInterval: 5)
         urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
@@ -140,7 +139,7 @@ extension RateListFetcher {
 
 // MARK: - 在 debug build configuration 顯示用量
 #if DEBUG
-extension RateListFetcher {
+extension Fetcher {
 #warning("改成singleton的時候要改邏輯")
     var apiKeysUsage: Double {
         let apiKeyCount = apiKeys.count + 1

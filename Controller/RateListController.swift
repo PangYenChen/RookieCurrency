@@ -13,7 +13,7 @@ import Combine
 class RateListController {
     static let shared: RateListController = .init()
     
-    let rateListFetcher = RateListFetcher.shared
+    let fetcher = Fetcher.shared
     #warning("之後要用注入的")
     
     let jsonDecoder = JSONDecoder()

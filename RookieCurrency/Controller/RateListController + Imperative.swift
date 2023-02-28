@@ -31,7 +31,7 @@ extension RateListController {
         }
         
         // 抓取當下的 rate list
-        rateListFetcher.rateList(for: .latest) { [unowned self] result in
+        fetcher.rateList(for: .latest) { [unowned self] result in
             switch result {
             case .success(let latestRateList):
                 
@@ -49,7 +49,7 @@ extension RateListController {
                         print("###", self, #function, "向伺服器拿取資料：", historicalDate)
                         
                         dispatchGroup?.enter()
-                        rateListFetcher.rateList(for: .historical(date: historicalDate) ) { result in
+                        fetcher.rateList(for: .historical(date: historicalDate) ) { result in
                             switch result {
                             case .success(let fetchedRateList):
                                 historicalRateListSet.insert(fetchedRateList)
