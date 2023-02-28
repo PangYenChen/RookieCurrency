@@ -26,13 +26,12 @@ class CombineCurrencyTests: XCTestCase {
 
     func testRateList() {
         
-        let dummyEndpoint = RateListFetcher.EndPoint.latest
+        let dummyEndpoint = RateListFetcher.Endpoint.latest
         
         sut.rateListPublisher(for: dummyEndpoint)
             .sink(
                 receiveCompletion: { completion in
                     guard case .failure = completion else { return }
-                    print("###, \(#function), \(self), 通過啦, \(completion)")
                     XCTFail()
                 },
                 receiveValue: { rateList in

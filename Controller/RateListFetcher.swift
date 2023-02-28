@@ -34,7 +34,7 @@ class RateListFetcher {
 // MARK: - name space
 extension RateListFetcher {
     /// 拿的資料的種類
-    enum EndPoint {
+    enum Endpoint {
         /// 組裝出 url 的 url components
         private static let urlComponents: URLComponents? = {
             

@@ -23,9 +23,9 @@ extension URLSession: RateListSession {
 
 
 extension RateListFetcher {
-    func rateListPublisher(for endPoint: EndPoint) -> AnyPublisher<ResponseDataModel.RateList, Error> {
+    func rateListPublisher(for endPoint: Endpoint) -> AnyPublisher<ResponseDataModel.RateList, Error> {
         
-        func dataTaskPublisherWithLimitHandling(for endPoint: EndPoint) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+        func dataTaskPublisherWithLimitHandling(for endPoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
             let urlRequest = createRequest(url: endPoint.url)
             
             return rateListSession.rateListDataTaskPublisher(for: urlRequest)

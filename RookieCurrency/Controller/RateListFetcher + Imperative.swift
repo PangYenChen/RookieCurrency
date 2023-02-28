@@ -31,7 +31,7 @@ extension RateListFetcher {
     /// - Parameters:
     ///   - endPoint: <#endPoint description#>
     ///   - completionHandler: <#completionHandler description#>
-    func rateList(for endPoint: EndPoint,
+    func rateList(for endPoint: Endpoint,
                   completionHandler: @escaping (Result<ResponseDataModel.RateList, Error>) -> ()) {
         
         let urlRequest = createRequest(url: endPoint.url)

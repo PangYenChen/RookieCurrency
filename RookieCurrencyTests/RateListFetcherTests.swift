@@ -23,7 +23,7 @@ class RateListFetcherTests: XCTestCase {
     
     func testLatest() {
 #warning("要改名字")
-        let dummyEndpoint = RateListFetcher.EndPoint.latest
+        let dummyEndpoint = RateListFetcher.Endpoint.latest
         
         sut.rateList(for: dummyEndpoint) { result in
             switch result {
