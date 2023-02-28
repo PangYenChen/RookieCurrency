@@ -20,5 +20,83 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "3EA600D2-2B9A-4333-80C2-B9A1A30583A7"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RookieCurrencyTests/FetcherTests.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "39"
+            endingLineNumber = "39"
+            landmarkName = "testFetchLatest()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "3EA600D2-2B9A-4333-80C2-B9A1A30583A7 - e32c897e82e497b0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "RookieCurrencyTests.FetcherTests.testFetchLatest() -&gt; ()"
+                  moduleName = "RookieCurrencyTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrencyTests/FetcherTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "42"
+                  endingLineNumber = "42"
+                  offsetFromSymbolStart = "156">
+               </Location>
+               <Location
+                  uuid = "3EA600D2-2B9A-4333-80C2-B9A1A30583A7 - 7ed9bdbb28185b18"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;RookieCurrency.ResponseDataModel.Rate&lt;RookieCurrency.ResponseDataModel.Category.Latest&gt;, Swift.Error&gt;) -&gt; () in RookieCurrencyTests.FetcherTests.testFetchLatest() -&gt; ()"
+                  moduleName = "RookieCurrencyTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrencyTests/FetcherTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "43"
+                  endingLineNumber = "43"
+                  offsetFromSymbolStart = "220">
+               </Location>
+               <Location
+                  uuid = "3EA600D2-2B9A-4333-80C2-B9A1A30583A7 - e32c897e82e497b0"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "RookieCurrencyTests.FetcherTests.testFetchLatest() -&gt; ()"
+                  moduleName = "RookieCurrencyTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrencyTests/FetcherTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "42"
+                  endingLineNumber = "42"
+                  offsetFromSymbolStart = "160">
+               </Location>
+               <Location
+                  uuid = "3EA600D2-2B9A-4333-80C2-B9A1A30583A7 - 7ed9bdbb28185b18"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;RookieCurrency.ResponseDataModel.Rate&lt;RookieCurrency.ResponseDataModel.Category.Latest&gt;, Swift.Error&gt;) -&gt; () in RookieCurrencyTests.FetcherTests.testFetchLatest() -&gt; ()"
+                  moduleName = "RookieCurrencyTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrencyTests/FetcherTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "43"
+                  endingLineNumber = "43"
+                  offsetFromSymbolStart = "272">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

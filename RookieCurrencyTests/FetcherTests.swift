@@ -34,6 +34,18 @@ class FetcherTests: XCTestCase {
             }
         }
     }
+    
+    func testFetchLatest() {
+        sut
+            .fetch(Endpoint.Latest()) { result in
+                switch result {
+                case .success(let rateList):
+                    XCTAssertFalse(rateList.rates.isEmpty)
+                case .failure:
+                    XCTFail()
+                }
+            }
+    }
 }
 
 private class RateListSessionStub: RateListSession {

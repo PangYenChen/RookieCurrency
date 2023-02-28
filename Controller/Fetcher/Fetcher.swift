@@ -14,6 +14,24 @@ class Fetcher {
     /// singleton object
     static let shared: Fetcher = .init()
     
+    static let urlComponents: URLComponents? = {
+        
+        /// 拿匯率的 base url，我使用的免費方案不支援 https。
+        /// 提供資料的服務商： https://apilayer.com
+        /// "https://api.apilayer.com/exchangerates_data/"
+        /// "https://api.apilayer.com/fixer/"
+        ///
+        let baseURL = "https://api.apilayer.com/fixer/"
+        
+        var urlComponents = URLComponents(string: baseURL)
+        
+        urlComponents?.queryItems = [URLQueryItem(name: "base", value: "EUR")]
+        
+#warning("之後要改成以新台幣為基準幣別，這樣出錯的時候我比較看得出來，目前本地存的資料還是以歐元為基準")
+        
+        return urlComponents
+    }()
+    
     let rateListSession: RateListSession
 
     let jsonDecoder = JSONDecoder()
@@ -36,31 +54,31 @@ extension Fetcher {
     enum Endpoint {
         /// 組裝出 url 的 url components
         private static let urlComponents: URLComponents? = {
-            
+
             /// 拿匯率的 base url，我使用的免費方案不支援 https。
             /// 提供資料的服務商： https://apilayer.com
             /// "https://api.apilayer.com/exchangerates_data/"
             /// "https://api.apilayer.com/fixer/"
             ///
             let baseURL = "https://api.apilayer.com/fixer/"
-            
+
             var urlComponents = URLComponents(string: baseURL)
-            
+
             urlComponents?.queryItems = [URLQueryItem(name: "base", value: "EUR")]
-            
+
 #warning("之後要改成以新台幣為基準幣別，這樣出錯的時候我比較看得出來，目前本地存的資料還是以歐元為基準")
-            
+
             return urlComponents
         }()
         /// 當下的資料
         case latest
         /// 日期為 date 的歷史資料
         case historical(date: Date)
-        
+
         /// 索取該資料的 url
         var url: URL {
             var urlComponents = Self.urlComponents
-            
+
             switch self {
             case .latest:
                 urlComponents?.path += "latest"
@@ -68,7 +86,7 @@ extension Fetcher {
                 let dateString = AppSetting.requestDateFormatter.string(from: date)
                 urlComponents?.path += dateString
             }
-            
+
 #warning("雖然說不應該 forced unwrap，但我想不到什麼時候會是 nil。")
             return (urlComponents?.url)!
         }
@@ -80,6 +98,28 @@ extension Fetcher {
     }
     
 }
+
+protocol EndpointProtocol {
+    associatedtype ResponseType: Decodable
+    
+    var url: URL { get }
+}
+
+
+protocol PathProvider: EndpointProtocol {
+    var path: String { get }
+}
+
+extension PathProvider {
+    var url: URL {
+        var urlComponents = Fetcher.urlComponents
+        urlComponents?.path += path
+        return (urlComponents?.url)!
+    }
+}
+
+
+
 
 // MARK: - static property
 extension Fetcher {
