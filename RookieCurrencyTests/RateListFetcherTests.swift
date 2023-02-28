@@ -36,8 +36,11 @@ class RateListFetcherTests: XCTestCase {
     }
 }
 
-class RateListSessionStub: RateListSession {
-    func rateListDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+private class RateListSessionStub: RateListSession {
+    func rateListDataTask(
+        with request: URLRequest,
+        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
+    ) {
         completionHandler(RateList.data, nil, nil)
     }
 }

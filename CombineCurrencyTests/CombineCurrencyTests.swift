@@ -8,27 +8,52 @@
 
 import XCTest
 @testable import CombineCurrency
+import Combine
 
 class CombineCurrencyTests: XCTestCase {
+    
+    private var sut: RateListFetcher!
+    
+    private var anyCancellableSet = Set<AnyCancellable>()
 
     override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+        sut = RateListFetcher(rateListSession: RateListSessionStub())
     }
 
     override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+        sut = nil
     }
 
-    func testExample() {
-        // This is an example of a functional test case.
-        // Use XCTAssert and related functions to verify your tests produce the correct results.
+    func testRateList() {
+        
+        let dummyEndpoint = RateListFetcher.EndPoint.latest
+        
+        sut.rateListPublisher(for: dummyEndpoint)
+            .sink(
+                receiveCompletion: { completion in
+                    guard case .failure = completion else { return }
+                    print("###, \(#function), \(self), 通過啦, \(completion)")
+                    XCTFail()
+                },
+                receiveValue: { rateList in
+                    assert(!(rateList.rates.isEmpty))
+                }
+            )
+            .store(in: &anyCancellableSet)
     }
+}
 
-    func testPerformanceExample() {
-        // This is an example of a performance test case.
-        self.measure {
-            // Put the code you want to measure the time of here.
-        }
+private class RateListSessionStub: RateListSession {
+    func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+        
+        let urlResponse = HTTPURLResponse(url: URL(string: "https://www.apple.com/")!,
+                                          statusCode: 200,
+                                          httpVersion: nil,
+                                          headerFields: nil)
+        
+        
+        return Just((data: RateList.data!, response: urlResponse!))
+            .setFailureType(to: URLError.self)
+            .eraseToAnyPublisher()
     }
-
 }
