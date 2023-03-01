@@ -1,5 +1,5 @@
 //
-//  RateListSetArchiver.swift
+//  Archiver.swift
 //  RookieCurrency
 //
 //  Created by Pang-yen Chen on 2020/6/5.
@@ -10,7 +10,7 @@ import Foundation
 import Combine
 
 /// 讀寫 RateListSet 的類別
-enum RateListSetArchiver {
+enum Archiver {
     /// app 的路徑
     private static let documentsDirectory = URL.documentsDirectory
     
@@ -29,7 +29,7 @@ enum RateListSetArchiver {
 }
 
 // MARK: - Imperative Part
-extension RateListSetArchiver {
+extension Archiver {
     /// 讀取先前存放的資料
     /// - Returns: timeout interval 為 5 秒的 data task publisher
     static func unarchive() throws -> Set<ResponseDataModel.RateList> {
@@ -57,7 +57,7 @@ extension RateListSetArchiver {
 
 
 // MARK: - Combine Part
-extension RateListSetArchiver {
+extension Archiver {
     /// 送出先前儲存起來的 rate list set
     /// - Returns: 送出先前儲存的 rate list 的 publisher
     static func unarchivedRateListSetPublisher() -> AnyPublisher<Set<ResponseDataModel.RateList>, Error> {

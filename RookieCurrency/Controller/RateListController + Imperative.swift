@@ -23,7 +23,7 @@ extension RateListController {
         /// 在日期範圍內的資料
         var historicalRateListSet = Set<ResponseDataModel.RateList>()
         do {
-            unarchivedRateListSet = try RateListSetArchiver.unarchive()
+            unarchivedRateListSet = try Archiver.unarchive()
         } catch {
             completionHandler(.failure(error))
             print("###", self, #function, "從硬碟讀取資料失敗", error)
@@ -69,7 +69,7 @@ extension RateListController {
                     completionHandler(.success((latestRateList, historicalRateListSet)))
                     
                     do {
-                        try RateListSetArchiver.archive(unarchivedRateListSet)
+                        try Archiver.archive(unarchivedRateListSet)
                     } catch {
 #warning("存檔失敗不知道要幹嘛？？ 考慮改成 `try?`")
                         completionHandler(.failure(error))

@@ -18,7 +18,7 @@ extension RateListController {
     -> AnyPublisher<(latestRateList: ResponseDataModel.RateList, historicalRateListSet: Set<ResponseDataModel.RateList>), Error> {
         
         fetcher.rateListPublisher(for: .latest)
-            .combineLatest(RateListSetArchiver.unarchivedRateListSetPublisher())
+            .combineLatest(Archiver.unarchivedRateListSetPublisher())
             .flatMap { [unowned self] latestRateList, unarchivedRateListSet -> AnyPublisher<(latestRateList: ResponseDataModel.RateList, historicalRateListSet: Set<ResponseDataModel.RateList>), Error> in
                 
                 /// 在日期範圍內，需要向伺服器拿的資料
@@ -50,7 +50,7 @@ extension RateListController {
                         .collect(numberOfDay)
                         .tryMap { fetchRateListArray -> [ResponseDataModel.RateList] in
                             let rateListSet = Set(fetchRateListArray).union(unarchivedRateListSet)
-                            try RateListSetArchiver.archive(rateListSet)
+                            try Archiver.archive(rateListSet)
                             return fetchRateListArray
                         }
                         .map { Set($0).union(historicalRateListNeededSet) }

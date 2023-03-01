@@ -51,7 +51,7 @@
 		51E1B4CC29AE490300D75669 /* Latest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4CA29AE490300D75669 /* Latest.swift */; };
 		51E1B4CE29AE4C7100D75669 /* Historical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4CD29AE4C7100D75669 /* Historical.swift */; };
 		51E1B4CF29AE4C7100D75669 /* Historical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4CD29AE4C7100D75669 /* Historical.swift */; };
-		E1133335248A924D00B8E67F /* RateListSetArchiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1133334248A924D00B8E67F /* RateListSetArchiver.swift */; };
+		E1133335248A924D00B8E67F /* Archiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1133334248A924D00B8E67F /* Archiver.swift */; };
 		E13B274624758ACB00E0A07D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274524758ACB00E0A07D /* AppDelegate.swift */; };
 		E13B274824758ACB00E0A07D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274724758ACB00E0A07D /* SceneDelegate.swift */; };
 		E13B274D24758ACB00E0A07D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E13B274B24758ACB00E0A07D /* Main.storyboard */; };
@@ -69,7 +69,7 @@
 		E1FB993C24FF45250096FE2C /* RateListSetAnalyst.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AB248555C30029ED73 /* RateListSetAnalyst.swift */; };
 		E1FB993F24FF554C0096FE2C /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FB993E24FF554C0096FE2C /* ResultTableViewController.swift */; };
 		E1FB994124FF9DCD0096FE2C /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96A9248555680029ED73 /* Fetcher.swift */; };
-		E1FB9943250083BE0096FE2C /* RateListSetArchiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1133334248A924D00B8E67F /* RateListSetArchiver.swift */; };
+		E1FB9943250083BE0096FE2C /* Archiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1133334248A924D00B8E67F /* Archiver.swift */; };
 		E1FB9944250084760096FE2C /* RateListController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AD248555E10029ED73 /* RateListController.swift */; };
 /* End PBXBuildFile section */
 
@@ -118,7 +118,7 @@
 		51E1B4C729AE488900D75669 /* Endpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoint.swift; sourceTree = "<group>"; };
 		51E1B4CA29AE490300D75669 /* Latest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Latest.swift; sourceTree = "<group>"; };
 		51E1B4CD29AE4C7100D75669 /* Historical.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Historical.swift; sourceTree = "<group>"; };
-		E1133334248A924D00B8E67F /* RateListSetArchiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateListSetArchiver.swift; sourceTree = "<group>"; };
+		E1133334248A924D00B8E67F /* Archiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Archiver.swift; sourceTree = "<group>"; };
 		E13B274224758ACB00E0A07D /* RookieCurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RookieCurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E13B274524758ACB00E0A07D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E13B274724758ACB00E0A07D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -373,7 +373,7 @@
 				51E1B4BF29AE3CB000D75669 /* Fetcher */,
 				E1CE96AB248555C30029ED73 /* RateListSetAnalyst.swift */,
 				E1CE96AD248555E10029ED73 /* RateListController.swift */,
-				E1133334248A924D00B8E67F /* RateListSetArchiver.swift */,
+				E1133334248A924D00B8E67F /* Archiver.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -603,7 +603,7 @@
 				51119A1A2999D79C002758B3 /* PresentWithNavigationController.swift in Sources */,
 				513803222998746A00D54E46 /* SettingTableViewController.swift in Sources */,
 				514F72FE29AB682D0080DD8B /* AppSetting.swift in Sources */,
-				E1133335248A924D00B8E67F /* RateListSetArchiver.swift in Sources */,
+				E1133335248A924D00B8E67F /* Archiver.swift in Sources */,
 				51578B6A29A8563F00BE890F /* RateList.swift in Sources */,
 				E1CE96AE248555E10029ED73 /* RateListController.swift in Sources */,
 				E13B276924758BCB00E0A07D /* Response Data.swift in Sources */,
@@ -660,7 +660,7 @@
 				514C4D0629A0D6570049E192 /* BaseCurrencyTableViewController.swift in Sources */,
 				51E1B4CC29AE490300D75669 /* Latest.swift in Sources */,
 				51E1B4C529AE3DE300D75669 /* Rate.swift in Sources */,
-				E1FB9943250083BE0096FE2C /* RateListSetArchiver.swift in Sources */,
+				E1FB9943250083BE0096FE2C /* Archiver.swift in Sources */,
 				512087B029A9F858005ED87A /* RateListController + Reactive.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
