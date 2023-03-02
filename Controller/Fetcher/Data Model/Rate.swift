@@ -54,52 +54,6 @@ extension ResponseDataModel {
             self.rates = rates
         }
         
-        /// 表示幣別的 enum
-        enum Currency: String, CaseIterable {
-            /// 新台幣
-            case TWD
-            /// 美金
-            case USD
-            /// 日圓
-            case JPY
-            /// 歐元
-            case EUR
-            /// 人民幣
-            case CNY
-            /// 英鎊
-            case GBP
-            /// 瑞典克朗
-            case SEK
-            /// 加拿大幣
-            case CAD
-            /// 南非幣
-            case ZAR
-            /// 港幣
-            case HKD
-            /// 新加坡幣
-            case SGD
-            /// 瑞士法郎
-            case CHF
-            /// 紐西蘭幣
-            case NZD
-            /// 澳幣
-            case AUD
-            /// 白銀 Silver (troy ounce)
-            case XAG
-            /// 黃金 Gold (troy ounce)
-            case XAU
-#warning("考慮搬到其他地方去，這好像不屬於 data model，已經跟業務邏輯有關了。希望可以用 Foundation 的 Currency，然後刪掉這個 type")
-            var localizedString: String {
-                if let localizedString =  Locale.current.localizedString(forCurrencyCode: self.rawValue) {
-                    return localizedString
-                } else {
-                    return ""
-                }
-            }
-            
-            var code: String { self.rawValue }
-        }
-        
         /// JSON 的 coding key
         enum CodingKeys: String, CodingKey {
             case historical, date, timestamp, rates
@@ -146,7 +100,7 @@ extension ResponseDataModel.Rate: Decodable {
         
         rates = try container.decode([String: Double].self, forKey: .rates)
         
-        for currency in Self.Currency.allCases where currency != .EUR {
+        for currency in Currency.allCases where currency != .EUR {
             guard rates[currency.rawValue] != nil else {
                 throw ServerDateError.dataAbsent(currency.rawValue)
             }

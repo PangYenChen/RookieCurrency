@@ -41,6 +41,9 @@ class FetcherTests: XCTestCase {
                 switch result {
                 case .success(let rate):
                     XCTAssertFalse(rate.rates.isEmpty)
+                    
+                    let dummyCurrency = Currency.TWD
+                    XCTAssertNotNil(rate[dummyCurrency])
                 case .failure:
                     XCTFail()
                 }
@@ -53,6 +56,9 @@ class FetcherTests: XCTestCase {
                 switch result {
                 case .success(let rate):
                     XCTAssertFalse(rate.rates.isEmpty)
+                    
+                    let dummyCurrency = Currency.TWD
+                    XCTAssertNotNil(rate[dummyCurrency])
                 case .failure:
                     XCTFail()
                 }
