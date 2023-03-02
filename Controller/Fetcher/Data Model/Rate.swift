@@ -18,7 +18,7 @@ extension ResponseDataModel {
     /// 服務商回傳的匯率資料
     /// Catetory 是 phantom type
     struct Rate<Category> {
-        
+        #warning("考慮拿掉")
         /// Returns true if a request for historical exchange rates was made.
         let historical: Bool
         
@@ -39,19 +39,6 @@ extension ResponseDataModel {
         
         subscript(_ currency: Currency) -> Double? {
             currency == .EUR ? 1 : rates[currency.rawValue]
-        }
-        
-        private init(historical: Bool,
-                     date: Date,
-                     timestamp: Int,
-                     rates: [String: Double]) {
-#warning("寫 unit test 的時候再看看要不要把這個 init 打開")
-            assertionFailure("###, \(#function), 不應該用 decode 之外的方式產生 instance。")
-            
-            self.historical = historical
-            self.date = date
-            self.timestamp = timestamp
-            self.rates = rates
         }
         
         /// JSON 的 coding key

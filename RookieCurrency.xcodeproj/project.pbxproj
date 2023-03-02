@@ -36,6 +36,7 @@
 		51578B6B29A8563F00BE890F /* RateList.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51578B6929A8563F00BE890F /* RateList.swift */; };
 		51578B7129A85A1000BE890F /* Git Commit Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51578B7029A85A1000BE890F /* Git Commit Info.swift */; };
 		51578B7229A85A1000BE890F /* Git Commit Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51578B7029A85A1000BE890F /* Git Commit Info.swift */; };
+		519A643029B0D5D000918B84 /* ArchiverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A642F29B0D5D000918B84 /* ArchiverTest.swift */; };
 		51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274524758ACB00E0A07D /* AppDelegate.swift */; };
 		51D67ED42975922D008B8928 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274724758ACB00E0A07D /* SceneDelegate.swift */; };
 		51DF9167299FD0B200CEA5A6 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */; };
@@ -111,6 +112,7 @@
 		51578B6929A8563F00BE890F /* RateList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateList.swift; sourceTree = "<group>"; };
 		51578B7029A85A1000BE890F /* Git Commit Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Git Commit Info.swift"; sourceTree = "<group>"; };
 		516916B92983D4C800547B60 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		519A642F29B0D5D000918B84 /* ArchiverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiverTest.swift; sourceTree = "<group>"; };
 		51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
 		51DF9169299FD0C100CEA5A6 /* CurrencyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyTableViewController.swift; sourceTree = "<group>"; };
 		51E1B4B629ADAD7F00D75669 /* RateList.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateList.swift; sourceTree = "<group>"; };
@@ -325,6 +327,7 @@
 			isa = PBXGroup;
 			children = (
 				E13B275C24758ACF00E0A07D /* FetcherTests.swift */,
+				519A642F29B0D5D000918B84 /* ArchiverTest.swift */,
 				E13B275E24758ACF00E0A07D /* Info.plist */,
 			);
 			path = RookieCurrencyTests;
@@ -629,6 +632,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E13B275D24758ACF00E0A07D /* FetcherTests.swift in Sources */,
+				519A643029B0D5D000918B84 /* ArchiverTest.swift in Sources */,
 				51E1B4B929ADADD800D75669 /* RateList.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
