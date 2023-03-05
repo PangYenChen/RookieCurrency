@@ -13,12 +13,12 @@ final class ArchiverTest: XCTestCase {
     
     let sut = Archiver.self
     
-//    func testArchiveAndThenUnarchive() throws {
-//        let dummyHistoricalRate = TestingData.historicalRate
-//        let dummyHistoricalRateSet: Set<ResponseDataModel.HistoricalRate> = [dummyHistoricalRate]
-//        try sut.archive(dummyHistoricalRateSet)
-//        let unarchivedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate> = try sut.unarchive()
-//        
-//        XCTAssertEqual(dummyHistoricalRateSet, unarchivedHistoricalRateSet)
-//    }
+    func testArchiveAndThenUnarchive() throws {
+        let dummyHistoricalRate = TestingData.historicalRate
+        let dummyHistoricalRateSet: Set<ResponseDataModel.HistoricalRate> = [dummyHistoricalRate]
+        try sut.archive(dummyHistoricalRateSet)
+        let unarchivedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate> = try sut.unarchive()
+        
+        XCTAssertEqual(dummyHistoricalRateSet, unarchivedHistoricalRateSet)
+    }
 }
