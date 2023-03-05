@@ -109,21 +109,21 @@ class ResultTableViewController: BaseResultTableViewController {
         
         latestUpdateTimeItem.title = R.string.localizable.updating()
         
-        RateListController.shared.getRateListFor(numberOfDay: numberOfDay, queue: .main) { [unowned self] result in
+        RateController.shared.getRateFor(numberOfDay: numberOfDay, queue: .main) { [unowned self] result in
             switch result {
-            case .success(let (latestRateList, historicalRateListSet)):
+            case .success(let (latestRate, historicalRateSet)):
                 
                 // update latestUpdateTime
                 do {
-                    let timestamp = Double(latestRateList.timestamp)
+                    let timestamp = Double(latestRate.timestamp)
                     latestUpdateTime = Date(timeIntervalSince1970: timestamp)
                 }
                 
                 // update table view
                 do {
                     analyzedDataDictionary = Analyst
-                        .analyze(latestRateList: latestRateList,
-                                 historicalRateListSet: historicalRateListSet,
+                        .analyze(latestRate: latestRate,
+                                 historicalRateSet: historicalRateSet,
                                  baseCurrency: baseCurrency)
                     populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
                                       order: self.order,

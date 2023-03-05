@@ -1,5 +1,5 @@
 //
-//  RookieCurrencyTests.swift
+//  FetcherTests.swift
 //  RookieCurrencyTests
 //
 //  Created by Pang-yen Chen on 2020/5/20.
@@ -19,20 +19,6 @@ class FetcherTests: XCTestCase {
     
     override func tearDown() {
         sut = nil
-    }
-    
-    func testLatest() {
-#warning("要改名字")
-        let dummyEndpoint = Fetcher.Endpoint.latest
-        
-        sut.rateList(for: dummyEndpoint) { result in
-            switch result {
-            case .success(let rateList):
-                assert(!(rateList.rates.isEmpty))
-            case .failure:
-                XCTFail()
-            }
-        }
     }
     
     func testFetchLatest() {

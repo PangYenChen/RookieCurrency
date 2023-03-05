@@ -1,5 +1,5 @@
 //
-//  RateListController.swift
+//  RateController.swift
 //  RookieCurrency
 //
 //  Created by Pang-yen Chen on 2020/6/1.
@@ -10,8 +10,8 @@ import Foundation
 import Combine
 
 /// 用來獲得各幣別匯率資料的類別
-class RateListController {
-    static let shared: RateListController = .init()
+class RateController {
+    static let shared: RateController = .init()
     
     let fetcher = Fetcher.shared
     #warning("之後要用注入的")

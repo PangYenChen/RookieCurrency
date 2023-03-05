@@ -1,5 +1,5 @@
 //
-//  RateListController + Imperative.swift
+//  RateController + Imperative.swift
 //  RookieCurrency
 //
 //  Created by 陳邦彥 on 2023/2/25.
@@ -8,20 +8,24 @@
 
 import Foundation
 #warning("這裡的 method 好長 看能不能拆開")
-extension RateListController {
-    
-    /// 獲得當下以及指定天數的歷史幣別匯率的資料
+extension RateController {
+    /// <#Description#>
     /// - Parameters:
-    ///   - numberOfDay: 除了當下，所需歷史資料的天數
-    ///   - completionHandler: 拿到資料後要執行的 completion handler
-    func getRateListFor(numberOfDay: Int,
-                        queue: DispatchQueue,
-                        completionHandler: @escaping (Result<(latestRateList: ResponseDataModel.RateList, historicalRateListSet: Set<ResponseDataModel.RateList>), Error>) -> ()) {
-        
+    ///   - numberOfDay: <#numberOfDay description#>
+    ///   - queue: <#queue description#>
+    ///   - completionHandler: <#completionHandler description#>
+    func getRateFor(
+        numberOfDay: Int,
+        queue: DispatchQueue,
+        completionHandler: @escaping (Result<(latestRateList: ResponseDataModel.LatestRate,
+                                              historicalRateListSet: Set<ResponseDataModel.HistoricalRate>),
+                                      Error>) -> ()
+    )
+    {
         /// 硬碟中全部的資料
-        var unarchivedRateListSet = Set<ResponseDataModel.RateList>()
+        var unarchivedRateListSet = Set<ResponseDataModel.HistoricalRate>()
         /// 在日期範圍內的資料
-        var historicalRateListSet = Set<ResponseDataModel.RateList>()
+        var historicalRateListSet = Set<ResponseDataModel.HistoricalRate>()
         do {
             unarchivedRateListSet = try Archiver.unarchive()
         } catch {
@@ -30,17 +34,23 @@ extension RateListController {
             return
         }
         
-        // 抓取當下的 rate list
-        fetcher.rateList(for: .latest) { [unowned self] result in
+        // 抓取當下的 rate
+        fetcher.fetch(Endpoint.Latest()) { [unowned self] result in
             switch result {
-            case .success(let latestRateList):
+            case .success(let latestRate):
                 
                 var dispatchGroup: DispatchGroup? = DispatchGroup()
                 
                 // 取得歷史資料
                 for numberOfDayAgo in 1...numberOfDay {
-                    let historicalDate = latestRateList.date.advanced(by: 24 * 60 * 60 * Double(-numberOfDayAgo))
-                    if let historicalRateList = unarchivedRateListSet.first(where: { $0.date == historicalDate}) {
+                    
+                    #warning("這段應該要抽成一個 method")
+                    let date = AppSetting.requestDateFormatter.date(from: latestRate.dateString)!
+                    let historicalDate = date.advanced(by: 24 * 60 * 60 * Double(-numberOfDayAgo))
+                    let historicalDateString = AppSetting.requestDateFormatter.string(from: historicalDate)
+                    
+                    
+                    if let historicalRateList = unarchivedRateListSet.first(where: { $0.dateString == historicalDateString}) {
                         // 有既有資料可以用
                         historicalRateListSet.insert(historicalRateList)
                         print("###", self, #function, "從既有的資料中找到：", historicalDate)
@@ -49,7 +59,7 @@ extension RateListController {
                         print("###", self, #function, "向伺服器拿取資料：", historicalDate)
                         
                         dispatchGroup?.enter()
-                        fetcher.rateList(for: .historical(date: historicalDate) ) { result in
+                        fetcher.fetch(Endpoint.Historical(date: historicalDate)) { result in
                             switch result {
                             case .success(let fetchedRateList):
                                 historicalRateListSet.insert(fetchedRateList)
@@ -65,8 +75,11 @@ extension RateListController {
                 
                 // 所需的資料全部拿到後
                 dispatchGroup?.notify(queue: queue) {
-                    print("###", self, #function, "全部的資料是\n\t", historicalRateListSet.sorted { lhs, rhs in lhs.date < rhs.date })
-                    completionHandler(.success((latestRateList, historicalRateListSet)))
+                    print("###", self, #function, "全部的資料是\n\t", historicalRateListSet)
+                    #warning("看排序要在哪做，印出比較漂亮好debug的東西")
+//                        .sorted { lhs, rhs in lhs.date < rhs.date })
+                          
+                    completionHandler(.success((latestRate, historicalRateListSet)))
                     
                     do {
                         try Archiver.archive(unarchivedRateListSet)
