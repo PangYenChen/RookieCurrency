@@ -19,6 +19,7 @@
 		5129D7A7298FAAC5005F5DE5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5129D7AA298FAAC5005F5DE5 /* Localizable.strings */; };
 		5129D7A8298FAAC5005F5DE5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5129D7AA298FAAC5005F5DE5 /* Localizable.strings */; };
 		51362E2629B4CF3F00E3CE89 /* RateInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51362E2529B4CF3F00E3CE89 /* RateInstance.swift */; };
+		51362E4F29B4D93500E3CE89 /* RateInstance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51362E2529B4CF3F00E3CE89 /* RateInstance.swift */; };
 		513803222998746A00D54E46 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513803212998746A00D54E46 /* SettingTableViewController.swift */; };
 		5138032829988BC300D54E46 /* CurrencyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5138032729988BC300D54E46 /* CurrencyTableViewController.swift */; };
 		51433D33298FD7BF00F2B4E6 /* RswiftLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 51433D32298FD7BF00F2B4E6 /* RswiftLibrary */; };
@@ -35,8 +36,6 @@
 		514F72FF29AB682D0080DD8B /* AppSetting.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514F72FD29AB682D0080DD8B /* AppSetting.swift */; };
 		51578B7129A85A1000BE890F /* Git Commit Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51578B7029A85A1000BE890F /* Git Commit Info.swift */; };
 		51578B7229A85A1000BE890F /* Git Commit Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51578B7029A85A1000BE890F /* Git Commit Info.swift */; };
-		519A643029B0D5D000918B84 /* ArchiverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A642F29B0D5D000918B84 /* ArchiverTest.swift */; };
-		519A643529B4615B00918B84 /* ResponseDataModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A643429B4615B00918B84 /* ResponseDataModelTest.swift */; };
 		519A643829B4627500918B84 /* TestingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A643729B4627500918B84 /* TestingData.swift */; };
 		519A643929B462AE00918B84 /* TestingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A643729B4627500918B84 /* TestingData.swift */; };
 		51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274524758ACB00E0A07D /* AppDelegate.swift */; };
@@ -54,6 +53,10 @@
 		51E1B4CC29AE490300D75669 /* Latest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4CA29AE490300D75669 /* Latest.swift */; };
 		51E1B4CE29AE4C7100D75669 /* Historical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4CD29AE4C7100D75669 /* Historical.swift */; };
 		51E1B4CF29AE4C7100D75669 /* Historical.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4CD29AE4C7100D75669 /* Historical.swift */; };
+		51E731C729B4DCF900C1DB2B /* ArchiverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A642F29B0D5D000918B84 /* ArchiverTest.swift */; };
+		51E731C829B4DCFA00C1DB2B /* ArchiverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A642F29B0D5D000918B84 /* ArchiverTest.swift */; };
+		51E731C929B4DCFE00C1DB2B /* ResponseDataModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A643429B4615B00918B84 /* ResponseDataModelTest.swift */; };
+		51E731CA29B4DCFF00C1DB2B /* ResponseDataModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A643429B4615B00918B84 /* ResponseDataModelTest.swift */; };
 		E1133335248A924D00B8E67F /* Archiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1133334248A924D00B8E67F /* Archiver.swift */; };
 		E13B274624758ACB00E0A07D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274524758ACB00E0A07D /* AppDelegate.swift */; };
 		E13B274824758ACB00E0A07D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274724758ACB00E0A07D /* SceneDelegate.swift */; };
@@ -133,7 +136,6 @@
 		E13B275124758ACF00E0A07D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E13B275824758ACF00E0A07D /* RookieCurrencyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RookieCurrencyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E13B275C24758ACF00E0A07D /* FetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherTests.swift; sourceTree = "<group>"; };
-		E13B275E24758ACF00E0A07D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E13B276824758BCB00E0A07D /* Response Data Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Response Data Model.swift"; sourceTree = "<group>"; };
 		E15BA6AB24FCA66600CA5B1B /* CombineCurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CombineCurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E15BA6B624FCA66900CA5B1B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -141,7 +143,6 @@
 		E15BA6BB24FCA66900CA5B1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E15BA6C024FCA66900CA5B1B /* CombineCurrencyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CombineCurrencyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherTests.swift; sourceTree = "<group>"; };
-		E15BA6C624FCA66900CA5B1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		E1CE96A9248555680029ED73 /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
 		E1CE96AB248555C30029ED73 /* Analyst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyst.swift; sourceTree = "<group>"; };
 		E1CE96AD248555E10029ED73 /* RateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateController.swift; sourceTree = "<group>"; };
@@ -219,6 +220,15 @@
 				512087AF29A9F858005ED87A /* RateController + Reactive.swift */,
 			);
 			path = Controller;
+			sourceTree = "<group>";
+		};
+		51362E3B29B4D7D700E3CE89 /* SharedTests */ = {
+			isa = PBXGroup;
+			children = (
+				519A643429B4615B00918B84 /* ResponseDataModelTest.swift */,
+				519A642F29B0D5D000918B84 /* ArchiverTest.swift */,
+			);
+			path = SharedTests;
 			sourceTree = "<group>";
 		};
 		51433D39298FD8C400F2B4E6 /* Frameworks */ = {
@@ -304,6 +314,7 @@
 				51E1B4B529ADAD5300D75669 /* TestingData */,
 				E13B275B24758ACF00E0A07D /* RookieCurrencyTests */,
 				E15BA6C324FCA66900CA5B1B /* CombineCurrencyTests */,
+				51362E3B29B4D7D700E3CE89 /* SharedTests */,
 				E13B274324758ACB00E0A07D /* Products */,
 				51433D39298FD8C400F2B4E6 /* Frameworks */,
 			);
@@ -333,9 +344,6 @@
 			isa = PBXGroup;
 			children = (
 				E13B275C24758ACF00E0A07D /* FetcherTests.swift */,
-				519A643429B4615B00918B84 /* ResponseDataModelTest.swift */,
-				519A642F29B0D5D000918B84 /* ArchiverTest.swift */,
-				E13B275E24758ACF00E0A07D /* Info.plist */,
 			);
 			path = RookieCurrencyTests;
 			sourceTree = "<group>";
@@ -353,7 +361,6 @@
 			isa = PBXGroup;
 			children = (
 				E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */,
-				E15BA6C624FCA66900CA5B1B /* Info.plist */,
 			);
 			path = CombineCurrencyTests;
 			sourceTree = "<group>";
@@ -495,7 +502,7 @@
 		E13B273A24758ACB00E0A07D /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastSwiftUpdateCheck = 1130;
+				LastSwiftUpdateCheck = 1420;
 				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = "Pang-yen Chen";
 				TargetAttributes = {
@@ -636,11 +643,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				519A643529B4615B00918B84 /* ResponseDataModelTest.swift in Sources */,
 				519A643829B4627500918B84 /* TestingData.swift in Sources */,
 				E13B275D24758ACF00E0A07D /* FetcherTests.swift in Sources */,
-				519A643029B0D5D000918B84 /* ArchiverTest.swift in Sources */,
 				51362E2629B4CF3F00E3CE89 /* RateInstance.swift in Sources */,
+				51E731C829B4DCFA00C1DB2B /* ArchiverTest.swift in Sources */,
+				51E731CA29B4DCFF00C1DB2B /* ResponseDataModelTest.swift in Sources */,
 				51E1B4B929ADADD800D75669 /* RateData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -682,6 +689,9 @@
 			files = (
 				E15BA6C524FCA66900CA5B1B /* FetcherTests.swift in Sources */,
 				51E1B4BA29ADADD800D75669 /* RateData.swift in Sources */,
+				51362E4F29B4D93500E3CE89 /* RateInstance.swift in Sources */,
+				51E731C729B4DCF900C1DB2B /* ArchiverTest.swift in Sources */,
+				51E731C929B4DCFE00C1DB2B /* ResponseDataModelTest.swift in Sources */,
 				519A643929B462AE00918B84 /* TestingData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -747,6 +757,298 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		51362E2A29B4D63500E3CE89 /* RookieCurrencyTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = RookieCurrnecy/RookieCurrency/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = Users/1902470/Desktop/RookieCurrnecy/RookieCurrency/Info.plist;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RookieCurrency_Tests;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = RookieCurrencyTests;
+		};
+		51362E2B29B4D63500E3CE89 /* RookieCurrencyTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6VUDHSKKA2;
+				INFOPLIST_FILE = "Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.RookieCurrency;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = RookieCurrencyTests;
+		};
+		51362E2C29B4D63500E3CE89 /* RookieCurrencyTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.RookieCurrencyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RookieCurrency.app/RookieCurrency";
+			};
+			name = RookieCurrencyTests;
+		};
+		51362E2D29B4D63500E3CE89 /* RookieCurrencyTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6VUDHSKKA2;
+				INFOPLIST_FILE = "Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.CombineCurrency;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = RookieCurrencyTests;
+		};
+		51362E2E29B4D63500E3CE89 /* RookieCurrencyTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6VUDHSKKA2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.CombineCurrencyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CombineCurrency.app/CombineCurrency";
+			};
+			name = RookieCurrencyTests;
+		};
+		51362E3129B4D67100E3CE89 /* CombineCurrencyTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				INFOPLIST_FILE = RookieCurrnecy/RookieCurrency/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 13.2;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_BUNDLE_IDENTIFIER = Users/1902470/Desktop/RookieCurrnecy/RookieCurrency/Info.plist;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = CombineCurrency_Tests;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = CombineCurrencyTests;
+		};
+		51362E3229B4D67100E3CE89 /* CombineCurrencyTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6VUDHSKKA2;
+				INFOPLIST_FILE = "Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.RookieCurrency;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = CombineCurrencyTests;
+		};
+		51362E3329B4D67100E3CE89 /* CombineCurrencyTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.RookieCurrencyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RookieCurrency.app/RookieCurrency";
+			};
+			name = CombineCurrencyTests;
+		};
+		51362E3429B4D67100E3CE89 /* CombineCurrencyTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6VUDHSKKA2;
+				INFOPLIST_FILE = "Supporting Files/Info.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.CombineCurrency;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = CombineCurrencyTests;
+		};
+		51362E3529B4D67100E3CE89 /* CombineCurrencyTests */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = 6VUDHSKKA2;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@loader_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.example.CombineCurrencyTests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CombineCurrency.app/CombineCurrency";
+			};
+			name = CombineCurrencyTests;
+		};
 		E13B275F24758ACF00E0A07D /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -911,7 +1213,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = RookieCurrencyTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -932,7 +1235,8 @@
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-				INFOPLIST_FILE = RookieCurrencyTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -992,7 +1296,8 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6VUDHSKKA2;
-				INFOPLIST_FILE = CombineCurrencyTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1014,7 +1319,8 @@
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 6VUDHSKKA2;
-				INFOPLIST_FILE = CombineCurrencyTests/Info.plist;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1036,6 +1342,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E13B275F24758ACF00E0A07D /* Debug */,
+				51362E3129B4D67100E3CE89 /* CombineCurrencyTests */,
+				51362E2A29B4D63500E3CE89 /* RookieCurrencyTests */,
 				E13B276024758ACF00E0A07D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1045,6 +1353,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E13B276224758ACF00E0A07D /* Debug */,
+				51362E3229B4D67100E3CE89 /* CombineCurrencyTests */,
+				51362E2B29B4D63500E3CE89 /* RookieCurrencyTests */,
 				E13B276324758ACF00E0A07D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1054,6 +1364,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E13B276524758ACF00E0A07D /* Debug */,
+				51362E3329B4D67100E3CE89 /* CombineCurrencyTests */,
+				51362E2C29B4D63500E3CE89 /* RookieCurrencyTests */,
 				E13B276624758ACF00E0A07D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1063,6 +1375,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E15BA6C724FCA66900CA5B1B /* Debug */,
+				51362E3429B4D67100E3CE89 /* CombineCurrencyTests */,
+				51362E2D29B4D63500E3CE89 /* RookieCurrencyTests */,
 				E15BA6C824FCA66900CA5B1B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
@@ -1072,6 +1386,8 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E15BA6C924FCA66900CA5B1B /* Debug */,
+				51362E3529B4D67100E3CE89 /* CombineCurrencyTests */,
+				51362E2E29B4D63500E3CE89 /* RookieCurrencyTests */,
 				E15BA6CA24FCA66900CA5B1B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

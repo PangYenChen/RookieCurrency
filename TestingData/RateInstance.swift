@@ -7,7 +7,12 @@
 //
 
 import Foundation
+
+#if RookieCurrency_Tests
 @testable import RookieCurrency
+#else
+@testable import CombineCurrency
+#endif
 
 extension TestingData {
     static let historicalRate = ResponseDataModel

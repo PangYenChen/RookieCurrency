@@ -7,7 +7,12 @@
 //
 
 import XCTest
+
+#if RookieCurrency_Tests
 @testable import RookieCurrency
+#else
+@testable import CombineCurrency
+#endif
 
 final class ResponseDataModelTest: XCTestCase {
     
