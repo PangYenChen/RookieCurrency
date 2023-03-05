@@ -137,8 +137,8 @@ class ResultTableViewController: BaseResultTableViewController {
             let analyzedDataDictionary = rateListSetSuccess
                 .withLatestFrom(numberOfDayAndBaseCurrency)
                 .map { rateListSet, numberOfDayAndBaseCurrency in
-                    Analyst.analyze(latestRateList: rateListSet.latestRateList,
-                                    historicalRateListSet: rateListSet.historicalRateListSet,
+                    Analyst.analyze(latestRate: rateListSet.latestRateList,
+                                    historicalRateSet: rateListSet.historicalRateListSet,
                                     baseCurrency: numberOfDayAndBaseCurrency.baseCurrency)
                 }
             

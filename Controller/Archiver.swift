@@ -28,30 +28,7 @@ enum Archiver {
     }()
 }
 
-// MARK: - Imperative Part
 extension Archiver {
-    /// 讀取先前存放的資料
-    static func unarchive() throws -> Set<ResponseDataModel.RateList> {
-
-        guard FileManager.default.fileExists(atPath: archiveURL.path) else { return [] }
-        
-        let data = try Data(contentsOf: archiveURL)
-        let rateListSet = try jsonDecoder.decode(Set<ResponseDataModel.RateList>.self, from: data)
-        
-        print("###", self, #function, "讀取資料:\n\t", rateListSet)
-        return rateListSet
-    }
-    
-    /// 寫入資料
-    /// - Parameter rateListSet: 要寫入的資料
-    static func archive(_ rateListSet: Set<ResponseDataModel.RateList>) throws {
-        var historicalRateListSet = rateListSet.filter { $0.historical}
-        // 故意移除一個項目，測試程式碼是否正常
-        historicalRateListSet.removeFirst()
-        let data = try jsonEncoder.encode(historicalRateListSet)
-        try data.write(to: archiveURL)
-        print("###", self, #function, "寫入資料:\n\t", rateListSet)
-    }
     
     /// 讀取先前存放的資料
     static func unarchive() throws -> Set<ResponseDataModel.HistoricalRate> {
@@ -74,29 +51,3 @@ extension Archiver {
     }
 }
 
-
-// MARK: - Combine Part
-extension Archiver {
-    /// 送出先前儲存起來的 rate list set
-    /// - Returns: 送出先前儲存的 rate list 的 publisher
-    static func unarchivedRateListSetPublisher() -> AnyPublisher<Set<ResponseDataModel.RateList>, Error> {
-        
-        return Future<Set<ResponseDataModel.RateList>, Error> { promise in
-    
-            guard FileManager.default.fileExists(atPath: archiveURL.path) else {
-                promise(.success([]))
-                return
-            }
-            
-            do {
-                let data = try Data(contentsOf: archiveURL)
-                let rateListSet = try jsonDecoder.decode(Set<ResponseDataModel.RateList>.self, from: data)
-                
-                promise(.success(rateListSet))
-            } catch {
-                promise(.failure(error))
-            }
-        }
-        .eraseToAnyPublisher()
-    }
-}
