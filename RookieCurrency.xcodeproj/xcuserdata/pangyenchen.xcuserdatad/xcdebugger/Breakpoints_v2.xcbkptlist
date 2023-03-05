@@ -14,9 +14,9 @@
             filePath = "RookieCurrencyTests/FetcherTests.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "48"
-            endingLineNumber = "48"
-            landmarkName = "testFetchLatest()"
+            startingLineNumber = "53"
+            endingLineNumber = "53"
+            landmarkName = "testFetchLatestRate()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

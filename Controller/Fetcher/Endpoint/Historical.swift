@@ -14,6 +14,7 @@ extension Endpoint {
         
         let path: String
         
+#warning("考慮直接輸入日期字串")
         init(date: Date) {
             self.path = AppSetting.requestDateFormatter.string(from: date)
         }

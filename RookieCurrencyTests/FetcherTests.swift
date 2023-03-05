@@ -27,12 +27,17 @@ final class FetcherTests: XCTestCase {
         stubRateListSession = nil
     }
     
-    func testFetchLatest() {
+    func testFetchLatestRate() throws {
         
         // arrange
         do {
             stubRateListSession.data = TestingData.latestData
-            stubRateListSession.urlResponse = nil
+            
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            stubRateListSession.urlResponse = HTTPURLResponse(url: url,
+                                                              statusCode: 200,
+                                                              httpVersion: nil,
+                                                              headerFields: nil)
             stubRateListSession.error = nil
         }
         
@@ -52,12 +57,17 @@ final class FetcherTests: XCTestCase {
             }
     }
     
-    func testFetchHistorical() {
+    func testFetchHistoricalRate() throws {
         
         // arrange
         do {
             stubRateListSession.data = TestingData.historicalData
-            stubRateListSession.urlResponse = nil
+            
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            stubRateListSession.urlResponse = HTTPURLResponse(url: url,
+                                                              statusCode: 200,
+                                                              httpVersion: nil,
+                                                              headerFields: nil)
             stubRateListSession.error = nil
         }
         

@@ -7,7 +7,7 @@
 //
 
 import Foundation
-@testable import RookieCurrency
+@testable import CombineCurrency
 
 
 extension TestingData {
