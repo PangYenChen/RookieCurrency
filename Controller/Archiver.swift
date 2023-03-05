@@ -9,13 +9,13 @@
 import Foundation
 import Combine
 
-/// 讀寫 RateListSet 的類別
+/// 讀寫 Historical Rate 的類別
 enum Archiver {
     /// app 的路徑
     private static let documentsDirectory = URL.documentsDirectory
     
     /// 存放資料的路徑
-    private static let archiveURL = documentsDirectory.appendingPathComponent("rateListSet.json")
+    private static let archiveURL = documentsDirectory.appendingPathComponent("ratetSet.json")
     
     /// 共用的 decoder
     private static let jsonDecoder = JSONDecoder()
@@ -36,14 +36,14 @@ extension Archiver {
         guard FileManager.default.fileExists(atPath: archiveURL.path) else { return [] }
         
         let data = try Data(contentsOf: archiveURL)
-        let rateListSet = try jsonDecoder.decode(Set<ResponseDataModel.HistoricalRate>.self, from: data)
+        let historicalRateSet = try jsonDecoder.decode(Set<ResponseDataModel.HistoricalRate>.self, from: data)
         
-        print("###", self, #function, "讀取資料:\n\t", rateListSet)
-        return rateListSet
+        print("###", self, #function, "讀取資料:\n\t", historicalRateSet)
+        return historicalRateSet
     }
     
     /// 寫入資料
-    /// - Parameter rateListSet: 要寫入的資料
+    /// - Parameter rateSet: 要寫入的資料
     static func archive(_ historicalRateSet: Set<ResponseDataModel.HistoricalRate>) throws {
         let data = try jsonEncoder.encode(historicalRateSet)
         try data.write(to: archiveURL)

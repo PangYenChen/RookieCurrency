@@ -32,12 +32,12 @@ class Fetcher {
         return urlComponents
     }()
     
-    let rateListSession: RateListSession
+    let rateSession: RateSession
 
     let jsonDecoder = JSONDecoder()
     
-    init(rateListSession: RateListSession = Fetcher.rateListSession) {
-        self.rateListSession = rateListSession
+    init(rateSession: RateSession = Fetcher.rateSession) {
+        self.rateSession = rateSession
     }
     
     // MARK: - api key 相關
@@ -124,7 +124,7 @@ extension PathProvider {
 // MARK: - static property
 extension Fetcher {
     /// 不暫存的 session
-    private static let rateListSession: URLSession = {
+    private static let rateSession: URLSession = {
         let configuration = URLSessionConfiguration.default
         configuration.urlCache = nil
         

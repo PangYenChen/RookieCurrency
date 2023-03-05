@@ -20,7 +20,7 @@ class FetcherTests: XCTestCase {
 
     override func setUp() {
         stubRateSession = StubRateSession()
-        sut = Fetcher(rateListSession: stubRateSession)
+        sut = Fetcher(rateSession: stubRateSession)
     }
 
     override func tearDown() {
@@ -96,11 +96,11 @@ class FetcherTests: XCTestCase {
     }
 }
 
-private class StubRateSession: RateListSession {
+private class StubRateSession: RateSession {
     
     var result: Result<(data: Data, response: URLResponse), URLError>!
     
-    func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+    func rateDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
         result
             .publisher
             .eraseToAnyPublisher()

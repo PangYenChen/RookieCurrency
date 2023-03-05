@@ -13,32 +13,32 @@ final class FetcherTests: XCTestCase {
     
     private var sut: Fetcher!
     
-    private var stubRateListSession: StubRateListSession!
+    private var stubRateSession: StubRateSession!
     
     override func setUp() {
-        stubRateListSession = StubRateListSession()
-        sut = Fetcher(rateListSession: stubRateListSession)
+        stubRateSession = StubRateSession()
+        sut = Fetcher(rateSession: stubRateSession)
     }
     
-    #warning("還要測 timeout、429、decode error")
+#warning("還要測 timeout、429、decode error")
     
     override func tearDown() {
         sut = nil
-        stubRateListSession = nil
+        stubRateSession = nil
     }
     
     func testFetchLatestRate() throws {
         
         // arrange
         do {
-            stubRateListSession.data = TestingData.latestData
+            stubRateSession.data = TestingData.latestData
             
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            stubRateListSession.urlResponse = HTTPURLResponse(url: url,
-                                                              statusCode: 200,
-                                                              httpVersion: nil,
-                                                              headerFields: nil)
-            stubRateListSession.error = nil
+            stubRateSession.urlResponse = HTTPURLResponse(url: url,
+                                                          statusCode: 200,
+                                                          httpVersion: nil,
+                                                          headerFields: nil)
+            stubRateSession.error = nil
         }
         
         // action
@@ -61,14 +61,14 @@ final class FetcherTests: XCTestCase {
         
         // arrange
         do {
-            stubRateListSession.data = TestingData.historicalData
+            stubRateSession.data = TestingData.historicalData
             
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            stubRateListSession.urlResponse = HTTPURLResponse(url: url,
+            stubRateSession.urlResponse = HTTPURLResponse(url: url,
                                                               statusCode: 200,
                                                               httpVersion: nil,
                                                               headerFields: nil)
-            stubRateListSession.error = nil
+            stubRateSession.error = nil
         }
         
         // action
@@ -88,7 +88,7 @@ final class FetcherTests: XCTestCase {
     }
 }
 
-private class StubRateListSession: RateListSession {
+private class StubRateSession: RateSession {
     
     var data: Data?
     
@@ -96,7 +96,7 @@ private class StubRateListSession: RateListSession {
     
     var error: Error?
     
-    func rateListDataTask(
+    func rateDataTask(
         with request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
     ) {

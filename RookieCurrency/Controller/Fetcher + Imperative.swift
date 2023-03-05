@@ -8,16 +8,16 @@
 
 import Foundation
 
-// MARK: - RateListSession
-protocol RateListSession {
-    func rateListDataTask(with request: URLRequest,
-                          completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
+// MARK: - RateSession
+protocol RateSession {
+    func rateDataTask(with request: URLRequest,
+                      completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
 }
 
-// MARK: - make url session confirm RateListSession
-extension URLSession: RateListSession {
-    func rateListDataTask(with request: URLRequest,
-                          completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+// MARK: - make url session confirm RateSession
+extension URLSession: RateSession {
+    func rateDataTask(with request: URLRequest,
+                      completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
         dataTask(with: request, completionHandler: completionHandler).resume()
     }
 }
@@ -33,7 +33,7 @@ extension Fetcher {
     ) {
         let urlRequest = createRequest(url: endpoint.url)
         
-        rateListSession.rateListDataTask(with: urlRequest) { [unowned self] data, response, error in
+        rateSession.rateDataTask(with: urlRequest) { [unowned self] data, response, error in
             // api key 的額度是否用完
             if let response, shouldMakeNewAPICall(for: response) {
                 fetch(endpoint, completionHandler: completionHandler)
@@ -56,8 +56,8 @@ extension Fetcher {
             prettyPrint(data)
             
             do {
-                let rateList = try jsonDecoder.decode(Endpoint.ResponseType.self, from: data)
-                completionHandler(.success(rateList))
+                let rate = try jsonDecoder.decode(Endpoint.ResponseType.self, from: data)
+                completionHandler(.success(rate))
             } catch {
                 completionHandler(.failure(error))
             }

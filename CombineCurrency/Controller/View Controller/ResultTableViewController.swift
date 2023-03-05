@@ -92,35 +92,35 @@ class ResultTableViewController: BaseResultTableViewController {
             let updatingString = updating
                 .map { _, _  in R.string.localizable.updating() }
             
-            let rateListSetResult = updating
+            let rateSetResult = updating
                 .flatMap { _, numberOfDayAndBaseCurrency in
                     RateController.shared
-                        .rateListSetPublisher(forDays: numberOfDayAndBaseCurrency.numberOfDay)
+                        .rateSetPublisher(forDays: numberOfDayAndBaseCurrency.numberOfDay)
                         .convertOutputToResult()
                         .receive(on: DispatchQueue.main)
                 }
                 .share()
             
-            let rateListSetFailure = rateListSetResult
+            let rateSetFailure = rateSetResult
                 .resultFailure()
                 .share()
             
-            rateListSetFailure
+            rateSetFailure
                 .sink { [unowned self] failure in showErrorAlert(error: failure) }
                 .store(in: &anyCancellableSet)
             
-            let rateListSetSuccess = rateListSetResult
+            let rateSetSuccess = rateSetResult
                 .resultSuccess()
                 .share()
             
-            let latestUpdateTimeString = rateListSetSuccess
-                .map { rateListSet in rateListSet.latestRateList.timestamp }
+            let latestUpdateTimeString = rateSetSuccess
+                .map { rateSet in rateSet.latestRate.timestamp }
                 .map(Double.init)
                 .map(Date.init(timeIntervalSince1970:))
                 .map(AppSetting.uiDateFormatter.string(from:))
                 .map { R.string.localizable.latestUpdateTime($0) }
             
-            let updateFailTimeString = rateListSetFailure
+            let updateFailTimeString = rateSetFailure
                 .withLatestFrom(latestUpdateTimeString)
                 .map { $1 }
                 .prepend("-")
@@ -134,11 +134,11 @@ class ResultTableViewController: BaseResultTableViewController {
                 .sink { [unowned self] updateResult in latestUpdateTimeItem.title = updateResult }
                 .store(in: &anyCancellableSet)
             
-            let analyzedDataDictionary = rateListSetSuccess
+            let analyzedDataDictionary = rateSetSuccess
                 .withLatestFrom(numberOfDayAndBaseCurrency)
-                .map { rateListSet, numberOfDayAndBaseCurrency in
-                    Analyst.analyze(latestRate: rateListSet.latestRateList,
-                                    historicalRateSet: rateListSet.historicalRateListSet,
+                .map { rateSet, numberOfDayAndBaseCurrency in
+                    Analyst.analyze(latestRate: rateSet.latestRate,
+                                    historicalRateSet: rateSet.historicalRateSet,
                                     baseCurrency: numberOfDayAndBaseCurrency.baseCurrency)
                 }
             
@@ -153,7 +153,7 @@ class ResultTableViewController: BaseResultTableViewController {
                 }
                 .store(in: &anyCancellableSet)
             
-            let shouldEndRefreshingControl = Publishers.Merge(rateListSetFailure.map { _ in () },
+            let shouldEndRefreshingControl = Publishers.Merge(rateSetFailure.map { _ in () },
                                                               shouldPopulateTableView.map { _ in () })
             
             shouldEndRefreshingControl

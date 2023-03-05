@@ -9,14 +9,14 @@
 import Foundation
 import Combine
 
-// MARK: - RateListSession
-protocol RateListSession {
-    func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError>
+// MARK: - RateSession
+protocol RateSession {
+    func rateDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError>
 }
 
-// MARK: - make url session confirm RateListSession
-extension URLSession: RateListSession {
-    func rateListDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+// MARK: - make url session confirm RateSession
+extension URLSession: RateSession {
+    func rateDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
         dataTaskPublisher(for: request).eraseToAnyPublisher()
     }
 }
@@ -28,7 +28,7 @@ extension Fetcher {
         func dataTaskPublisherWithLimitHandling(for endPoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
             let urlRequest = createRequest(url: endPoint.url)
             
-            return rateListSession.rateListDataTaskPublisher(for: urlRequest)
+            return rateSession.rateDataTaskPublisher(for: urlRequest)
                 .flatMap { [unowned self] output -> AnyPublisher<(data: Data, response: URLResponse), URLError> in
                     
                     if shouldMakeNewAPICall(for: output.response) {
