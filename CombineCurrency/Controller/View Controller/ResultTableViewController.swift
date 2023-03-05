@@ -44,8 +44,8 @@ class ResultTableViewController: BaseResultTableViewController {
                                                     image: UIImage(systemName: "arrow.up.right"),
                                                     handler: { [unowned self] _ in setOrder(.increasing) })
                     let decreasingAction = UIAction(title: Order.decreasing.localizedName,
-                                                     image: UIImage(systemName: "arrow.down.right"),
-                                                     handler: { [unowned self] _ in setOrder(.decreasing) })
+                                                    image: UIImage(systemName: "arrow.down.right"),
+                                                    handler: { [unowned self] _ in setOrder(.decreasing) })
                     switch order {
                     case .increasing:
                         increasingAction.state = .on
@@ -86,12 +86,12 @@ class ResultTableViewController: BaseResultTableViewController {
             numberOfDayAndBaseCurrency
                 .sink { [unowned self] _ in refreshControl?.beginRefreshing() }
                 .store(in: &anyCancellableSet)
-        
+            
             let updating = Publishers.CombineLatest(refresh, numberOfDayAndBaseCurrency).share()
             
             let updatingString = updating
                 .map { _, _  in R.string.localizable.updating() }
-                
+            
             let rateListSetResult = updating
                 .flatMap { _, numberOfDayAndBaseCurrency in
                     RateListController.shared
@@ -137,9 +137,9 @@ class ResultTableViewController: BaseResultTableViewController {
             let analyzedDataDictionary = rateListSetSuccess
                 .withLatestFrom(numberOfDayAndBaseCurrency)
                 .map { rateListSet, numberOfDayAndBaseCurrency in
-                    RateListSetAnalyst.analyze(latestRateList: rateListSet.latestRateList,
-                                               historicalRateListSet: rateListSet.historicalRateListSet,
-                                               baseCurrency: numberOfDayAndBaseCurrency.baseCurrency)
+                    Analyst.analyze(latestRateList: rateListSet.latestRateList,
+                                    historicalRateListSet: rateListSet.historicalRateListSet,
+                                    baseCurrency: numberOfDayAndBaseCurrency.baseCurrency)
                 }
             
             let shouldPopulateTableView = Publishers.CombineLatest3(analyzedDataDictionary, order, searchText).share()

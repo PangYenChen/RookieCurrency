@@ -71,6 +71,6 @@ private class RateListSessionStub: RateListSession {
         with request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
     ) {
-        completionHandler(RateList.data, nil, nil)
+        completionHandler(TestingData.historicalData, nil, nil)
     }
 }

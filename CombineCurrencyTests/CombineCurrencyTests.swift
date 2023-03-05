@@ -51,7 +51,7 @@ private class RateListSessionStub: RateListSession {
                                           headerFields: nil)
         
         
-        return Just((data: RateList.data!, response: urlResponse!))
+        return Just((data: TestingData.historicalData!, response: urlResponse!))
             .setFailureType(to: URLError.self)
             .eraseToAnyPublisher()
     }

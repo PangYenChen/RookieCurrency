@@ -1,5 +1,5 @@
 //
-//  RateListSetAnalyst.swift
+//  Analyst.swift
 //  RookieCurrency
 //
 //  Created by Pang-yen Chen on 2020/6/1.
@@ -9,7 +9,7 @@
 import Foundation
 
 /// 從數據中分析出幣別的升貶值的物件
-enum RateListSetAnalyst {
+enum Analyst {
     /// 分析幣值的升貶值
     /// - Parameters:
     ///   - latestRateList: 當下的匯率
@@ -35,6 +35,28 @@ enum RateListSetAnalyst {
             result.removeValue(forKey: baseCurrency)
             
             return result
+    }
+    
+    static func analyze(latestRate: ResponseDataModel.LatestRate,
+                        historicalRateSet: Set<ResponseDataModel.HistoricalRate>,
+                        baseCurrency: Currency)
+    -> [Currency: (latest: Double, mean: Double, deviation: Double)] {
+        
+        var result = [Currency: (latest: Double, mean: Double, deviation: Double)]()
+        
+        for currency in Currency.allCases {
+            for rateList in historicalRateSet {
+                // 基準幣別的換算
+                result[currency, default: (latest: 0, mean: 0, deviation: 0)].mean += rateList[baseCurrency]! / rateList[currency]!
+            }
+            result[currency]!.mean /= Double(historicalRateSet.count)
+            result[currency]!.latest = latestRate[baseCurrency]! / latestRate[currency]!
+            result[currency]!.deviation = (latestRate[baseCurrency]! / latestRate[currency]! - result[currency]!.mean) / result[currency]!.mean
+        }
+        
+        result.removeValue(forKey: baseCurrency)
+        
+        return result
     }
 }
 

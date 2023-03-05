@@ -121,7 +121,7 @@ class ResultTableViewController: BaseResultTableViewController {
                 
                 // update table view
                 do {
-                    analyzedDataDictionary = RateListSetAnalyst
+                    analyzedDataDictionary = Analyst
                         .analyze(latestRateList: latestRateList,
                                  historicalRateListSet: historicalRateListSet,
                                  baseCurrency: baseCurrency)
