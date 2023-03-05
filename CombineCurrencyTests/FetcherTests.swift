@@ -28,22 +28,6 @@ class FetcherTests: XCTestCase {
         stubRateSession = nil
     }
 #warning("還要測 timeout、429、decode error")
-    func testRateList() throws {
-        throw XCTSkip("要確定源頭也刪掉了")
-        let dummyEndpoint = Fetcher.Endpoint.latest
-        
-        sut.rateListPublisher(for: dummyEndpoint)
-            .sink(
-                receiveCompletion: { completion in
-                    guard case .failure = completion else { return }
-                    XCTFail()
-                },
-                receiveValue: { rateList in
-                    assert(!(rateList.rates.isEmpty))
-                }
-            )
-            .store(in: &anyCancellableSet)
-    }
     
     func testPublishLatestRate() throws {
         
