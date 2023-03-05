@@ -27,8 +27,11 @@ final class ResponseDataModelTest: XCTestCase {
         XCTAssertFalse(historicalRate.rates.isEmpty)
     }
     
-    func testEncodeAndThanDecode() {
-//        let dummyRate = ResponseDataModel
-//            .HistoricalRate(
+    func testEncodeAndThanDecode() throws {
+        let dummyHistoricalRate = TestingData.historicalRate
+        let historicalRateData = try JSONEncoder().encode(dummyHistoricalRate)
+        let decodedHistoricalRate = try JSONDecoder()
+            .decode(ResponseDataModel.HistoricalRate.self, from: historicalRateData)
+        XCTAssertEqual(dummyHistoricalRate, decodedHistoricalRate)
     }
 }
