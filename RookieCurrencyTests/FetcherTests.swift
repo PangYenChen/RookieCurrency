@@ -9,21 +9,37 @@
 import XCTest
 @testable import RookieCurrency
 
-class FetcherTests: XCTestCase {
+final class FetcherTests: XCTestCase {
     
-    var sut: Fetcher!
+    private var sut: Fetcher!
+    
+    private var stubRateListSession: StubRateListSession!
     
     override func setUp() {
-        sut = Fetcher(rateListSession: RateListSessionStub())
+        stubRateListSession = StubRateListSession()
+        sut = Fetcher(rateListSession: stubRateListSession)
     }
+    
+    #warning("還要測 timeout、429、decode error")
     
     override func tearDown() {
         sut = nil
+        stubRateListSession = nil
     }
     
     func testFetchLatest() {
+        
+        // arrange
+        do {
+            stubRateListSession.data = TestingData.latestData
+            stubRateListSession.urlResponse = nil
+            stubRateListSession.error = nil
+        }
+        
+        // action
         sut
             .fetch(Endpoint.Latest()) { result in
+                // assert
                 switch result {
                 case .success(let rate):
                     XCTAssertFalse(rate.rates.isEmpty)
@@ -37,8 +53,18 @@ class FetcherTests: XCTestCase {
     }
     
     func testFetchHistorical() {
+        
+        // arrange
+        do {
+            stubRateListSession.data = TestingData.historicalData
+            stubRateListSession.urlResponse = nil
+            stubRateListSession.error = nil
+        }
+        
+        // action
         sut
             .fetch(Endpoint.Historical(date: .now)) { result in
+                // assert
                 switch result {
                 case .success(let rate):
                     XCTAssertFalse(rate.rates.isEmpty)
@@ -52,7 +78,14 @@ class FetcherTests: XCTestCase {
     }
 }
 
-private class RateListSessionStub: RateListSession {
+private class StubRateListSession: RateListSession {
+    
+    var data: Data?
+    
+    var urlResponse: URLResponse?
+    
+    var error: Error?
+    
     func rateListDataTask(
         with request: URLRequest,
         completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
