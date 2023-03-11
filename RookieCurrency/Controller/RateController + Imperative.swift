@@ -29,8 +29,10 @@ extension RateController {
         do {
             unarchivedRateSet = try Archiver.unarchive()
         } catch {
-            completionHandler(.failure(error))
-            print("###", self, #function, "從硬碟讀取資料失敗", error)
+            DispatchQueue.main.async {
+                completionHandler(.failure(error))
+                print("###", self, #function, "從硬碟讀取資料失敗", error)
+            }
             return
         }
         
@@ -66,7 +68,10 @@ extension RateController {
                                 unarchivedRateSet.insert(fetchedRate)
                                 dispatchGroup?.leave()
                             case .failure(let error):
-                                completionHandler(.failure(error))
+                                DispatchQueue.main.async {
+                                    completionHandler(.failure(error))
+                                }
+                                
                                 dispatchGroup = nil
                             }
                         }
@@ -89,7 +94,9 @@ extension RateController {
                     }
                 }
             case .failure(let error):
-                completionHandler(.failure(error))
+                DispatchQueue.main.async {
+                    completionHandler(.failure(error))
+                }
             }
         }
     }

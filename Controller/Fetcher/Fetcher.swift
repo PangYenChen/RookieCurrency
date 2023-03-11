@@ -39,11 +39,18 @@ class Fetcher {
     }
     
     // MARK: - api key 相關
-    private var apiKeys: [String] = [
-        "pT4L8AtpKOIWiGoE0ouiak003mdE0Wvg"
-    ]
+    private var unusedAPIKeys: Set<String> = ["kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"]
     
-    private var apiKey: String = "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"
+    private var usingAPIKey: String = "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"
+    
+    private var usedAPIKeys: Set<String> = []
+    
+#if DEBUG
+    var apiKeysUsageRatio: Double {
+        let totalAPIKeyCount = usedAPIKeys.count + 1 + unusedAPIKeys.count
+        return Double(usedAPIKeys.count) / Double(totalAPIKeyCount)
+    }
+#endif
 }
 
 // MARK: - name space
@@ -74,9 +81,6 @@ extension PathProvider {
     }
 }
 
-
-
-
 // MARK: - static property
 extension Fetcher {
     /// 不暫存的 session
@@ -93,7 +97,7 @@ extension Fetcher {
 extension Fetcher {
     func createRequest(url: URL) -> URLRequest {
         var urlRequest = URLRequest(url: url, timeoutInterval: 5)
-        urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
+        urlRequest.addValue(usingAPIKey, forHTTPHeaderField: "apikey")
         return urlRequest
     }
     
@@ -107,9 +111,10 @@ extension Fetcher {
         if let httpURLResponse = response as? HTTPURLResponse,
            httpURLResponse.statusCode == 429 {
             // 當下的 api key 的額度用完了，要換新的 api key
-            if let apiKey = apiKeys.popLast() {
+            if !(unusedAPIKeys.isEmpty) {
                 // 已經換上新的 api key，需要從打一次 api
-                self.apiKey = apiKey
+                usedAPIKeys.insert(usingAPIKey)
+                usingAPIKey = unusedAPIKeys.removeFirst()
                 return true
             } else {
                 // 已經沒有 api key 可以用了。
@@ -132,14 +137,3 @@ extension Fetcher {
         }
     }
 }
-
-// MARK: - 在 debug build configuration 顯示用量
-#if DEBUG
-extension Fetcher {
-#warning("改成singleton的時候要改邏輯")
-    var apiKeysUsage: Double {
-        let apiKeyCount = apiKeys.count + 1
-        return Double(apiKeys.count) / Double(apiKeyCount)
-    }
-}
-#endif

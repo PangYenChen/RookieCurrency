@@ -17,7 +17,7 @@ class DebugInfoViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        apiKeyUsageProgressView.setProgress(Float(Fetcher.shared.apiKeysUsage), animated: true)
+        apiKeyUsageProgressView.setProgress(Float(Fetcher.shared.apiKeysUsageRatio), animated: true)
         homeDirectoryTextView.text = NSHomeDirectory()
     }
 #endif
