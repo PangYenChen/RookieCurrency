@@ -14,7 +14,9 @@ class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - properties
     override var editedNumberOfDayString: String { String(editedNumberOfDay.value) }
     
-    override var editedBaseCurrencyString: String { editedBaseCurrency.value.localizedString }
+    override var editedBaseCurrencyString: String {
+        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: editedBaseCurrency.value.code) ?? editedBaseCurrency.value.code
+    }
     
     private let editedNumberOfDay: CurrentValueSubject<Int, Never>
     
