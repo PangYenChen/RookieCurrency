@@ -36,11 +36,11 @@ class BaseCurrencyTableViewController: UITableViewController {
         
         // table view data source
         do {
-            dataSource = DataSource(tableView: tableView) { tableView, indexPath, itemIdentifier in
+            dataSource = DataSource(tableView: tableView) { tableView, indexPath, currency in
                 let identifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
                 
-                cell.textLabel?.text = itemIdentifier.localizedString
+                cell.textLabel?.text = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currency.code)
                 cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
                 cell.textLabel?.adjustsFontForContentSizeCategory = true
                 
@@ -76,7 +76,8 @@ extension BaseCurrencyTableViewController: UISearchBarDelegate {
         } else {
             let filteredCurrencies = currencies
                 .filter { currency in
-                    [currency.code, currency.localizedString]
+                    [currency.code, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currency.code)]
+                        .compactMap { $0 }
                         .contains { text in text.lowercased().contains(searchText.lowercased()) }
                 }
             snapshot.appendItems(filteredCurrencies)

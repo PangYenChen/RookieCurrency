@@ -74,7 +74,11 @@ class BaseResultTableViewController: UITableViewController {
                 let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
                 let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
                 
-                cell.textLabel?.text = [currency.code, currency.localizedString, deviationString].joined(separator: ", ")
+                cell.textLabel?.text = [currency.code,
+                                        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currency.code),
+                                        deviationString]
+                    .compactMap { $0 }
+                    .joined(separator: ", ")
                 cell.textLabel?.adjustsFontForContentSizeCategory = true
                 cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
                 cell.textLabel?.textColor = data.deviation < 0 ? .systemGreen : .systemRed
@@ -119,7 +123,9 @@ class BaseResultTableViewController: UITableViewController {
         if !searchText.isEmpty { // filtering if needed
             sortedTuple = sortedTuple
                 .filter { (currency,_) in
-                    [currency.code, currency.localizedString].contains { text in text.lowercased().contains(searchText.lowercased()) }
+                    [currency.code, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currency.code)]
+                        .compactMap { $0 }
+                        .contains { text in text.lowercased().contains(searchText.lowercased()) }
                 }
         }
         

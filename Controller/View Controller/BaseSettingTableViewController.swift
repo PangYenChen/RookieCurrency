@@ -56,7 +56,7 @@ class BaseSettingTableViewController: UITableViewController {
             dateLabel.textColor = UIColor.secondaryLabel
             dateLabel.adjustsFontForContentSizeCategory = true
             let formatter = DateFormatter()
-            formatter.locale = Locale.current
+            formatter.locale = Locale.autoupdatingCurrent
             formatter.dateStyle = .medium
             formatter.timeStyle = .short
             let commitDate = Date(timeIntervalSince1970: Double(commitTimestamp))
@@ -147,7 +147,7 @@ extension BaseSettingTableViewController {
             case .language:
                 cell.textLabel?.text = R.string.localizable.language()
                 if let languageCode = Bundle.main.preferredLocalizations.first {
-                    cell.detailTextLabel?.text = Locale.current.localizedString(forLanguageCode: languageCode)
+                    cell.detailTextLabel?.text = Locale.autoupdatingCurrent.localizedString(forLanguageCode: languageCode)
                 }
                 cell.accessoryType = .disclosureIndicator
                 cell.imageView?.image = UIImage(systemName: "character")

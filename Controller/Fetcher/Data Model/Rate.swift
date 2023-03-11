@@ -150,31 +150,6 @@ enum Currency: String, CaseIterable {
     case XAG
     /// 黃金 Gold (troy ounce)
     case XAU
-#warning("考慮搬到其他地方去，這好像不屬於 data model，已經跟業務邏輯有關了。")
-    var localizedString: String {
-        if let localizedString =  Locale.current.localizedString(forCurrencyCode: self.rawValue) {
-            return localizedString
-        } else {
-            switch self {
-            case .TWD: return R.string.localizable.twD()
-            case .USD: return R.string.localizable.usD()
-            case .JPY: return R.string.localizable.jpY()
-            case .EUR: return R.string.localizable.euR()
-            case .CNY: return R.string.localizable.cnY()
-            case .GBP: return R.string.localizable.gbP()
-            case .SEK: return R.string.localizable.seK()
-            case .CAD: return R.string.localizable.caD()
-            case .ZAR: return R.string.localizable.zaR()
-            case .HKD: return R.string.localizable.hkD()
-            case .SGD: return R.string.localizable.sgD()
-            case .CHF: return R.string.localizable.chF()
-            case .NZD: return R.string.localizable.nzD()
-            case .AUD: return R.string.localizable.auD()
-            case .XAG: return R.string.localizable.xaG()
-            case .XAU: return R.string.localizable.xaU()
-            }
-        }
-    }
     
     var code: String { self.rawValue }
 }
