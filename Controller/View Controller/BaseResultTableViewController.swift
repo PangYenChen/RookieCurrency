@@ -139,23 +139,14 @@ class BaseResultTableViewController: UITableViewController {
     }
     
     final func showErrorAlert(error: Error) {
-#warning("這出乎我的意料，要向下轉型才讀得到正確的 localizedDescription，要查一下資料。")
-        
+
         let alertController: UIAlertController
         
         // alert controller
         do {
-            let message: String
-            
-//            if let errorMessage = error as? ResponseDataModel.ServerError {
-//                message = errorMessage.localizedDescription
-//            } else {
-                message = error.localizedDescription
-//            }
-            
             let alertTitle = R.string.localizable.alertTitle()
             alertController = UIAlertController(title: alertTitle,
-                                                message: message,
+                                                message: error.localizedDescription,
                                                 preferredStyle: .alert)
         }
         
