@@ -29,7 +29,7 @@ extension ResponseDataModel {
         let rates: [String: Double]
         
         subscript(_ currency: Currency) -> Double? {
-            currency == .EUR ? 1 : rates[currency.rawValue]
+            rates[currency.rawValue]
         }
         
         /// JSON 的 coding key
@@ -75,12 +75,6 @@ extension ResponseDataModel.Rate: Decodable {
         timestamp = try container.decode(Int.self, forKey: .timestamp)
         
         rates = try container.decode([String: Double].self, forKey: .rates)
-        
-        for currency in Currency.allCases where currency != .EUR {
-            guard rates[currency.rawValue] != nil else {
-                throw ServerDateError.dataAbsent(currency.rawValue)
-            }
-        }
     }
 }
 
