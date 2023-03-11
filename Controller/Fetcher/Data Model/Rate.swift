@@ -8,16 +8,18 @@
 
 import Foundation
 
+protocol RateCategoryProtocol {}
+
 extension ResponseDataModel {
     
     enum Category {
-        enum Latest {}
-        enum Historical {}
+        enum Latest: RateCategoryProtocol {}
+        enum Historical: RateCategoryProtocol {}
     }
     
     /// 服務商回傳的匯率資料
     /// Catetory 是 phantom type
-    struct Rate<Category> {
+    struct Rate<Category: RateCategoryProtocol> {
         /// Returns the date for which rates were requested.
         let dateString: String
         
