@@ -80,18 +80,11 @@ extension RateController {
                 
                 // 所需的資料全部拿到後
                 dispatchGroup?.notify(queue: queue) {
-                    print("###", self, #function, "全部的資料是\n\t", historicalRateSet)
-                    #warning("看排序要在哪做，印出比較漂亮好debug的東西")
-//                        .sorted { lhs, rhs in lhs.date < rhs.date })
+                    print("###", self, #function, "全部的資料是\n\t", historicalRateSet.sorted { lhs, rhs in lhs.timestamp < rhs.timestamp })
                           
                     completionHandler(.success((latestRate, historicalRateSet)))
                     
-                    do {
-                        try Archiver.archive(unarchivedRateSet)
-                    } catch {
-#warning("存檔失敗不知道要幹嘛？？ 考慮改成 `try?`")
-                        completionHandler(.failure(error))
-                    }
+                    try? Archiver.archive(unarchivedRateSet) // 不處理存檔失敗
                 }
             case .failure(let error):
                 DispatchQueue.main.async {
