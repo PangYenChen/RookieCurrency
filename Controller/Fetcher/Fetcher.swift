@@ -49,13 +49,18 @@ class Fetcher {
         return Double(usedAPIKeys.count) / Double(totalAPIKeyCount)
     }
 #endif
+    
 }
 
 // MARK: - name space
 extension Fetcher {
     /// 用來接著不明錯誤
-    enum FetcherError: Error {
+    enum FetcherError: LocalizedError {
         case noDataNoError
+        
+        var errorDescription: String? {
+            "Something goes wrong (no data and error instance data task completion handler)"
+        }
     }
     
 }
