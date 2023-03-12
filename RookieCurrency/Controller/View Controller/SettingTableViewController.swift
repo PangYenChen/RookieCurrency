@@ -62,9 +62,21 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     override func stepperValueDidChange() {
         editedNumberOfDay = Int(stepper.value)
-        tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none)
+
         saveButton.isEnabled = hasChange
         isModalInPresentation = hasChange
+        
+        // update number of day ui
+        do {
+            let numberOfDayRow = IndexPath(row: Row.numberOfDay.rawValue, section: 0)
+            
+            guard let cell = tableView.cellForRow(at: numberOfDayRow) else {
+                assertionFailure("###, \(#function), \(self), 拿不到設定 number of day 的 cell。")
+                return
+            }
+            
+            cell.detailTextLabel?.text = editedNumberOfDayString
+        }
     }
     
     @IBAction override func save() {

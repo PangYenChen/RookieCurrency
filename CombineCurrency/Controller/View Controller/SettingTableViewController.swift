@@ -80,7 +80,18 @@ class SettingTableViewController: BaseSettingTableViewController {
         super.viewDidLoad()
         
         editedNumberOfDay
-            .sink { [unowned self] _ in tableView.reloadRows(at: [IndexPath(row: Row.numberOfDay.rawValue, section: 0)], with: .none) }
+            .dropFirst()
+            .sink { [unowned self] _ in
+                
+                let numberOfDayRow = IndexPath(row: Row.numberOfDay.rawValue, section: 0)
+                
+                guard let cell = tableView.cellForRow(at: numberOfDayRow) else {
+                    assertionFailure("###, \(#function), \(self), 拿不到設定 number of day 的 cell。")
+                    return
+                }
+                
+                cell.detailTextLabel?.text = editedNumberOfDayString
+            }
             .store(in: &anyCancellableSet)
         
         editedBaseCurrency
