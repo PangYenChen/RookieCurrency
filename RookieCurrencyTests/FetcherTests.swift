@@ -134,7 +134,7 @@ final class FetcherTests: XCTestCase {
     
     func testTimeout() {
         // arrange
-        let expectation = expectation(description: "should fail to decode")
+        let expectation = expectation(description: "should time out")
         let dummyEndpoint = Endpoint.Latest()
         do {
             
@@ -156,6 +156,51 @@ final class FetcherTests: XCTestCase {
                     } else {
                         XCTFail("get an error other than timedOut: \(failure)")
                     }
+                }
+            }
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
+    
+    func testTooManyRequestRecovery() throws {
+        // arrange
+        let expectation = expectation(description: "api key usage ratio should change")
+        let dummyEndpoint = Endpoint.Latest()
+        let initialAPIKeyUsageRatio = sut.apiKeysUsageRatio
+        
+        
+        do {
+            // first response
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response = HTTPURLResponse(url: url,
+                                           statusCode: 429,
+                                           httpVersion: nil,
+                                           headerFields: nil)
+            
+            stubRateSession.outputs = [(data: nil, response: response, error: nil)]
+        }
+        
+        do {
+            // second response
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response = HTTPURLResponse(url: url,
+                                           statusCode: 200,
+                                           httpVersion: nil,
+                                           headerFields: nil)
+            
+            stubRateSession.outputs.append((data: TestingData.latestData, response: response, error: nil))
+        }
+        
+        // action
+        sut
+            .fetch(dummyEndpoint) { [unowned self] result in
+                // assert
+                switch result {
+                case .success:
+                    XCTAssertNotEqual(initialAPIKeyUsageRatio, sut.apiKeysUsageRatio)
+                    expectation.fulfill()
+                case .failure(let failure):
+                    XCTFail("should not get any error")
                 }
             }
         

@@ -843,7 +843,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = Users/1902470/Desktop/RookieCurrnecy/RookieCurrency/Info.plist;
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RookieCurrency_Tests;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "RookieCurrency_Tests DEBUG";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = RookieCurrencyTests;
@@ -991,7 +991,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = Users/1902470/Desktop/RookieCurrnecy/RookieCurrency/Info.plist;
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = CombineCurrency_Tests;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "CombineCurrency_Tests DEBUG";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = CombineCurrencyTests;
