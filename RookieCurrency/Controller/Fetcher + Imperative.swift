@@ -38,14 +38,17 @@ extension Fetcher {
         let urlRequest = createRequest(url: endpoint.url)
         
         rateSession.rateDataTask(with: urlRequest) { [unowned self] data, response, error in
-            // api key 的額度是否用完
-            if let response, let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 429 {
+            if let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 429 {
+                // server 回應 status code 429，表示 api key 額度用完
                 if updateAPIKeySucceed() {
+                    // 更新完 api key 後重新打 api
                     fetch(endpoint, completionHandler: completionHandler)
+                    return
                 } else {
+                    // 已經沒有還有額度的 api key 可以用了
                     completionHandler(.failure(Error.tooManyRequest))
+                    return
                 }
-                return
             }
             
             // 網路錯誤，包含 timeout

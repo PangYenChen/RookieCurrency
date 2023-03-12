@@ -72,11 +72,9 @@ extension Fetcher {
         return urlRequest
     }
     
-    /// 判斷是否需要換新的 api key 重新打 api。
-    /// 當 api key 的額度用完時，server 會回傳 status code 429(too many request)，以此作為是否換 api key 的依據。
+    /// 更新正在使用的 api key
     /// 若還有新的 api key 可以用，換上後回傳 true，表示要重打 api。
     /// 若已無 api key 可用，回傳 false，讓 call cite 處理。
-    /// - Parameter response: 前一次打 api 的 response
     /// - Returns: 是否需要從打一次 api
     func updateAPIKeySucceed() -> Bool {
         if unusedAPIKeys.isEmpty {
@@ -105,7 +103,6 @@ extension Fetcher {
 
 // MARK: - name space
 extension Fetcher {
-    /// 用來接著不明錯誤
     enum Error: LocalizedError {
         case noDataNoError
         case tooManyRequest

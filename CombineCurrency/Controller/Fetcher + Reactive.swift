@@ -28,22 +28,30 @@ extension Fetcher {
     /// 像服務商的伺服器索取資料。
     /// - Parameter endPoint: The end point to be retrieved.
     /// - Returns: The publisher publishes decoded instance when the task completes, or terminates if the task fails with an error.
-    func publisher<Endpoint: EndpointProtocol>(for endPoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> {
+    func publisher<Endpoint: EndpointProtocol>(for endPoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error> {
         
-        func dataTaskPublisherWithLimitHandling(for endPoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+        func dataTaskPublisherWithLimitHandling(for endPoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> {
             rateSession.rateDataTaskPublisher(for: createRequest(url: endPoint.url))
-                .flatMap { [unowned self] data, response -> AnyPublisher<(data: Data, response: URLResponse), URLError> in
-                    
-                    if shouldMakeNewAPICall(for: response) {
-                        return dataTaskPublisherWithLimitHandling(for: endPoint)
-                            .eraseToAnyPublisher()
-                        
+                .mapError { $0 }
+                .flatMap { [unowned self] data, response -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> in
+                    if let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 429 {
+                        // server 回應 status code 429，表示 api key 額度用完
+                        if updateAPIKeySucceed() {
+                            // 更新完 api key 後重新打 api
+                            return dataTaskPublisherWithLimitHandling(for: endPoint)
+                                .eraseToAnyPublisher()
+                        } else {
+                            // 已經沒有還有額度的 api key 可以用了
+                            return Fail(error: Fetcher.Error.tooManyRequest)
+                                .eraseToAnyPublisher()
+                        }
                     } else {
                         return Just((data: data, response: response))
-                            .setFailureType(to: URLError.self)
+                            .setFailureType(to: Swift.Error.self)
                             .eraseToAnyPublisher()
                     }
                 }
+                .tryMap { $0 }
                 .eraseToAnyPublisher()
         }
         
