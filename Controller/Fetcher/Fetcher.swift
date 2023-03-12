@@ -16,12 +16,10 @@ class Fetcher {
     
     static let urlComponents: URLComponents? = {
 
-        /// 拿匯率的 base url，我使用的免費方案不支援 https。
-        /// 提供資料的服務商： https://apilayer.com
+        /// 拿匯率的 base url。
+        /// 提供資料的服務商： https://apilayer.com/marketplace/category/currency
         /// "https://api.apilayer.com/exchangerates_data/"
-        /// "https://api.apilayer.com/fixer/"
-        ///
-        let baseURL = "https://api.apilayer.com/fixer/"
+        let baseURL = "https://api.apilayer.com/exchangerates_data/"
 
         var urlComponents = URLComponents(string: baseURL)
 
