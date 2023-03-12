@@ -22,7 +22,7 @@ final class FetcherTests: XCTestCase {
         sut = Fetcher(rateSession: stubRateSession)
     }
     
-#warning("還要測 timeout、429")
+#warning("還要測429")
     
     override func tearDown() {
         sut = nil
@@ -125,6 +125,36 @@ final class FetcherTests: XCTestCase {
                         expectation.fulfill()
                     } else {
                         XCTFail("get an error other than decoding error: \(failure)")
+                    }
+                }
+            }
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
+    
+    func testTimeout() {
+        // arrange
+        let expectation = expectation(description: "should fail to decode")
+        let dummyEndpoint = Endpoint.Latest()
+        do {
+            
+            let timeoutError = URLError(URLError.timedOut)
+            
+            stubRateSession.outputs = [(data: nil, response: nil, error: timeoutError)]
+        }
+        
+        // action
+        sut
+            .fetch(dummyEndpoint) { result in
+                // assert
+                switch result {
+                case .success:
+                    XCTFail("should time out")
+                case .failure(let failure):
+                    if let urlError = failure as? URLError, urlError.code.rawValue == URLError.timedOut.rawValue  {
+                        expectation.fulfill()
+                    } else {
+                        XCTFail("get an error other than timedOut: \(failure)")
                     }
                 }
             }
