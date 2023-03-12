@@ -33,14 +33,18 @@ extension Fetcher {
     ///   - completionHandler: The completion handler to call when the load request is complete.
     func fetch<Endpoint: EndpointProtocol>(
         _ endpoint: Endpoint,
-        completionHandler: @escaping (Result<Endpoint.ResponseType, Error>) -> Void
+        completionHandler: @escaping (Result<Endpoint.ResponseType, Swift.Error>) -> Void
     ) {
         let urlRequest = createRequest(url: endpoint.url)
         
         rateSession.rateDataTask(with: urlRequest) { [unowned self] data, response, error in
             // api key 的額度是否用完
-            if let response, shouldMakeNewAPICall(for: response) {
-                fetch(endpoint, completionHandler: completionHandler)
+            if let response, let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 429 {
+                if updateAPIKeySucceed() {
+                    fetch(endpoint, completionHandler: completionHandler)
+                } else {
+                    completionHandler(.failure(Error.tooManyRequest))
+                }
                 return
             }
             
@@ -53,7 +57,7 @@ extension Fetcher {
             
             guard let data = data else {
                 print("###", self, #function, "沒有 data 也沒有 error，一般來說如果碰到 status code 204 確實有可能沒有 data 跟 error，但這個服務商沒有這種情況。")
-                completionHandler(.failure(FetcherError.noDataNoError))
+                completionHandler(.failure(Error.noDataNoError))
                 return
             }
             

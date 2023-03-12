@@ -78,22 +78,15 @@ extension Fetcher {
     /// 若已無 api key 可用，回傳 false，讓 call cite 處理。
     /// - Parameter response: 前一次打 api 的 response
     /// - Returns: 是否需要從打一次 api
-    func shouldMakeNewAPICall(for response: URLResponse) -> Bool {
-        if let httpURLResponse = response as? HTTPURLResponse,
-           httpURLResponse.statusCode == 429 {
-            // 當下的 api key 的額度用完了，要換新的 api key
-            if unusedAPIKeys.isEmpty {
-                // 已經沒有 api key 可以用了。
-                return false
-            } else {
-                // 已經換上新的 api key，需要從打一次 api
-                usedAPIKeys.insert(usingAPIKey)
-                usingAPIKey = unusedAPIKeys.removeFirst()
-                return true
-            }
-        } else {
-            // api key 的額度正常，不需要重打 api。
+    func updateAPIKeySucceed() -> Bool {
+        if unusedAPIKeys.isEmpty {
+            // 已經沒有 api key 可以用了。
             return false
+        } else {
+            // 已經換上新的 api key，需要從打一次 api
+            usedAPIKeys.insert(usingAPIKey)
+            usingAPIKey = unusedAPIKeys.removeFirst()
+            return true
         }
     }
     
@@ -113,11 +106,18 @@ extension Fetcher {
 // MARK: - name space
 extension Fetcher {
     /// 用來接著不明錯誤
-    enum FetcherError: LocalizedError {
+    enum Error: LocalizedError {
         case noDataNoError
+        case tooManyRequest
         
         var localizedDescription: String {
-            "Something goes wrong (no data and error instance data task completion handler)"
+            switch self {
+            case .noDataNoError:
+                return "Something goes wrong (no data and error instance data task completion handler)"
+            case .tooManyRequest:
+                return "You have exceeded your daily/monthly API rate limit."
+            }
+            
         }
         
         var errorDescription: String? { localizedDescription }

@@ -193,17 +193,48 @@ final class FetcherTests: XCTestCase {
 
         // action
         sut
-            .fetch(dummyEndpoint) { [unowned self] result in
+            .fetch(dummyEndpoint) { result in
                 // assert
                 switch result {
                 case .success:
                     XCTAssertEqual(Set(spyRateSession.receivedAPIKeys).count, 2)
                     expectation.fulfill()
-                case .failure(let failure):
+                case .failure:
                     XCTFail("should not get any error")
                 }
             }
 
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
+    
+    func testTooManyRequestFallBack() throws {
+        // arrange
+        let expectation = expectation(description: "should be unable to recover, pass error to")
+        let dummyEndpoint = Endpoint.Latest()
+        do {
+            stubRateSession.data = TestingData.tooManyRequest
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            stubRateSession.response = HTTPURLResponse(url: url,
+                                                       statusCode: 429,
+                                                       httpVersion: nil,
+                                                       headerFields: nil)
+            stubRateSession.error = nil
+        }
+        
+        // action
+        sut
+            .fetch(dummyEndpoint) { result in
+                switch result {
+                case .success:
+                    XCTFail("should not receive any instance")
+                case .failure(let failure):
+                    if let fetcherError = failure as? Fetcher.Error, fetcherError == Fetcher.Error.tooManyRequest {
+                        expectation.fulfill()
+                    } else {
+                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(failure)")
+                    }
+                }
+            }
         waitForExpectations(timeout: timeoutTimeInterval)
     }
 }

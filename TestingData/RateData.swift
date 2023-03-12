@@ -373,5 +373,12 @@ extension TestingData {
   "timestamp": 1678501623
 }
 """.data(using: .utf8)
+    
+    static let tooManyRequest: Data? = """
+{
+  "message": "You have exceeded your daily/monthly API rate limit. Please review and upgrade your subscription plan at https://promptapi.com/subscriptions to continue."
+}
+""".data(using: .utf8)
+    
 }
 
