@@ -35,14 +35,14 @@ final class FetcherTests: XCTestCase {
         let expectation = expectation(description: "should get a decoded latest rate instance")
         
         do {
-            let data = TestingData.latestData
+            stubRateSession.data = TestingData.latestData
             
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = HTTPURLResponse(url: url,
-                                           statusCode: 200,
-                                           httpVersion: nil,
-                                           headerFields: nil)
-            stubRateSession.outputs = [(data: data, response: response, error: nil)]
+            stubRateSession.response = HTTPURLResponse(url: url,
+                                                       statusCode: 200,
+                                                       httpVersion: nil,
+                                                       headerFields: nil)
+            stubRateSession.error = nil
         }
         
         // action
@@ -69,14 +69,14 @@ final class FetcherTests: XCTestCase {
         let expectation = expectation(description: "should get a decoded historical rate instance")
         
         do {
-            let data = TestingData.historicalData
+            stubRateSession.data = TestingData.historicalData
             
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = HTTPURLResponse(url: url,
-                                           statusCode: 200,
-                                           httpVersion: nil,
-                                           headerFields: nil)
-            stubRateSession.outputs = [(data: data, response: response, error: nil)]
+            stubRateSession.response = HTTPURLResponse(url: url,
+                                                       statusCode: 200,
+                                                       httpVersion: nil,
+                                                       headerFields: nil)
+            stubRateSession.error = nil
         }
         
         // action
@@ -104,14 +104,14 @@ final class FetcherTests: XCTestCase {
         let expectation = expectation(description: "should fail to decode")
         let dummyEndpoint = Endpoint.Latest()
         do {
-            let data = Data()
+            stubRateSession.data = Data()
             
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = HTTPURLResponse(url: url,
-                                           statusCode: 204,
-                                           httpVersion: nil,
-                                           headerFields: nil)
-            stubRateSession.outputs = [(data: data, response: response, error: nil)]
+            stubRateSession.response = HTTPURLResponse(url: url,
+                                                       statusCode: 204,
+                                                       httpVersion: nil,
+                                                       headerFields: nil)
+            stubRateSession.error = nil
         }
         
         // action
@@ -137,10 +137,9 @@ final class FetcherTests: XCTestCase {
         let expectation = expectation(description: "should time out")
         let dummyEndpoint = Endpoint.Latest()
         do {
-            
-            let timeoutError = URLError(URLError.timedOut)
-            
-            stubRateSession.outputs = [(data: nil, response: nil, error: timeoutError)]
+            stubRateSession.data = nil
+            stubRateSession.response = nil
+            stubRateSession.error = URLError(URLError.timedOut)
         }
         
         // action
@@ -164,10 +163,11 @@ final class FetcherTests: XCTestCase {
     
     func testTooManyRequestRecovery() throws {
         // arrange
+        let spyRateSession = SpyRateSession()
+        sut = Fetcher(rateSession: spyRateSession)
+        
         let expectation = expectation(description: "api key usage ratio should change")
         let dummyEndpoint = Endpoint.Latest()
-        let initialAPIKeyUsageRatio = sut.apiKeysUsageRatio
-        
         
         do {
             // first response
@@ -176,10 +176,10 @@ final class FetcherTests: XCTestCase {
                                            statusCode: 429,
                                            httpVersion: nil,
                                            headerFields: nil)
-            
-            stubRateSession.outputs = [(data: nil, response: response, error: nil)]
+
+            spyRateSession.outputs.append((data: nil, response: response, error: nil))
         }
-        
+
         do {
             // second response
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
@@ -188,34 +188,54 @@ final class FetcherTests: XCTestCase {
                                            httpVersion: nil,
                                            headerFields: nil)
             
-            stubRateSession.outputs.append((data: TestingData.latestData, response: response, error: nil))
+            spyRateSession.outputs.append((data: TestingData.latestData, response: response, error: nil))
         }
-        
+
         // action
         sut
             .fetch(dummyEndpoint) { [unowned self] result in
                 // assert
                 switch result {
                 case .success:
-                    XCTAssertNotEqual(initialAPIKeyUsageRatio, sut.apiKeysUsageRatio)
+                    XCTAssertEqual(Set(spyRateSession.receivedAPIKeys).count, 2)
                     expectation.fulfill()
                 case .failure(let failure):
                     XCTFail("should not get any error")
                 }
             }
-        
+
         waitForExpectations(timeout: timeoutTimeInterval)
     }
 }
 
+// MARK: - test double
 private final class StubRateSession: RateSession {
     
-    var outputs: [(data: Data?, response: URLResponse?, error: Error?)] = []
+    var data: Data?
     
-    func rateDataTask(
-        with request: URLRequest,
-        completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void
-    ) {
+    var response: URLResponse?
+    
+    var error: Error?
+    
+    func rateDataTask(with request: URLRequest,
+                      completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+        completionHandler(data, response, error)
+    }
+}
+
+private final class SpyRateSession: RateSession {
+    
+    var outputs = [(data: Data?, response: URLResponse?, error: Error?)]()
+    
+    private(set) var receivedAPIKeys = [String]()
+    
+    func rateDataTask(with request: URLRequest,
+                      completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+        
+        if let receivedAPIKey = request.value(forHTTPHeaderField: "apikey") {
+            receivedAPIKeys.append(receivedAPIKey)
+        }
+        
         guard !(outputs.isEmpty) else { return }
         
         let output = outputs.removeFirst()
