@@ -18,12 +18,9 @@ class Fetcher {
 
         /// 拿匯率的 base url。
         /// 提供資料的服務商： https://apilayer.com/marketplace/category/currency
-        /// "https://api.apilayer.com/exchangerates_data/"
         let baseURL = "https://api.apilayer.com/exchangerates_data/"
 
         var urlComponents = URLComponents(string: baseURL)
-
-        urlComponents?.queryItems = [URLQueryItem(name: "base", value: "USD")]
 
         return urlComponents
     }()
@@ -50,38 +47,6 @@ class Fetcher {
     }
 #endif
     
-}
-
-// MARK: - name space
-extension Fetcher {
-    /// 用來接著不明錯誤
-    enum FetcherError: LocalizedError {
-        case noDataNoError
-        
-        var errorDescription: String? {
-            "Something goes wrong (no data and error instance data task completion handler)"
-        }
-    }
-    
-}
-
-protocol EndpointProtocol {
-    associatedtype ResponseType: Decodable
-    
-    var url: URL { get }
-}
-
-
-protocol PathProvider: EndpointProtocol {
-    var path: String { get }
-}
-
-extension PathProvider {
-    var url: URL {
-        var urlComponents = Fetcher.urlComponents
-        urlComponents?.path += path
-        return (urlComponents?.url)!
-    }
 }
 
 // MARK: - static property
@@ -137,6 +102,18 @@ extension Fetcher {
             print("###", self, #function, "拿到 json:\n", jsonString)
         } else {
             print("###", self, #function, "json 格式無效")
+        }
+    }
+}
+
+// MARK: - name space
+extension Fetcher {
+    /// 用來接著不明錯誤
+    enum FetcherError: LocalizedError {
+        case noDataNoError
+        
+        var errorDescription: String? {
+            "Something goes wrong (no data and error instance data task completion handler)"
         }
     }
 }

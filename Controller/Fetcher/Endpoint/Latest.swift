@@ -9,9 +9,9 @@
 import Foundation
 
 extension Endpoint {
-    struct Latest: PathProvider {
+    struct Latest: BaseOnTWD {
         typealias ResponseType = ResponseDataModel.LatestRate
         
-        let path: String = "latest"
+        let partialPath: String = "latest"
     }
 }

@@ -12,6 +12,7 @@ protocol RateCategoryProtocol {}
 
 extension ResponseDataModel {
     
+    /// 用來區別 latest 跟 historical 的 phantom type
     enum Category {
         enum Latest: RateCategoryProtocol {}
         enum Historical: RateCategoryProtocol {}
@@ -27,7 +28,7 @@ extension ResponseDataModel {
         let timestamp: Int
         
         /// Returns the three-letter currency code of the base currency used for this request.
-        /// 幣別跟匯率的鍵值對，1 歐元等於多少其他幣別
+        /// 幣別跟匯率的鍵值對，1 單位新台幣等於多少其他幣別
         let rates: [String: Double]
         
         subscript(_ currency: Currency) -> Double? {
@@ -41,9 +42,16 @@ extension ResponseDataModel {
     }
 }
 
+// MARK: - type alias
+extension ResponseDataModel {
+    /// 用來裝 latest endpoint 的 data model
+    typealias LatestRate = ResponseDataModel.Rate<ResponseDataModel.Category.Latest>
+    /// 用來裝 historical endpoint 的 data model
+    typealias HistoricalRate = ResponseDataModel.Rate<ResponseDataModel.Category.Historical>
+}
 
+// MARK: - decodable，latest 跟 historical 都要 decodable
 extension ResponseDataModel.Rate: Decodable {
-    
     /// 表示伺服器回傳的日期字串無效的錯誤
     enum ServerDateError: Error {
         /// 伺服器給的日期字串無效，date 為該字串
@@ -59,8 +67,6 @@ extension ResponseDataModel.Rate: Decodable {
             }
         }
     }
-    
-    
     
     /// Creates a new instance by decoding from the given decoder.
     /// - Parameter decoder: The decoder to read data from.
@@ -85,10 +91,7 @@ extension ResponseDataModel.Rate: CustomStringConvertible {
     var description: String { dateString }
 }
 
-extension ResponseDataModel {
-    typealias LatestRate = ResponseDataModel.Rate<ResponseDataModel.Category.Latest>
-    typealias HistoricalRate = ResponseDataModel.Rate<ResponseDataModel.Category.Historical>
-}
+
 
 
 

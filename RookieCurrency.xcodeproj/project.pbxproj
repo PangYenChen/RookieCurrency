@@ -38,6 +38,8 @@
 		51578B7229A85A1000BE890F /* Git Commit Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51578B7029A85A1000BE890F /* Git Commit Info.swift */; };
 		519A643829B4627500918B84 /* TestingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A643729B4627500918B84 /* TestingData.swift */; };
 		519A643929B462AE00918B84 /* TestingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A643729B4627500918B84 /* TestingData.swift */; };
+		519BD8AA29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519BD8A929BD7E8F00D2CB29 /* EndpointProtocol.swift */; };
+		519BD8AB29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519BD8A929BD7E8F00D2CB29 /* EndpointProtocol.swift */; };
 		51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274524758ACB00E0A07D /* AppDelegate.swift */; };
 		51D67ED42975922D008B8928 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274724758ACB00E0A07D /* SceneDelegate.swift */; };
 		51DF9167299FD0B200CEA5A6 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */; };
@@ -120,6 +122,7 @@
 		519A642F29B0D5D000918B84 /* ArchiverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiverTest.swift; sourceTree = "<group>"; };
 		519A643429B4615B00918B84 /* ResponseDataModelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseDataModelTest.swift; sourceTree = "<group>"; };
 		519A643729B4627500918B84 /* TestingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingData.swift; sourceTree = "<group>"; };
+		519BD8A929BD7E8F00D2CB29 /* EndpointProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointProtocol.swift; sourceTree = "<group>"; };
 		51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
 		51DF9169299FD0C100CEA5A6 /* CurrencyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyTableViewController.swift; sourceTree = "<group>"; };
 		51E1B4B629ADAD7F00D75669 /* RateData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateData.swift; sourceTree = "<group>"; };
@@ -294,6 +297,7 @@
 		51E1B4C229AE3CD500D75669 /* Endpoint */ = {
 			isa = PBXGroup;
 			children = (
+				519BD8A929BD7E8F00D2CB29 /* EndpointProtocol.swift */,
 				51E1B4C729AE488900D75669 /* Endpoint.swift */,
 				51E1B4CA29AE490300D75669 /* Latest.swift */,
 				51E1B4CD29AE4C7100D75669 /* Historical.swift */,
@@ -368,8 +372,8 @@
 		E1CE96A02485535D0029ED73 /* Data Model */ = {
 			isa = PBXGroup;
 			children = (
-				51E1B4C329AE3DE300D75669 /* Rate.swift */,
 				E13B276824758BCB00E0A07D /* Response Data Model.swift */,
+				51E1B4C329AE3DE300D75669 /* Rate.swift */,
 			);
 			path = "Data Model";
 			sourceTree = "<group>";
@@ -645,6 +649,7 @@
 				E13B276924758BCB00E0A07D /* Response Data Model.swift in Sources */,
 				E1CE96AA248555680029ED73 /* Fetcher.swift in Sources */,
 				514C4D0D29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */,
+				519BD8AA29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */,
 				E1CE96AC248555C30029ED73 /* Analyst.swift in Sources */,
 				514C4D0A29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */,
 				51E1B4CE29AE4C7100D75669 /* Historical.swift in Sources */,
@@ -689,6 +694,7 @@
 				51DF9167299FD0B200CEA5A6 /* SettingTableViewController.swift in Sources */,
 				514C4D0E29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */,
 				51DF916A299FD0C100CEA5A6 /* CurrencyTableViewController.swift in Sources */,
+				519BD8AB29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */,
 				514C4D0B29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */,
 				51D67ED42975922D008B8928 /* SceneDelegate.swift in Sources */,
 				51E1B4CF29AE4C7100D75669 /* Historical.swift in Sources */,

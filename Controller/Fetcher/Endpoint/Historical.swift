@@ -9,14 +9,14 @@
 import Foundation
 
 extension Endpoint {
-    struct Historical: PathProvider {
+    struct Historical: BaseOnTWD {
         typealias ResponseType = ResponseDataModel.HistoricalRate
         
-        let path: String
+        let partialPath: String
         
 #warning("考慮直接輸入日期字串")
         init(date: Date) {
-            self.path = AppSetting.requestDateFormatter.string(from: date)
+            self.partialPath = AppSetting.requestDateFormatter.string(from: date)
         }
     }
 }
