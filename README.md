@@ -18,6 +18,8 @@
 
 使用 diffable data source。
 
+使用 search bar 實作搜尋功能。
+
 custom segue
 
 讓使用者決定排序的方向。
@@ -33,3 +35,5 @@ custom segue
 用 phantom type 區分本質上一樣，但用途不同的 data model。
 
 處理 api 呼叫的物件使用 Generic type。
+
+兩個 target 都有編寫 unit test。
