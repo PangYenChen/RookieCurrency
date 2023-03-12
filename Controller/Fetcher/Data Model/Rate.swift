@@ -56,14 +56,11 @@ extension ResponseDataModel.Rate: Decodable {
     enum ServerDateError: Error {
         /// 伺服器給的日期字串無效，date 為該字串
         case serverDateInvalid(dateString: String)
-        case dataAbsent(String)
         
         var localizedDescription: String {
             switch self {
             case .serverDateInvalid(let string):
                 return "伺服器回傳的日期字串是 \(string)"
-            case .dataAbsent(let string):
-                return "伺服器回傳的資料缺少 \(string)"
             }
         }
     }

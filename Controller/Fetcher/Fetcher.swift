@@ -63,30 +63,33 @@ extension Fetcher {
 
 // MARK: - helper method
 extension Fetcher {
+    /// 產生 timeout 時限為 5 秒，且帶上 api key 的 `URLRequest`
+    /// - Parameter url: The URL to be retrieved.
+    /// - Returns: The new url request.
     func createRequest(url: URL) -> URLRequest {
         var urlRequest = URLRequest(url: url, timeoutInterval: 5)
         urlRequest.addValue(usingAPIKey, forHTTPHeaderField: "apikey")
         return urlRequest
     }
     
-    /// 判斷是否需要換新的 api key 重新打 api，是的話回傳是否更新 api key 成功。
+    /// 判斷是否需要換新的 api key 重新打 api。
     /// 當 api key 的額度用完時，server 會回傳 status code 429(too many request)，以此作為是否換 api key 的依據。
-    /// 若還有新的 api key 可以用，換上後回傳 true
-    /// 若以無 api key 可用，回傳 false
+    /// 若還有新的 api key 可以用，換上後回傳 true，表示要重打 api。
+    /// 若已無 api key 可用，回傳 false，讓 call cite 處理。
     /// - Parameter response: 前一次打 api 的 response
     /// - Returns: 是否需要從打一次 api
     func shouldMakeNewAPICall(for response: URLResponse) -> Bool {
         if let httpURLResponse = response as? HTTPURLResponse,
            httpURLResponse.statusCode == 429 {
             // 當下的 api key 的額度用完了，要換新的 api key
-            if !(unusedAPIKeys.isEmpty) {
+            if unusedAPIKeys.isEmpty {
+                // 已經沒有 api key 可以用了。
+                return false
+            } else {
                 // 已經換上新的 api key，需要從打一次 api
                 usedAPIKeys.insert(usingAPIKey)
                 usingAPIKey = unusedAPIKeys.removeFirst()
                 return true
-            } else {
-                // 已經沒有 api key 可以用了。
-                return false
             }
         } else {
             // api key 的額度正常，不需要重打 api。
@@ -94,8 +97,9 @@ extension Fetcher {
         }
     }
     
-#warning("考慮這個方法要不要跟 archiver 共用")
+    /// 把 `Data` 轉成好看的 JSON 字串印出來
     func prettyPrint(_ data: Data) {
+#warning("考慮這個方法要不要跟 archiver 共用")
         if let jsonObject = try? JSONSerialization.jsonObject(with: data),
            let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted) {
             let jsonString = String(decoding: jsonData, as: UTF8.self)
@@ -112,8 +116,10 @@ extension Fetcher {
     enum FetcherError: LocalizedError {
         case noDataNoError
         
-        var errorDescription: String? {
+        var localizedDescription: String {
             "Something goes wrong (no data and error instance data task completion handler)"
         }
+        
+        var errorDescription: String? { localizedDescription }
     }
 }
