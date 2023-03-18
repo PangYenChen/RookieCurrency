@@ -16,6 +16,8 @@ class FetcherTests: XCTestCase {
     
     private var stubRateSession: StubRateSession!
     
+    private let timeoutTimeInterval: TimeInterval = 1
+    
     private var anyCancellableSet = Set<AnyCancellable>()
 
     override func setUp() {
@@ -32,6 +34,9 @@ class FetcherTests: XCTestCase {
     func testPublishLatestRate() throws {
         
         // arrange
+        let valueExpectation = expectation(description: "should gate a latest rate instance")
+        let finishedExpectation = expectation(description: "should receive .finished")
+        
         do {
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
             
@@ -52,14 +57,24 @@ class FetcherTests: XCTestCase {
             .sink(
                 // assert
                 receiveCompletion: { completion in
-                    guard case .failure = completion else { return }
-                    XCTFail()
+                    switch completion {
+                    case .finished:
+                        finishedExpectation.fulfill()
+                    case .failure:
+                        XCTFail("should not receive a .failure")
+                    }
                 },
                 receiveValue: { latestRate in
+                    let currency = Currency.TWD
+                    XCTAssertNotNil(latestRate[currency])
+                    
                     XCTAssertFalse(latestRate.rates.isEmpty)
+                    valueExpectation.fulfill()
                 }
             )
             .store(in: &anyCancellableSet)
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
     }
     
     func testPublishHistoricalRate() throws {

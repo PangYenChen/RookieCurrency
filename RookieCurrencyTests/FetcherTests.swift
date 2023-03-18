@@ -15,7 +15,7 @@ final class FetcherTests: XCTestCase {
     
     private var stubRateSession: StubRateSession!
     
-    private let timeoutTimeInterval: TimeInterval = 3
+    private let timeoutTimeInterval: TimeInterval = 1
     
     override func setUp() {
         stubRateSession = StubRateSession()
@@ -32,7 +32,7 @@ final class FetcherTests: XCTestCase {
     func testFetchLatestRate() throws {
         
         // arrange
-        let expectation = expectation(description: "should get a decoded latest rate instance")
+        let expectation = expectation(description: "should get a latest rate instance")
         
         do {
             stubRateSession.data = TestingData.latestData
@@ -50,14 +50,14 @@ final class FetcherTests: XCTestCase {
             .fetch(Endpoint.Latest()) { result in
                 // assert
                 switch result {
-                case .success(let rate):
-                    XCTAssertFalse(rate.rates.isEmpty)
+                case .success(let latestRate):
+                    XCTAssertFalse(latestRate.rates.isEmpty)
                     
                     let dummyCurrency = Currency.TWD
-                    XCTAssertNotNil(rate[dummyCurrency])
+                    XCTAssertNotNil(latestRate[dummyCurrency])
                     expectation.fulfill()
                 case .failure:
-                    XCTFail("should get a decoded latest rate instance")
+                    XCTFail("should get a latest rate instance")
                 }
             }
         

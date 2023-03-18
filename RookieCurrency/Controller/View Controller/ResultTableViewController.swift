@@ -109,38 +109,38 @@ class ResultTableViewController: BaseResultTableViewController {
         
         latestUpdateTimeItem.title = R.string.localizable.updating()
         
-//        RateController.shared.getRateFor(numberOfDay: numberOfDay, queue: .main) { [unowned self] result in
-//            switch result {
-//            case .success(let (latestRate, historicalRateSet)):
-//                
-//                // update latestUpdateTime
-//                do {
-//                    let timestamp = Double(latestRate.timestamp)
-//                    latestUpdateTime = Date(timeIntervalSince1970: timestamp)
-//                }
-//                
-//                // update table view
-//                do {
-//                    analyzedDataDictionary = Analyst
-//                        .analyze(latestRate: latestRate,
-//                                 historicalRateSet: historicalRateSet,
-//                                 baseCurrency: baseCurrency)
-//                    populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
-//                                      order: self.order,
-//                                      searchText: self.searchText)
-//                }
-//                
-//            case .failure(let error):
-//                showErrorAlert(error: error)
-//            }
-//            
-//            do { // update latestUpdateTimeItem
-//                let dateString = latestUpdateTime.map(AppSetting.uiDateFormatter.string(from:)) ?? "-"
-//                latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(dateString)
-//            }
-//            
-//            refreshControl?.endRefreshing()
-//        }
+        RateController.shared.getRateFor(numberOfDay: numberOfDay, queue: .main) { [unowned self] result in
+            switch result {
+            case .success(let (latestRate, historicalRateSet)):
+                
+                // update latestUpdateTime
+                do {
+                    let timestamp = Double(latestRate.timestamp)
+                    latestUpdateTime = Date(timeIntervalSince1970: timestamp)
+                }
+                
+                // update table view
+                do {
+                    analyzedDataDictionary = Analyst
+                        .analyze(latestRate: latestRate,
+                                 historicalRateSet: historicalRateSet,
+                                 baseCurrency: baseCurrency)
+                    populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
+                                      order: self.order,
+                                      searchText: self.searchText)
+                }
+                
+            case .failure(let error):
+                showErrorAlert(error: error)
+            }
+            
+            do { // update latestUpdateTimeItem
+                let dateString = latestUpdateTime.map(AppSetting.uiDateFormatter.string(from:)) ?? "-"
+                latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(dateString)
+            }
+            
+            refreshControl?.endRefreshing()
+        }
     }
 }
 
