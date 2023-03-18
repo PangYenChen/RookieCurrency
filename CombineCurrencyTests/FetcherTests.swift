@@ -39,16 +39,16 @@ class FetcherTests: XCTestCase {
         do {
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
             
-            let httpURLResponse = HTTPURLResponse(url: url,
-                                                  statusCode: 200,
-                                                  httpVersion: nil,
-                                                  headerFields: nil)
-            
-            let urlResponse = try XCTUnwrap(httpURLResponse.map { $0 as URLResponse })
+            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                                statusCode: 200,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
             
             let data = try XCTUnwrap(TestingData.latestData)
             
-            stubRateSession.result = .success((data: data, response: urlResponse))
+            stubRateSession.outputPublisher = Just((data: data, response: httpURLResponse))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
         }
         
         // action
@@ -83,18 +83,18 @@ class FetcherTests: XCTestCase {
         let finishedExpectation = expectation(description: "should receive a .finished")
         
         do {
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            
-            let httpURLResponse = HTTPURLResponse(url: url,
-                                                  statusCode: 200,
-                                                  httpVersion: nil,
-                                                  headerFields: nil)
-            
-            let urlResponse = try XCTUnwrap(httpURLResponse)
-            
             let data = try XCTUnwrap(TestingData.historicalData)
             
-            stubRateSession.result = .success((data: data, response: urlResponse))
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            
+            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                                statusCode: 200,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
+            
+            stubRateSession.outputPublisher = Just((data: data, response: httpURLResponse))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
         }
         
         // action
@@ -130,12 +130,14 @@ class FetcherTests: XCTestCase {
         
         do {
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = try XCTUnwrap(HTTPURLResponse(url: url,
-                                                         statusCode: 204,
-                                                         httpVersion: nil,
-                                                         headerFields: nil))
+            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                                statusCode: 204,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
             
-            stubRateSession.result = .success((data: Data(), response: response))
+            stubRateSession.outputPublisher = Just((data: Data(), response: httpURLResponse))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
         }
         
         // action
@@ -169,7 +171,8 @@ class FetcherTests: XCTestCase {
         let expectation = expectation(description: "should time out")
         let dummyEndpoint = Endpoint.Latest()
         do {
-            stubRateSession.result = .failure(URLError(URLError.timedOut))
+            stubRateSession.outputPublisher = Fail(error: URLError(URLError.timedOut))
+                .eraseToAnyPublisher()
         }
         
         // action
@@ -211,11 +214,11 @@ class FetcherTests: XCTestCase {
             // first response
             let dummyData = try XCTUnwrap(TestingData.tooManyRequest)
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response: URLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+            let urlResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
                                                                       statusCode: 429,
                                                                       httpVersion: nil,
                                                                       headerFields: nil))
-            let outputPublisher = Just((data: dummyData, response: response))
+            let outputPublisher = Just((data: dummyData, response: urlResponse))
                 .setFailureType(to: URLError.self)
                 .eraseToAnyPublisher()
             
@@ -268,12 +271,14 @@ class FetcherTests: XCTestCase {
             let dummyData = try XCTUnwrap(TestingData.latestData)
             
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = try XCTUnwrap(HTTPURLResponse(url: url,
+            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
                                                          statusCode: 429,
                                                          httpVersion: nil,
                                                          headerFields: nil))
             
-            stubRateSession.result = .success((data: dummyData, response: response))
+            stubRateSession.outputPublisher = Just((data: dummyData, response: httpURLResponse))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
         }
         
         // action
@@ -304,12 +309,10 @@ class FetcherTests: XCTestCase {
 
 private class StubRateSession: RateSession {
     
-    var result: Result<(data: Data, response: URLResponse), URLError>!
+    var outputPublisher: AnyPublisher<(data: Data, response: URLResponse), URLError>!
     
     func rateDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
-        result
-            .publisher
-            .eraseToAnyPublisher()
+        outputPublisher
     }
 }
 
@@ -326,7 +329,7 @@ private class SpyRateSession: RateSession {
         }
         
         if outputPublishers.isEmpty {
-            return Empty(completeImmediately: true)
+            return Empty()
                 .setFailureType(to: URLError.self)
                 .eraseToAnyPublisher()
         } else {
