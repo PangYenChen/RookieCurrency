@@ -66,7 +66,7 @@ final class FetcherTests: XCTestCase {
     
     func testFetchHistoricalRate() throws {
         // arrange
-        let expectation = expectation(description: "should get a decoded historical rate instance")
+        let expectation = expectation(description: "should get a historical rate instance")
         
         do {
             stubRateSession.data = TestingData.historicalData
@@ -92,7 +92,7 @@ final class FetcherTests: XCTestCase {
                     
                     expectation.fulfill()
                 case .failure:
-                    XCTFail("should get a decoded historical rate instance")
+                    XCTFail("should get a historical rate instance")
                 }
             }
         

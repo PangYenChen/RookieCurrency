@@ -60,13 +60,13 @@ class FetcherTests: XCTestCase {
                     switch completion {
                     case .finished:
                         finishedExpectation.fulfill()
-                    case .failure:
-                        XCTFail("should not receive a .failure")
+                    case .failure(let failure):
+                        XCTFail("should not receive the .failure \(failure)")
                     }
                 },
                 receiveValue: { latestRate in
-                    let currency = Currency.TWD
-                    XCTAssertNotNil(latestRate[currency])
+                    let dummyCurrency = Currency.TWD
+                    XCTAssertNotNil(latestRate[dummyCurrency])
                     
                     XCTAssertFalse(latestRate.rates.isEmpty)
                     valueExpectation.fulfill()
@@ -80,6 +80,9 @@ class FetcherTests: XCTestCase {
     func testPublishHistoricalRate() throws {
         
         // arrange
+        let valueExpectation = expectation(description: "should receive a historical rate")
+        let finishedExpectation = expectation(description: "should receive a .finished")
+        
         do {
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
             
@@ -100,14 +103,25 @@ class FetcherTests: XCTestCase {
             .sink(
                 // assert
                 receiveCompletion: { completion in
-                    guard case .failure = completion else { return }
-                    XCTFail()
+                    switch completion {
+                    case .failure(let failure):
+                        XCTFail("should not receive the .failure \(failure)")
+                    case .finished:
+                        finishedExpectation.fulfill()
+                    }
                 },
                 receiveValue: { historicalRate in
                     XCTAssertFalse(historicalRate.rates.isEmpty)
+                    
+                    let dummyCurrency = Currency.TWD
+                    XCTAssertNotNil(historicalRate[dummyCurrency])
+                    
+                    valueExpectation.fulfill()
                 }
             )
             .store(in: &anyCancellableSet)
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
     }
 }
 
