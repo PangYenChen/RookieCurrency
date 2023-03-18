@@ -177,7 +177,7 @@ final class FetcherTests: XCTestCase {
                                            httpVersion: nil,
                                            headerFields: nil)
 
-            spyRateSession.outputs.append((data: nil, response: response, error: nil))
+            spyRateSession.outputs.append((data: TestingData.tooManyRequest, response: response, error: nil))
         }
 
         do {
@@ -209,7 +209,7 @@ final class FetcherTests: XCTestCase {
     
     func testTooManyRequestFallBack() throws {
         // arrange
-        let expectation = expectation(description: "should be unable to recover, pass error to")
+        let expectation = expectation(description: "should be unable to recover, pass error to call cite")
         let dummyEndpoint = Endpoint.Latest()
         do {
             stubRateSession.data = TestingData.tooManyRequest

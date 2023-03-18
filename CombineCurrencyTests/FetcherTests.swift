@@ -29,7 +29,6 @@ class FetcherTests: XCTestCase {
         sut = nil
         stubRateSession = nil
     }
-#warning("還要測429")
     
     func testPublishLatestRate() throws {
         
@@ -210,12 +209,13 @@ class FetcherTests: XCTestCase {
 
         do {
             // first response
+            let dummyData = try XCTUnwrap(TestingData.tooManyRequest)
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
             let response: URLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
                                                                       statusCode: 429,
                                                                       httpVersion: nil,
                                                                       headerFields: nil))
-            let outputPublisher = Just((data: Data(), response: response))
+            let outputPublisher = Just((data: dummyData, response: response))
                 .setFailureType(to: URLError.self)
                 .eraseToAnyPublisher()
             
@@ -260,6 +260,46 @@ class FetcherTests: XCTestCase {
         waitForExpectations(timeout: timeoutTimeInterval)
     }
 
+    func testTooManyRequestFallBack() throws {
+        // arrange
+        let expectation = expectation(description: "should be unable to recover, pass error to down stream")
+        let dummyEndpoint = Endpoint.Latest()
+        do {
+            let dummyData = try XCTUnwrap(TestingData.latestData)
+            
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                         statusCode: 429,
+                                                         httpVersion: nil,
+                                                         headerFields: nil))
+            
+            stubRateSession.result = .success((data: dummyData, response: response))
+        }
+        
+        // action
+        sut
+            .publisher(for: dummyEndpoint)
+            .sink(
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .failure(let error):
+                        if let fetcherError = error as? Fetcher.Error, fetcherError == Fetcher.Error.tooManyRequest {
+                            expectation.fulfill()
+                        } else {
+                            XCTFail("should not receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                        }
+                    case .finished:
+                        XCTFail("should not complete noromally")
+                    }
+                },
+                receiveValue: { value in
+                    XCTFail("should not receive a value: \(value)")
+                }
+            )
+            .store(in: &anyCancellableSet)
+
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
 }
 
 private class StubRateSession: RateSession {
