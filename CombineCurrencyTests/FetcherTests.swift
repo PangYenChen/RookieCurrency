@@ -198,6 +198,68 @@ class FetcherTests: XCTestCase {
         
         waitForExpectations(timeout: timeoutTimeInterval)
     }
+    
+    func testTooManyRequestRecovery() throws {
+        // arrange
+        let spyRateSession = SpyRateSession()
+        sut = Fetcher(rateSession: spyRateSession)
+
+        let valueExpectation = expectation(description: "should receive a result")
+        let finishedExpectation = expectation(description: "should complete normally")
+        let dummyEndpoint = Endpoint.Latest()
+
+        do {
+            // first response
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response: URLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                                      statusCode: 429,
+                                                                      httpVersion: nil,
+                                                                      headerFields: nil))
+            let outputPublisher = Just((data: Data(), response: response))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+            
+            spyRateSession.outputPublishers.append(outputPublisher)
+        }
+        
+        do {
+            // second response
+            let dummyData = try XCTUnwrap(TestingData.latestData)
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response: URLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                                      statusCode: 200,
+                                                                      httpVersion: nil,
+                                                                      headerFields: nil))
+            
+            let outputPublisher = Just((data: dummyData, response: response))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+            
+            spyRateSession.outputPublishers.append(outputPublisher)
+        }
+
+        // action
+        sut
+            .publisher(for: dummyEndpoint)
+            .sink(
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .failure(let error):
+                        XCTFail("should not receive error: \(error)")
+                    case .finished:
+                        finishedExpectation.fulfill()
+                    }
+                },
+                receiveValue: { _ in
+                    XCTAssertEqual(Set(spyRateSession.receivedAPIKeys).count, 2)
+                    valueExpectation.fulfill()
+                }
+            )
+            .store(in: &anyCancellableSet)
+
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
+
 }
 
 private class StubRateSession: RateSession {
@@ -208,5 +270,27 @@ private class StubRateSession: RateSession {
         result
             .publisher
             .eraseToAnyPublisher()
+    }
+}
+
+private class SpyRateSession: RateSession {
+    
+    private(set) var receivedAPIKeys = [String]()
+    
+    var outputPublishers = [AnyPublisher<(data: Data, response: URLResponse), URLError>]()
+    
+    func rateDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+        
+        if let apikey = request.value(forHTTPHeaderField: "apikey") {
+            receivedAPIKeys.append(apikey)
+        }
+        
+        if outputPublishers.isEmpty {
+            return Empty(completeImmediately: true)
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+        } else {
+            return outputPublishers.removeFirst()
+        }
     }
 }

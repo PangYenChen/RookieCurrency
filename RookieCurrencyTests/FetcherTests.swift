@@ -166,7 +166,7 @@ final class FetcherTests: XCTestCase {
         let spyRateSession = SpyRateSession()
         sut = Fetcher(rateSession: spyRateSession)
         
-        let expectation = expectation(description: "api key usage ratio should change")
+        let expectation = expectation(description: "should receive a result")
         let dummyEndpoint = Endpoint.Latest()
         
         do {
@@ -224,6 +224,7 @@ final class FetcherTests: XCTestCase {
         // action
         sut
             .fetch(dummyEndpoint) { result in
+                // assert
                 switch result {
                 case .success:
                     XCTFail("should not receive any instance")
