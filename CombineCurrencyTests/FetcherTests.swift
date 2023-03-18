@@ -29,7 +29,7 @@ class FetcherTests: XCTestCase {
         sut = nil
         stubRateSession = nil
     }
-#warning("還要測 timeout、429、decode error")
+#warning("還要測429")
     
     func testPublishLatestRate() throws {
         
@@ -60,8 +60,8 @@ class FetcherTests: XCTestCase {
                     switch completion {
                     case .finished:
                         finishedExpectation.fulfill()
-                    case .failure(let failure):
-                        XCTFail("should not receive the .failure \(failure)")
+                    case .failure(let error):
+                        XCTFail("should not receive the .failure \(error)")
                     }
                 },
                 receiveValue: { latestRate in
@@ -104,8 +104,8 @@ class FetcherTests: XCTestCase {
                 // assert
                 receiveCompletion: { completion in
                     switch completion {
-                    case .failure(let failure):
-                        XCTFail("should not receive the .failure \(failure)")
+                    case .failure(let error):
+                        XCTFail("should not receive the .failure \(error)")
                     case .finished:
                         finishedExpectation.fulfill()
                     }
@@ -117,6 +117,81 @@ class FetcherTests: XCTestCase {
                     XCTAssertNotNil(historicalRate[dummyCurrency])
                     
                     valueExpectation.fulfill()
+                }
+            )
+            .store(in: &anyCancellableSet)
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
+    
+    func testInvalidJSONData() throws {
+        // arrange
+        let expectation = expectation(description: "should fail to decode")
+        let dummyEndpoint = Endpoint.Latest()
+        
+        do {
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                         statusCode: 204,
+                                                         httpVersion: nil,
+                                                         headerFields: nil))
+            
+            stubRateSession.result = .success((data: Data(), response: response))
+        }
+        
+        // action
+        sut
+            .publisher(for: dummyEndpoint)
+            .sink(
+                // assert
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .failure(let error):
+                        if error is DecodingError {
+                            expectation.fulfill()
+                        } else {
+                            XCTFail("should not receive error other than decoding error: \(error)")
+                        }
+                    case .finished:
+                        XCTFail("should not complete normally")
+                    }
+                },
+                receiveValue: { value in
+                    XCTFail("should not receive value: \(value)")
+                }
+            )
+            .store(in: &anyCancellableSet)
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
+    
+    func testTimeout() {
+        // arrange
+        let expectation = expectation(description: "should time out")
+        let dummyEndpoint = Endpoint.Latest()
+        do {
+            stubRateSession.result = .failure(URLError(URLError.timedOut))
+        }
+        
+        // action
+        sut
+            .publisher(for: dummyEndpoint)
+            .sink(
+                // assert
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .failure(let error):
+                        if let urlError = error as? URLError, urlError.code.rawValue == URLError.timedOut.rawValue {
+                            expectation.fulfill()
+                        } else {
+                            XCTFail("should not receive error other than timeout: \(error)")
+                        }
+                    case .finished:
+                        XCTFail("should not complete normally")
+                    }
+                },
+                receiveValue: { value in
+                    XCTFail("should not receive value: \(value)")
                 }
             )
             .store(in: &anyCancellableSet)

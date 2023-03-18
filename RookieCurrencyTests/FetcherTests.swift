@@ -99,7 +99,7 @@ final class FetcherTests: XCTestCase {
         waitForExpectations(timeout: timeoutTimeInterval)
     }
     
-    func testDecodeFail() throws {
+    func testInvalidJSONData() throws {
         // arrange
         let expectation = expectation(description: "should fail to decode")
         let dummyEndpoint = Endpoint.Latest()
@@ -120,11 +120,11 @@ final class FetcherTests: XCTestCase {
                 switch result {
                 case .success:
                     XCTFail("should fail to decode")
-                case .failure(let failure):
-                    if failure is DecodingError {
+                case .failure(let error):
+                    if error is DecodingError {
                         expectation.fulfill()
                     } else {
-                        XCTFail("get an error other than decoding error: \(failure)")
+                        XCTFail("get an error other than decoding error: \(error)")
                     }
                 }
             }
@@ -149,11 +149,11 @@ final class FetcherTests: XCTestCase {
                 switch result {
                 case .success:
                     XCTFail("should time out")
-                case .failure(let failure):
-                    if let urlError = failure as? URLError, urlError.code.rawValue == URLError.timedOut.rawValue  {
+                case .failure(let error):
+                    if let urlError = error as? URLError, urlError.code.rawValue == URLError.timedOut.rawValue  {
                         expectation.fulfill()
                     } else {
-                        XCTFail("get an error other than timedOut: \(failure)")
+                        XCTFail("get an error other than timedOut: \(error)")
                     }
                 }
             }
@@ -227,11 +227,11 @@ final class FetcherTests: XCTestCase {
                 switch result {
                 case .success:
                     XCTFail("should not receive any instance")
-                case .failure(let failure):
-                    if let fetcherError = failure as? Fetcher.Error, fetcherError == Fetcher.Error.tooManyRequest {
+                case .failure(let error):
+                    if let fetcherError = error as? Fetcher.Error, fetcherError == Fetcher.Error.tooManyRequest {
                         expectation.fulfill()
                     } else {
-                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(failure)")
+                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
                     }
                 }
             }
