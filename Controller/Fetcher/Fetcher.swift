@@ -88,7 +88,7 @@ extension Fetcher {
         }
     }
     
-    /// 把 `Data` 轉成好看的 JSON 字串印出來
+    /// 把 Data 轉成好看的 JSON 字串印出來
     func prettyPrint(_ data: Data) {
 #warning("考慮這個方法要不要跟 archiver 共用")
         if let jsonObject = try? JSONSerialization.jsonObject(with: data),

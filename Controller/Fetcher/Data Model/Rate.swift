@@ -50,10 +50,11 @@ extension ResponseDataModel {
     typealias HistoricalRate = ResponseDataModel.Rate<ResponseDataModel.Category.Historical>
 }
 
-// MARK: - decodable，latest 跟 historical 都要 decodable
+// MARK: - Decodable
+// latest 跟 historical 都要 decodable
 extension ResponseDataModel.Rate: Decodable {
     /// 表示伺服器回傳的日期字串無效的錯誤
-    enum ServerDateError: Error {
+    enum ServerDateError: LocalizedError {
         /// 伺服器給的日期字串無效，date 為該字串
         case serverDateInvalid(dateString: String)
         
@@ -63,6 +64,11 @@ extension ResponseDataModel.Rate: Decodable {
                 return "伺服器回傳的日期字串是 \(string)"
             }
         }
+        
+        var errorDescription: String? {
+            localizedDescription
+        }
+        
     }
     
     /// Creates a new instance by decoding from the given decoder.
@@ -88,10 +94,8 @@ extension ResponseDataModel.Rate: CustomStringConvertible {
     var description: String { dateString }
 }
 
-
-
-
-
+// MARK: - Encodable
+// 只有 historical rate 要存在本地，latest rate 不用
 extension ResponseDataModel.HistoricalRate: Encodable {
     /// Encodes this value into the given encoder.
     /// - Parameter encoder: The encoder to write data to.
@@ -103,13 +107,14 @@ extension ResponseDataModel.HistoricalRate: Encodable {
     }
 }
 
+// MARK: - Equatable, Hashable
+// historical 要放進 Set 裡面，latest 不用
 extension ResponseDataModel.HistoricalRate: Equatable {
     static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.dateString == rhs.dateString
     }
 }
 
-// historical 要放進 Set 裡面，latest 不用
 extension ResponseDataModel.HistoricalRate: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(dateString)
