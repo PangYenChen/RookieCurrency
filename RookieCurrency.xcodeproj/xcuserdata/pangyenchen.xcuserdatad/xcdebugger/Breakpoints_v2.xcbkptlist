@@ -84,5 +84,68 @@
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "8C9D17D0-19C7-483F-9335-04168A86BDF3"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "RookieCurrency/Controller/Fetcher + Imperative.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "41"
+            endingLineNumber = "41"
+            landmarkName = "fetch(_:completionHandler:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "8C9D17D0-19C7-483F-9335-04168A86BDF3 - e1130d4da86b97ea"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in RookieCurrency.Fetcher.fetch&lt;&#x3c4;_0_0 where &#x3c4;_0_0: RookieCurrency.EndpointProtocol&gt;(_: &#x3c4;_0_0, completionHandler: (Swift.Result&lt;&#x3c4;_0_0.ResponseType, Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/Fetcher%20+%20Imperative.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "41"
+                  endingLineNumber = "41"
+                  offsetFromSymbolStart = "452">
+               </Location>
+               <Location
+                  uuid = "8C9D17D0-19C7-483F-9335-04168A86BDF3 - e1130d4da86b97ea"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in RookieCurrency.Fetcher.fetch&lt;&#x3c4;_0_0 where &#x3c4;_0_0: RookieCurrency.EndpointProtocol&gt;(_: &#x3c4;_0_0, completionHandler: (Swift.Result&lt;&#x3c4;_0_0.ResponseType, Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/Fetcher%20+%20Imperative.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "41"
+                  endingLineNumber = "41"
+                  offsetFromSymbolStart = "620">
+               </Location>
+               <Location
+                  uuid = "8C9D17D0-19C7-483F-9335-04168A86BDF3 - e1130d4da86b97ea"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Optional&lt;Foundation.Data&gt;, Swift.Optional&lt;__C.NSURLResponse&gt;, Swift.Optional&lt;Swift.Error&gt;) -&gt; () in RookieCurrency.Fetcher.fetch&lt;&#x3c4;_0_0 where &#x3c4;_0_0: RookieCurrency.EndpointProtocol&gt;(_: &#x3c4;_0_0, completionHandler: (Swift.Result&lt;&#x3c4;_0_0.ResponseType, Swift.Error&gt;) -&gt; ()) -&gt; ()"
+                  moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/Fetcher%20+%20Imperative.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "41"
+                  endingLineNumber = "41"
+                  offsetFromSymbolStart = "696">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
    </Breakpoints>
 </Bucket>

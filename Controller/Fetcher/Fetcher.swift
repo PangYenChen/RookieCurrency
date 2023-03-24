@@ -106,6 +106,7 @@ extension Fetcher {
     enum Error: LocalizedError {
         case noDataNoError
         case tooManyRequest
+        case invalidAPIKey
         
         var localizedDescription: String {
             switch self {
@@ -113,6 +114,8 @@ extension Fetcher {
                 return "Something goes wrong (no data and error instance data task completion handler)"
             case .tooManyRequest:
                 return "You have exceeded your daily/monthly API rate limit."
+            case .invalidAPIKey:
+                return "Invalid authentication credentials"
             }
         }
         #warning("要看一下這個是誰讀誰")
