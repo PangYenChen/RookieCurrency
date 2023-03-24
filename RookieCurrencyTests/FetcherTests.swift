@@ -22,8 +22,6 @@ final class FetcherTests: XCTestCase {
         sut = Fetcher(rateSession: stubRateSession)
     }
     
-#warning("還要測429")
-    
     override func tearDown() {
         sut = nil
         stubRateSession = nil
@@ -177,7 +175,7 @@ final class FetcherTests: XCTestCase {
                                            httpVersion: nil,
                                            headerFields: nil)
 
-            spyRateSession.outputs.append((data: TestingData.tooManyRequest, response: response, error: nil))
+            spyRateSession.outputs.append((data: TestingData.tooManyRequestData, response: response, error: nil))
         }
 
         do {
@@ -212,7 +210,7 @@ final class FetcherTests: XCTestCase {
         let expectation = expectation(description: "should be unable to recover, pass error to call cite")
         let dummyEndpoint = Endpoint.Latest()
         do {
-            stubRateSession.data = TestingData.tooManyRequest
+            stubRateSession.data = TestingData.tooManyRequestData
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
             stubRateSession.response = HTTPURLResponse(url: url,
                                                        statusCode: 429,
@@ -236,6 +234,83 @@ final class FetcherTests: XCTestCase {
                     }
                 }
             }
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
+    
+    func testInvalidAPIKeyRecovery() throws {
+        // arrange
+        let spyRateSession = SpyRateSession()
+        sut = Fetcher(rateSession: spyRateSession)
+        
+        let expectation = expectation(description: "should receive a dummy rate")
+        let dummyEndpoint = Endpoint.Latest()
+        
+        do {
+            // first response
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                                statusCode: 401,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
+            spyRateSession.outputs.append((data: TestingData.invalidAPIKeyData, response: httpURLResponse, error: nil))
+        }
+        
+        do {
+            // second response
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                                statusCode: 200,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
+            spyRateSession.outputs.append((data: TestingData.latestData, response: httpURLResponse, error: nil))
+        }
+        
+        // action
+        sut.fetch(dummyEndpoint) { result in
+            // assert
+            switch result {
+            case .success:
+                expectation.fulfill()
+                XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
+            case .failure:
+                XCTFail("should not receive any error")
+            }
+        }
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
+    
+    func testInvalidAPIKeyFallBack() throws {
+        // arrange
+        let expectation = expectation(description: "should be unable to recover, pass error to call cite")
+        let dummyEndpoint = Endpoint.Latest()
+        do {
+            stubRateSession.data = TestingData.tooManyRequestData
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            stubRateSession.response = HTTPURLResponse(url: url,
+                                                       statusCode: 401,
+                                                       httpVersion: nil,
+                                                       headerFields: nil)
+            stubRateSession.error = nil
+        }
+        
+        // action
+        sut
+            .fetch(dummyEndpoint) { result in
+                // assert
+                switch result {
+                case .success:
+                    XCTFail("should not receive any instance")
+                case .failure(let error):
+                    if let fetcherError = error as? Fetcher.Error, fetcherError == Fetcher.Error.invalidAPIKey {
+                        expectation.fulfill()
+                    } else {
+                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                    }
+                }
+            }
+        
         waitForExpectations(timeout: timeoutTimeInterval)
     }
 }

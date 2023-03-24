@@ -374,11 +374,14 @@ extension TestingData {
 }
 """.data(using: .utf8)
     
-    static let tooManyRequest: Data? = """
+    static let tooManyRequestData: Data? = """
 {
   "message": "You have exceeded your daily/monthly API rate limit. Please review and upgrade your subscription plan at https://promptapi.com/subscriptions to continue."
 }
 """.data(using: .utf8)
     
+    static let invalidAPIKeyData: Data? = """
+Invalid authentication credentials
+""".data(using: .utf8)
 }
 
