@@ -39,26 +39,27 @@ extension Fetcher {
         
         rateSession.rateDataTask(with: urlRequest) { [unowned self] data, response, error in
             if let httpURLResponse = response as? HTTPURLResponse, let data {
-                switch httpURLResponse.statusCode {
-                case 401, 429:
-                    // status code 是 401 或 429 時，要更新 api key 後重新打
+                if httpURLResponse.statusCode == 401 {
+                    // status code 是 401 表示 api key 無效，要更新 api key 後重新打
                     if updateAPIKeySucceed() {
                         // 更新成功後重新打 api
                         fetch(endpoint, completionHandler: completionHandler)
                     } else {
-                        // 已無有效 api key 可用，將錯誤往外傳
-                        if httpURLResponse.statusCode == 401 {
-                            // server 回應 status code 401，表示 api key 無效，
-                            completionHandler(.failure(Error.invalidAPIKey))
-                            print("###, \(self), \(#function), api key 無效")
-                        } else if httpURLResponse.statusCode == 429 {
-                            // server 回應 status code 429，表示 api key 額度用完
-                            completionHandler(.failure(Error.tooManyRequest))
-                            print("###, \(self), \(#function), api key 的額度用罄")
-                        }
+                        // 沒有有效的 api key
+                        completionHandler(.failure(Error.invalidAPIKey))
+                        print("###, \(self), \(#function), api key 無效")
                     }
-                    
-                default:
+                } else if httpURLResponse.statusCode == 429 {
+                    // status code 是 429 表示 api key 的額度已經用完，要更新 api key 後重新打
+                    if updateAPIKeySucceed() {
+                        // 更新成功後重新打 api
+                        fetch(endpoint, completionHandler: completionHandler)
+                    } else {
+                        // 沒有還有額度的 api key
+                        completionHandler(.failure(Error.tooManyRequest))
+                        print("###, \(self), \(#function), api key 的額度用罄")
+                    }
+                } else {
                     prettyPrint(data)
                     // 這是一切正常的情況，將 data decode
                     do {
