@@ -366,6 +366,51 @@ class FetcherTests: XCTestCase {
         
         waitForExpectations(timeout: timeoutTimeInterval)
     }
+    
+    func testInvalidAPIKeyFallBack() throws {
+        // arrange
+        let errorExpectation = expectation(description: "should a receive Fetcher.Error.invalidAPIKey")
+        let dummyEndpoint = Endpoint.Latest()
+        
+        do {
+            let dummyData = try XCTUnwrap(TestingData.invalidAPIKeyData)
+            let dummyRUL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyRUL,
+                                                                statusCode: 401,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
+            let outputPublish = Just((data: dummyData, response: httpURLResponse))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+            stubRateSession.outputPublisher = outputPublish
+        }
+        
+        // action
+        sut
+            .publisher(for: dummyEndpoint)
+            .sink(
+                // assert
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .failure(let error):
+                        if let error = error as? Fetcher.Error,
+                           error == Fetcher.Error.invalidAPIKey {
+                            errorExpectation.fulfill()
+                        } else {
+                            XCTFail("should not receive any error other than Fetcher.Error.invalidAPIKey: \(error)")
+                        }
+                    case .finished:
+                        XCTFail("should not complete normally")
+                    }
+                },
+                receiveValue: { value in
+                    XCTFail("should not receive any value: \(value)")
+                }
+            )
+            .store(in: &anyCancellableSet)
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
 }
 
 private class StubRateSession: RateSession {
