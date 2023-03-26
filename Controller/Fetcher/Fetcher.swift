@@ -104,13 +104,13 @@ extension Fetcher {
 // MARK: - name space
 extension Fetcher {
     enum Error: LocalizedError {
-        case noDataNoError
+        case unknownError
         case tooManyRequest
         case invalidAPIKey
         
         var localizedDescription: String {
             switch self {
-            case .noDataNoError:
+            case .unknownError:
                 return "Something goes wrong (no data and error instance data task completion handler)"
             case .tooManyRequest:
                 return "You have exceeded your daily/monthly API rate limit."
