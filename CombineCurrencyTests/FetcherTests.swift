@@ -19,12 +19,12 @@ class FetcherTests: XCTestCase {
     private let timeoutTimeInterval: TimeInterval = 1
     
     private var anyCancellableSet = Set<AnyCancellable>()
-
+    
     override func setUp() {
         stubRateSession = StubRateSession()
         sut = Fetcher(rateSession: stubRateSession)
     }
-
+    
     override func tearDown() {
         sut = nil
         stubRateSession = nil
@@ -205,19 +205,19 @@ class FetcherTests: XCTestCase {
         // arrange
         let spyRateSession = SpyRateSession()
         sut = Fetcher(rateSession: spyRateSession)
-
+        
         let valueExpectation = expectation(description: "should receive a result")
         let finishedExpectation = expectation(description: "should complete normally")
         let dummyEndpoint = Endpoint.Latest()
-
+        
         do {
             // first response
-            let dummyData = try XCTUnwrap(TestingData.tooManyRequest)
+            let dummyData = try XCTUnwrap(TestingData.tooManyRequestData)
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
             let urlResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
-                                                                      statusCode: 429,
-                                                                      httpVersion: nil,
-                                                                      headerFields: nil))
+                                                                         statusCode: 429,
+                                                                         httpVersion: nil,
+                                                                         headerFields: nil))
             let outputPublisher = Just((data: dummyData, response: urlResponse))
                 .setFailureType(to: URLError.self)
                 .eraseToAnyPublisher()
@@ -240,11 +240,12 @@ class FetcherTests: XCTestCase {
             
             spyRateSession.outputPublishers.append(outputPublisher)
         }
-
+        
         // action
         sut
             .publisher(for: dummyEndpoint)
             .sink(
+                // assert
                 receiveCompletion: { completion in
                     switch completion {
                     case .failure(let error):
@@ -259,10 +260,10 @@ class FetcherTests: XCTestCase {
                 }
             )
             .store(in: &anyCancellableSet)
-
+        
         waitForExpectations(timeout: timeoutTimeInterval)
     }
-
+    
     func testTooManyRequestFallBack() throws {
         // arrange
         let expectation = expectation(description: "should be unable to recover, pass error to down stream")
@@ -272,9 +273,9 @@ class FetcherTests: XCTestCase {
             
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
             let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
-                                                         statusCode: 429,
-                                                         httpVersion: nil,
-                                                         headerFields: nil))
+                                                                statusCode: 429,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
             
             stubRateSession.outputPublisher = Just((data: dummyData, response: httpURLResponse))
                 .setFailureType(to: URLError.self)
@@ -285,6 +286,7 @@ class FetcherTests: XCTestCase {
         sut
             .publisher(for: dummyEndpoint)
             .sink(
+                // assert
                 receiveCompletion: { completion in
                     switch completion {
                     case .failure(let error):
@@ -302,7 +304,66 @@ class FetcherTests: XCTestCase {
                 }
             )
             .store(in: &anyCancellableSet)
-
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
+    
+    func testInvalidAPIKeyRecovery() throws {
+        // arrange
+        let spyRateSession = SpyRateSession()
+        sut = Fetcher(rateSession: spyRateSession)
+        let dummyEndpoint = Endpoint.Latest()
+        let valueExpectation = expectation(description: "should receive a dummy rate instance")
+        let finishedExpectation = expectation(description: "should complete normally")
+        
+        do {
+            // first output
+            let dummyData = try XCTUnwrap(TestingData.invalidAPIKeyData)
+            let dummyURL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyURL,
+                                                                statusCode: 401,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
+            let outputPublisher = Just((data: dummyData, response: httpURLResponse))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+            spyRateSession.outputPublishers.append(outputPublisher)
+        }
+        
+        do {
+            // second output
+            let dummyData = try XCTUnwrap(TestingData.latestData)
+            let dummyURL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyURL,
+                                                                             statusCode: 200,
+                                                                             httpVersion: nil,
+                                                                             headerFields: nil))
+            let outputPublisher = Just((data: dummyData, response: httpURLResponse))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+            spyRateSession.outputPublishers.append(outputPublisher)
+        }
+        
+        // action
+        sut
+            .publisher(for: dummyEndpoint)
+            .sink(
+                // assert
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .finished:
+                        finishedExpectation.fulfill()
+                    case .failure(let error):
+                        XCTFail("should not receive any error:\(error)")
+                    }
+                },
+                receiveValue: { rate in
+                    XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
+                    valueExpectation.fulfill()
+                }
+            )
+            .store(in: &anyCancellableSet)
+        
         waitForExpectations(timeout: timeoutTimeInterval)
     }
 }

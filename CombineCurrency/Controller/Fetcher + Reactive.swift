@@ -34,24 +34,41 @@ extension Fetcher {
             rateSession.rateDataTaskPublisher(for: createRequest(url: endPoint.url))
                 .mapError { $0 }
                 .flatMap { [unowned self] data, response -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> in
-                    if let httpURLResponse = response as? HTTPURLResponse, httpURLResponse.statusCode == 429 {
-                        // server 回應 status code 429，表示 api key 額度用完
-                        if updateAPIKeySucceed() {
-                            // 更新完 api key 後重新打 api
-                            return dataTaskPublisherWithLimitHandling(for: endPoint)
-                                .eraseToAnyPublisher()
+                    if let httpURLResponse = response as? HTTPURLResponse {
+                        if httpURLResponse.statusCode == 401 {
+                            // server 回應 status code 401，表示 api key 無效
+                            if updateAPIKeySucceed() {
+                                // 更新完 api key 後重新打 api
+                                return dataTaskPublisherWithLimitHandling(for: endPoint)
+                                    .eraseToAnyPublisher()
+                            } else {
+                                // 沒有有效 api key 可用
+                                return Fail(error: Fetcher.Error.invalidAPIKey)
+                                    .eraseToAnyPublisher()
+                            }
+                        } else if httpURLResponse.statusCode == 429 {
+                            // server 回應 status code 429，表示 api key 額度用完
+                            if updateAPIKeySucceed() {
+                                // 更新完 api key 後重新打 api
+                                return dataTaskPublisherWithLimitHandling(for: endPoint)
+                                    .eraseToAnyPublisher()
+                            } else {
+                                // 已經沒有還有額度的 api key 可以用了
+                                return Fail(error: Fetcher.Error.tooManyRequest)
+                                    .eraseToAnyPublisher()
+                            }
                         } else {
-                            // 已經沒有還有額度的 api key 可以用了
-                            return Fail(error: Fetcher.Error.tooManyRequest)
+                            // 這是一切都正常的情況，把 data 跟 response 往下傳
+                            return Just((data: data, response: response))
+                                .setFailureType(to: Swift.Error.self)
                                 .eraseToAnyPublisher()
                         }
                     } else {
-                        return Just((data: data, response: response))
-                            .setFailureType(to: Swift.Error.self)
+                        assertionFailure("response 不是 HttpURLResponse，常理來說都不會發生。")
+                        return Fail(error: Error.unknownError)
                             .eraseToAnyPublisher()
                     }
                 }
-                .tryMap { $0 }
                 .eraseToAnyPublisher()
         }
         
