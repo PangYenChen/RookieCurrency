@@ -15,7 +15,7 @@ enum Archiver {
     private static let documentsDirectory = URL.documentsDirectory
     
     /// 存放資料的路徑
-    private static let archiveURL = documentsDirectory.appendingPathComponent("ratetSet.json")
+    private static let archiveURL = documentsDirectory.appendingPathComponent("rateSet.json")
     
     /// 共用的 decoder
     private static let jsonDecoder = AppSetting.jsonDecoder
