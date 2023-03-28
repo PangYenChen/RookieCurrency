@@ -27,7 +27,7 @@ class Fetcher {
     
     let rateSession: RateSession
 
-    let jsonDecoder = JSONDecoder()
+    let jsonDecoder = AppSetting.jsonDecoder
     
     init(rateSession: RateSession = Fetcher.rateSession) {
         self.rateSession = rateSession

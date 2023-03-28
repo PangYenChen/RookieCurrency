@@ -78,3 +78,14 @@ extension AppSetting {
         return dateFormatter
     }()
 }
+
+// MARK: - JSONDecoder and JSONEncoder
+extension AppSetting {
+    static let jsonDecoder = JSONDecoder()
+    
+    static let jsonEncoder: JSONEncoder = {
+        let jsonEncoder = JSONEncoder()
+        jsonEncoder.outputFormatting = .prettyPrinted
+        return jsonEncoder
+    }()
+}

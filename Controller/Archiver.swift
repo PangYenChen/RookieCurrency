@@ -18,14 +18,10 @@ enum Archiver {
     private static let archiveURL = documentsDirectory.appendingPathComponent("ratetSet.json")
     
     /// 共用的 decoder
-    private static let jsonDecoder = JSONDecoder()
+    private static let jsonDecoder = AppSetting.jsonDecoder
     
     /// 共用的 encoder
-    private static let jsonEncoder: JSONEncoder = {
-        let jsonEncoder = JSONEncoder()
-        jsonEncoder.outputFormatting = .prettyPrinted
-        return jsonEncoder
-    }()
+    private static let jsonEncoder = AppSetting.jsonEncoder
 }
 
 extension Archiver {
