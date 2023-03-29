@@ -55,12 +55,9 @@ class BaseSettingTableViewController: UITableViewController {
             dateLabel.font = UIFont.preferredFont(forTextStyle: .callout)
             dateLabel.textColor = UIColor.secondaryLabel
             dateLabel.adjustsFontForContentSizeCategory = true
-            let formatter = DateFormatter()
-            formatter.locale = Locale.autoupdatingCurrent
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .short
             let commitDate = Date(timeIntervalSince1970: Double(commitTimestamp))
-            let dateString = formatter.string(from: commitDate)
+            let dateString = commitDate.formatted(date: .numeric, time: .complete)
+            
             dateLabel.text = R.string.localizable.versionDate(dateString)
         }
     }

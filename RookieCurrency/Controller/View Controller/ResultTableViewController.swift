@@ -135,7 +135,7 @@ class ResultTableViewController: BaseResultTableViewController {
             }
             
             do { // update latestUpdateTimeItem
-                let dateString = latestUpdateTime.map(AppSetting.uiDateFormatter.string(from:)) ?? "-"
+                let dateString = latestUpdateTime?.formatted(date: .omitted, time: .standard) ?? "-"
                 latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(dateString)
             }
             

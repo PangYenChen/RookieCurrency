@@ -8,8 +8,7 @@
 
 import Foundation
 
-/// 使用者相關的設定。
-/// 集中管理讀取不到資料時的 fall back 的邏輯。
+/// 整個 App 通用的東西。
 enum AppSetting {}
 
 // MARK: - user setting storage
@@ -68,13 +67,6 @@ extension AppSetting {
         let dateFormatter = DateFormatter()
         // 好像不需要 Gregorian calendar 的樣子
         dateFormatter.dateFormat = "yyyy-MM-dd"
-        return dateFormatter
-    }()
-    
-    /// 畫面上顯示的日期格式的 date formatter
-    static let uiDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         return dateFormatter
     }()
 }

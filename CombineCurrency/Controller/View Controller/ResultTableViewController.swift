@@ -117,7 +117,7 @@ class ResultTableViewController: BaseResultTableViewController {
                 .map { rateSet in rateSet.latestRate.timestamp }
                 .map(Double.init)
                 .map(Date.init(timeIntervalSince1970:))
-                .map(AppSetting.uiDateFormatter.string(from:))
+                .map { $0.formatted(date: .omitted, time: .standard) }
                 .map { R.string.localizable.latestUpdateTime($0) }
             
             let updateFailTimeString = rateSetFailure
