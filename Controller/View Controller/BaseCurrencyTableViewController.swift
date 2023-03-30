@@ -78,7 +78,7 @@ extension BaseCurrencyTableViewController: UISearchBarDelegate {
                 .filter { currency in
                     [currency.code, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currency.code)]
                         .compactMap { $0 }
-                        .contains { text in text.lowercased().contains(searchText.lowercased()) }
+                        .contains { text in text.localizedStandardContains(searchText) }
                 }
             snapshot.appendItems(filteredCurrencies)
         }
