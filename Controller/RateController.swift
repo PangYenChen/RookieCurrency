@@ -16,7 +16,5 @@ class RateController {
     let fetcher = Fetcher.shared
     #warning("之後要用注入的")
     
-    let jsonDecoder = JSONDecoder()
-    
     init() {}
 }
