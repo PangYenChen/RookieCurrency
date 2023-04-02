@@ -87,18 +87,6 @@ extension Fetcher {
             return true
         }
     }
-    
-    /// 把 Data 轉成好看的 JSON 字串印出來
-    func prettyPrint(_ data: Data) {
-#warning("考慮這個方法要不要跟 archiver 共用")
-        if let jsonObject = try? JSONSerialization.jsonObject(with: data),
-           let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted) {
-            let jsonString = String(decoding: jsonData, as: UTF8.self)
-            print("###", self, #function, "拿到 json:\n", jsonString)
-        } else {
-            print("###", self, #function, "json 格式無效")
-        }
-    }
 }
 
 // MARK: - name space

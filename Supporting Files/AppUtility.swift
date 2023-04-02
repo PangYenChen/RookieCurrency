@@ -81,3 +81,18 @@ extension AppUtility {
         return jsonEncoder
     }()
 }
+
+// MARK: - pretty print json
+extension AppUtility {
+    /// 把 data 轉乘 json 格式的字串，並在 console 顯示
+    /// - Parameter data: 要轉的 data
+    static func prettyPrint(_ data: Data) {
+        if let jsonObject = try? JSONSerialization.jsonObject(with: data),
+           let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted) {
+            let jsonString = String(decoding: jsonData, as: UTF8.self)
+            print("###", self, #function, "拿到 json:\n", jsonString)
+        } else {
+            print("###", self, #function, "json 格式無效")
+        }
+    }
+}

@@ -64,6 +64,9 @@ extension Archiver {
         let url = documentsDirectory.appending(component: fileName)
             .appendingPathExtension("json")
         let data = try Data(contentsOf: url)
+        
+        AppUtility.prettyPrint(data)
+        
         let historicalRate = try jsonDecoder.decode(ResponseDataModel.HistoricalRate.self, from: data)
         
         print("###", self, #function, "讀取資料:\n\t", historicalRate)

@@ -60,7 +60,7 @@ extension Fetcher {
                         print("###, \(self), \(#function), api key 的額度用罄")
                     }
                 } else {
-                    prettyPrint(data)
+                    AppUtility.prettyPrint(data)
                     // 這是一切正常的情況，將 data decode
                     do {
                         let rate = try jsonDecoder.decode(Endpoint.ResponseType.self, from: data)
