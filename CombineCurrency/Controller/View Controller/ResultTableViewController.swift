@@ -24,7 +24,7 @@ class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - Methods
     required init?(coder: NSCoder) {
-        numberOfDayAndBaseCurrency = CurrentValueSubject((numberOfDay: AppSetting.numberOfDay, baseCurrency: AppSetting.baseCurrency))
+        numberOfDayAndBaseCurrency = CurrentValueSubject((numberOfDay: AppUtility.numberOfDay, baseCurrency: AppUtility.baseCurrency))
         order = PassthroughSubject<Order, Never>()
         searchText = PassthroughSubject<String, Never>()
         refresh = PassthroughSubject<Void, Never>()
@@ -67,7 +67,7 @@ class ResultTableViewController: BaseResultTableViewController {
             order
                 .dropFirst()
                 .sink { [unowned self] order in
-                    AppSetting.order = order
+                    AppUtility.order = order
                     sortItem.menu?.children.first?.subtitle = order.localizedName
                 }
                 .store(in: &anyCancellableSet)
@@ -78,8 +78,8 @@ class ResultTableViewController: BaseResultTableViewController {
             numberOfDayAndBaseCurrency
                 .dropFirst()
                 .sink { numberOfDay, baseCurrency in
-                    AppSetting.numberOfDay = numberOfDay
-                    AppSetting.baseCurrency = baseCurrency
+                    AppUtility.numberOfDay = numberOfDay
+                    AppUtility.baseCurrency = baseCurrency
                 }
                 .store(in: &anyCancellableSet)
             
@@ -163,7 +163,7 @@ class ResultTableViewController: BaseResultTableViewController {
         
         // send initial value
         do {
-            order.send(AppSetting.order)
+            order.send(AppUtility.order)
             searchText.send("")
             refresh.send()
         }

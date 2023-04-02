@@ -13,8 +13,9 @@ import Combine
 class RateController {
     static let shared: RateController = .init()
     
-    let fetcher = Fetcher.shared
-    #warning("之後要用注入的")
+    let fetcher: FetcherProtocol
     
-    init() {}
+    init(fetcher: FetcherProtocol = Fetcher.shared) {
+        self.fetcher = fetcher
+    }
 }

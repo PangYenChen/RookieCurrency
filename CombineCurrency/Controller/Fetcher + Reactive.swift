@@ -74,7 +74,7 @@ extension Fetcher {
         
         return dataTaskPublisherWithLimitHandling(for: endPoint)
             .map { $0.0 }
-            .handleEvents(receiveOutput: prettyPrint)
+            .handleEvents(receiveOutput: AppUtility.prettyPrint)
             .decode(type: Endpoint.ResponseType.self, decoder: jsonDecoder)
             .eraseToAnyPublisher()
     }

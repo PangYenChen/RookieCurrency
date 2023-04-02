@@ -8,6 +8,15 @@
 
 import Foundation
 import Combine
+
+// MARK: - Fetcher Protocol
+protocol FetcherProtocol {
+    func publisher<Endpoint: EndpointProtocol>(for endPoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error>
+}
+
+// MARK: - make Fetcher confirm FetcherProtocol
+extension Fetcher: FetcherProtocol {}
+
 #warning("這裡的 method 好長 看能不能拆開")
 
 extension RateController {
@@ -31,9 +40,9 @@ extension RateController {
                 for numberOfDayAgo in 1...numberOfDay {
                     
 #warning("這段應該要抽成一個 method")
-                    let date = AppSetting.requestDateFormatter.date(from: latestRate.dateString)!
+                    let date = AppUtility.requestDateFormatter.date(from: latestRate.dateString)!
                     let historicalDate = date.advanced(by: 24 * 60 * 60 * Double(-numberOfDayAgo))
-                    let historicalDateString = AppSetting.requestDateFormatter.string(from: historicalDate)
+                    let historicalDateString = AppUtility.requestDateFormatter.string(from: historicalDate)
                     
                     
                     if let historicalRate = unarchivedRateSet.first(where: { $0.dateString == historicalDateString}) {
