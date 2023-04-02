@@ -20,5 +20,8 @@ class DebugInfoViewController: UIViewController {
         apiKeyUsageProgressView.setProgress(Float(Fetcher.shared.apiKeysUsageRatio), animated: true)
         homeDirectoryTextView.text = NSHomeDirectory()
     }
+    @IBAction func copyDocumentDirectory(_ sender: Any) {
+        UIPasteboard.general.string = NSHomeDirectory()
+    }
 #endif
 }
