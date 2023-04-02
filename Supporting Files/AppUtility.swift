@@ -1,5 +1,5 @@
 //
-//  AppSetting.swift
+//  AppUtility.swift
 //  RookieCurrency
 //
 //  Created by 陳邦彥 on 2023/2/26.
@@ -9,10 +9,10 @@
 import Foundation
 
 /// 整個 App 通用的東西。
-enum AppSetting {}
+enum AppUtility {}
 
 // MARK: - user setting storage
-extension AppSetting {
+extension AppUtility {
     private enum Key: String {
         case numberOfDay
         case baseCurrency
@@ -58,7 +58,7 @@ extension AppSetting {
 }
 
 // MARK: - formatter
-extension AppSetting {
+extension AppUtility {
     /// 能回傳 API 需要的日期格式的 date formatter
     /// 整個專案的日期都必須使用這個格式！
     /// 因為會有伺服器接受的只有到日期，沒有到分秒，
@@ -72,7 +72,7 @@ extension AppSetting {
 }
 
 // MARK: - JSONDecoder and JSONEncoder
-extension AppSetting {
+extension AppUtility {
     static let jsonDecoder = JSONDecoder()
     
     static let jsonEncoder: JSONEncoder = {

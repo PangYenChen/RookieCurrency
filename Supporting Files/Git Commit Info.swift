@@ -1,3 +1,5 @@
 // 這個檔案是用 run script 產生的
-let gitHash = "aa0e9d4"
-let commitTimestamp = 1680429817
+extension AppUtility {
+    static let gitHash = "9854504"
+    static let commitTimestamp = 1680430585
+}

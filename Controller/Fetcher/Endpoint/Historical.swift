@@ -16,7 +16,7 @@ extension Endpoint {
         
 #warning("考慮直接輸入日期字串")
         init(date: Date) {
-            self.partialPath = AppSetting.requestDateFormatter.string(from: date)
+            self.partialPath = AppUtility.requestDateFormatter.string(from: date)
         }
     }
 }

@@ -79,7 +79,7 @@ extension ResponseDataModel.Rate: Decodable {
         dateString = try container.decode(String.self, forKey: .date)
         
         // 客製化 init from decoder 就是為了檢查日期字串的格式
-        guard AppSetting.requestDateFormatter.date(from: dateString) != nil else {
+        guard AppUtility.requestDateFormatter.date(from: dateString) != nil else {
             throw ServerDateError.serverDateInvalid(dateString: dateString)
         }
         

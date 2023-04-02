@@ -48,14 +48,14 @@ class BaseSettingTableViewController: UITableViewController {
             versionLabel.textColor = UIColor.secondaryLabel
             versionLabel.adjustsFontForContentSizeCategory = true
             let appVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-            versionLabel.text = R.string.localizable.version(appVersionString ?? "", gitHash)
+            versionLabel.text = R.string.localizable.version(appVersionString ?? "", AppUtility.gitHash)
         }
         
         do {
             dateLabel.font = UIFont.preferredFont(forTextStyle: .callout)
             dateLabel.textColor = UIColor.secondaryLabel
             dateLabel.adjustsFontForContentSizeCategory = true
-            let commitDate = Date(timeIntervalSince1970: Double(commitTimestamp))
+            let commitDate = Date(timeIntervalSince1970: Double(AppUtility.commitTimestamp))
             let dateString = commitDate.formatted(date: .numeric, time: .complete)
             
             dateLabel.text = R.string.localizable.versionDate(dateString)

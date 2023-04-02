@@ -24,9 +24,9 @@ class ResultTableViewController: BaseResultTableViewController {
     // MARK: - Methods
     required init?(coder: NSCoder) {
         
-        numberOfDay = AppSetting.numberOfDay
-        baseCurrency = AppSetting.baseCurrency
-        order = AppSetting.order
+        numberOfDay = AppUtility.numberOfDay
+        baseCurrency = AppUtility.baseCurrency
+        order = AppUtility.order
         searchText = String()
         latestUpdateTime =  nil
         
@@ -70,7 +70,7 @@ class ResultTableViewController: BaseResultTableViewController {
     
     override func setOrder(_ order: BaseResultTableViewController.Order) {
         self.order = order
-        AppSetting.order = order
+        AppUtility.order = order
         sortItem.menu?.children.first?.subtitle = order.localizedName
         populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
                           order: self.order,
@@ -88,13 +88,13 @@ class ResultTableViewController: BaseResultTableViewController {
             // base currency
             do {
                 baseCurrency = editedBaseCurrency
-                AppSetting.baseCurrency = baseCurrency
+                AppUtility.baseCurrency = baseCurrency
             }
             
             // number Of Day
             do {
                 numberOfDay = editedNumberOfDay
-                AppSetting.numberOfDay = numberOfDay
+                AppUtility.numberOfDay = numberOfDay
             }
             
             refreshDataAndPopulateTableView()
