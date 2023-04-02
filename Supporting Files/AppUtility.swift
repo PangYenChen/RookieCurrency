@@ -65,7 +65,7 @@ extension AppUtility {
     /// 所以如果使用 Date 的 instance 的話，會有誤差。
     static let requestDateFormatter: DateFormatter = {
         let dateFormatter = DateFormatter()
-        // 好像不需要 Gregorian calendar 的樣子
+        dateFormatter.timeZone = TimeZone(identifier: "UTC") // server time zone
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter
     }()
