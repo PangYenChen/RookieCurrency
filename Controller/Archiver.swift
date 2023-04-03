@@ -63,11 +63,25 @@ extension Archiver {
     static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
         let url = documentsDirectory.appending(component: fileName)
             .appendingPathExtension("json")
-        let data = try Data(contentsOf: url)
+        let data: Data
+        
+        do {
+            data = try Data(contentsOf: url)
+        } catch {
+            try? FileManager.default.removeItem(at: url)
+            throw error
+        }
         
         AppUtility.prettyPrint(data)
         
-        let historicalRate = try jsonDecoder.decode(ResponseDataModel.HistoricalRate.self, from: data)
+        let historicalRate: ResponseDataModel.HistoricalRate
+        
+        do {
+            historicalRate = try jsonDecoder.decode(ResponseDataModel.HistoricalRate.self, from: data)
+        } catch {
+            try? FileManager.default.removeItem(at: url)
+            throw error
+        }
         
         print("###", self, #function, "讀取資料:\n\t", historicalRate)
         
