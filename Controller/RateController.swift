@@ -19,10 +19,13 @@ class RateController {
         self.fetcher = fetcher
     }
     
-    func requestDateStringForHistoricalRate(numberOfDaysAgo: Int, from start: Date = .now) -> String? {
-        Calendar(identifier: .gregorian) // server calendar
-            .date(byAdding: .day, value: -numberOfDaysAgo, to: start)
-            .map { historicalDate in AppUtility.requestDateFormatter.string(from: historicalDate) }
+    func historicalRateDateStrings(numberOfDaysAgo: Int, from start: Date = .now) -> [String] {
+        (1...numberOfDaysAgo)
+            .compactMap { numberOfDaysAgo in
+                Calendar(identifier: .gregorian) // server calendar
+                    .date(byAdding: .day, value: -numberOfDaysAgo, to: start)
+                    .map { historicalDate in AppUtility.requestDateFormatter.string(from: historicalDate) }
+            }
     }
 
 }

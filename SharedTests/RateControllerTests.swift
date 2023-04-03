@@ -27,14 +27,15 @@ final class RateControllerTests: XCTestCase {
         sut = nil
     }
     
-    func testRequestDateString() {
+    func testHistoricalRateDateString() throws {
         // arrange
         let startDay = Date(timeIntervalSince1970: 0)
         
         // action
-        let historicalDateString = sut.requestDateStringForHistoricalRate(numberOfDaysAgo: 1, from: startDay)
+        var historicalDateStrings = sut.historicalRateDateStrings(numberOfDaysAgo: 1, from: startDay)
         
         // assert
+        let historicalDateString = try XCTUnwrap(historicalDateStrings.popLast())
         XCTAssertEqual(historicalDateString, "1969-12-31")
     }
 }
