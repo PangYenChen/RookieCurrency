@@ -33,7 +33,8 @@ final class ResponseDataModelTest: XCTestCase {
     }
     
     func testEncodeAndThanDecode() throws {
-        let dummyHistoricalRate = TestingData.historicalRate
+        let dummyDateString = "1970-01-01"
+        let dummyHistoricalRate = TestingData.historicalRate(dateString: dummyDateString)
         let historicalRateData = try JSONEncoder().encode(dummyHistoricalRate)
         let decodedHistoricalRate = try JSONDecoder()
             .decode(ResponseDataModel.HistoricalRate.self, from: historicalRateData)

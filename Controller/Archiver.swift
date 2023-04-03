@@ -74,5 +74,21 @@ extension Archiver {
         return historicalRate
     }
     
+    
+    static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool {
+        let fileURL = documentsDirectory.appendingPathComponent(fileName)
+            .appendingPathExtension("json")
+        
+        return FileManager.default.fileExists(atPath: fileURL.path)
+    }
 }
 
+protocol ArchiverProtocol {
+    static func archive(historicalRate: ResponseDataModel.HistoricalRate) throws
+        
+    static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate
+    
+    static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool
+}
+
+extension Archiver: ArchiverProtocol {}

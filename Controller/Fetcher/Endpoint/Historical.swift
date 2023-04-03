@@ -18,5 +18,9 @@ extension Endpoint {
         init(date: Date) {
             self.partialPath = AppUtility.requestDateFormatter.string(from: date)
         }
+        
+        init(dateString: String) {
+            self.partialPath = dateString
+        }
     }
 }
