@@ -109,23 +109,14 @@ extension RateController {
     func getRateFor(
         numberOfDays: Int,
         from start: Date = .now,
-        dispatchQueue: DispatchQueue = .main,
+        completionHandlerQueue: DispatchQueue = .main,
+        archiveQueue: DispatchQueue = DispatchQueue(label: "test"),
         completionHandler: @escaping (Result<(latestRate: ResponseDataModel.LatestRate,
                                               historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
                                       Error>) -> ()
     )
     {
-        var latestRate: ResponseDataModel.LatestRate!
-        
         var historicalRateSet: Set<ResponseDataModel.HistoricalRate> = []
-        
-        var dispatchGroup:DispatchGroup? = DispatchGroup()
-        
-        dispatchGroup?.notify(queue: dispatchQueue) {
-            completionHandler(.success((latestRate: latestRate, historicalRateSet: historicalRateSet)))
-        }
-        
-        dispatchGroup?.enter()
         
         #warning("變數名稱要改一下")
         
@@ -147,20 +138,29 @@ extension RateController {
                 }
             }
         
+        var dispatchGroup: DispatchGroup? = DispatchGroup()
+        
         // 打 api
         needToCallAPI
             .forEach { historicalRateDateString in
                 dispatchGroup?.enter()
+                
                 fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { [unowned self] result in
                     switch result {
                     case .success(let historicalRate):
-                        try? archiver.archive(historicalRate: historicalRate)
-                        historicalRateSet.insert(historicalRate)
-                        historicalRateDictionary[historicalRate.dateString] = historicalRate
-                        dispatchGroup?.leave()
+                        archiveQueue.async { [unowned self] in
+                            try? archiver.archive(historicalRate: historicalRate)
+                        }
+                        
+                        archiveQueue.async(flags: .barrier) { [unowned self] in
+                            historicalRateSet.insert(historicalRate)
+                            historicalRateDictionary[historicalRate.dateString] = historicalRate
+                            dispatchGroup?.leave()
+                        }
+                        
                     case .failure(let failure):
                         dispatchGroup = nil
-                        dispatchQueue.async {
+                        completionHandlerQueue.async {
                             completionHandler(.failure(failure))
                         }
                     }
@@ -171,21 +171,26 @@ extension RateController {
         readAAA
             .forEach { historicalRateDateString in
                 dispatchGroup?.enter()
-                #warning("要改成 inject queue")
-                DispatchQueue.main.async { [unowned self] in
+                
+                archiveQueue.async { [unowned self] in
                     do {
-                        try historicalRateSet.insert(archiver.unarchive(historicalRateDateString: historicalRateDateString))
-                        dispatchGroup?.leave()
+                        let unarchivedHistoricalRate = try archiver.unarchive(historicalRateDateString: historicalRateDateString)
+                        archiveQueue.async(flags: .barrier) {
+                            historicalRateSet.insert(unarchivedHistoricalRate)
+                            dispatchGroup?.leave()
+                        }
                     } catch {
                         #warning("這段需要 unit test")
                         self.fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { result in
                             switch result {
                             case .success(let historicalRate):
-                                historicalRateSet.insert(historicalRate)
-                                dispatchGroup?.leave()
+                                archiveQueue.async(flags: .barrier) {
+                                    historicalRateSet.insert(historicalRate)
+                                    dispatchGroup?.leave()
+                                }
                             case .failure(let failure):
                                 dispatchGroup = nil
-                                dispatchQueue.async {
+                                completionHandlerQueue.async {
                                     completionHandler(.failure(failure))
                                 }
                             }
@@ -195,6 +200,8 @@ extension RateController {
             }
         
         // 打 latest
+        var latestRate: ResponseDataModel.LatestRate!
+        
         dispatchGroup?.enter()
         fetcher.fetch(Endpoint.Latest()) { result in
             switch result {
@@ -203,14 +210,16 @@ extension RateController {
                 dispatchGroup?.leave()
             case .failure(let failure):
                 dispatchGroup = nil
-                dispatchQueue.async {
+                completionHandlerQueue.async {
                     completionHandler(.failure(failure))
                 }
             }
         }
         
         //
-        dispatchGroup?.leave()
         
+        dispatchGroup?.notify(queue: completionHandlerQueue) {
+            completionHandler(.success((latestRate: latestRate, historicalRateSet: historicalRateSet)))
+        }
     }
 }
