@@ -127,6 +127,8 @@ extension RateController {
         
         dispatchGroup?.enter()
         
+        #warning("變數名稱要改一下")
+        
         var readAAA: Set<String> = []
         
         var needToCallAPI: Set<String> = []

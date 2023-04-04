@@ -19,12 +19,16 @@ final class RateControllerTests: XCTestCase {
     
     var sut: RateController!
     
+    var fakeFetcher: FakeFetcher!
+    
     override func setUp() {
-        sut = RateController(fetcher: FakeFetcher())
+        fakeFetcher = FakeFetcher()
+        sut = RateController(fetcher: fakeFetcher)
     }
     
     override func tearDown() {
         sut = nil
+        fakeFetcher = nil
     }
     
     func testHistoricalRateDateString() throws {
@@ -37,23 +41,34 @@ final class RateControllerTests: XCTestCase {
         // assert
         let historicalDateString = try XCTUnwrap(historicalDateStrings.first)
         XCTAssertEqual(historicalDateString, "1969-12-31")
+        XCTAssertEqual(fakeFetcher.numberOfMethodCall, 0)
     }
 }
 
 final class FakeFetcher: FetcherProtocol {
+    
+    private(set) var numberOfMethodCall = 0
+    
     #if RookieCurrency_Tests
     
     func fetch<Endpoint: EndpointProtocol>(
         _ endpoint: Endpoint,
         completionHandler: @escaping (Result<Endpoint.ResponseType, Swift.Error>) -> Void
     ){
-        fatalError("This is a fake instance, and any of it's method should not be called.")
+        // This is a fake instance, and any of it's method should not be called.
+        
+        numberOfMethodCall += 1
     }
     
     #else
     
     func publisher<Endpoint>(for endPoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> where Endpoint : CombineCurrency.EndpointProtocol {
-        fatalError("This is a fake instance, and any of it's method should not be called.")
+        // This is a fake instance, and any of it's method should not be called.
+        
+        numberOfMethodCall += 1
+        
+        // the following code should be dead code
+        return Empty().eraseToAnyPublisher()
     }
     
     #endif
