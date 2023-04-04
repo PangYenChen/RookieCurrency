@@ -23,6 +23,7 @@ final class ImperativeRateControllerTests: XCTestCase {
     func testNoCacheAndDiskData() {
         // arrange
         let stubFetcher = StubFetcher()
+        SpyArchiver.reset()
         let spyArchiver = SpyArchiver.self
         sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
         
@@ -50,6 +51,52 @@ final class ImperativeRateControllerTests: XCTestCase {
         
         waitForExpectations(timeout: timeoutInterval)
     }
+    
+    func testAllFromCache() {
+        // arrange
+        let stubFetcher = StubFetcher()
+        SpyArchiver.reset()
+        let spyArchiver = SpyArchiver.self
+        sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
+        
+        let expectation = expectation(description: "should receive rate")
+        let dummyStartingDate = Date(timeIntervalSince1970: 0)
+        let numberOfDays = 3
+        
+        sut.getRateFor(numberOfDays: numberOfDays,
+                       from: dummyStartingDate,
+                       dispatchQueue: .main) { [unowned self] result in
+            switch result {
+            case .success(let (_ , historicalRateSet)):
+                // first assert which may be not necessary
+                XCTAssertEqual(historicalRateSet.count, numberOfDays)
+                XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
+                XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
+                XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 1)
+                XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
+                // action
+                sut.getRateFor(numberOfDays: numberOfDays,
+                               from: dummyStartingDate) { result in
+                    switch result {
+                    case .success(let (_ , historicalRateSet)):
+                        // assert
+                        XCTAssertEqual(historicalRateSet.count, numberOfDays)
+                        XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
+                        XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
+                        XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 2)
+                        XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
+                        expectation.fulfill()
+                    case .failure(let failure):
+                        XCTFail("should not receive any failure but receive: \(failure)")
+                    }
+                }
+            case .failure(let failure):
+                XCTFail("should not receive any failure but receive: \(failure)")
+            }
+        }
+        
+        waitForExpectations(timeout: timeoutInterval)
+    }
 }
 
 enum SpyArchiver: ArchiverProtocol {
@@ -58,24 +105,29 @@ enum SpyArchiver: ArchiverProtocol {
     
     static private(set) var numberOfUnarchiveCall = 0
     
+    static private var archivedFileNames: [String] = []
+    
+    static func reset() {
+        numberOfArchiveCall = 0
+        numberOfUnarchiveCall = 0
+        archivedFileNames = []
+    }
+    
     static func archive(historicalRate: RookieCurrency.ResponseDataModel.HistoricalRate) throws {
-        // Do nothing.
-        // This is a pure spy instance.
         numberOfArchiveCall += 1
+        
+        archivedFileNames.append(historicalRate.dateString)
     }
     
 
     static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
-        // This is a pure spy instance. This method should not be called.
         numberOfUnarchiveCall += 1
         
-        // the following should be dead code
-        let dummyDateString = "1970-01-01"
-        return TestingData.historicalRate(dateString: dummyDateString)
+        return TestingData.historicalRate(dateString: fileName)
     }
     
     static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool {
-        false
+        archivedFileNames.contains(fileName)
     }
 }
 
@@ -84,7 +136,6 @@ final class StubFetcher: FetcherProtocol {
     private(set) var numberOfLatestEndpointCall = 0
     
     private(set) var dateStringOfHistoricalEndpointCall: Set<String> = []
-    
     
     func fetch<Endpoint>(_ endpoint: Endpoint, completionHandler: @escaping (Result<Endpoint.ResponseType, Error>) -> Void) where Endpoint : RookieCurrency.EndpointProtocol {
         

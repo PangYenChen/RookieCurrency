@@ -150,11 +150,13 @@ extension RateController {
         readAAA
             .forEach { historicalRateDateString in
                 dispatchGroup?.enter()
-                DispatchQueue.global().async { [unowned self] in
+                #warning("要改成 inject queue")
+                DispatchQueue.main.async { [unowned self] in
                     do {
                         try historicalRateSet.insert(archiver.unarchive(historicalRateDateString: historicalRateDateString))
                         dispatchGroup?.leave()
                     } catch {
+                        #warning("這段需要 unit test")
                         self.fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { result in
                             switch result {
                             case .success(let historicalRate):
@@ -179,6 +181,7 @@ extension RateController {
                     case .success(let historicalRate):
                         try? archiver.archive(historicalRate: historicalRate)
                         historicalRateSet.insert(historicalRate)
+                        historicalRateDictionary[historicalRate.dateString] = historicalRate
                         dispatchGroup?.leave()
                     case .failure(let failure):
                         dispatchGroup = nil
