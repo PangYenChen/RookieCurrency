@@ -33,8 +33,7 @@ final class ImperativeRateControllerTests: XCTestCase {
         
         // action
         sut.getRateFor(numberOfDays: numberOfDays,
-                       from: dummyStartingDate,
-                       dispatchQueue: .main) { result in
+                       from: dummyStartingDate) { result in
             // assert
             switch result {
             case .success(let (_ , historicalRateSet)):
@@ -64,8 +63,7 @@ final class ImperativeRateControllerTests: XCTestCase {
         let numberOfDays = 3
         
         sut.getRateFor(numberOfDays: numberOfDays,
-                       from: dummyStartingDate,
-                       dispatchQueue: .main) { [unowned self] result in
+                       from: dummyStartingDate) { [unowned self] result in
             switch result {
             case .success(let (_ , historicalRateSet)):
                 // first assert which may be not necessary

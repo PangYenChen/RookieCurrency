@@ -146,6 +146,27 @@ extension RateController {
                     needToCallAPI.insert(historicalRateDateString)
                 }
             }
+        
+        // 打 api
+        needToCallAPI
+            .forEach { historicalRateDateString in
+                dispatchGroup?.enter()
+                fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { [unowned self] result in
+                    switch result {
+                    case .success(let historicalRate):
+                        try? archiver.archive(historicalRate: historicalRate)
+                        historicalRateSet.insert(historicalRate)
+                        historicalRateDictionary[historicalRate.dateString] = historicalRate
+                        dispatchGroup?.leave()
+                    case .failure(let failure):
+                        dispatchGroup = nil
+                        dispatchQueue.async {
+                            completionHandler(.failure(failure))
+                        }
+                    }
+                }
+            }
+        
         // 讀檔看看
         readAAA
             .forEach { historicalRateDateString in
@@ -172,25 +193,7 @@ extension RateController {
                     }
                 }
             }
-        // 打 api
-        needToCallAPI
-            .forEach { historicalRateDateString in
-                dispatchGroup?.enter()
-                fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { [unowned self] result in
-                    switch result {
-                    case .success(let historicalRate):
-                        try? archiver.archive(historicalRate: historicalRate)
-                        historicalRateSet.insert(historicalRate)
-                        historicalRateDictionary[historicalRate.dateString] = historicalRate
-                        dispatchGroup?.leave()
-                    case .failure(let failure):
-                        dispatchGroup = nil
-                        dispatchQueue.async {
-                            completionHandler(.failure(failure))
-                        }
-                    }
-                }
-            }
+        
         // 打 latest
         dispatchGroup?.enter()
         fetcher.fetch(Endpoint.Latest()) { result in

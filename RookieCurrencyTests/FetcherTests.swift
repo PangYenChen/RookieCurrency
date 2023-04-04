@@ -325,7 +325,7 @@ private final class StubRateSession: RateSession {
     var error: Error?
     
     func rateDataTask(with request: URLRequest,
-                      completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+                      completionHandler: (Data?, URLResponse?, Error?) -> Void) {
         completionHandler(data, response, error)
     }
 }
@@ -337,7 +337,7 @@ private final class SpyRateSession: RateSession {
     private(set) var receivedAPIKeys = [String]()
     
     func rateDataTask(with request: URLRequest,
-                      completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+                      completionHandler: (Data?, URLResponse?, Error?) -> Void) {
         
         if let receivedAPIKey = request.value(forHTTPHeaderField: "apikey") {
             receivedAPIKeys.append(receivedAPIKey)
