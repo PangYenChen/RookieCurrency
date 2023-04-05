@@ -17,11 +17,15 @@ class RateController {
     
     let archiver: ArchiverProtocol.Type
     
+    let concurrentQueue: DispatchQueue
+    
     var historicalRateDictionary: [String: ResponseDataModel.HistoricalRate]
     
     init(fetcher: FetcherProtocol = Fetcher.shared, archiver: ArchiverProtocol.Type = Archiver.self) {
         self.fetcher = fetcher
         self.archiver = archiver
+        
+        concurrentQueue = DispatchQueue(label: "rate controller concurrent queue", attributes: .concurrent)
         
         historicalRateDictionary = [:]
     }

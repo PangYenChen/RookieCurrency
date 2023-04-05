@@ -110,7 +110,6 @@ extension RateController {
         numberOfDays: Int,
         from start: Date = .now,
         completionHandlerQueue: DispatchQueue = .main,
-        archiveQueue: DispatchQueue = DispatchQueue(label: "test"),
         completionHandler: @escaping (Result<(latestRate: ResponseDataModel.LatestRate,
                                               historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
                                       Error>) -> ()
@@ -118,41 +117,39 @@ extension RateController {
     {
         var historicalRateSet: Set<ResponseDataModel.HistoricalRate> = []
         
-        #warning("變數名稱要改一下")
+        var dateStringsOfHistoricalRateInDisk: Set<String> = []
         
-        var readAAA: Set<String> = []
-        
-        var needToCallAPI: Set<String> = []
+        var dateStringsOfHistoricalRateToFetch: Set<String> = []
         
         historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .forEach { historicalRateDateString in
-                if let cacheHistoricalRate = historicalRateDictionary[historicalRateDateString] {
+                if let cacheHistoricalRate = concurrentQueue.sync(execute: { historicalRateDictionary[historicalRateDateString] }) {
                     // rate controller 本身已經有資料了
                     historicalRateSet.insert(cacheHistoricalRate)
                 } else if archiver.hasFileInDisk(historicalRateDateString: historicalRateDateString) {
                     // rate controller 沒資料，但硬碟裡有，叫 archiver 讀出來
-                    readAAA.insert(historicalRateDateString)
+                    dateStringsOfHistoricalRateInDisk.insert(historicalRateDateString)
                 } else {
                     // 這台裝置上沒有資料，跟伺服器拿資料
-                    needToCallAPI.insert(historicalRateDateString)
+                    dateStringsOfHistoricalRateToFetch.insert(historicalRateDateString)
                 }
             }
         
         var dispatchGroup: DispatchGroup? = DispatchGroup()
         
-        // 打 api
-        needToCallAPI
+        // fetch historical rate
+        dateStringsOfHistoricalRateToFetch
             .forEach { historicalRateDateString in
                 dispatchGroup?.enter()
                 
                 fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { [unowned self] result in
                     switch result {
                     case .success(let historicalRate):
-                        archiveQueue.async { [unowned self] in
+                        concurrentQueue.async { [unowned self] in
                             try? archiver.archive(historicalRate: historicalRate)
                         }
                         
-                        archiveQueue.async(flags: .barrier) { [unowned self] in
+                        concurrentQueue.async(flags: .barrier) { [unowned self] in
                             historicalRateSet.insert(historicalRate)
                             historicalRateDictionary[historicalRate.dateString] = historicalRate
                             dispatchGroup?.leave()
@@ -167,24 +164,25 @@ extension RateController {
                 }
             }
         
-        // 讀檔看看
-        readAAA
+        // read the file in disk
+        dateStringsOfHistoricalRateInDisk
             .forEach { historicalRateDateString in
                 dispatchGroup?.enter()
                 
-                archiveQueue.async { [unowned self] in
+                concurrentQueue.async { [unowned self] in
                     do {
                         let unarchivedHistoricalRate = try archiver.unarchive(historicalRateDateString: historicalRateDateString)
-                        archiveQueue.async(flags: .barrier) {
+                        concurrentQueue.async(flags: .barrier) {
                             historicalRateSet.insert(unarchivedHistoricalRate)
                             dispatchGroup?.leave()
                         }
                     } catch {
                         #warning("這段需要 unit test")
-                        self.fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { result in
+                        // fall back to fetch
+                        self.fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { [unowned self] result in
                             switch result {
                             case .success(let historicalRate):
-                                archiveQueue.async(flags: .barrier) {
+                                concurrentQueue.async(flags: .barrier) {
                                     historicalRateSet.insert(historicalRate)
                                     dispatchGroup?.leave()
                                 }
@@ -199,7 +197,7 @@ extension RateController {
                 }
             }
         
-        // 打 latest
+        // fetch latest rate
         var latestRate: ResponseDataModel.LatestRate!
         
         dispatchGroup?.enter()
@@ -216,7 +214,7 @@ extension RateController {
             }
         }
         
-        //
+        // all enter are set
         
         dispatchGroup?.notify(queue: completionHandlerQueue) {
             completionHandler(.success((latestRate: latestRate, historicalRateSet: historicalRateSet)))
