@@ -36,11 +36,10 @@ final class RateControllerTests: XCTestCase {
         let startDay = Date(timeIntervalSince1970: 0)
         
         // action
-        let historicalDateStrings = sut.historicalRateDateStrings(numberOfDaysAgo: 1, from: startDay)
+        let historicalDateStrings = sut.historicalRateDateStrings(numberOfDaysAgo: 3, from: startDay)
         
         // assert
-        let historicalDateString = try XCTUnwrap(historicalDateStrings.first)
-        XCTAssertEqual(historicalDateString, "1969-12-31")
+        XCTAssertEqual(historicalDateStrings, Set(["1969-12-31", "1969-12-30", "1969-12-29"]))
         XCTAssertEqual(fakeFetcher.numberOfMethodCall, 0)
     }
 }
