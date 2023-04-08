@@ -106,6 +106,7 @@ extension RateController {
         }
     }
     
+    // MARK: - 新的寫法
     func getRateFor(
         numberOfDays: Int,
         from start: Date = .now,
@@ -115,7 +116,7 @@ extension RateController {
                                       Error>) -> ()
     )
     {
-        var historicalRateSet: Set<ResponseDataModel.HistoricalRate> = []
+        var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error> = .success([])
         
         var dateStringsOfHistoricalRateInDisk: Set<String> = []
         
@@ -125,7 +126,8 @@ extension RateController {
             .forEach { historicalRateDateString in
                 if let cacheHistoricalRate = concurrentQueue.sync(execute: { historicalRateDictionary[historicalRateDateString] }) {
                     // rate controller 本身已經有資料了
-                    historicalRateSet.insert(cacheHistoricalRate)
+                    historicalRateSetResult = historicalRateSetResult
+                        .map { historicalRateSet in historicalRateSet.union([cacheHistoricalRate]) }
                 } else if archiver.hasFileInDisk(historicalRateDateString: historicalRateDateString) {
                     // rate controller 沒資料，但硬碟裡有，叫 archiver 讀出來
                     dateStringsOfHistoricalRateInDisk.insert(historicalRateDateString)
@@ -135,30 +137,31 @@ extension RateController {
                 }
             }
         
-        var dispatchGroup: DispatchGroup? = DispatchGroup()
+        let dispatchGroup = DispatchGroup()
         
         // fetch historical rate
         dateStringsOfHistoricalRateToFetch
             .forEach { historicalRateDateString in
-                dispatchGroup?.enter()
+                dispatchGroup.enter()
                 
                 fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { [unowned self] result in
                     switch result {
-                    case .success(let historicalRate):
+                    case .success(let fetchedHistoricalRate):
                         concurrentQueue.async { [unowned self] in
-                            try? archiver.archive(historicalRate: historicalRate)
+                            try? archiver.archive(historicalRate: fetchedHistoricalRate)
                         }
                         
                         concurrentQueue.async(flags: .barrier) { [unowned self] in
-                            historicalRateSet.insert(historicalRate)
-                            historicalRateDictionary[historicalRate.dateString] = historicalRate
-                            dispatchGroup?.leave()
+                            historicalRateSetResult = historicalRateSetResult
+                                .map { historicalRateSet in historicalRateSet.union([fetchedHistoricalRate]) }
+                            historicalRateDictionary[fetchedHistoricalRate.dateString] = fetchedHistoricalRate
+                            dispatchGroup.leave()
                         }
                         
                     case .failure(let failure):
-                        dispatchGroup = nil
-                        completionHandlerQueue.async {
-                            completionHandler(.failure(failure))
+                        concurrentQueue.async(flags: .barrier) {
+                            historicalRateSetResult = .failure(failure)
+                            dispatchGroup.leave()
                         }
                     }
                 }
@@ -167,29 +170,37 @@ extension RateController {
         // read the file in disk
         dateStringsOfHistoricalRateInDisk
             .forEach { historicalRateDateString in
-                dispatchGroup?.enter()
+                dispatchGroup.enter()
                 
                 concurrentQueue.async { [unowned self] in
                     do {
                         let unarchivedHistoricalRate = try archiver.unarchive(historicalRateDateString: historicalRateDateString)
-                        concurrentQueue.async(flags: .barrier) {
-                            historicalRateSet.insert(unarchivedHistoricalRate)
-                            dispatchGroup?.leave()
+                        concurrentQueue.async(flags: .barrier) { [unowned self] in
+                            historicalRateSetResult = historicalRateSetResult
+                                .map { historicalRateSet in historicalRateSet.union([unarchivedHistoricalRate]) }
+                            historicalRateDictionary[historicalRateDateString] = unarchivedHistoricalRate
+                            dispatchGroup.leave()
                         }
                     } catch {
                         #warning("這段需要 unit test")
                         // fall back to fetch
                         self.fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { [unowned self] result in
                             switch result {
-                            case .success(let historicalRate):
-                                concurrentQueue.async(flags: .barrier) {
-                                    historicalRateSet.insert(historicalRate)
-                                    dispatchGroup?.leave()
+                            case .success(let fetchedHistoricalRate):
+                                concurrentQueue.async { [unowned self] in
+                                    try? archiver.archive(historicalRate: fetchedHistoricalRate)
+                                }
+                                
+                                concurrentQueue.async(flags: .barrier) { [unowned self] in
+                                    historicalRateSetResult = historicalRateSetResult
+                                        .map { historicalRateSet in historicalRateSet.union([fetchedHistoricalRate]) }
+                                    historicalRateDictionary[historicalRateDateString] = fetchedHistoricalRate
+                                    dispatchGroup.leave()
                                 }
                             case .failure(let failure):
-                                dispatchGroup = nil
-                                completionHandlerQueue.async {
-                                    completionHandler(.failure(failure))
+                                concurrentQueue.async(flags: .barrier) {
+                                    historicalRateSetResult = .failure(failure)
+                                    dispatchGroup.leave()
                                 }
                             }
                         }
@@ -198,26 +209,23 @@ extension RateController {
             }
         
         // fetch latest rate
-        var latestRate: ResponseDataModel.LatestRate!
+        var latestRateResult: Result<ResponseDataModel.LatestRate, Error>!
         
-        dispatchGroup?.enter()
+        dispatchGroup.enter()
         fetcher.fetch(Endpoint.Latest()) { result in
-            switch result {
-            case .success(let success):
-                latestRate = success
-                dispatchGroup?.leave()
-            case .failure(let failure):
-                dispatchGroup = nil
-                completionHandlerQueue.async {
-                    completionHandler(.failure(failure))
-                }
-            }
+            latestRateResult = result
+            dispatchGroup.leave()
         }
         
-        // all enter are set
-        
-        dispatchGroup?.notify(queue: completionHandlerQueue) {
-            completionHandler(.success((latestRate: latestRate, historicalRateSet: historicalRateSet)))
+        // all enters have been set synchronously
+        dispatchGroup.notify(queue: completionHandlerQueue) {
+            do {
+                let latestRate = try latestRateResult.get()
+                let historicalRateSet = try historicalRateSetResult.get()
+                completionHandler(.success((latestRate: latestRate, historicalRateSet: historicalRateSet)))
+            } catch {
+                completionHandler(.failure(error))
+            }
         }
     }
 }
