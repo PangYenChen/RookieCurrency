@@ -14,6 +14,9 @@
 		512087A929A9F10A005ED87A /* Fetcher + Imperative.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512087A829A9F10A005ED87A /* Fetcher + Imperative.swift */; };
 		512087AE29A9F4A7005ED87A /* Fetcher + Reactive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512087AD29A9F4A7005ED87A /* Fetcher + Reactive.swift */; };
 		512087B029A9F858005ED87A /* RateController + Reactive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512087AF29A9F858005ED87A /* RateController + Reactive.swift */; };
+		5121216929E2D59F001D234B /* ReactiveRateControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5121216829E2D59F001D234B /* ReactiveRateControllerTests.swift */; };
+		5121216C29E2D60C001D234B /* TestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5121216B29E2D60C001D234B /* TestDoubles.swift */; };
+		5121216D29E2D60C001D234B /* TestDoubles.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5121216B29E2D60C001D234B /* TestDoubles.swift */; };
 		5129D7A0298F9A2E005F5DE5 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = E13B274B24758ACB00E0A07D /* Main.storyboard */; };
 		5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */; };
 		5129D7A7298FAAC5005F5DE5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 5129D7AA298FAAC5005F5DE5 /* Localizable.strings */; };
@@ -108,6 +111,8 @@
 		512087A829A9F10A005ED87A /* Fetcher + Imperative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Fetcher + Imperative.swift"; sourceTree = "<group>"; };
 		512087AD29A9F4A7005ED87A /* Fetcher + Reactive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Fetcher + Reactive.swift"; sourceTree = "<group>"; };
 		512087AF29A9F858005ED87A /* RateController + Reactive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RateController + Reactive.swift"; sourceTree = "<group>"; };
+		5121216829E2D59F001D234B /* ReactiveRateControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactiveRateControllerTests.swift; sourceTree = "<group>"; };
+		5121216B29E2D60C001D234B /* TestDoubles.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDoubles.swift; sourceTree = "<group>"; };
 		5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 		5129D7A9298FAAC5005F5DE5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		5129D7AB298FAB89005F5DE5 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/LaunchScreen.strings"; sourceTree = "<group>"; };
@@ -286,6 +291,7 @@
 				519A643729B4627500918B84 /* TestingData.swift */,
 				51E1B4B629ADAD7F00D75669 /* RateData.swift */,
 				51362E2529B4CF3F00E3CE89 /* RateInstance.swift */,
+				5121216B29E2D60C001D234B /* TestDoubles.swift */,
 			);
 			path = TestingData;
 			sourceTree = "<group>";
@@ -372,6 +378,7 @@
 			isa = PBXGroup;
 			children = (
 				E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */,
+				5121216829E2D59F001D234B /* ReactiveRateControllerTests.swift */,
 			);
 			path = CombineCurrencyTests;
 			sourceTree = "<group>";
@@ -683,6 +690,7 @@
 				51E731C829B4DCFA00C1DB2B /* ArchiverTest.swift in Sources */,
 				51E731CA29B4DCFF00C1DB2B /* ResponseDataModelTest.swift in Sources */,
 				51E1B4B929ADADD800D75669 /* RateData.swift in Sources */,
+				5121216C29E2D60C001D234B /* TestDoubles.swift in Sources */,
 				5189F9D029DAD630004234D3 /* ImperativeRateControllerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -729,6 +737,8 @@
 				51362E4F29B4D93500E3CE89 /* RateInstance.swift in Sources */,
 				51E731C729B4DCF900C1DB2B /* ArchiverTest.swift in Sources */,
 				51E731C929B4DCFE00C1DB2B /* ResponseDataModelTest.swift in Sources */,
+				5121216929E2D59F001D234B /* ReactiveRateControllerTests.swift in Sources */,
+				5121216D29E2D60C001D234B /* TestDoubles.swift in Sources */,
 				519A643929B462AE00918B84 /* TestingData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

@@ -23,8 +23,8 @@ final class ImperativeRateControllerTests: XCTestCase {
     func testNoCacheAndDiskData() {
         // arrange
         let stubFetcher = StubFetcher()
-        SpyArchiver.reset()
-        let spyArchiver = SpyArchiver.self
+        TestDouble.SpyArchiver.reset()
+        let spyArchiver = TestDouble.SpyArchiver.self
         sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
         
         let expectation = expectation(description: "should receive rate")
@@ -54,8 +54,8 @@ final class ImperativeRateControllerTests: XCTestCase {
     func testAllFromCache() {
         // arrange
         let stubFetcher = StubFetcher()
-        SpyArchiver.reset()
-        let spyArchiver = SpyArchiver.self
+        TestDouble.SpyArchiver.reset()
+        let spyArchiver = TestDouble.SpyArchiver.self
         sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
         
         let expectation = expectation(description: "should receive rate")
@@ -94,38 +94,6 @@ final class ImperativeRateControllerTests: XCTestCase {
         }
         
         waitForExpectations(timeout: timeoutInterval)
-    }
-}
-
-enum SpyArchiver: ArchiverProtocol {
-    
-    static private(set) var numberOfArchiveCall = 0
-    
-    static private(set) var numberOfUnarchiveCall = 0
-    
-    static private var archivedFileNames: [String] = []
-    
-    static func reset() {
-        numberOfArchiveCall = 0
-        numberOfUnarchiveCall = 0
-        archivedFileNames = []
-    }
-    
-    static func archive(historicalRate: RookieCurrency.ResponseDataModel.HistoricalRate) throws {
-        numberOfArchiveCall += 1
-        
-        archivedFileNames.append(historicalRate.dateString)
-    }
-    
-
-    static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
-        numberOfUnarchiveCall += 1
-        
-        return TestingData.historicalRate(dateString: fileName)
-    }
-    
-    static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool {
-        archivedFileNames.contains(fileName)
     }
 }
 
