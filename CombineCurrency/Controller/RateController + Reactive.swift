@@ -76,4 +76,53 @@ extension RateController {
             }
             .eraseToAnyPublisher()
     }
+    
+    func ratePublisher(numberOfDay: Int, from start: Date = .now)
+    -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error>
+    {
+        historicalRateDateStrings(numberOfDaysAgo: numberOfDay, from: start)
+            .publisher
+            .flatMap { [unowned self] dateString -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> in
+                if let cacheHistoricalRate = concurrentQueue.sync(execute: { historicalRateDictionary[dateString] })  {
+                    return Just(cacheHistoricalRate)
+                        .setFailureType(to: Error.self)
+                        .eraseToAnyPublisher()
+                } else if archiver.hasFileInDisk(historicalRateDateString: dateString) {
+                    return Future<ResponseDataModel.HistoricalRate, Error> { [unowned self] promise in
+                        concurrentQueue.async { [unowned self] in
+                            do {
+                                try promise(.success(archiver.unarchive(historicalRateDateString: dateString)))
+                            } catch {
+                                promise(.failure(error))
+                            }
+                        }
+                    }
+                    .catch { [unowned self] _ in
+                        fetcher.publisher(for: Endpoint.Historical(dateString: dateString))
+                            .handleEvents(
+                                receiveOutput: { [unowned self] historicalRate in
+                                    concurrentQueue.async(flags: .barrier) { [unowned self] in
+                                        try? archiver.archive(historicalRate: historicalRate)
+                                    }
+                                }
+                            )
+                    }
+                    .eraseToAnyPublisher()
+                } else {
+                    return fetcher.publisher(for: Endpoint.Historical(dateString: dateString))
+                        .handleEvents(
+                            receiveOutput: { [unowned self] historicalRate in
+                                concurrentQueue.async(flags: .barrier) { [unowned self] in
+                                    try? archiver.archive(historicalRate: historicalRate)
+                                }
+                            }
+                        )
+                        .eraseToAnyPublisher()
+                }
+            }
+            .collect(numberOfDay)
+            .combineLatest(fetcher.publisher(for: Endpoint.Latest()))
+            .map { (latestRate: $0.1, historicalRateSet: Set($0.0)) }
+            .eraseToAnyPublisher()
+    }
 }
