@@ -18,12 +18,12 @@ final class ImperativeRateControllerTests: XCTestCase {
     
     override func tearDown() {
         sut = nil
+        TestDouble.SpyArchiver.reset()
     }
     
     func testNoCacheAndDiskData() {
         // arrange
         let stubFetcher = StubFetcher()
-        TestDouble.SpyArchiver.reset()
         let spyArchiver = TestDouble.SpyArchiver.self
         sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
         
@@ -54,7 +54,6 @@ final class ImperativeRateControllerTests: XCTestCase {
     func testAllFromCache() {
         // arrange
         let stubFetcher = StubFetcher()
-        TestDouble.SpyArchiver.reset()
         let spyArchiver = TestDouble.SpyArchiver.self
         sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
         
@@ -124,6 +123,7 @@ final class StubFetcher: FetcherProtocol {
             }
         }
         
+        // the following should be dead code, which purely make compiler silent
         completionHandler(.failure(Fetcher.Error.unknownError))
     }
 }

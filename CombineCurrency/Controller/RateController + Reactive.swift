@@ -11,7 +11,7 @@ import Combine
 
 // MARK: - Fetcher Protocol
 protocol FetcherProtocol {
-    func publisher<Endpoint: EndpointProtocol>(for endPoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error>
+    func publisher<Endpoint: EndpointProtocol>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error>
 }
 
 // MARK: - make Fetcher confirm FetcherProtocol

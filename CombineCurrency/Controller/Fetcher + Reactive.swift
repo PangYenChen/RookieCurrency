@@ -28,10 +28,10 @@ extension Fetcher {
     /// 像服務商的伺服器索取資料。
     /// - Parameter endPoint: The end point to be retrieved.
     /// - Returns: The publisher publishes decoded instance when the task completes, or terminates if the task fails with an error.
-    func publisher<Endpoint: EndpointProtocol>(for endPoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error> {
+    func publisher<Endpoint: EndpointProtocol>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error> {
         
-        func dataTaskPublisherWithLimitHandling(for endPoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> {
-            rateSession.rateDataTaskPublisher(for: createRequest(url: endPoint.url))
+        func dataTaskPublisherWithLimitHandling(for endpoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> {
+            rateSession.rateDataTaskPublisher(for: createRequest(url: endpoint.url))
                 .mapError { $0 }
                 .flatMap { [unowned self] data, response -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> in
                     if let httpURLResponse = response as? HTTPURLResponse {
@@ -39,7 +39,7 @@ extension Fetcher {
                             // server 回應 status code 401，表示 api key 無效
                             if updateAPIKeySucceed() {
                                 // 更新完 api key 後重新打 api
-                                return dataTaskPublisherWithLimitHandling(for: endPoint)
+                                return dataTaskPublisherWithLimitHandling(for: endpoint)
                                     .eraseToAnyPublisher()
                             } else {
                                 // 沒有有效 api key 可用
@@ -50,7 +50,7 @@ extension Fetcher {
                             // server 回應 status code 429，表示 api key 額度用完
                             if updateAPIKeySucceed() {
                                 // 更新完 api key 後重新打 api
-                                return dataTaskPublisherWithLimitHandling(for: endPoint)
+                                return dataTaskPublisherWithLimitHandling(for: endpoint)
                                     .eraseToAnyPublisher()
                             } else {
                                 // 已經沒有還有額度的 api key 可以用了
@@ -72,7 +72,7 @@ extension Fetcher {
                 .eraseToAnyPublisher()
         }
         
-        return dataTaskPublisherWithLimitHandling(for: endPoint)
+        return dataTaskPublisherWithLimitHandling(for: endpoint)
             .map { $0.0 }
             .handleEvents(receiveOutput: AppUtility.prettyPrint)
             .decode(type: Endpoint.ResponseType.self, decoder: jsonDecoder)
