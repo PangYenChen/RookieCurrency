@@ -29,7 +29,7 @@ final class ReactiveRateControllerTests: XCTestCase {
         sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
         
         let valueExpectation = expectation(description: "should receive rate")
-        let finishedExpectation = expectation(description: "should finished normally")
+        let finishedExpectation = expectation(description: "should finish normally")
         let dummyStartingDate = Date(timeIntervalSince1970: 0)
         let numberOfDays = 3
         
@@ -45,7 +45,7 @@ final class ReactiveRateControllerTests: XCTestCase {
                         XCTFail("should not receive any failure but receive: \(error)")
                     }
                 },
-                receiveValue: { (latestRate, historicalRateSet) in
+                receiveValue: { (_, historicalRateSet) in
                     XCTAssertEqual(historicalRateSet.count, numberOfDays)
                     XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
                     XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
@@ -56,6 +56,52 @@ final class ReactiveRateControllerTests: XCTestCase {
             )
             .store(in: &anyCancellableSet)
         
+        waitForExpectations(timeout: timeoutInterval)
+    }
+    
+    func testAllFromCache() {
+        // arrange
+        let stubFetcher = StubFetcher()
+        let spyArchiver = TestDouble.SpyArchiver.self
+        sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
+        
+        let outputExpectation = expectation(description: "should receive rate")
+        let finishedExpectation = expectation(description: "should finish normally")
+        let dummyStartingDate = Date(timeIntervalSince1970: 0)
+        let numberOfDays = 3
+        
+        sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
+            .handleEvents(
+                receiveOutput: { (_, historicalRateSet) in
+                    // first assert which may be not necessary
+                    XCTAssertEqual(historicalRateSet.count, numberOfDays)
+                    XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
+                    XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
+                    XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 1)
+                    XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
+                }
+            )
+            .flatMap { [unowned self] _ in sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate) }
+            .sink(
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .finished:
+                        finishedExpectation.fulfill()
+                    case .failure(let error):
+                        XCTFail("should not receive any failure but receive: \(error)")
+                    }
+                },
+                receiveValue: { (_, historicalRateSet) in
+                    XCTAssertEqual(historicalRateSet.count, numberOfDays)
+                    XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
+                    XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
+                    XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 2)
+                    XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
+                    outputExpectation.fulfill()
+                }
+            )
+            .store(in: &anyCancellableSet)
+
         waitForExpectations(timeout: timeoutInterval)
     }
 }

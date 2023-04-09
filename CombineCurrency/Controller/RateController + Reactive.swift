@@ -103,6 +103,7 @@ extension RateController {
                                 receiveOutput: { [unowned self] historicalRate in
                                     concurrentQueue.async(flags: .barrier) { [unowned self] in
                                         try? archiver.archive(historicalRate: historicalRate)
+                                        historicalRateDictionary[historicalRate.dateString] = historicalRate
                                     }
                                 }
                             )
@@ -114,6 +115,7 @@ extension RateController {
                             receiveOutput: { [unowned self] historicalRate in
                                 concurrentQueue.async(flags: .barrier) { [unowned self] in
                                     try? archiver.archive(historicalRate: historicalRate)
+                                    historicalRateDictionary[historicalRate.dateString] = historicalRate
                                 }
                             }
                         )
