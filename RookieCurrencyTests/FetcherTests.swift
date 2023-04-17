@@ -51,8 +51,8 @@ final class FetcherTests: XCTestCase {
                 case .success(let latestRate):
                     XCTAssertFalse(latestRate.rates.isEmpty)
                     
-                    let dummyCurrency = Currency.TWD
-                    XCTAssertNotNil(latestRate[dummyCurrency])
+                    let dummyCurrencyCode = Currency.TWD.rawValue
+                    XCTAssertNotNil(latestRate[currencyCode: dummyCurrencyCode])
                     expectation.fulfill()
                 case .failure:
                     XCTFail("should get a latest rate instance")
@@ -85,8 +85,8 @@ final class FetcherTests: XCTestCase {
                 case .success(let rate):
                     XCTAssertFalse(rate.rates.isEmpty)
                     
-                    let dummyCurrency = Currency.TWD
-                    XCTAssertNotNil(rate[dummyCurrency])
+                    let dummyCurrencyCode = Currency.TWD.rawValue
+                    XCTAssertNotNil(rate[currencyCode: dummyCurrencyCode])
                     
                     expectation.fulfill()
                 case .failure:
