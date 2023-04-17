@@ -14,26 +14,26 @@ class SettingTableViewController: BaseSettingTableViewController {
     override var editedNumberOfDayString: String { String(editedNumberOfDay) }
     
     override var editedBaseCurrencyString: String {
-        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: editedBaseCurrency.code) ?? editedBaseCurrency.code
+        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: editedBaseCurrency) ?? editedBaseCurrency
     }
     
     private let originalNumberOfDay: Int
     
     private var editedNumberOfDay: Int
     
-    private let originalBaseCurrency: Currency
+    private let originalBaseCurrency: ResponseDataModel.CurrencyCode
     
-    private var editedBaseCurrency: Currency
+    private var editedBaseCurrency: ResponseDataModel.CurrencyCode
     
     private var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
     
-    private let completionHandler: (Int, Currency) -> Void
+    private let completionHandler: (Int, ResponseDataModel.CurrencyCode) -> Void
     
     // MARK: - methods
     required init?(coder: NSCoder,
                    numberOfDay: Int,
-                   baseCurrency: Currency,
-                   completionHandler: @escaping (Int, Currency) -> Void) {
+                   baseCurrency: ResponseDataModel.CurrencyCode,
+                   completionHandler: @escaping (Int, ResponseDataModel.CurrencyCode) -> Void) {
         
         // number of day
         do {

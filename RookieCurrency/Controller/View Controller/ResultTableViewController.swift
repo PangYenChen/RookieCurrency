@@ -13,7 +13,7 @@ class ResultTableViewController: BaseResultTableViewController {
     // MARK: - stored properties
     private var numberOfDay: Int
     
-    private var baseCurrency: Currency
+    private var baseCurrency: ResponseDataModel.CurrencyCode
     
     private var order: Order
     

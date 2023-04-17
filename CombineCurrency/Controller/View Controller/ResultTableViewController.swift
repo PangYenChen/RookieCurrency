@@ -12,7 +12,7 @@ import Combine
 class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - stored properties
-    private let numberOfDayAndBaseCurrency: CurrentValueSubject<(numberOfDay: Int, baseCurrency: Currency), Never>
+    private let numberOfDayAndBaseCurrency: CurrentValueSubject<(numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode), Never>
     
     private let order: PassthroughSubject<Order, Never>
     

@@ -15,12 +15,12 @@ class SettingTableViewController: BaseSettingTableViewController {
     override var editedNumberOfDayString: String { String(editedNumberOfDay.value) }
     
     override var editedBaseCurrencyString: String {
-        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: editedBaseCurrency.value.code) ?? editedBaseCurrency.value.code
+        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: editedBaseCurrency.value) ?? editedBaseCurrency.value
     }
     
     private let editedNumberOfDay: CurrentValueSubject<Int, Never>
     
-    private let editedBaseCurrency: CurrentValueSubject<Currency, Never>
+    private let editedBaseCurrency: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
     
     private let hasChanges: AnyPublisher<Bool, Never>
     
@@ -33,8 +33,8 @@ class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - methods
     required init?(coder: NSCoder,
                    numberOfDay: Int,
-                   baseCurrency: Currency,
-                   updateSetting: AnySubscriber<(numberOfDay: Int, baseCurrency: Currency), Never>) {
+                   baseCurrency: ResponseDataModel.CurrencyCode,
+                   updateSetting: AnySubscriber<(numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode), Never>) {
         
         editedNumberOfDay = CurrentValueSubject(numberOfDay)
         

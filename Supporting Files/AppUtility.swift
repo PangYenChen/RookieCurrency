@@ -27,17 +27,16 @@ extension AppUtility {
         set { UserDefaults.standard.set(newValue, forKey: Key.numberOfDay.rawValue) }
     }
     
-    static var baseCurrency: Currency {
+    static var baseCurrency: ResponseDataModel.CurrencyCode {
         get {
-            if let baseCurrencyString = UserDefaults.standard.string(forKey: Key.baseCurrency.rawValue),
-               let baseCurrency = Currency(rawValue: baseCurrencyString) {
-                return baseCurrency
+            if let baseCurrencyCode = UserDefaults.standard.string(forKey: Key.baseCurrency.rawValue) {
+                return baseCurrencyCode
             } else {
-                return .TWD
+                return "TWD"
             }
         }
         set {
-            UserDefaults.standard.set(newValue.rawValue, forKey: Key.baseCurrency.rawValue)
+            UserDefaults.standard.set(newValue, forKey: Key.baseCurrency.rawValue)
         }
     }
     

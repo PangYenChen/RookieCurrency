@@ -8,6 +8,10 @@
 
 import Foundation
 
+extension ResponseDataModel {
+    typealias CurrencyCode = String
+}
+
 protocol RateCategoryProtocol {}
 
 extension ResponseDataModel {
@@ -31,8 +35,8 @@ extension ResponseDataModel {
         /// 幣別跟匯率的鍵值對，1 單位新台幣等於多少其他幣別
         let rates: [String: Double]
         
-        subscript(_ currency: Currency) -> Double? {
-            rates[currency.rawValue]
+        subscript(currencyCode currencyCode: CurrencyCode) -> Double? {
+            rates[currencyCode]
         }
         
         /// JSON 的 coding key

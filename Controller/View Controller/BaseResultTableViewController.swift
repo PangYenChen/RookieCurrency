@@ -16,7 +16,7 @@ class BaseResultTableViewController: UITableViewController {
     @IBOutlet weak var sortItem: UIBarButtonItem!
     
     /// 分析過的匯率資料
-    var analyzedDataDictionary: [Currency: (latest: Double, mean: Double, deviation: Double)]
+    var analyzedDataDictionary: [ResponseDataModel.CurrencyCode: (latest: Double, mean: Double, deviation: Double)]
     
     private var dataSource: DataSource!
     
@@ -64,18 +64,18 @@ class BaseResultTableViewController: UITableViewController {
         
         // table view data source
         do {
-            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currency in
+            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
                 let reusedIdentifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
                 
-                guard let data = analyzedDataDictionary[currency] else { return cell }
+                guard let data = analyzedDataDictionary[currencyCode] else { return cell }
                 
                 let deviationString = NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
                 let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
                 let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
                 
-                cell.textLabel?.text = [currency.code,
-                                        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currency.code),
+                cell.textLabel?.text = [currencyCode,
+                                        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode),
                                         deviationString]
                     .compactMap { $0 }
                     .joined(separator: ", ")
@@ -107,7 +107,7 @@ class BaseResultTableViewController: UITableViewController {
     }
     
     /// 更新 table view，純粹把資料填入 table view，不動資料。
-    final func populateTableView(analyzedDataDictionary: [Currency: (latest: Double, mean: Double, deviation: Double)],
+    final func populateTableView(analyzedDataDictionary: [ResponseDataModel.CurrencyCode: (latest: Double, mean: Double, deviation: Double)],
                                  order: Order,
                                  searchText: String) {
         var sortedTuple = analyzedDataDictionary
@@ -122,8 +122,8 @@ class BaseResultTableViewController: UITableViewController {
         
         if !searchText.isEmpty { // filtering if needed
             sortedTuple = sortedTuple
-                .filter { (currency,_) in
-                    [currency.code, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currency.code)]
+                .filter { (currencyCode,_) in
+                    [currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)]
                         .compactMap { $0 }
                         .contains { text in text.localizedStandardContains(searchText) }
                 }
@@ -188,7 +188,7 @@ private extension BaseResultTableViewController {
         case main
     }
     
-    typealias DataSource = UITableViewDiffableDataSource<Section, Currency>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Currency>
+    typealias DataSource = UITableViewDiffableDataSource<Section, ResponseDataModel.CurrencyCode>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ResponseDataModel.CurrencyCode>
     
 }

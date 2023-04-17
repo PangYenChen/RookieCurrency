@@ -11,10 +11,10 @@ import UIKit
 class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     // MARK: - property
-    private let completionHandler: (Currency) -> Void
+    private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
     
     // MARK: - methods
-    init?(coder: NSCoder, completionHandler: @escaping (Currency) -> Void) {
+    init?(coder: NSCoder, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
         self.completionHandler = completionHandler
         
         super.init(coder: coder)
@@ -28,7 +28,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
 // MARK: - Table view delegate
 extension CurrencyTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedCurrency = Currency.allCases[indexPath.row]
+        let selectedCurrency = Currency.allCases[indexPath.row].rawValue
         
         completionHandler(selectedCurrency)
 

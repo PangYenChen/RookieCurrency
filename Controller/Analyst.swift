@@ -18,19 +18,24 @@ enum Analyst {
     ///   - baseCurrency: <#baseCurrency description#>
     static func analyze(latestRate: ResponseDataModel.LatestRate,
                         historicalRateSet: Set<ResponseDataModel.HistoricalRate>,
-                        baseCurrency: Currency)
-    -> [Currency: (latest: Double, mean: Double, deviation: Double)] {
+                        baseCurrency: ResponseDataModel.CurrencyCode)
+    -> [ResponseDataModel.CurrencyCode: (latest: Double, mean: Double, deviation: Double)] {
         
-        var result = [Currency: (latest: Double, mean: Double, deviation: Double)]()
+        var result = [ResponseDataModel.CurrencyCode: (latest: Double, mean: Double, deviation: Double)]()
         
-        for currency in Currency.allCases {
+        for currencyCode in Currency.allCases.map { $0.rawValue } {
             for historicalRate in historicalRateSet {
                 // 基準幣別的換算
-                result[currency, default: (latest: 0, mean: 0, deviation: 0)].mean += historicalRate[baseCurrency]! / historicalRate[currency]!
+                result[currencyCode, default: (latest: 0, mean: 0, deviation: 0)].mean += historicalRate[currencyCode: baseCurrency]! / historicalRate[currencyCode: currencyCode]!
             }
-            result[currency]!.mean /= Double(historicalRateSet.count)
-            result[currency]!.latest = latestRate[baseCurrency]! / latestRate[currency]!
-            result[currency]!.deviation = (latestRate[baseCurrency]! / latestRate[currency]! - result[currency]!.mean) / result[currency]!.mean
+            result[currencyCode]!.mean /= Double(historicalRateSet.count)
+            
+            
+            
+            
+            
+            result[currencyCode]!.latest = latestRate[currencyCode: baseCurrency]! / latestRate[currencyCode: currencyCode]!
+            result[currencyCode]!.deviation = (latestRate[currencyCode: baseCurrency]! / latestRate[currencyCode: currencyCode]! - result[currencyCode]!.mean) / result[currencyCode]!.mean
         }
         
         result.removeValue(forKey: baseCurrency)
