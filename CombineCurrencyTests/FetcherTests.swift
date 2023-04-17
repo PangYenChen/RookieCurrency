@@ -64,8 +64,8 @@ class FetcherTests: XCTestCase {
                     }
                 },
                 receiveValue: { latestRate in
-                    let dummyCurrency = Currency.TWD
-                    XCTAssertNotNil(latestRate[dummyCurrency])
+                    let dummyCurrencyCode = Currency.TWD.rawValue
+                    XCTAssertNotNil(latestRate[currencyCode: dummyCurrencyCode])
                     
                     XCTAssertFalse(latestRate.rates.isEmpty)
                     valueExpectation.fulfill()
@@ -112,8 +112,8 @@ class FetcherTests: XCTestCase {
                 receiveValue: { historicalRate in
                     XCTAssertFalse(historicalRate.rates.isEmpty)
                     
-                    let dummyCurrency = Currency.TWD
-                    XCTAssertNotNil(historicalRate[dummyCurrency])
+                    let dummyCurrencyCode = Currency.TWD.rawValue
+                    XCTAssertNotNil(historicalRate[currencyCode: dummyCurrencyCode])
                     
                     valueExpectation.fulfill()
                 }
