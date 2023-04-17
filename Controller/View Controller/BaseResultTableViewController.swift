@@ -11,7 +11,7 @@ import UIKit
 class BaseResultTableViewController: UITableViewController {
     
     // MARK: - IBOutlet
-    @IBOutlet weak var latestUpdateTimeItem: UIBarButtonItem!
+    @IBOutlet weak var updatingStatusItem: UIBarButtonItem!
     
     @IBOutlet weak var sortItem: UIBarButtonItem!
     
@@ -56,10 +56,10 @@ class BaseResultTableViewController: UITableViewController {
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
         }
         
-        // latestUpdateTimeItem
+        // updatingStatusItem
         do {
-            latestUpdateTimeItem.isEnabled = false
-            latestUpdateTimeItem.setTitleTextAttributes([.foregroundColor: UIColor.label], for: .disabled)
+            updatingStatusItem.isEnabled = false
+            updatingStatusItem.setTitleTextAttributes([.foregroundColor: UIColor.label], for: .disabled)
         }
         
         // table view data source

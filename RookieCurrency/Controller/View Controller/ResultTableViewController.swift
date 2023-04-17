@@ -36,7 +36,7 @@ class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime("-")
+        updatingStatusItem.title = R.string.localizable.latestUpdateTime("-")
         
         // sort Item
         do {
@@ -107,7 +107,7 @@ class ResultTableViewController: BaseResultTableViewController {
             refreshControl?.beginRefreshing()
         }
         
-        latestUpdateTimeItem.title = R.string.localizable.updating()
+        updatingStatusItem.title = R.string.localizable.updating()
         
         RateController.shared.getRateFor(numberOfDays: numberOfDay, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
@@ -134,9 +134,9 @@ class ResultTableViewController: BaseResultTableViewController {
                 showErrorAlert(error: error)
             }
             
-            do { // update latestUpdateTimeItem
+            do { // update updatingStatusItem
                 let dateString = latestUpdateTime?.formatted(date: .omitted, time: .standard) ?? "-"
-                latestUpdateTimeItem.title = R.string.localizable.latestUpdateTime(dateString)
+                updatingStatusItem.title = R.string.localizable.latestUpdateTime(dateString)
             }
             
             refreshControl?.endRefreshing()

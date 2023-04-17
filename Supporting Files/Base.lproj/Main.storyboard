@@ -66,8 +66,8 @@
                     <navigationItem key="navigationItem" title="##分析結果" id="wXd-hW-RJo"/>
                     <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="latestUpdateTimeItem" destination="5N8-C9-olc" id="oC3-to-6Ot"/>
                         <outlet property="sortItem" destination="G4w-3c-ylk" id="O3U-hp-uOs"/>
+                        <outlet property="updatingStatusItem" destination="5N8-C9-olc" id="vQE-b7-1Wk"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="z1T-NB-gpk" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>

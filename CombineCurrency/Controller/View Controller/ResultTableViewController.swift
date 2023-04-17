@@ -131,7 +131,7 @@ class ResultTableViewController: BaseResultTableViewController {
                 .Merge3(updatingString,
                         updateFailTimeString,
                         updateSuccessTimeString)
-                .sink { [unowned self] updateResult in latestUpdateTimeItem.title = updateResult }
+                .sink { [unowned self] updateResult in updatingStatusItem.title = updateResult }
                 .store(in: &anyCancellableSet)
             
             let analyzedDataDictionary = rateSetSuccess
