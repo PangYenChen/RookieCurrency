@@ -14,11 +14,6 @@ extension Endpoint {
         
         let partialPath: String
         
-#warning("考慮直接輸入日期字串")
-        init(date: Date) {
-            self.partialPath = AppUtility.requestDateFormatter.string(from: date)
-        }
-        
         init(dateString: String) {
             self.partialPath = dateString
         }

@@ -97,8 +97,10 @@ class FetcherTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
         
+        let dummyDateString = "1970-01-01"
+        
         // action
-        sut.publisher(for: Endpoint.Historical(date: .now))
+        sut.publisher(for: Endpoint.Historical(dateString: dummyDateString))
             .sink(
                 // assert
                 receiveCompletion: { completion in

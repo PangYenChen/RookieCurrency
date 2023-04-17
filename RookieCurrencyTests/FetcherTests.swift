@@ -77,9 +77,11 @@ final class FetcherTests: XCTestCase {
             stubRateSession.error = nil
         }
         
+        let dummyDateString = "1970-01-01"
+        
         // action
         sut
-            .fetch(Endpoint.Historical(date: .now)) { result in
+            .fetch(Endpoint.Historical(dateString: dummyDateString)) { result in
                 // assert
                 switch result {
                 case .success(let rate):
