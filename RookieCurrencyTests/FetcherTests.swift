@@ -315,6 +315,36 @@ final class FetcherTests: XCTestCase {
         
         waitForExpectations(timeout: timeoutTimeInterval)
     }
+    
+    func testFetchSupportedSymbols() throws {
+        // arrange
+        let expectation = expectation(description: "should gat a list of supported symbols")
+        
+        do {
+            stubRateSession.data = TestingData.supportedSymbols
+            
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            stubRateSession.response = HTTPURLResponse(url: url,
+                                                       statusCode: 200,
+                                                       httpVersion: nil,
+                                                       headerFields: nil)
+            stubRateSession.error = nil
+        }
+            
+        // action
+        sut.fetch(Endpoint.SupportedSymbols()) { result in
+            // assert
+            switch result {
+            case .success(let supportedSymbols):
+                XCTAssertFalse(supportedSymbols.symbols.isEmpty)
+                expectation.fulfill()
+            case .failure(let failure):
+                XCTFail("should not receive any failure, but receive: \(failure)")
+            }
+        }
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
 }
 
 // MARK: - test double

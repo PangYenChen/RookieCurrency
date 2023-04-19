@@ -162,6 +162,3 @@ enum Currency: String, CaseIterable {
     
     var code: String { self.rawValue }
 }
-
-
-
