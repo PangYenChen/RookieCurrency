@@ -29,6 +29,7 @@
 "version" = "版本號：%1$@(%2$@)";
 "versionDate" = "版本日期：%@";
 "debugInfo" = "偵錯資訊";
+"currencyOfInterest" = "感興趣的貨幣";
 // MARK: - 幣別
 "TWD" = "新台幣";
 "USD" = "美金";

@@ -95,4 +95,9 @@ private extension BaseCurrencyTableViewController {
     
     typealias DataSource = UITableViewDiffableDataSource<Section, Currency>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, Currency>
+    
+    enum SelectionItem {
+        case baseCurrency(ResponseDataModel.CurrencyCode)
+        case currencyOfInterest(Set<ResponseDataModel.CurrencyCode>)
+    }
 }

@@ -142,7 +142,7 @@ extension BaseSettingTableViewController {
                 cell.accessoryType = .disclosureIndicator
                 cell.imageView?.image = UIImage(systemName: "dollarsign.circle")
             case .currencyOfInterest:
-                cell.textLabel?.text = "## 感興趣的貨幣"
+                cell.textLabel?.text = R.string.localizable.currencyOfInterest()
                 cell.detailTextLabel?.text = nil
                 cell.accessoryType = .disclosureIndicator
                 cell.imageView?.image = UIImage(systemName: "checklist")
