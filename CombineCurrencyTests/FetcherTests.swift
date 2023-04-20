@@ -413,6 +413,45 @@ class FetcherTests: XCTestCase {
         
         waitForExpectations(timeout: timeoutTimeInterval)
     }
+    
+    func testFetchSupportedSymbols() throws {
+        // arrange
+        let outputExpectation = expectation(description: "should gat a list of supported symbols")
+        let finishedExpectation = expectation(description: "should finish normally")
+        
+        do {
+            let data = try XCTUnwrap(TestingData.supportedSymbols)
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                         statusCode: 200,
+                                                         httpVersion: nil,
+                                                         headerFields: nil))
+            stubRateSession.outputPublisher = Just((data: data, response: response))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+        }
+        
+        // action
+        sut.publisher(for: Endpoint.SupportedSymbols())
+            .sink(
+                // assert
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .finished:
+                        finishedExpectation.fulfill()
+                    case .failure(let error):
+                        XCTFail("should not receive any error, but receive: \(error)")
+                    }
+                },
+                receiveValue: { supportedSymbol in
+                    XCTAssertFalse(supportedSymbol.symbols.isEmpty)
+                    outputExpectation.fulfill()
+                }
+            )
+            .store(in: &anyCancellableSet)
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
 }
 
 private class StubRateSession: RateSession {

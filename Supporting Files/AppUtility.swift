@@ -11,12 +11,13 @@ import Foundation
 /// 整個 App 通用的東西。
 enum AppUtility {}
 
-// MARK: - user setting storage
+// MARK: - user setting storage, including so fallback logic
 extension AppUtility {
     private enum Key: String {
         case numberOfDay
         case baseCurrency
         case order
+        case currencyOfInterest
     }
     
     static var numberOfDay: Int {
@@ -51,6 +52,20 @@ extension AppUtility {
         }
         set {
             UserDefaults.standard.set(newValue.rawValue, forKey: Key.order.rawValue)
+        }
+    }
+    
+    static var currencyOfInterest: [ResponseDataModel.CurrencyCode] {
+        get {
+            if let currencyOfInterest = UserDefaults.standard.stringArray(forKey: Key.currencyOfInterest.rawValue) {
+                return currencyOfInterest
+            } else {
+                // 預設值為強勢貨幣(Hard Currency)
+                return ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
+            }
+        }
+        set {
+            UserDefaults.standard.setValue(newValue, forKey: Key.currencyOfInterest.rawValue)
         }
     }
     
