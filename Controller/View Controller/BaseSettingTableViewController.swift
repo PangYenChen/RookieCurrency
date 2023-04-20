@@ -141,6 +141,11 @@ extension BaseSettingTableViewController {
                 cell.detailTextLabel?.text = editedBaseCurrencyString
                 cell.accessoryType = .disclosureIndicator
                 cell.imageView?.image = UIImage(systemName: "dollarsign.circle")
+            case .currencyOfInterest:
+                cell.textLabel?.text = "## 感興趣的貨幣"
+                cell.detailTextLabel?.text = nil
+                cell.accessoryType = .disclosureIndicator
+                cell.imageView?.image = UIImage(systemName: "checklist")
             case .language:
                 cell.textLabel?.text = R.string.localizable.language()
                 if let languageCode = Bundle.main.preferredLocalizations.first {
@@ -171,7 +176,7 @@ extension BaseSettingTableViewController {
         switch row {
         case .numberOfDay:
             return nil
-        case .baseCurrency, .language:
+        case .baseCurrency, .currencyOfInterest, .language:
             return indexPath
 #if DEBUG
         case .debugInfo:
@@ -191,6 +196,10 @@ extension BaseSettingTableViewController {
         case .baseCurrency:
             let identifier = R.segue.settingTableViewController.showCurrencyTable.identifier
             performSegue(withIdentifier: identifier, sender: self)
+        case .currencyOfInterest:
+            let identifier = R.segue.settingTableViewController.showCurrencyTable.identifier
+            performSegue(withIdentifier: identifier, sender: self)
+#warning("還沒實作")
         case .language:
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             tableView.deselectRow(at: indexPath, animated: true)
@@ -231,6 +240,7 @@ extension BaseSettingTableViewController {
     enum Row: Int, CaseIterable {
         case numberOfDay = 0
         case baseCurrency
+        case currencyOfInterest
         case language
 #if DEBUG
         case debugInfo

@@ -21,6 +21,8 @@ class ResultTableViewController: BaseResultTableViewController {
     
     private var latestUpdateTime: Date?
     
+    private var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+    
     // MARK: - Methods
     required init?(coder: NSCoder) {
         
@@ -29,6 +31,7 @@ class ResultTableViewController: BaseResultTableViewController {
         order = AppUtility.order
         searchText = String()
         latestUpdateTime =  nil
+        currencyOfInterest = Set(AppUtility.currencyOfInterest)
         
         super.init(coder: coder)
     }
@@ -84,7 +87,8 @@ class ResultTableViewController: BaseResultTableViewController {
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
         SettingTableViewController(coder: coder,
                                    numberOfDay: numberOfDay,
-                                   baseCurrency: baseCurrency) { [unowned self] editedNumberOfDay, editedBaseCurrency in
+                                   baseCurrency: baseCurrency,
+                                   currencyOfInterest: currencyOfInterest) { [unowned self] editedNumberOfDay, editedBaseCurrency in
             // base currency
             do {
                 baseCurrency = editedBaseCurrency

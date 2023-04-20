@@ -25,7 +25,15 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     private var editedBaseCurrency: ResponseDataModel.CurrencyCode
     
-    private var hasChange: Bool { originalNumberOfDay != editedNumberOfDay || originalBaseCurrency != editedBaseCurrency }
+    private let originalCurrencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+    
+    private var editedCurrencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+    
+    private var hasChange: Bool {
+        originalNumberOfDay != editedNumberOfDay ||
+        originalBaseCurrency != editedBaseCurrency ||
+        originalCurrencyOfInterest != editedCurrencyOfInterest
+    }
     
     private let completionHandler: (Int, ResponseDataModel.CurrencyCode) -> Void
     
@@ -33,6 +41,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     required init?(coder: NSCoder,
                    numberOfDay: Int,
                    baseCurrency: ResponseDataModel.CurrencyCode,
+                   currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
                    completionHandler: @escaping (Int, ResponseDataModel.CurrencyCode) -> Void) {
         
         // number of day
@@ -45,6 +54,12 @@ class SettingTableViewController: BaseSettingTableViewController {
         do {
             originalBaseCurrency = baseCurrency
             editedBaseCurrency = baseCurrency
+        }
+        
+        // currency of interest
+        do {
+            originalCurrencyOfInterest = currencyOfInterest
+            editedCurrencyOfInterest = currencyOfInterest
         }
         
         self.completionHandler = completionHandler
