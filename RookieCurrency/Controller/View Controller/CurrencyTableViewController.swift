@@ -14,10 +14,13 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
     
     // MARK: - methods
-    init?(coder: NSCoder, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
+    init?(coder: NSCoder,
+          selectionItem: SelectionItem,
+          completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
+        
         self.completionHandler = completionHandler
         
-        super.init(coder: coder)
+        super.init(coder: coder, selectionItem: selectionItem)
     }
     
     required init?(coder: NSCoder) {

@@ -102,8 +102,11 @@ class BaseSettingTableViewController: UITableViewController {
     }
     
     // MARK: - Navigation
-    @IBSegueAction func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
-        fatalError("showCurrencyTable(_:) has not been implemented")
+    @IBSegueAction func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+        fatalError("showBaseCurrencyTableViewController(_:) has not been implemented")
+    }
+    @IBSegueAction func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+        fatalError("showCurrencyOfInterestTableViewController(_:) has not been implemented")
     }
 }
 
@@ -193,21 +196,25 @@ extension BaseSettingTableViewController {
         switch row {
         case .numberOfDay:
             assertionFailure("###, \(#function), \(self), number of day 這個 row 在 tableView(_:willSelectRowAt:) 被設定成不能被點")
+            
         case .baseCurrency:
-            let identifier = R.segue.settingTableViewController.showCurrencyTable.identifier
+            let identifier = R.segue.settingTableViewController.showBaseCurrencyTableViewController.identifier
             performSegue(withIdentifier: identifier, sender: self)
+            
         case .currencyOfInterest:
-            let identifier = R.segue.settingTableViewController.showCurrencyTable.identifier
+            let identifier = R.segue.settingTableViewController.showCurrencyOfInterestTableViewController.identifier
             performSegue(withIdentifier: identifier, sender: self)
-#warning("還沒實作")
+            
         case .language:
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             tableView.deselectRow(at: indexPath, animated: true)
+            
 #if DEBUG
         case .debugInfo:
             let identifier = R.segue.settingTableViewController.showDebugInfo.identifier
             performSegue(withIdentifier: identifier, sender: self)
 #endif
+            
         case nil:
             assertionFailure("###, \(#function), \(self), SettingTableViewController.Row 新增了 case，未處理新增的 case。")
         }

@@ -130,8 +130,9 @@
                         <outlet property="saveButton" destination="4h0-rJ-PQn" id="BSJ-OI-thw"/>
                         <outlet property="sectionFooterView" destination="01U-2C-QVd" id="I4m-7Q-W3n"/>
                         <outlet property="versionLabel" destination="1Fv-BA-uyf" id="DNk-e0-foc"/>
-                        <segue destination="I3t-1P-vym" kind="show" identifier="showCurrencyTable" destinationCreationSelector="showCurrencyTable:" id="Np9-zw-Nph"/>
+                        <segue destination="I3t-1P-vym" kind="show" identifier="showBaseCurrencyTableViewController" destinationCreationSelector="showBaseCurrencyTableViewController:" id="Np9-zw-Nph"/>
                         <segue destination="eIy-JG-5zx" kind="show" identifier="showDebugInfo" id="Lwh-4B-2hb"/>
+                        <segue destination="I3t-1P-vym" kind="show" identifier="showCurrencyOfInterestTableViewController" destinationCreationSelector="showCurrencyOfInterestTableViewController:" id="GlB-SH-qZ6"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bN2-6g-ejU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -194,7 +195,7 @@
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tgn-yx-MYn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="4074" y="119"/>
+            <point key="canvasLocation" x="4106" y="119"/>
         </scene>
         <!--Debug Info View Controller-->
         <scene sceneID="oy6-N3-Kvm">
@@ -284,6 +285,9 @@
             <point key="canvasLocation" x="869" y="119"/>
         </scene>
     </scenes>
+    <inferredMetricsTieBreakers>
+        <segue reference="GlB-SH-qZ6"/>
+    </inferredMetricsTieBreakers>
     <resources>
         <image name="ellipsis.circle" catalog="system" width="128" height="123"/>
         <image name="gear" catalog="system" width="128" height="122"/>
