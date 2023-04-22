@@ -31,9 +31,9 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
 // MARK: - Table view delegate
 extension CurrencyTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedCurrency = Currency.allCases[indexPath.row].rawValue
+        let selectedCurrencyCode = currencyCodes[indexPath.row]
         
-        completionHandler(selectedCurrency)
+        completionHandler(selectedCurrencyCode)
 
         super.tableView(tableView, didSelectRowAt: indexPath)
     }

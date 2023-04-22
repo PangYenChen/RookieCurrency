@@ -8,10 +8,13 @@
 
 import UIKit
 
+/// 這裡的 base 是 base class 的意思，不是基準幣別
 class BaseCurrencyTableViewController: UITableViewController {
     
     // MARK: - private properties
-    private var currencyCodes: [ResponseDataModel.CurrencyCode]
+    private var currencyCodeDescriptionDictionary: [String: String]
+    
+    private(set) var currencyCodes: [ResponseDataModel.CurrencyCode]
     
     private var dataSource: DataSource!
     
@@ -21,6 +24,8 @@ class BaseCurrencyTableViewController: UITableViewController {
     
     // MARK: - methods
     init?(coder: NSCoder, selectionItem: SelectionItem) {
+        
+        currencyCodeDescriptionDictionary = [:]
         
         currencyCodes = []
         
@@ -36,7 +41,13 @@ class BaseCurrencyTableViewController: UITableViewController {
             searchController.searchBar.delegate = self
         }
         
-        title = R.string.localizable.currency()
+        
+        switch selectionItem {
+        case .baseCurrency:
+            title = R.string.localizable.currency()
+        case .currencyOfInterest:
+            title = R.string.localizable.currencyOfInterest()
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -48,11 +59,15 @@ class BaseCurrencyTableViewController: UITableViewController {
         
         // table view data source
         do {
-            dataSource = DataSource(tableView: tableView) { tableView, indexPath, currencyCode in
+            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
                 let identifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
                 
-                cell.textLabel?.text = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
+                let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
+                let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
+                
+                cell.textLabel?.text = localizedCurrencyDescription ?? serverCurrencyDescription
+                
                 cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
                 cell.textLabel?.adjustsFontForContentSizeCategory = true
                 
@@ -73,12 +88,16 @@ class BaseCurrencyTableViewController: UITableViewController {
         super.viewDidAppear(animated)
         
         fetcher.fetch(Endpoint.SupportedSymbols()) { [unowned self] result in
-            switch result {
-            case .success(let supportedSymbols):
-                currencyCodes = supportedSymbols.symbols.keys.map { $0 }
-                updateTableView()
-            case .failure(let failure):
-                #warning("還沒處理")
+            DispatchQueue.main.async { [unowned self] in
+                switch result {
+                case .success(let supportedSymbols):
+                    currencyCodeDescriptionDictionary = supportedSymbols.symbols
+                    currencyCodes = supportedSymbols.symbols.keys.map { $0 }
+                        .sorted()
+                    updateTableView()
+                case .failure(let failure):
+                    presentErrorAlert(error: failure)
+                }
             }
         }
     }
@@ -139,5 +158,7 @@ extension BaseCurrencyTableViewController {
         case baseCurrency(ResponseDataModel.CurrencyCode)
         case currencyOfInterest(Set<ResponseDataModel.CurrencyCode>)
     }
-    
 }
+
+// MARK: - Error Alert Presenter
+extension BaseCurrencyTableViewController: ErrorAlertPresenter {}

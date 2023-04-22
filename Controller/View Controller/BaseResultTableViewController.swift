@@ -137,29 +137,10 @@ class BaseResultTableViewController: UITableViewController {
         
         dataSource.apply(snapshot)
     }
-    
-    final func showErrorAlert(error: Error) {
-
-        let alertController: UIAlertController
-        
-        // alert controller
-        do {
-            let alertTitle = R.string.localizable.alertTitle()
-            alertController = UIAlertController(title: alertTitle,
-                                                message: error.localizedDescription,
-                                                preferredStyle: .alert)
-        }
-        
-        // alert action
-        do {
-            let alertActionTitle = R.string.localizable.alertActionTitle()
-            let alertAction = UIAlertAction(title: alertActionTitle, style: .cancel)
-            alertController.addAction(alertAction)
-        }
-        
-        present(alertController, animated: true)
-    }
 }
+
+// MARK: - Error Alert Presenter
+extension BaseResultTableViewController: ErrorAlertPresenter {}
 
 // MARK: - Search Bar Delegate
 extension BaseResultTableViewController: UISearchBarDelegate {}
