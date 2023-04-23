@@ -169,7 +169,7 @@
             </objects>
             <point key="canvasLocation" x="3334.7826086956525" y="118.52678571428571"/>
         </scene>
-        <!--## 基準幣別-->
+        <!--## 基準貨幣 或者 感興趣的貨幣-->
         <scene sceneID="Wzb-4c-N6y">
             <objects>
                 <tableViewController id="I3t-1P-vym" customClass="CurrencyTableViewController" customModule="CombineCurrency" customModuleProvider="target" sceneMemberID="viewController">
@@ -178,12 +178,28 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="currencyCell" id="xbW-9R-N6E">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="default" indentationWidth="10" reuseIdentifier="currencyCell" textLabel="1y2-Fe-1zy" detailTextLabel="B91-dq-7WN" style="IBUITableViewCellStyleSubtitle" id="xbW-9R-N6E">
                                 <rect key="frame" x="0.0" y="50" width="414" height="43.5"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="xbW-9R-N6E" id="EnL-cp-zBs">
                                     <rect key="frame" x="0.0" y="0.0" width="414" height="43.5"/>
                                     <autoresizingMask key="autoresizingMask"/>
+                                    <subviews>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Title" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="1y2-Fe-1zy">
+                                            <rect key="frame" x="20" y="6" width="25" height="14.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                        <label opaque="NO" multipleTouchEnabled="YES" contentMode="left" insetsLayoutMarginsFromSafeArea="NO" text="Subtitle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="B91-dq-7WN">
+                                            <rect key="frame" x="20" y="22.5" width="44" height="14.5"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <fontDescription key="fontDescription" type="system" pointSize="0.0"/>
+                                            <nil key="textColor"/>
+                                            <nil key="highlightedColor"/>
+                                        </label>
+                                    </subviews>
                                 </tableViewCellContentView>
                             </tableViewCell>
                         </prototypes>
@@ -191,7 +207,14 @@
                             <outlet property="delegate" destination="I3t-1P-vym" id="pJM-76-tcS"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="## 基準幣別" id="lSU-Hm-LaO"/>
+                    <navigationItem key="navigationItem" title="## 基準貨幣 或者 感興趣的貨幣" id="lSU-Hm-LaO">
+                        <barButtonItem key="rightBarButtonItem" title="## 排序" id="syx-PT-jlG">
+                            <imageReference key="image" image="arrow.up.arrow.down" catalog="system" symbolScale="default"/>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="sortBarButtonItem" destination="syx-PT-jlG" id="45w-hg-Lj9"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tgn-yx-MYn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
@@ -289,6 +312,7 @@
         <segue reference="GlB-SH-qZ6"/>
     </inferredMetricsTieBreakers>
     <resources>
+        <image name="arrow.up.arrow.down" catalog="system" width="128" height="97"/>
         <image name="ellipsis.circle" catalog="system" width="128" height="123"/>
         <image name="gear" catalog="system" width="128" height="122"/>
         <systemColor name="labelColor">

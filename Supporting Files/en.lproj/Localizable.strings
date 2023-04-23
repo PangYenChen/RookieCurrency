@@ -30,20 +30,3 @@
 "versionDate" = "version date：%@";
 "debugInfo" = "debug info";
 "currencyOfInterest" = "Currency of Interest";
-// MARK: - 幣別
-"TWD" = "New Taiwan Dollar";
-"USD" = "United States Dollar";
-"JPY" = "Japanese Yen";
-"EUR" = "Euro";
-"CNY" = "Chinese Yuan";
-"GBP" = "British Pound Sterling";
-"SEK" = "Swedish Krona";
-"CAD" = "Canadian Dollar";
-"ZAR" = "South African Rand";
-"HKD" = "Hong Kong Dollar";
-"SGD" = "Singapore Dollar";
-"CHF" = "Swiss Franc";
-"NZD" = "New Zealand Dollar";
-"AUD" = "Australian Dollar";
-"XAG" = "Silver (troy ounce)";
-"XAU" = "Gold (troy ounce)";
