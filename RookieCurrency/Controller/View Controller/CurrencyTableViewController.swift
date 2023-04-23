@@ -11,14 +11,18 @@ import UIKit
 class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     // MARK: - property
-    private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
+    private let selectBaseCurrency: ((ResponseDataModel.CurrencyCode) -> Void)?
+    
+    private let selectCurrencyOfInterest: ((Set<ResponseDataModel.CurrencyCode>) -> Void)?
     
     // MARK: - methods
     init?(coder: NSCoder,
           selectionItem: SelectionItem,
-          completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
+          selectBaseCurrency: ((ResponseDataModel.CurrencyCode) -> Void)? = nil,
+          selectCurrencyOfInterest: ((Set<ResponseDataModel.CurrencyCode>) -> Void)? = nil) {
         
-        self.completionHandler = completionHandler
+        self.selectBaseCurrency = selectBaseCurrency
+        self.selectCurrencyOfInterest = selectCurrencyOfInterest
         
         super.init(coder: coder, selectionItem: selectionItem)
     }
@@ -33,8 +37,29 @@ extension CurrencyTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let selectedCurrencyCode = currencyCodes[indexPath.row]
         
-        completionHandler(selectedCurrencyCode)
+        switch selectionItem {
+        case .baseCurrency:
+            selectBaseCurrency?(selectedCurrencyCode)
+            
+        case .currencyOfInterest(var currencyOfInterest):
+            guard let cell = tableView.cellForRow(at: indexPath) else {
+                assertionFailure("table view should get the selected cell")
+                return
+            }
 
-        super.tableView(tableView, didSelectRowAt: indexPath)
+            if currencyOfInterest.contains(selectedCurrencyCode) {
+                currencyOfInterest.remove(selectedCurrencyCode)
+                cell.accessoryType = .none
+            } else {
+                currencyOfInterest.insert(selectedCurrencyCode)
+                cell.accessoryType = .checkmark
+            }
+
+            selectionItem = .currencyOfInterest(currencyOfInterest)
+
+            tableView.deselectRow(at: indexPath, animated: true)
+            
+            selectCurrencyOfInterest?(currencyOfInterest)
+        }
     }
 }

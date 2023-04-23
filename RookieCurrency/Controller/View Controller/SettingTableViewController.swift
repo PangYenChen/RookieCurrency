@@ -105,21 +105,23 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - Navigation
     override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        CurrencyTableViewController(coder: coder, selectionItem: .baseCurrency(editedBaseCurrency)) { [unowned self] selectedCurrency in
+        CurrencyTableViewController(coder: coder,
+                                    selectionItem: .baseCurrency(editedBaseCurrency),
+                                    selectBaseCurrency: { [unowned self] selectedCurrency in
             editedBaseCurrency = selectedCurrency
             saveButton.isEnabled = hasChange
             isModalInPresentation = hasChange
             tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none)
-        }
+        })
     }
     
     override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        CurrencyTableViewController(coder: coder, selectionItem: .currencyOfInterest(editedCurrencyOfInterest)) { [unowned self] selectedCurrency in
-            editedBaseCurrency = selectedCurrency
+        CurrencyTableViewController(coder: coder, selectionItem: .currencyOfInterest(editedCurrencyOfInterest), selectCurrencyOfInterest: { [unowned self] selectedCurrencyOfInterest in
+            editedCurrencyOfInterest = selectedCurrencyOfInterest
             saveButton.isEnabled = hasChange
             isModalInPresentation = hasChange
             tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none)
-        }
+        })
     }
     
 }

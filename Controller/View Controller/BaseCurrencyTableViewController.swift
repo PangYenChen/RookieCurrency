@@ -18,7 +18,7 @@ class BaseCurrencyTableViewController: UITableViewController {
     
     private var dataSource: DataSource!
     
-    private let selectionItem: SelectionItem
+    var selectionItem: SelectionItem
     
     private let fetcher: Fetcher
     
@@ -71,6 +71,21 @@ class BaseCurrencyTableViewController: UITableViewController {
                 cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
                 cell.textLabel?.adjustsFontForContentSizeCategory = true
                 
+                switch selectionItem {
+                case .baseCurrency(let baseCurrency):
+                    if currencyCode == baseCurrency {
+                        cell.accessoryType = .checkmark
+                    } else {
+                        cell.accessoryType = .none
+                    }
+                case .currencyOfInterest(let currencyOfInterest):
+                    if currencyOfInterest.contains(currencyCode) {
+                        cell.accessoryType = .checkmark
+                    } else {
+                        cell.accessoryType = .none
+                    }
+                }
+                
                 return cell
             }
             
@@ -120,18 +135,6 @@ class BaseCurrencyTableViewController: UITableViewController {
         }
         
         dataSource.apply(snapshot)
-    }
-}
-
-// MARK: - Table view delegate
-extension BaseCurrencyTableViewController {
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        switch selectionItem {
-        case .baseCurrency:
-            navigationController?.popViewController(animated: true)
-        case .currencyOfInterest:
-            break
-        }
     }
 }
 
