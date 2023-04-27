@@ -22,6 +22,8 @@ class BaseCurrencyTableViewController: UITableViewController {
     
     var selectionItem: SelectionItem
     
+    private var sortingMethod: SortingMethod
+    
     private var sortingOrder: SortingOrder
     
     private let fetcher: Fetcher
@@ -35,7 +37,9 @@ class BaseCurrencyTableViewController: UITableViewController {
         
         self.selectionItem = selectionItem
         
-        sortingOrder = .currencyNameAscending
+        sortingMethod = .currencyName
+        
+        sortingOrder = .ascending
         
         self.fetcher = Fetcher.shared
         
@@ -50,9 +54,9 @@ class BaseCurrencyTableViewController: UITableViewController {
         
         switch selectionItem {
         case .baseCurrency:
-            title = R.string.localizable.currency()
+            title = "R.string.localizable.currency()"
         case .currencyOfInterest:
-            title = R.string.localizable.currencyOfInterest()
+            title = "R.string.localizable.currencyOfInterest()"
         }
     }
     
@@ -73,11 +77,11 @@ class BaseCurrencyTableViewController: UITableViewController {
                     let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
                     let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
                     
-                    switch sortingOrder {
-                    case .currencyNameAscending, .currencyNameDescending:
+                    switch sortingMethod {
+                    case .currencyName, .currencyNameZhuyin:
                         cell.textLabel?.text = localizedCurrencyDescription ?? serverCurrencyDescription
                         cell.detailTextLabel?.text = currencyCode
-                    case .currencyCodeAscending, .currencyCodeDescending:
+                    case .currencyCode:
                         cell.textLabel?.text = currencyCode
                         cell.detailTextLabel?.text = localizedCurrencyDescription ?? serverCurrencyDescription
                     }
@@ -119,15 +123,15 @@ class BaseCurrencyTableViewController: UITableViewController {
             
             let currencyNameMenu: UIMenu
             do {
-                let ascendingAction = UIAction(title: SortingOrder.currencyNameAscending.localizedName,
+                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
                                                image: UIImage(systemName: "arrow.up.right"),
                                                state: .on,
-                                               handler: { [unowned self] _ in setSortingOrder(.currencyNameAscending) })
+                                               handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .ascending) })
 #warning("初始化的邏輯散落各地")
                 
-                let descendingAction = UIAction(title: SortingOrder.currencyNameDescending.localizedName,
+                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
                                                 image: UIImage(systemName: "arrow.down.right"),
-                                                handler: { [unowned self] _ in setSortingOrder(.currencyNameDescending)})
+                                                handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .descending) })
                 
                 currencyNameMenu = UIMenu(title: "＃＃幣別名稱",
                                           children: [ascendingAction, descendingAction])
@@ -135,30 +139,49 @@ class BaseCurrencyTableViewController: UITableViewController {
             
             let currencyCodeMenu: UIMenu
             do {
-                let ascendingAction = UIAction(title: SortingOrder.currencyCodeAscending.localizedName,
+                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
                                                image: UIImage(systemName: "arrow.up.right"),
-                                               handler: { [unowned self] _ in setSortingOrder(.currencyCodeAscending) })
+                                               handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .ascending) })
                 
-                let descendingAction = UIAction(title: SortingOrder.currencyCodeDescending.localizedName,
+                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
                                                 image: UIImage(systemName: "arrow.down.right"),
-                                                handler: { [unowned self] _ in setSortingOrder(.currencyNameDescending)})
+                                                handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .descending) })
                 
                 currencyCodeMenu = UIMenu(title: "＃＃幣別代碼",
                                           children: [ascendingAction, descendingAction])
+            }
+            
+            var children = [currencyNameMenu, currencyCodeMenu]
+            
+            // 注音
+            if Bundle.main.preferredLocalizations.first == "zh-Hant" {
+                let zhuyinLocale = Locale(identifier: "zh@collation=zhuyin")
+                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
+                                               image: UIImage(systemName: "arrow.up.right"),
+                                               handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .ascending) })
+                
+                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
+                                                image: UIImage(systemName: "arrow.down.right"),
+                                                handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .descending) })
+                
+                let currencyZhuyinMenu = UIMenu(title: "＃＃幣別注音",
+                                                children: [ascendingAction, descendingAction])
+                
+                children.append(currencyZhuyinMenu)
             }
             
             let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
                                   subtitle: "## 目前使用貨幣名稱的升冪排序",
                                   image: UIImage(systemName: "arrow.up.arrow.down"),
                                   options: .singleSelection,
-                                  children: [currencyNameMenu, currencyCodeMenu])
+                                  children: children)
             
             sortBarButtonItem.menu = UIMenu(title: "",
                                             options: .singleSelection,
                                             children: [sortMenu])
             
             #warning("這個不舒服，可以想想怎麼 init sorting order，初始化的邏輯散落各地")
-            setSortingOrder(.currencyNameAscending)
+            set(sortingMethod: sortingMethod, sortingOrder: sortingOrder)
         }
     }
     
@@ -186,9 +209,9 @@ class BaseCurrencyTableViewController: UITableViewController {
         snapshot.appendSections([.main])
         
         let sortedCurrencyCodes = currencyCodes.sorted { lhs, rhs in
-            switch sortingOrder {
                 
-            case .currencyNameAscending:
+            switch sortingMethod {
+            case .currencyName, .currencyNameZhuyin:
                 let lhsString: String
                 do {
                     let lhsLocalizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: lhs)
@@ -203,28 +226,36 @@ class BaseCurrencyTableViewController: UITableViewController {
                     rhsString = rhsLocalizedCurrencyDescription ?? rhsServerCurrencyDescription ?? rhs
                 }
                 
-                return lhsString.localizedStandardCompare(rhsString) == .orderedAscending
-            case .currencyNameDescending:
-                let lhsString: String
-                do {
-                    let lhsLocalizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: lhs)
-                    let lhsServerCurrencyDescription = currencyCodeDescriptionDictionary[lhs]
-                    lhsString = lhsLocalizedCurrencyDescription ?? lhsServerCurrencyDescription ?? lhs
+                if sortingMethod == .currencyName {
+                    switch sortingOrder {
+                    case .ascending:
+                        return lhsString.localizedStandardCompare(rhsString) == .orderedAscending
+                    case .descending:
+                        return lhsString.localizedStandardCompare(rhsString) == .orderedDescending
+                    }
+                } else if sortingMethod == .currencyNameZhuyin {
+                    let zhuyinLocale = Locale(identifier: "zh@collation=zhuyin")
+                    switch sortingOrder {
+                    case .ascending:
+                        return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedAscending
+                    case .descending:
+                        return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedDescending
+                    }
+                } else {
+                    #warning("dead code 要處理一下")
+                    assertionFailure("ajhwe;fijaw;efoij")
+                    return false
                 }
                 
-                let rhsString: String
-                do {
-                    let rhsLocalizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: rhs)
-                    let rhsServerCurrencyDescription = currencyCodeDescriptionDictionary[rhs]
-                    rhsString = rhsLocalizedCurrencyDescription ?? rhsServerCurrencyDescription ?? rhs
+            case .currencyCode:
+                switch sortingOrder {
+                case .ascending:
+                    return lhs.localizedStandardCompare(rhs) == .orderedAscending
+                case .descending:
+                    return lhs.localizedStandardCompare(rhs) == .orderedDescending
                 }
-                
-                return lhsString.localizedStandardCompare(rhsString) == .orderedDescending
-            case .currencyCodeAscending:
-                return lhs.localizedStandardCompare(rhs) == .orderedAscending
-            case .currencyCodeDescending:
-                return lhs.localizedStandardCompare(rhs) == .orderedDescending
             }
+            
         }
         
         var filteredCurrencyCodes = sortedCurrencyCodes
@@ -243,9 +274,10 @@ class BaseCurrencyTableViewController: UITableViewController {
         dataSource.apply(snapshot)
     }
     
-    private func setSortingOrder(_ sortingOrder: SortingOrder) {
+    private func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
+        self.sortingMethod = sortingMethod
         self.sortingOrder = sortingOrder
-        sortBarButtonItem.menu?.children.first?.subtitle = sortingOrder.localizedName
+        sortBarButtonItem.menu?.children.first?.subtitle = sortingMethod.localizedName + sortingOrder.localizedName
         #warning("之後要帶資訊給 table view")
         populateTableView()
     }
@@ -267,18 +299,28 @@ private extension BaseCurrencyTableViewController {
     typealias DataSource = UITableViewDiffableDataSource<Section, ResponseDataModel.CurrencyCode>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ResponseDataModel.CurrencyCode>
     
-    enum SortingOrder {
-        case currencyNameAscending
-        case currencyNameDescending
-        case currencyCodeAscending
-        case currencyCodeDescending
+    enum SortingMethod {
+        case currencyName
+        case currencyCode
+        case currencyNameZhuyin
         
         var localizedName: String {
             switch self {
-            case .currencyNameAscending: return "## 貨幣名稱 升冪排列"
-            case .currencyNameDescending: return "## 貨幣名稱 降冪排列"
-            case .currencyCodeAscending: return "## 貨幣代買 升冪排列"
-            case .currencyCodeDescending: return "## 貨幣代碼 降冪排列"
+            case .currencyName: return "## 貨幣名稱"
+            case .currencyCode: return "## 貨幣代碼"
+            case .currencyNameZhuyin: return "## 貨幣注音"
+            }
+        }
+    }
+    
+    enum SortingOrder {
+        case ascending
+        case descending
+        
+        var localizedName: String {
+            switch self {
+            case .ascending: return "## 升冪排列"
+            case .descending: return "## 降冪排列"
             }
         }
     }
