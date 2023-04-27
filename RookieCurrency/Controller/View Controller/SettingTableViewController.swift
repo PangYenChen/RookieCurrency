@@ -105,23 +105,21 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - Navigation
     override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        CurrencyTableViewController(coder: coder,
-                                    selectionItem: .baseCurrency(editedBaseCurrency),
-                                    selectBaseCurrency: { [unowned self] selectedCurrency in
-            editedBaseCurrency = selectedCurrency
-            saveButton.isEnabled = hasChange
-            isModalInPresentation = hasChange
-            tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none)
-        })
+        
+        let selectionBaseCurrencyViewModel = BaseCurrencyTableViewController.SelectionBaseCurrencyViewModel(baseCurrencyCode: editedBaseCurrency) { [unowned self] selectedBaseCurrency in
+            editedBaseCurrency = selectedBaseCurrency
+        }
+        
+        return CurrencyTableViewController(coder: coder, viewModel: selectionBaseCurrencyViewModel)
     }
     
     override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        CurrencyTableViewController(coder: coder, selectionItem: .currencyOfInterest(editedCurrencyOfInterest), selectCurrencyOfInterest: { [unowned self] selectedCurrencyOfInterest in
+        
+        let selectionCurrencyOfInterestViewModel = BaseCurrencyTableViewController.SelectionCurrencyOfInterestViewModel(currencyOfInterest: editedCurrencyOfInterest) { [unowned self] selectedCurrencyOfInterest in
             editedCurrencyOfInterest = selectedCurrencyOfInterest
-            saveButton.isEnabled = hasChange
-            isModalInPresentation = hasChange
-            tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none)
-        })
+        }
+        
+        return CurrencyTableViewController(coder: coder, viewModel: selectionCurrencyOfInterestViewModel)
     }
     
 }

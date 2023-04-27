@@ -9,57 +9,92 @@
 import UIKit
 
 class CurrencyTableViewController: BaseCurrencyTableViewController {
-    
-    // MARK: - property
-    private let selectBaseCurrency: ((ResponseDataModel.CurrencyCode) -> Void)?
-    
-    private let selectCurrencyOfInterest: ((Set<ResponseDataModel.CurrencyCode>) -> Void)?
-    
-    // MARK: - methods
-    init?(coder: NSCoder,
-          selectionItem: SelectionItem,
-          selectBaseCurrency: ((ResponseDataModel.CurrencyCode) -> Void)? = nil,
-          selectCurrencyOfInterest: ((Set<ResponseDataModel.CurrencyCode>) -> Void)? = nil) {
-        
-        self.selectBaseCurrency = selectBaseCurrency
-        self.selectCurrencyOfInterest = selectCurrencyOfInterest
-        
-        super.init(coder: coder, selectionItem: selectionItem)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+//
+//    // MARK: - property
+//    private let selectBaseCurrency: ((ResponseDataModel.CurrencyCode) -> Void)?
+//
+//    private let selectCurrencyOfInterest: ((Set<ResponseDataModel.CurrencyCode>) -> Void)?
+//
+//    // MARK: - methods
+//    init?(coder: NSCoder,
+//          selectionItem: SelectionItem,
+//          selectBaseCurrency: ((ResponseDataModel.CurrencyCode) -> Void)? = nil,
+//          selectCurrencyOfInterest: ((Set<ResponseDataModel.CurrencyCode>) -> Void)? = nil) {
+//
+//        self.selectBaseCurrency = selectBaseCurrency
+//        self.selectCurrencyOfInterest = selectCurrencyOfInterest
+//
+//        super.init(coder: coder, selectionItem: selectionItem)
+//    }
+//
+//    required init?(coder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
 }
 
-// MARK: - Table view delegate
-extension CurrencyTableViewController {
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let selectedCurrencyCode = currencyCodes[indexPath.row]
+
+extension BaseCurrencyTableViewController {
+    
+    class SelectionBaseCurrencyViewModel: CurrencyTableViewModel {
         
-        switch selectionItem {
-        case .baseCurrency:
-            selectBaseCurrency?(selectedCurrencyCode)
+        let title: String
+        
+        private let baseCurrencyCode: String
+        
+        private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
+        
+        init(baseCurrencyCode: String, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
+            title = "## 選擇基準幣別"
             
-        case .currencyOfInterest(var currencyOfInterest):
-            guard let cell = tableView.cellForRow(at: indexPath) else {
-                assertionFailure("table view should get the selected cell")
-                return
-            }
-
-            if currencyOfInterest.contains(selectedCurrencyCode) {
-                currencyOfInterest.remove(selectedCurrencyCode)
-                cell.accessoryType = .none
-            } else {
-                currencyOfInterest.insert(selectedCurrencyCode)
+            self.baseCurrencyCode = baseCurrencyCode
+            
+            self.completionHandler = completionHandler
+        }
+        
+        func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
+            if currencyCode == baseCurrencyCode {
                 cell.accessoryType = .checkmark
+            } else {
+                cell.accessoryType = .none
             }
-
-            selectionItem = .currencyOfInterest(currencyOfInterest)
-
-            tableView.deselectRow(at: indexPath, animated: true)
-            
-            selectCurrencyOfInterest?(currencyOfInterest)
+        }
+        
+        func didTap(currencyCode: ResponseDataModel.CurrencyCode) {
+            completionHandler(currencyCode)
+        }
+    }
+    
+    class SelectionCurrencyOfInterestViewModel: CurrencyTableViewModel {
+    
+        let title: String
+        
+        private var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+        
+        private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
+        
+        init(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
+             completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
+            title = "## 感興趣的貨幣"
+            self.currencyOfInterest = currencyOfInterest
+            self.completionHandler = completionHandler
+        }
+        
+        func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
+            if currencyOfInterest.contains(currencyCode) {
+                cell.accessoryType = .checkmark
+            } else {
+                cell.accessoryType = .none
+            }
+        }
+        
+        func didTap(currencyCode: ResponseDataModel.CurrencyCode) {
+            if currencyOfInterest.contains(currencyCode) {
+                currencyOfInterest.remove(currencyCode)
+                completionHandler(currencyOfInterest)
+            } else {
+                currencyOfInterest.insert(currencyCode)
+                completionHandler(currencyOfInterest)
+            }
         }
     }
 }

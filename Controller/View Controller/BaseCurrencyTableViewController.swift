@@ -20,22 +20,22 @@ class BaseCurrencyTableViewController: UITableViewController {
     
     private var dataSource: DataSource!
     
-    var selectionItem: SelectionItem
-    
     private var sortingMethod: SortingMethod
     
     private var sortingOrder: SortingOrder
     
     private let fetcher: Fetcher
     
+    let viewModel: CurrencyTableViewModel
+    
     // MARK: - methods
-    init?(coder: NSCoder, selectionItem: SelectionItem) {
+    init?(coder: NSCoder, viewModel: CurrencyTableViewModel) {
         
         currencyCodeDescriptionDictionary = [:]
         
         currencyCodes = []
         
-        self.selectionItem = selectionItem
+        self.viewModel = viewModel
         
         sortingMethod = .currencyName
         
@@ -51,13 +51,7 @@ class BaseCurrencyTableViewController: UITableViewController {
             searchController.searchBar.delegate = self
         }
         
-        
-        switch selectionItem {
-        case .baseCurrency:
-            title = "R.string.localizable.currency()"
-        case .currencyOfInterest:
-            title = "R.string.localizable.currencyOfInterest()"
-        }
+        title = viewModel.title
     }
     
     required init?(coder: NSCoder) {
@@ -91,20 +85,7 @@ class BaseCurrencyTableViewController: UITableViewController {
                 cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
                 cell.textLabel?.adjustsFontForContentSizeCategory = true
                 
-                switch selectionItem {
-                case .baseCurrency(let baseCurrency):
-                    if currencyCode == baseCurrency {
-                        cell.accessoryType = .checkmark
-                    } else {
-                        cell.accessoryType = .none
-                    }
-                case .currencyOfInterest(let currencyOfInterest):
-                    if currencyOfInterest.contains(currencyCode) {
-                        cell.accessoryType = .checkmark
-                    } else {
-                        cell.accessoryType = .none
-                    }
-                }
+                viewModel.decorate(cell: cell, for: currencyCode)
                 
                 return cell
             }
@@ -325,13 +306,24 @@ private extension BaseCurrencyTableViewController {
         }
     }
 }
-// MARK: - internal name space
-extension BaseCurrencyTableViewController {
-    enum SelectionItem {
-        case baseCurrency(ResponseDataModel.CurrencyCode)
-        case currencyOfInterest(Set<ResponseDataModel.CurrencyCode>)
-    }
-}
 
 // MARK: - Error Alert Presenter
 extension BaseCurrencyTableViewController: ErrorAlertPresenter {}
+
+// MARK: - Table View Delegate
+extension BaseCurrencyTableViewController {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let tappedCurrencyCode = currencyCodes[indexPath.row]
+        viewModel.didTap(currencyCode: tappedCurrencyCode)
+    }
+}
+
+
+// MARK: - Currency Table View Model
+protocol CurrencyTableViewModel {
+    var title: String { get }
+    
+    func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode)
+    
+    func didTap(currencyCode: ResponseDataModel.CurrencyCode)
+}
