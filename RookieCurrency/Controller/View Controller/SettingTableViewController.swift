@@ -114,12 +114,12 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        
-        let selectionCurrencyOfInterestViewModel = BaseCurrencyTableViewController.SelectionCurrencyOfInterestViewModel(currencyOfInterest: editedCurrencyOfInterest) { [unowned self] selectedCurrencyOfInterest in
-            editedCurrencyOfInterest = selectedCurrencyOfInterest
-        }
-        
-        return CurrencyTableViewController(coder: coder, viewModel: selectionCurrencyOfInterestViewModel)
+        fatalError("暫時先拿掉")
+//        let selectionCurrencyOfInterestViewModel = BaseCurrencyTableViewController.SelectionCurrencyOfInterestViewModel(currencyOfInterest: editedCurrencyOfInterest) { [unowned self] selectedCurrencyOfInterest in
+//            editedCurrencyOfInterest = selectedCurrencyOfInterest
+//        }
+//
+//        return CurrencyTableViewController(coder: coder, viewModel: selectionCurrencyOfInterestViewModel)
     }
     
 }
