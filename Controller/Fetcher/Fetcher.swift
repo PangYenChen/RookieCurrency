@@ -36,9 +36,9 @@ class Fetcher {
     }
     
     // MARK: - api key 相關
-    private var unusedAPIKeys: Set<String> = ["pT4L8AtpKOIWiGoE0ouiak003mdE0Wvg", "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"]
+    private var unusedAPIKeys: Set<String> = ["pT4L8AtpKOIWiGoE0ouiak003mdE0Wvg", "R7fbgnoWFqhDtzxrfbYNgTbRJqLcNplL"]
     
-    private var usingAPIKey: String = "R7fbgnoWFqhDtzxrfbYNgTbRJqLcNplL"
+    private var usingAPIKey: String = "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"
     
     private var usedAPIKeys: Set<String> = []
     
