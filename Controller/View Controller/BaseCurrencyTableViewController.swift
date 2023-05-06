@@ -14,13 +14,18 @@ class BaseCurrencyTableViewController: UITableViewController {
     // MARK: - private properties
     @IBOutlet weak var sortBarButtonItem: UIBarButtonItem!
     
-    let viewModel: SelectionBaseCurrencyViewModel
+    private(set) var dataSource: DataSource!
+    
+    private(set) var currencyCodeDescriptionDictionary: [String: String]
+    
+    private let fetcher: Fetcher
     
     // MARK: - methods
-    init?(coder: NSCoder, viewModel: SelectionBaseCurrencyViewModel) {
+    required init?(coder: NSCoder) {
         
+        currencyCodeDescriptionDictionary = [:]
         
-        self.viewModel = viewModel
+        fetcher = Fetcher.shared
         
         super.init(coder: coder)
         
@@ -29,18 +34,60 @@ class BaseCurrencyTableViewController: UITableViewController {
             navigationItem.searchController = searchController
             searchController.searchBar.delegate = self
         }
-        
-        title = viewModel.title
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        viewModel.configureDataSourceAndDeletate(tableView: tableView)
+        // table view data source and delegate
+        do {
+            tableView.refreshControl?.beginRefreshing()
+            
+            fetcher.fetch(Endpoint.SupportedSymbols()) { [unowned self] result in
+                switch result {
+                case .success(let supportedSymbols):
+                    currencyCodeDescriptionDictionary = supportedSymbols.symbols
+                    
+                    populateTableView()
+                case .failure(let failure):
+                #warning("to be implemented")
+                }
+            }
+            
+            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
+                let identifier = R.reuseIdentifier.currencyCell.identifier
+                let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+                
+                do {
+                    let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
+                    let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
+                    
+                    let sortingMethod = getSortingMethod()
+                    
+                    switch sortingMethod {
+                    case .currencyName, .currencyNameZhuyin:
+                        cell.textLabel?.text = localizedCurrencyDescription ?? serverCurrencyDescription
+                        cell.detailTextLabel?.text = currencyCode
+                    case .currencyCode:
+                        cell.textLabel?.text = currencyCode
+                        cell.detailTextLabel?.text = localizedCurrencyDescription ?? serverCurrencyDescription
+                    }
+                }
+                
+                
+                cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+                cell.textLabel?.adjustsFontForContentSizeCategory = true
+                
+                decorate(cell: cell, for: currencyCode)
+                
+                return cell
+            }
+            
+            dataSource.defaultRowAnimation = .fade
+            
+            tableView.delegate = self
+        }
+        
         
         // sort bar button item
         do {
@@ -108,21 +155,34 @@ class BaseCurrencyTableViewController: UITableViewController {
         }
     }
     
-    private func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
+    func populateTableView() {
+        fatalError("populateTableView() has not been implemented.")
+    }
+    
+    func getSortingMethod() -> SortingMethod {
+        fatalError("getSortingMethod() has not been implemented.")
+    }
+    
+    func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
+        fatalError("decorate(cell:for:) has not been implemented.")
+    }
+    
+    func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
         sortBarButtonItem.menu?.children.first?.subtitle = sortingMethod.localizedName + sortingOrder.localizedName
-        viewModel.set(sortingMethod: sortingMethod, sortingOrder: sortingOrder)
     }
 }
 
 // MARK: - Search Bar Delegate
-extension BaseCurrencyTableViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        viewModel.search(text: searchText)
-    }
-}
+extension BaseCurrencyTableViewController: UISearchBarDelegate {}
 
-// MARK: - private name space
+// MARK: - name space
 extension BaseCurrencyTableViewController {
+    enum Section {
+        case main
+    }
+    
+    typealias DataSource = UITableViewDiffableDataSource<Section, ResponseDataModel.CurrencyCode>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ResponseDataModel.CurrencyCode>
     
     enum SortingMethod {
         case currencyName
@@ -153,5 +213,3 @@ extension BaseCurrencyTableViewController {
 
 // MARK: - Error Alert Presenter
 extension BaseCurrencyTableViewController: ErrorAlertPresenter {}
-
-

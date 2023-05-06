@@ -83,9 +83,9 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         // update number of day ui
         do {
-            let numberOfDayRow = IndexPath(row: Row.numberOfDay.rawValue, section: 0)
+            let numberOfDayIndexPath = IndexPath(row: Row.numberOfDay.rawValue, section: 0)
             
-            guard let cell = tableView.cellForRow(at: numberOfDayRow) else {
+            guard let cell = tableView.cellForRow(at: numberOfDayIndexPath) else {
                 assertionFailure("###, \(#function), \(self), 拿不到設定 number of day 的 cell。")
                 return
             }
@@ -106,11 +106,14 @@ class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - Navigation
     override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
         
-        let selectionBaseCurrencyViewModel = BaseCurrencyTableViewController.SelectionBaseCurrencyViewModel(baseCurrencyCode: editedBaseCurrency) { [unowned self] selectedBaseCurrency in
-            editedBaseCurrency = selectedBaseCurrency
-        }
+        let currencyTableViewModel = CurrencyTableViewController
+            .ViewModel(baseCurrencyCode: editedBaseCurrency) { [unowned self] selectedBaseCurrency in
+                self.editedBaseCurrency = selectedBaseCurrency
+                let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
+                tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
+            }
         
-        return CurrencyTableViewController(coder: coder, viewModel: selectionBaseCurrencyViewModel)
+        return CurrencyTableViewController(coder: coder, viewModel: currencyTableViewModel)
     }
     
     override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
