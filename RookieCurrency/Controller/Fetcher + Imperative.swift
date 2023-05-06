@@ -35,13 +35,14 @@ extension Fetcher {
         _ endpoint: Endpoint,
         completionHandler: @escaping (Result<Endpoint.ResponseType, Swift.Error>) -> Void
     ) {
-        let urlRequest = createRequest(url: endpoint.url)
+        let apiKey = usingAPIKey
+        let urlRequest = createRequest(url: endpoint.url, withAPIKey: apiKey)
         
         rateSession.rateDataTask(with: urlRequest) { [unowned self] data, response, error in
             if let httpURLResponse = response as? HTTPURLResponse, let data {
                 if httpURLResponse.statusCode == 401 {
                     // status code 是 401 表示 api key 無效，要更新 api key 後重新打
-                    if updateAPIKeySucceed() {
+                    if updateAPIKeySucceed(apiKeyToBeDeprecated: apiKey) {
                         // 更新成功後重新打 api
                         fetch(endpoint, completionHandler: completionHandler)
                     } else {
@@ -51,7 +52,7 @@ extension Fetcher {
                     }
                 } else if httpURLResponse.statusCode == 429 {
                     // status code 是 429 表示 api key 的額度已經用完，要更新 api key 後重新打
-                    if updateAPIKeySucceed() {
+                    if updateAPIKeySucceed(apiKeyToBeDeprecated: apiKey) {
                         // 更新成功後重新打 api
                         fetch(endpoint, completionHandler: completionHandler)
                     } else {

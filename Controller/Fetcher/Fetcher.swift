@@ -38,7 +38,7 @@ class Fetcher {
     // MARK: - api key 相關
     private var unusedAPIKeys: Set<String> = ["pT4L8AtpKOIWiGoE0ouiak003mdE0Wvg", "R7fbgnoWFqhDtzxrfbYNgTbRJqLcNplL"]
     
-    private var usingAPIKey: String = "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"
+    private(set) var usingAPIKey: String = "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"
     
     private var usedAPIKeys: Set<String> = []
     
@@ -68,7 +68,7 @@ extension Fetcher {
     /// 產生 timeout 時限為 5 秒，且帶上 api key 的 `URLRequest`
     /// - Parameter url: The URL to be retrieved.
     /// - Returns: The new url request.
-    func createRequest(url: URL) -> URLRequest {
+    func createRequest(url: URL, withAPIKey: String) -> URLRequest {
         var urlRequest = URLRequest(url: url, timeoutInterval: 5)
         urlRequest.addValue(usingAPIKey, forHTTPHeaderField: "apikey")
         return urlRequest
@@ -78,14 +78,21 @@ extension Fetcher {
     /// 若還有新的 api key 可以用，換上後回傳 true，表示要重打 api。
     /// 若已無 api key 可用，回傳 false，讓 call cite 處理。
     /// - Returns: 是否需要從打一次 api
-    func updateAPIKeySucceed() -> Bool {
-        if unusedAPIKeys.isEmpty {
-            // 已經沒有 api key 可以用了。
-            return false
+    func updateAPIKeySucceed(apiKeyToBeDeprecated: String) -> Bool {
+        
+        if apiKeyToBeDeprecated == usingAPIKey {
+            // 正在用的 api key 要被換掉
+            if unusedAPIKeys.isEmpty {
+                // 已經沒有 api key 可以用了。
+                return false
+            } else {
+                // 已經換上新的 api key，需要從打一次 api
+                usedAPIKeys.insert(usingAPIKey)
+                usingAPIKey = unusedAPIKeys.removeFirst()
+                return true
+            }
         } else {
-            // 已經換上新的 api key，需要從打一次 api
-            usedAPIKeys.insert(usingAPIKey)
-            usingAPIKey = unusedAPIKeys.removeFirst()
+            // 要被換掉的 api key 已經被其他隻 api 換掉了
             return true
         }
     }
