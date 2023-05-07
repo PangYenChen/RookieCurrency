@@ -106,23 +106,24 @@ class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - Navigation
     override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
         
-        let currencyTableViewModel = CurrencyTableViewController
-            .ViewModel(baseCurrencyCode: editedBaseCurrency) { [unowned self] selectedBaseCurrency in
+        let baseCurrencySelectionViewModel = CurrencyTableViewController
+            .BaseCurrencySelectionViewModel(baseCurrencyCode: editedBaseCurrency) { [unowned self] selectedBaseCurrency in
                 self.editedBaseCurrency = selectedBaseCurrency
                 let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
                 tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
             }
         
-        return CurrencyTableViewController(coder: coder, viewModel: currencyTableViewModel)
+        return CurrencyTableViewController(coder: coder, viewModel: baseCurrencySelectionViewModel)
     }
     
     override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        fatalError("暫時先拿掉")
-//        let selectionCurrencyOfInterestViewModel = BaseCurrencyTableViewController.SelectionCurrencyOfInterestViewModel(currencyOfInterest: editedCurrencyOfInterest) { [unowned self] selectedCurrencyOfInterest in
-//            editedCurrencyOfInterest = selectedCurrencyOfInterest
-//        }
-//
-//        return CurrencyTableViewController(coder: coder, viewModel: selectionCurrencyOfInterestViewModel)
+        
+        let currencyOfInterestSelectionViewModel = CurrencyTableViewController
+            .CurrencyOfInterestSelectionViewModel(currencyOfInterest: editedCurrencyOfInterest) { [unowned self] selectedCurrencyOfInterest in
+            editedCurrencyOfInterest = selectedCurrencyOfInterest
+        }
+
+        return CurrencyTableViewController(coder: coder, viewModel: currencyOfInterestSelectionViewModel)
     }
     
 }

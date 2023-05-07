@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CurrencyTableViewController: BaseCurrencyTableViewController, ErrorAlertPresenter {
+class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private var sortingMethod: SortingMethod
     
@@ -16,9 +16,9 @@ class CurrencyTableViewController: BaseCurrencyTableViewController, ErrorAlertPr
     
     private var searchText: String
     
-    private let viewModel: ViewModel
+    private let viewModel: CurrencyTableViewModel
     
-    init?(coder: NSCoder, viewModel: ViewModel) {
+    init?(coder: NSCoder, viewModel: CurrencyTableViewModel) {
         
         self.viewModel = viewModel
         
@@ -41,13 +41,15 @@ class CurrencyTableViewController: BaseCurrencyTableViewController, ErrorAlertPr
         title = viewModel.title
         
         fetcher.fetch(Endpoint.SupportedSymbols()) { [unowned self] result in
-            switch result {
-            case .success(let supportedSymbols):
-                currencyCodeDescriptionDictionary = supportedSymbols.symbols
-                
-                populateTableView()
-            case .failure(let failure):
-                presentErrorAlert(error: failure)
+            DispatchQueue.main.async { [unowned self] in
+                switch result {
+                case .success(let supportedSymbols):
+                    currencyCodeDescriptionDictionary = supportedSymbols.symbols
+                    
+                    populateTableView()
+                case .failure(let failure):
+                    self.presentErrorAlert(error: failure)
+                }
             }
         }
     }
@@ -155,50 +157,49 @@ class CurrencyTableViewController: BaseCurrencyTableViewController, ErrorAlertPr
 }
 
 
-extension BaseCurrencyTableViewController {
+extension CurrencyTableViewController {
 
-    class ViewModel {
+    class BaseCurrencySelectionViewModel: CurrencyTableViewModel {
         
-        let title: String = "### AAA"
+        let title: String
         
         private var baseCurrencyCode: String
         
-        let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
+        private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
         
         init(baseCurrencyCode: String, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
+            title = R.string.localizable.baseCurrency()
             self.baseCurrencyCode = baseCurrencyCode
             self.completionHandler = completionHandler
         }
         
         func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
-            if currencyCode == baseCurrencyCode {
-                cell.accessoryType = .checkmark
-            } else {
-                cell.accessoryType = .none
-            }
+            cell.accessoryType = currencyCode == baseCurrencyCode ? .checkmark : .none
         }
         
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
-            // 處理舊的 base currency
-            do {
-                if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode),
-                   let oldSelectedBaseCurrencyCell = tableView.cellForRow(at: oldSelectedBaseCurrencyIndexPath) {
-                    oldSelectedBaseCurrencyCell.accessoryType = .none
-                }
+            
+            var identifiersNeedToBeLoaded: [ResponseDataModel.CurrencyCode] = []
+            
+            guard let newSelectedBaseCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
+                assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
+                return
             }
             
-            // 處理新的 base currency
-            do {
-                tableView.deselectRow(at: indexPath, animated: true)
-                tableView.cellForRow(at: indexPath)?.accessoryType = .checkmark
-                
-                if let newSelectedBaseCurrencyCode = dataSource.itemIdentifier(for: indexPath) {
-                    baseCurrencyCode = newSelectedBaseCurrencyCode
-                    completionHandler(newSelectedBaseCurrencyCode)
-                } else {
-                    assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
-                }
+            identifiersNeedToBeLoaded.append(newSelectedBaseCurrencyCode)
+            
+            if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode),
+               tableView.indexPathsForVisibleRows?.contains(oldSelectedBaseCurrencyIndexPath) == true {
+                identifiersNeedToBeLoaded.append(baseCurrencyCode)
             }
+            
+            baseCurrencyCode = newSelectedBaseCurrencyCode
+            
+            var snapshot = dataSource.snapshot()
+            snapshot.reloadItems(identifiersNeedToBeLoaded)
+            dataSource.apply(snapshot)
+            
+            completionHandler(newSelectedBaseCurrencyCode)
         }
         
         func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
@@ -206,44 +207,59 @@ extension BaseCurrencyTableViewController {
         }
     }
     
+    class CurrencyOfInterestSelectionViewModel: CurrencyTableViewModel {
+        
+        let title: String
+        
+        private var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+        
+        private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
+        
+        init(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
+             completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
+            title = R.string.localizable.currencyOfInterest()
+            self.currencyOfInterest = currencyOfInterest
+            self.completionHandler = completionHandler
+        }
+        
+        func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
+            cell.accessoryType = currencyOfInterest.contains(currencyCode) ? .checkmark : .none
+        }
+        
+        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
+            
+            guard let selectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
+                assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
+                return
+            }
+            
+            if currencyOfInterest.contains(selectedCurrencyCode) {
+                currencyOfInterest.remove(selectedCurrencyCode)
+            } else {
+                currencyOfInterest.insert(selectedCurrencyCode)
+            }
+            
+            var snapshot = dataSource.snapshot()
+            snapshot.reloadItems([selectedCurrencyCode])
+            dataSource.apply(snapshot)
+        }
+        
+        func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
+            indexPath
+        }
+    }
+}
+
+protocol CurrencyTableViewModel {
+    var title: String { get }
     
+    func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode)
     
+    func tableView(_ tableView: UITableView,
+                   didSelectRowAt indexPath: IndexPath,
+                   with dataSource: BaseCurrencyTableViewController.DataSource)
     
-//    class SelectionCurrencyOfInterestViewModel: CurrencyTableViewModel {
-//        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//            <#code#>
-//        }
-//
-//
-//        let title: String
-//
-//        private var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
-//
-//        private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
-//
-//        init(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
-//             completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
-//            title = "## 感興趣的貨幣"
-//            self.currencyOfInterest = currencyOfInterest
-//            self.completionHandler = completionHandler
-//        }
-//
-//        func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
-//            if currencyOfInterest.contains(currencyCode) {
-//                cell.accessoryType = .checkmark
-//            } else {
-//                cell.accessoryType = .none
-//            }
-//        }
-//
-//        func didTap(currencyCode: ResponseDataModel.CurrencyCode) {
-//            if currencyOfInterest.contains(currencyCode) {
-//                currencyOfInterest.remove(currencyCode)
-//                completionHandler(currencyOfInterest)
-//            } else {
-//                currencyOfInterest.insert(currencyCode)
-//                completionHandler(currencyOfInterest)
-//            }
-//        }
-//    }
+    func tableView(_ tableView: UITableView,
+                   willSelectRowAt indexPath: IndexPath,
+                   with dataSource: BaseCurrencyTableViewController.DataSource) -> IndexPath?
 }
