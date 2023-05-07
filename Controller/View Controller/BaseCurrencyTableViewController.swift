@@ -16,9 +16,9 @@ class BaseCurrencyTableViewController: UITableViewController {
     
     private(set) var dataSource: DataSource!
     
-    private(set) var currencyCodeDescriptionDictionary: [String: String]
+    var currencyCodeDescriptionDictionary: [String: String]
     
-    private let fetcher: Fetcher
+    let fetcher: Fetcher
     
     // MARK: - methods
     required init?(coder: NSCoder) {
@@ -42,17 +42,6 @@ class BaseCurrencyTableViewController: UITableViewController {
         // table view data source and delegate
         do {
             tableView.refreshControl?.beginRefreshing()
-            
-            fetcher.fetch(Endpoint.SupportedSymbols()) { [unowned self] result in
-                switch result {
-                case .success(let supportedSymbols):
-                    currencyCodeDescriptionDictionary = supportedSymbols.symbols
-                    
-                    populateTableView()
-                case .failure(let failure):
-                #warning("to be implemented")
-                }
-            }
             
             dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
                 let identifier = R.reuseIdentifier.currencyCell.identifier

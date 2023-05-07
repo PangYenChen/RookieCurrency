@@ -8,7 +8,7 @@
 
 import UIKit
 
-class CurrencyTableViewController: BaseCurrencyTableViewController {
+class CurrencyTableViewController: BaseCurrencyTableViewController, ErrorAlertPresenter {
     
     private var sortingMethod: SortingMethod
     
@@ -39,6 +39,17 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         super.viewDidLoad()
         
         title = viewModel.title
+        
+        fetcher.fetch(Endpoint.SupportedSymbols()) { [unowned self] result in
+            switch result {
+            case .success(let supportedSymbols):
+                currencyCodeDescriptionDictionary = supportedSymbols.symbols
+                
+                populateTableView()
+            case .failure(let failure):
+                presentErrorAlert(error: failure)
+            }
+        }
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -98,8 +109,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                         return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedDescending
                     }
                 } else {
-#warning("dead code 要處理一下")
-                    assertionFailure("ajhwe;fijaw;efoij")
+                    assertionFailure("###, \(self), \(#function), 這段是 dead code")
                     return false
                 }
                 
@@ -134,7 +144,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         self.sortingMethod = sortingMethod
         self.sortingOrder = sortingOrder
         
-#warning("之後要帶資訊給 table view")
         populateTableView()
         
         super.set(sortingMethod: sortingMethod, sortingOrder: sortingOrder)
@@ -172,12 +181,9 @@ extension BaseCurrencyTableViewController {
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
             // 處理舊的 base currency
             do {
-                if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode) {
-                    if let oldSelectedBaseCurrencyCell = tableView.cellForRow(at: oldSelectedBaseCurrencyIndexPath){
-                        oldSelectedBaseCurrencyCell.accessoryType = .none
-                    }
-                } else {
-                    assertionFailure("")
+                if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode),
+                   let oldSelectedBaseCurrencyCell = tableView.cellForRow(at: oldSelectedBaseCurrencyIndexPath) {
+                    oldSelectedBaseCurrencyCell.accessoryType = .none
                 }
             }
             
@@ -190,7 +196,7 @@ extension BaseCurrencyTableViewController {
                     baseCurrencyCode = newSelectedBaseCurrencyCode
                     completionHandler(newSelectedBaseCurrencyCode)
                 } else {
-                    assertionFailure("")
+                    assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
                 }
             }
         }

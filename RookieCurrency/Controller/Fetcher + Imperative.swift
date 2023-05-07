@@ -76,7 +76,7 @@ extension Fetcher {
                 completionHandler(.failure(error))
                 print("###", self, #function, "網路錯誤", error.localizedDescription, error)
             } else {
-                assertionFailure("response 不是 HttpURLResponse，或者既沒有(data, httpURLResponse)，也沒有 error，常理來說都不會發生。")
+                assertionFailure("###, \(#function), \(self), response 不是 HttpURLResponse，或者既沒有(data, httpURLResponse)，也沒有 error，常理來說都不會發生。")
                 completionHandler(.failure(Error.unknownError))
             }
         }

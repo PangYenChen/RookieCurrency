@@ -64,7 +64,7 @@ extension Fetcher {
                                 .eraseToAnyPublisher()
                         }
                     } else {
-                        assertionFailure("response 不是 HttpURLResponse，常理來說都不會發生。")
+                        assertionFailure("###, \(#function), \(self), response 不是 HttpURLResponse，常理來說都不會發生。")
                         return Fail(error: Error.unknownError)
                             .eraseToAnyPublisher()
                     }
