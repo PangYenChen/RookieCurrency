@@ -202,3 +202,18 @@ extension BaseCurrencyTableViewController {
 
 // MARK: - Error Alert Presenter
 extension BaseCurrencyTableViewController: ErrorAlertPresenter {}
+
+// MARK: - Currency Table View Model
+protocol CurrencyTableViewModel {
+    var title: String { get }
+    
+    func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode)
+    
+    func tableView(_ tableView: UITableView,
+                   didSelectRowAt indexPath: IndexPath,
+                   with dataSource: BaseCurrencyTableViewController.DataSource)
+    
+    func tableView(_ tableView: UITableView,
+                   willSelectRowAt indexPath: IndexPath,
+                   with dataSource: BaseCurrencyTableViewController.DataSource) -> IndexPath?
+}

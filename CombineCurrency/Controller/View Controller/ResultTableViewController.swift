@@ -106,7 +106,7 @@ class ResultTableViewController: BaseResultTableViewController {
                 .share()
             
             rateSetFailure
-                .sink { [unowned self] failure in showErrorAlert(error: failure) }
+                .sink { [unowned self] failure in presentErrorAlert(error: failure) }
                 .store(in: &anyCancellableSet)
             
             let rateSetSuccess = rateSetResult

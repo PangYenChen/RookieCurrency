@@ -29,6 +29,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         searchText = ""
         
         super.init(coder: coder)
+        
+        title = viewModel.title
     }
     
     required init?(coder: NSCoder) {
@@ -38,14 +40,12 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        title = viewModel.title
-        
         fetcher.fetch(Endpoint.SupportedSymbols()) { [unowned self] result in
             DispatchQueue.main.async { [unowned self] in
                 switch result {
                 case .success(let supportedSymbols):
                     currencyCodeDescriptionDictionary = supportedSymbols.symbols
-                    
+                    #warning("結束下拉更新")
                     populateTableView()
                 case .failure(let failure):
                     self.presentErrorAlert(error: failure)
@@ -156,7 +156,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     }
 }
 
-
+// MARK: - view model
 extension CurrencyTableViewController {
 
     class BaseCurrencySelectionViewModel: CurrencyTableViewModel {
@@ -179,24 +179,24 @@ extension CurrencyTableViewController {
         
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
             
-            var identifiersNeedToBeLoaded: [ResponseDataModel.CurrencyCode] = []
+            var identifiersNeedToBeReloaded: [ResponseDataModel.CurrencyCode] = []
             
             guard let newSelectedBaseCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
                 assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
                 return
             }
             
-            identifiersNeedToBeLoaded.append(newSelectedBaseCurrencyCode)
+            identifiersNeedToBeReloaded.append(newSelectedBaseCurrencyCode)
             
             if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode),
                tableView.indexPathsForVisibleRows?.contains(oldSelectedBaseCurrencyIndexPath) == true {
-                identifiersNeedToBeLoaded.append(baseCurrencyCode)
+                identifiersNeedToBeReloaded.append(baseCurrencyCode)
             }
             
             baseCurrencyCode = newSelectedBaseCurrencyCode
             
             var snapshot = dataSource.snapshot()
-            snapshot.reloadItems(identifiersNeedToBeLoaded)
+            snapshot.reloadItems(identifiersNeedToBeReloaded)
             dataSource.apply(snapshot)
             
             completionHandler(newSelectedBaseCurrencyCode)
@@ -248,18 +248,4 @@ extension CurrencyTableViewController {
             indexPath
         }
     }
-}
-
-protocol CurrencyTableViewModel {
-    var title: String { get }
-    
-    func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode)
-    
-    func tableView(_ tableView: UITableView,
-                   didSelectRowAt indexPath: IndexPath,
-                   with dataSource: BaseCurrencyTableViewController.DataSource)
-    
-    func tableView(_ tableView: UITableView,
-                   willSelectRowAt indexPath: IndexPath,
-                   with dataSource: BaseCurrencyTableViewController.DataSource) -> IndexPath?
 }

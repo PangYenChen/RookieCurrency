@@ -31,13 +31,15 @@ extension Fetcher {
     func publisher<Endpoint: EndpointProtocol>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error> {
         
         func dataTaskPublisherWithLimitHandling(for endpoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> {
-            rateSession.rateDataTaskPublisher(for: createRequest(url: endpoint.url))
+            let apiKey = usingAPIKey
+            
+            return rateSession.rateDataTaskPublisher(for: createRequest(url: endpoint.url, withAPIKey: apiKey))
                 .mapError { $0 }
                 .flatMap { [unowned self] data, response -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> in
                     if let httpURLResponse = response as? HTTPURLResponse {
                         if httpURLResponse.statusCode == 401 {
                             // server 回應 status code 401，表示 api key 無效
-                            if updateAPIKeySucceed() {
+                            if updateAPIKeySucceed(apiKeyToBeDeprecated: apiKey) {
                                 // 更新完 api key 後重新打 api
                                 return dataTaskPublisherWithLimitHandling(for: endpoint)
                                     .eraseToAnyPublisher()
@@ -48,7 +50,7 @@ extension Fetcher {
                             }
                         } else if httpURLResponse.statusCode == 429 {
                             // server 回應 status code 429，表示 api key 額度用完
-                            if updateAPIKeySucceed() {
+                            if updateAPIKeySucceed(apiKeyToBeDeprecated: apiKey) {
                                 // 更新完 api key 後重新打 api
                                 return dataTaskPublisherWithLimitHandling(for: endpoint)
                                     .eraseToAnyPublisher()

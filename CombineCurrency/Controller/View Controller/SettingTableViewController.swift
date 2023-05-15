@@ -120,8 +120,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     // MARK: - Navigation
-    @IBSegueAction override func showCurrencyTable(_ coder: NSCoder) -> CurrencyTableViewController? {
-        let anySubscriber = AnySubscriber(editedBaseCurrency)
-        return CurrencyTableViewController(coder: coder, currencySubscriber: anySubscriber)
+    override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+        fatalError()
     }
 }
