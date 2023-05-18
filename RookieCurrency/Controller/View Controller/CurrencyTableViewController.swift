@@ -99,12 +99,14 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         do {
             
             let currencyNameMenu: UIMenu
+            
+            let ascendingAction: UIAction
+            
             do {
-                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
-                                               image: UIImage(systemName: "arrow.up.right"),
-                                               state: .on,
-                                               handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .ascending) })
-#warning("初始化的邏輯散落各地")
+                ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
+                                           image: UIImage(systemName: "arrow.up.right"),
+                                           state: .on,
+                                           handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .ascending) })
                 
                 let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
                                                 image: UIImage(systemName: "arrow.down.right"),
@@ -156,8 +158,12 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                                             options: .singleSelection,
                                             children: [sortMenu])
             
-#warning("這個不舒服，可以想想怎麼 init sorting order，初始化的邏輯散落各地")
-            //            set(sortingMethod: sortingMethod, sortingOrder: sortingOrder)
+            // set up the initial state
+            ascendingAction.state = .on
+            
+            // The properties `sortingMethod` and `sortingOrder` could be changed between the call of `init` and `viewDidLoad`,
+            // so we need to reset them to the initial values as needed.
+            set(sortingMethod: .currencyName, sortingOrder: .ascending)
         }
         
         
@@ -264,7 +270,6 @@ private extension CurrencyTableViewController {
                     return lhs.localizedStandardCompare(rhs) == .orderedDescending
                 }
             }
-            
         }
         
         var filteredCurrencyCodes = sortedCurrencyCodes
