@@ -10,11 +10,21 @@ import UIKit
 
 class CurrencyTableViewController: BaseCurrencyTableViewController {
     
+    // MARK: - IBOutlet
+    @IBOutlet private var sortBarButtonItem: UIBarButtonItem!
+    
+    // MARK: - private properties
     private var sortingMethod: SortingMethod
     
     private var sortingOrder: SortingOrder
     
     private var searchText: String
+    
+    private var currencyCodeDescriptionDictionary: [String: String]
+    
+    private var dataSource: DataSource!
+    
+    private let fetcher: Fetcher
     
     private let viewModel: CurrencyTableViewModel
     
@@ -28,7 +38,17 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         
         searchText = ""
         
+        currencyCodeDescriptionDictionary = [:]
+        
+        fetcher = Fetcher.shared
+        
         super.init(coder: coder)
+        
+        do {
+            let searchController = UISearchController()
+            navigationItem.searchController = searchController
+            searchController.searchBar.delegate = self
+        }
         
         title = viewModel.title
     }
@@ -40,20 +60,122 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        fetcher.fetch(Endpoint.SupportedSymbols()) { [unowned self] result in
-            DispatchQueue.main.async { [unowned self] in
-                switch result {
-                case .success(let supportedSymbols):
-                    currencyCodeDescriptionDictionary = supportedSymbols.symbols
-                    #warning("結束下拉更新")
-                    populateTableView()
-                case .failure(let failure):
-                    self.presentErrorAlert(error: failure)
+        // table view data source and delegate
+        do {
+            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
+                let identifier = R.reuseIdentifier.currencyCell.identifier
+                let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+                
+                do {
+                    let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
+                    let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
+                    
+                    switch sortingMethod {
+                    case .currencyName, .currencyNameZhuyin:
+                        cell.textLabel?.text = localizedCurrencyDescription ?? serverCurrencyDescription
+                        cell.detailTextLabel?.text = currencyCode
+                    case .currencyCode:
+                        cell.textLabel?.text = currencyCode
+                        cell.detailTextLabel?.text = localizedCurrencyDescription ?? serverCurrencyDescription
+                    }
                 }
+                
+                
+                cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
+                cell.textLabel?.adjustsFontForContentSizeCategory = true
+                
+                viewModel.decorate(cell: cell, for: currencyCode)
+                
+                return cell
             }
+            
+            dataSource.defaultRowAnimation = .fade
+            
+            tableView.delegate = self
+        }
+        
+        
+        // sort bar button item
+        do {
+            
+            let currencyNameMenu: UIMenu
+            do {
+                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
+                                               image: UIImage(systemName: "arrow.up.right"),
+                                               state: .on,
+                                               handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .ascending) })
+#warning("初始化的邏輯散落各地")
+                
+                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
+                                                image: UIImage(systemName: "arrow.down.right"),
+                                                handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .descending) })
+                
+                currencyNameMenu = UIMenu(title: "＃＃幣別名稱",
+                                          children: [ascendingAction, descendingAction])
+            }
+            
+            let currencyCodeMenu: UIMenu
+            do {
+                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
+                                               image: UIImage(systemName: "arrow.up.right"),
+                                               handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .ascending) })
+                
+                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
+                                                image: UIImage(systemName: "arrow.down.right"),
+                                                handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .descending) })
+                
+                currencyCodeMenu = UIMenu(title: "＃＃幣別代碼",
+                                          children: [ascendingAction, descendingAction])
+            }
+            
+            var children = [currencyNameMenu, currencyCodeMenu]
+            
+            // 注音
+            if Bundle.main.preferredLocalizations.first == "zh-Hant" {
+                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
+                                               image: UIImage(systemName: "arrow.up.right"),
+                                               handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .ascending) })
+                
+                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
+                                                image: UIImage(systemName: "arrow.down.right"),
+                                                handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .descending) })
+                
+                let currencyZhuyinMenu = UIMenu(title: "＃＃幣別注音",
+                                                children: [ascendingAction, descendingAction])
+                
+                children.append(currencyZhuyinMenu)
+            }
+            
+            let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
+                                  subtitle: "## 目前使用貨幣名稱的升冪排序",
+                                  image: UIImage(systemName: "arrow.up.arrow.down"),
+                                  options: .singleSelection,
+                                  children: children)
+            
+            sortBarButtonItem.menu = UIMenu(title: "",
+                                            options: .singleSelection,
+                                            children: [sortMenu])
+            
+#warning("這個不舒服，可以想想怎麼 init sorting order，初始化的邏輯散落各地")
+            //            set(sortingMethod: sortingMethod, sortingOrder: sortingOrder)
+        }
+        
+        
+        // table view refresh controller
+        do {
+            tableView.refreshControl = UIRefreshControl()
+            
+            let action = UIAction { [unowned self] _ in refreshControlTriggered() }
+            tableView.refreshControl?.addAction(action, for: .primaryActionTriggered)
+            
+            tableView.refreshControl?.beginRefreshing()
+            tableView.refreshControl?.sendActions(for: .primaryActionTriggered)
         }
     }
-    
+}
+
+// MARK: - table view delegate relative
+extension CurrencyTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         viewModel.tableView(tableView, didSelectRowAt: indexPath, with: dataSource)
     }
@@ -61,17 +183,36 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         viewModel.tableView(tableView, willSelectRowAt: indexPath, with: dataSource)
     }
-    
+}
+
+// MARK: - search bar delegate relative
+extension CurrencyTableViewController {
     func search(text searchText: String) {
         self.searchText = searchText
         populateTableView()
     }
-    
-    override func getSortingMethod() -> SortingMethod {
-        sortingMethod
+}
+
+// MARK: - private method
+private extension CurrencyTableViewController {
+    func refreshControlTriggered() {
+        fetcher.fetch(Endpoint.SupportedSymbols()) { [weak self] result in
+            DispatchQueue.main.async { [weak self] in
+                guard let self else { return }
+                switch result {
+                case .success(let supportedSymbols):
+                    currencyCodeDescriptionDictionary = supportedSymbols.symbols
+                    populateTableView()
+                case .failure(let failure):
+                    presentErrorAlert(error: failure)
+                }
+                
+                tableView.refreshControl?.endRefreshing()
+            }
+        }
     }
-    
-    override func populateTableView() {
+        
+    func populateTableView() {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         
@@ -142,17 +283,13 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         dataSource.apply(snapshot)
     }
     
-    override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
+    func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
+        sortBarButtonItem.menu?.children.first?.subtitle = sortingMethod.localizedName + sortingOrder.localizedName
+        
         self.sortingMethod = sortingMethod
         self.sortingOrder = sortingOrder
         
         populateTableView()
-        
-        super.set(sortingMethod: sortingMethod, sortingOrder: sortingOrder)
-    }
-    
-    override func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
-        viewModel.decorate(cell: cell, for: currencyCode)
     }
 }
 

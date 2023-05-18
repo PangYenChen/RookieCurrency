@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="21701" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" colorMatched="YES" initialViewController="WKW-3X-IXk">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="21678"/>
         <capability name="Image references" minToolsVersion="12.0"/>
         <capability name="Stack View standard spacing" minToolsVersion="9.0"/>
@@ -213,7 +212,7 @@
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="sortBarButtonItem" destination="syx-PT-jlG" id="45w-hg-Lj9"/>
+                        <outlet property="sortBarButtonItem" destination="syx-PT-jlG" id="umb-gK-QFl"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Tgn-yx-MYn" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
