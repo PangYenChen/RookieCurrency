@@ -121,6 +121,10 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - Navigation
     override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        fatalError()
+        let viewModel = CurrencyTableViewController
+            .BaseCurrencySelectionViewModel(baseCurrencyCode: editedBaseCurrencyString,
+                                            selectedBaseCurrencyCode: AnySubscriber(editedBaseCurrency))
+        
+        return CurrencyTableViewController(coder: coder, viewModel: viewModel)
     }
 }

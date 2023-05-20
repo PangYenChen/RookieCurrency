@@ -149,7 +149,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             }
             
             let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
-                                  subtitle: "## 目前使用貨幣名稱的升冪排序",
                                   image: UIImage(systemName: "arrow.up.arrow.down"),
                                   options: .singleSelection,
                                   children: children)
@@ -161,8 +160,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             // set up the initial state
             ascendingAction.state = .on
             
-            // The properties `sortingMethod` and `sortingOrder` could be changed between the call of `init` and `viewDidLoad`,
-            // so we need to reset them to the initial values as needed.
+            // The value of properties `sortingMethod` and `sortingOrder` could be changed between the call of `init` and `viewDidLoad`,
+            // so we need to reset them in order to be consistent with the ascendingAction.state
             set(sortingMethod: .currencyName, sortingOrder: .ascending)
         }
         
