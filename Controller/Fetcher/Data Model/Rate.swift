@@ -32,7 +32,7 @@ extension ResponseDataModel {
         let timestamp: Int
         
         /// Returns the three-letter currency code of the base currency used for this request.
-        /// 幣別跟匯率的鍵值對，1 單位新台幣等於多少其他幣別
+        /// 貨幣跟匯率的鍵值對，1 單位新台幣等於多少其他貨幣
         let rates: [String: Double]
         
         subscript(currencyCode currencyCode: CurrencyCode) -> Double? {
@@ -125,7 +125,7 @@ extension ResponseDataModel.HistoricalRate: Hashable {
     }
 }
 
-/// 表示幣別的 enum
+/// 表示貨幣的 enum
 enum Currency: String, CaseIterable {
     /// 新台幣
     case TWD

@@ -9,7 +9,7 @@
 import Foundation
 import Combine
 
-/// 用來獲得各幣別匯率資料的類別
+/// 用來獲得各貨幣匯率資料的類別
 class RateController {
     static let shared: RateController = .init()
     

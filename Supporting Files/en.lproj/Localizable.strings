@@ -13,7 +13,6 @@
 "alertTitle" = "Oops, something goes wrong.";
 "alertActionTitle" = "ok";
 "currencyCellDetail" = "historical mean：%2$@，today：%1$@";
-"pleaseChooseBaseCurrency" = "please Choose Base Currency";
 "cancel" = "cancel";
 "language" = "Language";
 "cancelAlertSavingTitle" = "Save changes";
@@ -30,3 +29,9 @@
 "versionDate" = "version date：%@";
 "debugInfo" = "debug info";
 "currencyOfInterest" = "Currency of Interest";
+"currencyZhuyin" = "currency zhuyin";
+"currencyCode" = "currency code";
+"currencyName" = "currency name";
+"ascending" = "ascending";
+"descending" = "descending";
+"sortingWay" = "%1$@ in %2$@ order";

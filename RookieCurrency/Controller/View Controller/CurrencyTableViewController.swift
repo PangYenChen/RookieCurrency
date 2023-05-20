@@ -112,7 +112,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                                                 image: UIImage(systemName: "arrow.down.right"),
                                                 handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .descending) })
                 
-                currencyNameMenu = UIMenu(title: "＃＃幣別名稱",
+                currencyNameMenu = UIMenu(title: SortingMethod.currencyName.localizedName,
                                           children: [ascendingAction, descendingAction])
             }
             
@@ -126,7 +126,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                                                 image: UIImage(systemName: "arrow.down.right"),
                                                 handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .descending) })
                 
-                currencyCodeMenu = UIMenu(title: "＃＃幣別代碼",
+                currencyCodeMenu = UIMenu(title: SortingMethod.currencyCode.localizedName,
                                           children: [ascendingAction, descendingAction])
             }
             
@@ -142,7 +142,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                                                 image: UIImage(systemName: "arrow.down.right"),
                                                 handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .descending) })
                 
-                let currencyZhuyinMenu = UIMenu(title: "＃＃幣別注音",
+                let currencyZhuyinMenu = UIMenu(title: SortingMethod.currencyNameZhuyin.localizedName,
                                                 children: [ascendingAction, descendingAction])
                 
                 children.append(currencyZhuyinMenu)
@@ -288,7 +288,7 @@ private extension CurrencyTableViewController {
     }
     
     func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
-        sortBarButtonItem.menu?.children.first?.subtitle = sortingMethod.localizedName + sortingOrder.localizedName
+        sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
         
         self.sortingMethod = sortingMethod
         self.sortingOrder = sortingOrder

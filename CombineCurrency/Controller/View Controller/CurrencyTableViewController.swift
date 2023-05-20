@@ -14,7 +14,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     // MARK: - property
     @IBOutlet private weak var sortBarButtonItem: UIBarButtonItem!
     
-    #warning("看能不能拿掉")
     private var currencyCodeDescriptionDictionary: [String: String]
     
     private let sortingMethodAndOrder: CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>
@@ -107,7 +106,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                                                 image: UIImage(systemName: "arrow.down.right"),
                                                 handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .descending) })
                 
-                currencyNameMenu = UIMenu(title: "＃＃幣別名稱",
+                currencyNameMenu = UIMenu(title: SortingMethod.currencyName.localizedName,
                                           children: [ascendingAction, descendingAction])
             }
             
@@ -121,7 +120,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                                                 image: UIImage(systemName: "arrow.down.right"),
                                                 handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .descending) })
                 
-                currencyCodeMenu = UIMenu(title: "＃＃幣別代碼",
+                currencyCodeMenu = UIMenu(title: SortingMethod.currencyCode.localizedName,
                                           children: [ascendingAction, descendingAction])
             }
             
@@ -137,14 +136,13 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                                                 image: UIImage(systemName: "arrow.down.right"),
                                                 handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .descending) })
                 
-                let currencyZhuyinMenu = UIMenu(title: "＃＃幣別注音",
+                let currencyZhuyinMenu = UIMenu(title: SortingMethod.currencyNameZhuyin.localizedName,
                                                 children: [ascendingAction, descendingAction])
                 
                 children.append(currencyZhuyinMenu)
             }
             
             let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
-                                  subtitle: "## 目前使用貨幣名稱的升冪排序",
                                   image: UIImage(systemName: "arrow.up.arrow.down"),
                                   options: .singleSelection,
                                   children: children)
@@ -278,7 +276,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
 // MARK: - private method
 private extension CurrencyTableViewController {
     func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
-        sortBarButtonItem.menu?.children.first?.subtitle = sortingMethod.localizedName + sortingOrder.localizedName
+        sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
         
         sortingMethodAndOrder.send((method: sortingMethod, order: sortingOrder))
     }

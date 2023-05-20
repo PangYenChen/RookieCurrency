@@ -8,7 +8,7 @@
 
 import Foundation
 
-/// 從數據中分析出幣別的升貶值的物件
+/// 從數據中分析出貨幣的升貶值的物件
 enum Analyst {
     
     /// <#Description#>
@@ -25,7 +25,7 @@ enum Analyst {
         
         for currencyCode in Currency.allCases.map { $0.rawValue } {
             for historicalRate in historicalRateSet {
-                // 基準幣別的換算
+                // 基準貨幣的換算
                 result[currencyCode, default: (latest: 0, mean: 0, deviation: 0)].mean += historicalRate[currencyCode: baseCurrency]! / historicalRate[currencyCode: currencyCode]!
             }
             result[currencyCode]!.mean /= Double(historicalRateSet.count)

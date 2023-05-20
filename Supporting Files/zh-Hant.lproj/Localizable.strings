@@ -8,12 +8,11 @@
 
 "numberOfConsideredDay" = "考慮過去天數";
 "latestUpdateTime" = "最後更新時間：%@";
-"baseCurrency" = "基準幣別";
+"baseCurrency" = "基準貨幣";
 "changeBaseCurrency" = "變更";
 "alertTitle" = "唉呀！出錯啦！";
 "alertActionTitle" = "喔，是喔。";
 "currencyCellDetail" = "過去平均：%1$@，今天匯率：%2$@";
-"pleaseChooseBaseCurrency" = "請選擇基準幣別";
 "cancel" = "取消";
 "language" = "語言";
 "cancelAlertSavingTitle" = "儲存變更";
@@ -30,3 +29,9 @@
 "versionDate" = "版本日期：%@";
 "debugInfo" = "偵錯資訊";
 "currencyOfInterest" = "感興趣的貨幣";
+"currencyZhuyin" = "貨幣注音";
+"currencyCode" = "貨幣代碼";
+"currencyName" = "貨幣名稱";
+"ascending" = "升冪排列";
+"descending" = "降冪排列";
+"sortingWay" = "%1$@%2$@";
