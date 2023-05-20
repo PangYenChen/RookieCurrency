@@ -275,11 +275,23 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     }
 }
 
+// MARK: - private method
 private extension CurrencyTableViewController {
     func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
         sortBarButtonItem.menu?.children.first?.subtitle = sortingMethod.localizedName + sortingOrder.localizedName
         
         sortingMethodAndOrder.send((method: sortingMethod, order: sortingOrder))
+    }
+}
+
+// MARK: - table view delegate relative
+extension CurrencyTableViewController {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        viewModel.tableView(tableView, didSelectRowAt: indexPath, with: dataSource)
+    }
+    
+    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+        viewModel.tableView(tableView, willSelectRowAt: indexPath, with: dataSource)
     }
 }
 
@@ -290,20 +302,20 @@ extension CurrencyTableViewController {
         
         let title: String
         
-        private var baseCurrencyCode: String
+        private let baseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
         
-        private let selectedBaseCurrencyCode: PassthroughSubject<ResponseDataModel.CurrencyCode, Never>
-                                                    
-        
-        init(baseCurrencyCode: String, selectedBaseCurrencyCode: AnySubscriber<ResponseDataModel.CurrencyCode, Never>) {
+        init(baseCurrencyCode: String,
+             selectedBaseCurrencyCode: AnySubscriber<ResponseDataModel.CurrencyCode, Never>) {
             title = R.string.localizable.baseCurrency()
-            self.baseCurrencyCode = baseCurrencyCode
-            self.selectedBaseCurrencyCode = PassthroughSubject<ResponseDataModel.CurrencyCode, Never>()
-            self.selectedBaseCurrencyCode.subscribe(selectedBaseCurrencyCode)
+            self.baseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(baseCurrencyCode)
+            
+            self.baseCurrencyCode
+                .dropFirst()
+                .subscribe(selectedBaseCurrencyCode)
         }
         
         func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
-            cell.accessoryType = currencyCode == baseCurrencyCode ? .checkmark : .none
+            cell.accessoryType = currencyCode == baseCurrencyCode.value ? .checkmark : .none
         }
         
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
@@ -317,64 +329,63 @@ extension CurrencyTableViewController {
             
             identifiersNeedToBeReloaded.append(newSelectedBaseCurrencyCode)
             
-            if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode),
+            if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode.value),
                tableView.indexPathsForVisibleRows?.contains(oldSelectedBaseCurrencyIndexPath) == true {
-                identifiersNeedToBeReloaded.append(baseCurrencyCode)
+                identifiersNeedToBeReloaded.append(baseCurrencyCode.value)
             }
             
-            baseCurrencyCode = newSelectedBaseCurrencyCode
+            baseCurrencyCode.send(newSelectedBaseCurrencyCode)
             
             var snapshot = dataSource.snapshot()
             snapshot.reloadItems(identifiersNeedToBeReloaded)
             dataSource.apply(snapshot)
-            
-            selectedBaseCurrencyCode.send(newSelectedBaseCurrencyCode)
         }
         
         func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
-            dataSource.indexPath(for: baseCurrencyCode) == indexPath ? nil : indexPath
+            dataSource.indexPath(for: baseCurrencyCode.value) == indexPath ? nil : indexPath
         }
     }
     
-//    class CurrencyOfInterestSelectionViewModel: CurrencyTableViewModel {
-//
-//        let title: String
-//
-//        private var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
-//
-//        private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
-//
-//        init(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
-//             completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
-//            title = R.string.localizable.currencyOfInterest()
-//            self.currencyOfInterest = currencyOfInterest
-//            self.completionHandler = completionHandler
-//        }
-//
-//        func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
-//            cell.accessoryType = currencyOfInterest.contains(currencyCode) ? .checkmark : .none
-//        }
-//
-//        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
-//
-//            guard let selectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
-//                assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
-//                return
-//            }
-//
-//            if currencyOfInterest.contains(selectedCurrencyCode) {
-//                currencyOfInterest.remove(selectedCurrencyCode)
-//            } else {
-//                currencyOfInterest.insert(selectedCurrencyCode)
-//            }
-//
-//            var snapshot = dataSource.snapshot()
-//            snapshot.reloadItems([selectedCurrencyCode])
-//            dataSource.apply(snapshot)
-//        }
-//
-//        func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
-//            indexPath
-//        }
-//    }
+    class CurrencyOfInterestSelectionViewModel: CurrencyTableViewModel {
+
+        let title: String
+
+        private let currencyOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
+
+        init(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
+             selectedCurrencyOfInterest: AnySubscriber<Set<ResponseDataModel.CurrencyCode>, Never>) {
+            title = R.string.localizable.currencyOfInterest()
+            self.currencyOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyOfInterest)
+            
+            self.currencyOfInterest
+                .dropFirst()
+                .subscribe(selectedCurrencyOfInterest)
+        }
+
+        func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
+            cell.accessoryType = currencyOfInterest.value.contains(currencyCode) ? .checkmark : .none
+        }
+
+        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
+
+            guard let selectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
+                assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
+                return
+            }
+
+            if currencyOfInterest.value.contains(selectedCurrencyCode) {
+                currencyOfInterest.value.remove(selectedCurrencyCode)
+            } else {
+                currencyOfInterest.value.insert(selectedCurrencyCode)
+            }
+
+            var snapshot = dataSource.snapshot()
+            snapshot.reloadItems([selectedCurrencyCode])
+            dataSource.apply(snapshot)
+        }
+
+        func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
+            indexPath
+        }
+    }
 }

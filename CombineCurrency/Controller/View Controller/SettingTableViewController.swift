@@ -22,6 +22,8 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     private let editedBaseCurrency: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
     
+    private let editedCurrencyOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
+    
     private let hasChanges: AnyPublisher<Bool, Never>
     
     private let didTapCancelButtonSubject: PassthroughSubject<Void, Never>
@@ -39,6 +41,8 @@ class SettingTableViewController: BaseSettingTableViewController {
         editedNumberOfDay = CurrentValueSubject(numberOfDay)
         
         editedBaseCurrency = CurrentValueSubject(baseCurrency)
+        #warning("還沒實作")
+        editedCurrencyOfInterest = CurrentValueSubject([])
         
         didTapCancelButtonSubject = PassthroughSubject()
         
@@ -48,8 +52,10 @@ class SettingTableViewController: BaseSettingTableViewController {
         do {
             let numberOfDayHasChanges = editedNumberOfDay.map { $0 != numberOfDay }
             let baseCurrencyHasChanges = editedBaseCurrency.map { $0 != baseCurrency }
-            hasChanges = Publishers.CombineLatest(numberOfDayHasChanges, baseCurrencyHasChanges)
-                .map { $0 || $1 }
+            #warning("還沒實作")
+            let currencyOfInterestHasChanges = editedCurrencyOfInterest.map { $0 != [] }
+            hasChanges = Publishers.CombineLatest3(numberOfDayHasChanges, baseCurrencyHasChanges, currencyOfInterestHasChanges)
+                .map { $0 || $1 || $2 }
                 .eraseToAnyPublisher()
         }
 
@@ -70,6 +76,13 @@ class SettingTableViewController: BaseSettingTableViewController {
             .withLatestFrom(editedBaseCurrency)
             .map { (numberOfDay: $0, baseCurrency: $1) }
             .subscribe(updateSetting)
+        
+        editedCurrencyOfInterest
+            .sink { output in
+                #warning("還沒實作")
+                print("###, \(self), \(#function), output, \(output)")
+            }
+            .store(in: &anyCancellableSet)
     }
     
     required init?(coder: NSCoder) {
@@ -124,6 +137,14 @@ class SettingTableViewController: BaseSettingTableViewController {
         let viewModel = CurrencyTableViewController
             .BaseCurrencySelectionViewModel(baseCurrencyCode: editedBaseCurrencyString,
                                             selectedBaseCurrencyCode: AnySubscriber(editedBaseCurrency))
+        
+        return CurrencyTableViewController(coder: coder, viewModel: viewModel)
+    }
+    
+    override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+        let viewModel = CurrencyTableViewController
+            .CurrencyOfInterestSelectionViewModel(currencyOfInterest: editedCurrencyOfInterest.value,
+                                                  selectedCurrencyOfInterest: AnySubscriber(editedCurrencyOfInterest))
         
         return CurrencyTableViewController(coder: coder, viewModel: viewModel)
     }
