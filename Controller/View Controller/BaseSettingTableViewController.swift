@@ -24,6 +24,8 @@ class BaseSettingTableViewController: UITableViewController {
     
     var editedBaseCurrencyString: String { fatalError("editedBaseCurrencyString has not been implemented") }
     
+    var editedCurrencyOfInterestString: String { fatalError("editedCurrencyOfInterestString has not been implemented") }
+    
     // MARK: - methods
     required init?(coder: NSCoder) {
         
@@ -146,7 +148,7 @@ extension BaseSettingTableViewController {
                 cell.imageView?.image = UIImage(systemName: "dollarsign.circle")
             case .currencyOfInterest:
                 cell.textLabel?.text = R.string.localizable.currencyOfInterest()
-                cell.detailTextLabel?.text = nil
+                cell.detailTextLabel?.text = editedCurrencyOfInterestString
                 cell.accessoryType = .disclosureIndicator
                 cell.imageView?.image = UIImage(systemName: "checklist")
             case .language:

@@ -171,7 +171,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             
             symbolsResult
                 .receive(on: DispatchQueue.main)
-                .sink { [unowned self] _ in tableView.refreshControl?.endRefreshing() }
+                .sink { [weak self] _ in self?.tableView.refreshControl?.endRefreshing() }
                 .store(in: &anyCancellableSet)
             
             symbolsResult.resultFailure()
@@ -254,7 +254,10 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                     
                     snapshot.appendItems(filteredCurrencyCodes)
                     
-                    dataSource.apply(snapshot)
+                    DispatchQueue.main.async { [unowned self] in
+                        dataSource.apply(snapshot)
+                    }
+                    
                 }
                 .store(in: &anyCancellableSet)
         }
@@ -318,14 +321,12 @@ extension CurrencyTableViewController {
         
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
             
-            var identifiersNeedToBeReloaded: [ResponseDataModel.CurrencyCode] = []
-            
             guard let newSelectedBaseCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
                 assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
                 return
             }
             
-            identifiersNeedToBeReloaded.append(newSelectedBaseCurrencyCode)
+            var identifiersNeedToBeReloaded = [newSelectedBaseCurrencyCode]
             
             if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode.value),
                tableView.indexPathsForVisibleRows?.contains(oldSelectedBaseCurrencyIndexPath) == true {
@@ -336,7 +337,9 @@ extension CurrencyTableViewController {
             
             var snapshot = dataSource.snapshot()
             snapshot.reloadItems(identifiersNeedToBeReloaded)
-            dataSource.apply(snapshot)
+            DispatchQueue.main.async {
+                dataSource.apply(snapshot)
+            }
         }
         
         func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
@@ -379,7 +382,9 @@ extension CurrencyTableViewController {
 
             var snapshot = dataSource.snapshot()
             snapshot.reloadItems([selectedCurrencyCode])
-            dataSource.apply(snapshot)
+            DispatchQueue.main.async {
+                dataSource.apply(snapshot)
+            }
         }
 
         func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {

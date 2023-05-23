@@ -17,6 +17,14 @@ class SettingTableViewController: BaseSettingTableViewController {
         Locale.autoupdatingCurrent.localizedString(forCurrencyCode: editedBaseCurrency) ?? editedBaseCurrency
     }
     
+    override var editedCurrencyOfInterestString: String {
+        let editedCurrencyDisplayString = editedCurrencyOfInterest
+            .map { currencyCode in Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ?? currencyCode }
+            .sorted()
+        
+        return ListFormatter.localizedString(byJoining: editedCurrencyDisplayString)
+    }
+    
     private let originalNumberOfDay: Int
     
     private var editedNumberOfDay: Int
@@ -108,9 +116,11 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         let baseCurrencySelectionViewModel = CurrencyTableViewController
             .BaseCurrencySelectionViewModel(baseCurrencyCode: editedBaseCurrency) { [unowned self] selectedBaseCurrency in
-                self.editedBaseCurrency = selectedBaseCurrency
+                editedBaseCurrency = selectedBaseCurrency
                 let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
-                tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
+                DispatchQueue.main.async { [unowned self] in
+                    tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
+                }                
             }
         
         return CurrencyTableViewController(coder: coder, viewModel: baseCurrencySelectionViewModel)
@@ -120,8 +130,12 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         let currencyOfInterestSelectionViewModel = CurrencyTableViewController
             .CurrencyOfInterestSelectionViewModel(currencyOfInterest: editedCurrencyOfInterest) { [unowned self] selectedCurrencyOfInterest in
-            editedCurrencyOfInterest = selectedCurrencyOfInterest
-        }
+                editedCurrencyOfInterest = selectedCurrencyOfInterest
+                let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
+                DispatchQueue.main.async { [unowned self] in
+                    tableView.reloadRows(at: [currencyOfInterestIndexPath], with: .automatic)
+                }
+            }
 
         return CurrencyTableViewController(coder: coder, viewModel: currencyOfInterestSelectionViewModel)
     }

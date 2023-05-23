@@ -194,7 +194,7 @@ extension CurrencyTableViewController {
 extension CurrencyTableViewController {
     func search(text searchText: String) {
         self.searchText = searchText
-        populateTableView()
+        convertDataThenPopulateTableView()
     }
 }
 
@@ -202,22 +202,25 @@ extension CurrencyTableViewController {
 private extension CurrencyTableViewController {
     func refreshControlTriggered() {
         fetcher.fetch(Endpoint.SupportedSymbols()) { [weak self] result in
+            guard let self else { return }
+            
             DispatchQueue.main.async { [weak self] in
-                guard let self else { return }
-                switch result {
-                case .success(let supportedSymbols):
-                    currencyCodeDescriptionDictionary = supportedSymbols.symbols
-                    populateTableView()
-                case .failure(let failure):
-                    presentErrorAlert(error: failure)
+                self?.tableView.refreshControl?.endRefreshing()
+            }
+            
+            switch result {
+            case .success(let supportedSymbols):
+                currencyCodeDescriptionDictionary = supportedSymbols.symbols
+                convertDataThenPopulateTableView()
+            case .failure(let failure):
+                DispatchQueue.main.async { [weak self] in
+                    self?.presentErrorAlert(error: failure)
                 }
-                
-                tableView.refreshControl?.endRefreshing()
             }
         }
     }
         
-    func populateTableView() {
+    func convertDataThenPopulateTableView() {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         
@@ -283,8 +286,9 @@ private extension CurrencyTableViewController {
         }
         
         snapshot.appendItems(filteredCurrencyCodes)
-        
-        dataSource.apply(snapshot)
+        DispatchQueue.main.async { [weak self] in
+            self?.dataSource.apply(snapshot)
+        }
     }
     
     func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
@@ -293,7 +297,7 @@ private extension CurrencyTableViewController {
         self.sortingMethod = sortingMethod
         self.sortingOrder = sortingOrder
         
-        populateTableView()
+        convertDataThenPopulateTableView()
     }
 }
 
@@ -320,14 +324,14 @@ extension CurrencyTableViewController {
         
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
             
-            var identifiersNeedToBeReloaded: [ResponseDataModel.CurrencyCode] = []
-            
             guard let newSelectedBaseCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
                 assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
                 return
             }
             
-            identifiersNeedToBeReloaded.append(newSelectedBaseCurrencyCode)
+            completionHandler(newSelectedBaseCurrencyCode)
+            
+            var identifiersNeedToBeReloaded = [newSelectedBaseCurrencyCode]
             
             if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode),
                tableView.indexPathsForVisibleRows?.contains(oldSelectedBaseCurrencyIndexPath) == true {
@@ -338,9 +342,9 @@ extension CurrencyTableViewController {
             
             var snapshot = dataSource.snapshot()
             snapshot.reloadItems(identifiersNeedToBeReloaded)
-            dataSource.apply(snapshot)
-            
-            completionHandler(newSelectedBaseCurrencyCode)
+            DispatchQueue.main.async {
+                dataSource.apply(snapshot)
+            }
         }
         
         func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
@@ -380,9 +384,13 @@ extension CurrencyTableViewController {
                 currencyOfInterest.insert(selectedCurrencyCode)
             }
             
+            completionHandler(currencyOfInterest)
+            
             var snapshot = dataSource.snapshot()
             snapshot.reloadItems([selectedCurrencyCode])
-            dataSource.apply(snapshot)
+            DispatchQueue.main.async {
+                dataSource.apply(snapshot)
+            }
         }
         
         func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
