@@ -43,14 +43,14 @@ class SettingTableViewController: BaseSettingTableViewController {
         originalCurrencyOfInterest != editedCurrencyOfInterest
     }
     
-    private let completionHandler: (Int, ResponseDataModel.CurrencyCode) -> Void
+    private let completionHandler: (Int, ResponseDataModel.CurrencyCode, Set<ResponseDataModel.CurrencyCode>) -> Void
     
     // MARK: - methods
     required init?(coder: NSCoder,
                    numberOfDay: Int,
                    baseCurrency: ResponseDataModel.CurrencyCode,
                    currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
-                   completionHandler: @escaping (Int, ResponseDataModel.CurrencyCode) -> Void) {
+                   completionHandler: @escaping (Int, ResponseDataModel.CurrencyCode, Set<ResponseDataModel.CurrencyCode>) -> Void) {
         
         // number of day
         do {
@@ -103,7 +103,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     @IBAction override func save() {
-        completionHandler(editedNumberOfDay, editedBaseCurrency)
+        completionHandler(editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest)
         super.save()
     }
     
@@ -117,10 +117,13 @@ class SettingTableViewController: BaseSettingTableViewController {
         let baseCurrencySelectionViewModel = CurrencyTableViewController
             .BaseCurrencySelectionViewModel(baseCurrencyCode: editedBaseCurrency) { [unowned self] selectedBaseCurrency in
                 editedBaseCurrency = selectedBaseCurrency
+                saveButton.isEnabled = hasChange
+                isModalInPresentation = hasChange
+                
                 let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
                 DispatchQueue.main.async { [unowned self] in
                     tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
-                }                
+                }
             }
         
         return CurrencyTableViewController(coder: coder, viewModel: baseCurrencySelectionViewModel)
@@ -131,6 +134,9 @@ class SettingTableViewController: BaseSettingTableViewController {
         let currencyOfInterestSelectionViewModel = CurrencyTableViewController
             .CurrencyOfInterestSelectionViewModel(currencyOfInterest: editedCurrencyOfInterest) { [unowned self] selectedCurrencyOfInterest in
                 editedCurrencyOfInterest = selectedCurrencyOfInterest
+                saveButton.isEnabled = hasChange
+                isModalInPresentation = hasChange
+                
                 let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
                 DispatchQueue.main.async { [unowned self] in
                     tableView.reloadRows(at: [currencyOfInterestIndexPath], with: .automatic)

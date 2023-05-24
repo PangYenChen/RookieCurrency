@@ -88,7 +88,7 @@ class ResultTableViewController: BaseResultTableViewController {
         SettingTableViewController(coder: coder,
                                    numberOfDay: numberOfDay,
                                    baseCurrency: baseCurrency,
-                                   currencyOfInterest: currencyOfInterest) { [unowned self] editedNumberOfDay, editedBaseCurrency in
+                                   currencyOfInterest: currencyOfInterest) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
             // base currency
             do {
                 baseCurrency = editedBaseCurrency
@@ -99,6 +99,12 @@ class ResultTableViewController: BaseResultTableViewController {
             do {
                 numberOfDay = editedNumberOfDay
                 AppUtility.numberOfDay = numberOfDay
+            }
+            
+            // currency of interest
+            do {
+                currencyOfInterest = editedCurrencyOfInterest
+                AppUtility.currencyOfInterest = currencyOfInterest
             }
             
             refreshDataAndPopulateTableView()

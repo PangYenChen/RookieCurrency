@@ -55,17 +55,17 @@ extension AppUtility {
         }
     }
     
-    static var currencyOfInterest: [ResponseDataModel.CurrencyCode] {
+    static var currencyOfInterest: Set<ResponseDataModel.CurrencyCode> {
         get {
             if let currencyOfInterest = UserDefaults.standard.stringArray(forKey: Key.currencyOfInterest.rawValue) {
-                return currencyOfInterest
+                return Set(currencyOfInterest)
             } else {
                 // 預設值為強勢貨幣(Hard Currency)
                 return ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
             }
         }
         set {
-            UserDefaults.standard.setValue(newValue, forKey: Key.currencyOfInterest.rawValue)
+            UserDefaults.standard.setValue(newValue.sorted(), forKey: Key.currencyOfInterest.rawValue)
         }
     }
     
