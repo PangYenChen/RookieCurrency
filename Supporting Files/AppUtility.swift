@@ -68,7 +68,6 @@ extension AppUtility {
             UserDefaults.standard.setValue(newValue.sorted(), forKey: Key.currencyOfInterest.rawValue)
         }
     }
-    
 }
 
 // MARK: - formatter
@@ -109,4 +108,8 @@ extension AppUtility {
             print("###", self, #function, "json 格式無效")
         }
     }
+}
+// MARK: - name space
+extension AppUtility {
+    typealias UserSetting = (numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
 }

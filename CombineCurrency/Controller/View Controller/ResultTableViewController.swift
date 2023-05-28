@@ -12,7 +12,7 @@ import Combine
 class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - stored properties
-    private let numberOfDayAndBaseCurrency: CurrentValueSubject<(numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode), Never>
+    private let userSetting: CurrentValueSubject<AppUtility.UserSetting, Never>
     
     private let order: PassthroughSubject<Order, Never>
     
@@ -24,7 +24,7 @@ class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - Methods
     required init?(coder: NSCoder) {
-        numberOfDayAndBaseCurrency = CurrentValueSubject((numberOfDay: AppUtility.numberOfDay, baseCurrency: AppUtility.baseCurrency))
+        userSetting = CurrentValueSubject((AppUtility.numberOfDay, AppUtility.baseCurrency, AppUtility.currencyOfInterest))
         order = PassthroughSubject<Order, Never>()
         searchText = PassthroughSubject<String, Never>()
         refresh = PassthroughSubject<Void, Never>()
@@ -75,19 +75,20 @@ class ResultTableViewController: BaseResultTableViewController {
         
         // subscribe
         do {
-            numberOfDayAndBaseCurrency
+            userSetting
                 .dropFirst()
-                .sink { numberOfDay, baseCurrency in
+                .sink { numberOfDay, baseCurrency, currencyOfInterest in
                     AppUtility.numberOfDay = numberOfDay
                     AppUtility.baseCurrency = baseCurrency
+                    AppUtility.currencyOfInterest = currencyOfInterest
                 }
                 .store(in: &anyCancellableSet)
             
-            numberOfDayAndBaseCurrency
+            userSetting
                 .sink { [unowned self] _ in refreshControl?.beginRefreshing() }
                 .store(in: &anyCancellableSet)
             
-            let updating = Publishers.CombineLatest(refresh, numberOfDayAndBaseCurrency).share()
+            let updating = Publishers.CombineLatest(refresh, userSetting).share()
             
             let updatingString = updating
                 .map { _, _  in R.string.localizable.updating() }
@@ -135,11 +136,11 @@ class ResultTableViewController: BaseResultTableViewController {
                 .store(in: &anyCancellableSet)
             
             let analyzedDataDictionary = rateSetSuccess
-                .withLatestFrom(numberOfDayAndBaseCurrency)
-                .map { rateSet, numberOfDayAndBaseCurrency in
+                .withLatestFrom(userSetting)
+                .map { rateSet, userSetting in
                     Analyst.analyze(latestRate: rateSet.latestRate,
                                     historicalRateSet: rateSet.historicalRateSet,
-                                    baseCurrency: numberOfDayAndBaseCurrency.baseCurrency)
+                                    baseCurrency: userSetting.baseCurrency)
                 }
             
             let shouldPopulateTableView = Publishers.CombineLatest3(analyzedDataDictionary, order, searchText).share()
@@ -179,9 +180,8 @@ class ResultTableViewController: BaseResultTableViewController {
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
         SettingTableViewController(coder: coder,
-                                   numberOfDay: numberOfDayAndBaseCurrency.value.numberOfDay,
-                                   baseCurrency: numberOfDayAndBaseCurrency.value.baseCurrency,
-                                   updateSetting: AnySubscriber(numberOfDayAndBaseCurrency))
+                                   userSetting: userSetting.value,
+                                   updateSetting: AnySubscriber(userSetting))
     }
 }
 

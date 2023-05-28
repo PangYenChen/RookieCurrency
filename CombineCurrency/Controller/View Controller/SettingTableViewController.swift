@@ -18,6 +18,14 @@ class SettingTableViewController: BaseSettingTableViewController {
         Locale.autoupdatingCurrent.localizedString(forCurrencyCode: editedBaseCurrency.value) ?? editedBaseCurrency.value
     }
     
+    override var editedCurrencyOfInterestString: String {
+        let editedCurrencyDisplayString = editedCurrencyOfInterest.value
+            .map { currencyCode in Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ?? currencyCode }
+            .sorted()
+        
+        return ListFormatter.localizedString(byJoining: editedCurrencyDisplayString)
+    }
+    
     private let editedNumberOfDay: CurrentValueSubject<Int, Never>
     
     private let editedBaseCurrency: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
@@ -34,15 +42,14 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - methods
     required init?(coder: NSCoder,
-                   numberOfDay: Int,
-                   baseCurrency: ResponseDataModel.CurrencyCode,
-                   updateSetting: AnySubscriber<(numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode), Never>) {
+                   userSetting: AppUtility.UserSetting,
+                   updateSetting: AnySubscriber<(numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>), Never>) {
         
-        editedNumberOfDay = CurrentValueSubject(numberOfDay)
+        editedNumberOfDay = CurrentValueSubject(userSetting.numberOfDay)
         
-        editedBaseCurrency = CurrentValueSubject(baseCurrency)
-        #warning("還沒實作")
-        editedCurrencyOfInterest = CurrentValueSubject([])
+        editedBaseCurrency = CurrentValueSubject(userSetting.baseCurrency)
+
+        editedCurrencyOfInterest = CurrentValueSubject(userSetting.currencyOfInterest)
         
         didTapCancelButtonSubject = PassthroughSubject()
         
@@ -50,10 +57,9 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         // has changes
         do {
-            let numberOfDayHasChanges = editedNumberOfDay.map { $0 != numberOfDay }
-            let baseCurrencyHasChanges = editedBaseCurrency.map { $0 != baseCurrency }
-            #warning("還沒實作")
-            let currencyOfInterestHasChanges = editedCurrencyOfInterest.map { $0 != [] }
+            let numberOfDayHasChanges = editedNumberOfDay.map { $0 != userSetting.numberOfDay }
+            let baseCurrencyHasChanges = editedBaseCurrency.map { $0 != userSetting.baseCurrency }
+            let currencyOfInterestHasChanges = editedCurrencyOfInterest.map { $0 != userSetting.currencyOfInterest }
             hasChanges = Publishers.CombineLatest3(numberOfDayHasChanges, baseCurrencyHasChanges, currencyOfInterestHasChanges)
                 .map { $0 || $1 || $2 }
                 .eraseToAnyPublisher()
@@ -63,7 +69,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         super.init(coder: coder)
         
-        stepper.value = Double(numberOfDay)
+        stepper.value = Double(userSetting.numberOfDay)
         
         didTapCancelButtonSubject
             .withLatestFrom(hasChanges)
@@ -74,15 +80,9 @@ class SettingTableViewController: BaseSettingTableViewController {
             .withLatestFrom(editedNumberOfDay)
             .map { $1 }
             .withLatestFrom(editedBaseCurrency)
-            .map { (numberOfDay: $0, baseCurrency: $1) }
+            .withLatestFrom(editedCurrencyOfInterest)
+            .map { (numberOfDay: $0.0, baseCurrency: $0.1, currencyOfInterest: $1) }
             .subscribe(updateSetting)
-        
-        editedCurrencyOfInterest
-            .sink { output in
-                #warning("還沒實作")
-                print("###, \(self), \(#function), output, \(output)")
-            }
-            .store(in: &anyCancellableSet)
     }
     
     required init?(coder: NSCoder) {
@@ -109,6 +109,10 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         editedBaseCurrency
             .sink { [unowned self] _ in tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none) }
+            .store(in: &anyCancellableSet)
+        
+        editedCurrencyOfInterest
+            .sink { [unowned self] currencyOfInterest in tableView.reloadRows(at: [IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)], with: .none) }
             .store(in: &anyCancellableSet)
         
         hasChanges
