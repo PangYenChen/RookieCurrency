@@ -71,7 +71,10 @@ class BaseResultTableViewController: UITableViewController {
                 guard let data = analyzedDataDictionary[currencyCode] else { return cell }
                 
                 var contentConfiguration = cell.defaultContentConfiguration()
+                contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+                contentConfiguration.textToSecondaryTextVerticalPadding = 4
                 
+                // text
                 do {
                     let deviationString = NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
                     
@@ -86,6 +89,7 @@ class BaseResultTableViewController: UITableViewController {
                     contentConfiguration.textProperties.color = data.deviation < 0 ? .systemGreen : .systemRed
                 }
                 
+                // secondary text
                 do {
                     let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
                     let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)

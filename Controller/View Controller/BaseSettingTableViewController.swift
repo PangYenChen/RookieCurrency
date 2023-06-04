@@ -123,6 +123,8 @@ extension BaseSettingTableViewController {
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
         
         var contentConfiguration = cell.defaultContentConfiguration()
+        contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+        contentConfiguration.textToSecondaryTextVerticalPadding = 4
         
         // font
         do {

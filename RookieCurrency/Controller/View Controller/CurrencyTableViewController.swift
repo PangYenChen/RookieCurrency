@@ -66,23 +66,36 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                 let identifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
                 
+                var contentConfiguration = cell.defaultContentConfiguration()
+                contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+                contentConfiguration.textToSecondaryTextVerticalPadding = 4
+                
+                // content
                 do {
                     let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
                     let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
                     
                     switch sortingMethod {
                     case .currencyName, .currencyNameZhuyin:
-                        cell.textLabel?.text = localizedCurrencyDescription ?? serverCurrencyDescription
-                        cell.detailTextLabel?.text = currencyCode
+                        contentConfiguration.text = localizedCurrencyDescription ?? serverCurrencyDescription
+                        contentConfiguration.secondaryText = currencyCode
                     case .currencyCode:
-                        cell.textLabel?.text = currencyCode
-                        cell.detailTextLabel?.text = localizedCurrencyDescription ?? serverCurrencyDescription
+                        contentConfiguration.text = currencyCode
+                        contentConfiguration.secondaryText = localizedCurrencyDescription ?? serverCurrencyDescription
                     }
                 }
                 
+                // font
+                do {
+                    contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
+                    contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
+                    
+                    contentConfiguration.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
+                    contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
+                }
                 
-                cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-                cell.textLabel?.adjustsFontForContentSizeCategory = true
+                
+                cell.contentConfiguration = contentConfiguration
                 
                 viewModel.decorate(cell: cell, for: currencyCode)
                 
