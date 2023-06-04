@@ -70,22 +70,32 @@ class BaseResultTableViewController: UITableViewController {
                 
                 guard let data = analyzedDataDictionary[currencyCode] else { return cell }
                 
-                let deviationString = NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
-                let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
-                let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
+                var contentConfiguration = cell.defaultContentConfiguration()
                 
-                cell.textLabel?.text = [currencyCode,
-                                        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode),
-                                        deviationString]
-                    .compactMap { $0 }
-                    .joined(separator: ", ")
-                cell.textLabel?.adjustsFontForContentSizeCategory = true
-                cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .headline)
-                cell.textLabel?.textColor = data.deviation < 0 ? .systemGreen : .systemRed
+                do {
+                    let deviationString = NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
+                    
+                    contentConfiguration.text = [currencyCode,
+                                                 Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode),
+                                                 deviationString]
+                        .compactMap { $0 }
+                        .joined(separator: ", ")
+                    
+                    contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
+                    contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
+                    contentConfiguration.textProperties.color = data.deviation < 0 ? .systemGreen : .systemRed
+                }
                 
-                cell.detailTextLabel?.text = R.string.localizable.currencyCellDetail(meanString, latestString)
-                cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
-                cell.detailTextLabel?.font = UIFont.preferredFont(forTextStyle: .subheadline)
+                do {
+                    let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
+                    let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
+                    
+                    contentConfiguration.secondaryText = R.string.localizable.currencyCellDetail(meanString, latestString)
+                    contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
+                    contentConfiguration.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
+                }
+                
+                cell.contentConfiguration = contentConfiguration
                 
                 return cell
             }

@@ -122,14 +122,16 @@ extension BaseSettingTableViewController {
         let identifier = R.reuseIdentifier.settingCell.identifier
         let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
         
+        var contentConfiguration = cell.defaultContentConfiguration()
+        
         // font
         do {
-            cell.textLabel?.font = UIFont.preferredFont(forTextStyle: .body)
-            cell.textLabel?.adjustsFontForContentSizeCategory = true
+            contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .body)
+            contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
             
-            cell.detailTextLabel?.font = UIFont.preferredFont(forTextStyle: .subheadline)
-            cell.detailTextLabel?.textColor = UIColor.secondaryLabel
-            cell.detailTextLabel?.adjustsFontForContentSizeCategory = true
+            contentConfiguration.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
+            contentConfiguration.secondaryTextProperties.color = UIColor.secondaryLabel
+            contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
         }
         
         // content
@@ -137,38 +139,40 @@ extension BaseSettingTableViewController {
             let row = Row(rawValue: indexPath.row)
             switch row {
             case .numberOfDay:
-                cell.textLabel?.text = R.string.localizable.numberOfConsideredDay()
-                cell.detailTextLabel?.text = editedNumberOfDayString
+                contentConfiguration.text = R.string.localizable.numberOfConsideredDay()
+                contentConfiguration.secondaryText = editedNumberOfDayString
+                contentConfiguration.image = UIImage(systemName: "calendar")
                 cell.accessoryView = stepper
-                cell.imageView?.image = UIImage(systemName: "calendar")
             case .baseCurrency:
-                cell.textLabel?.text = R.string.localizable.baseCurrency()
-                cell.detailTextLabel?.text = editedBaseCurrencyString
+                contentConfiguration.text = R.string.localizable.baseCurrency()
+                contentConfiguration.secondaryText = editedBaseCurrencyString
+                contentConfiguration.image = UIImage(systemName: "dollarsign.circle")
                 cell.accessoryType = .disclosureIndicator
-                cell.imageView?.image = UIImage(systemName: "dollarsign.circle")
             case .currencyOfInterest:
-                cell.textLabel?.text = R.string.localizable.currencyOfInterest()
-                cell.detailTextLabel?.text = editedCurrencyOfInterestString
+                contentConfiguration.text = R.string.localizable.currencyOfInterest()
+                contentConfiguration.secondaryText = editedCurrencyOfInterestString
+                contentConfiguration.image = UIImage(systemName: "checklist")
                 cell.accessoryType = .disclosureIndicator
-                cell.imageView?.image = UIImage(systemName: "checklist")
             case .language:
-                cell.textLabel?.text = R.string.localizable.language()
+                contentConfiguration.text = R.string.localizable.language()
                 if let languageCode = Bundle.main.preferredLocalizations.first {
-                    cell.detailTextLabel?.text = Locale.autoupdatingCurrent.localizedString(forLanguageCode: languageCode)
+                    contentConfiguration.secondaryText = Locale.autoupdatingCurrent.localizedString(forLanguageCode: languageCode)
                 }
+                contentConfiguration.image = UIImage(systemName: "character")
                 cell.accessoryType = .disclosureIndicator
-                cell.imageView?.image = UIImage(systemName: "character")
 #if DEBUG
             case .debugInfo:
-                cell.textLabel?.text = R.string.localizable.debugInfo()
-                cell.detailTextLabel?.text = nil
+                contentConfiguration.text = R.string.localizable.debugInfo()
+                contentConfiguration.secondaryText = nil
+                contentConfiguration.image = UIImage(systemName: "ladybug")
                 cell.accessoryType = .disclosureIndicator
-                cell.imageView?.image = UIImage(systemName: "ladybug")
 #endif
             case nil:
                 assertionFailure("###, \(#function), \(self), SettingTableViewController.Row 新增了 case，未處理新增的 case。")
             }
         }
+        
+        cell.contentConfiguration = contentConfiguration
         
         return cell
     }
