@@ -70,7 +70,7 @@ extension BaseCurrencyTableViewController: ErrorAlertPresenter {}
 protocol CurrencyTableViewModel {
     var title: String { get }
     
-    func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode)
+    func isSelected(for currencyCode: ResponseDataModel.CurrencyCode) -> Bool
     
     func tableView(_ tableView: UITableView,
                    didSelectRowAt indexPath: IndexPath,

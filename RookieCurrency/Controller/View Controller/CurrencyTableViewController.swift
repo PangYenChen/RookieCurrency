@@ -65,39 +65,50 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
                 let identifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+                cell.selectionStyle = .none
                 
-                var contentConfiguration = cell.defaultContentConfiguration()
-                contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-                contentConfiguration.textToSecondaryTextVerticalPadding = 4
-                
-                // content
-                do {
-                    let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
-                    let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
+                cell.automaticallyUpdatesContentConfiguration = true
+                cell.configurationUpdateHandler = { [unowned self] cell, state in
+                    var contentConfiguration = cell.defaultContentConfiguration()
                     
-                    switch sortingMethod {
-                    case .currencyName, .currencyNameZhuyin:
-                        contentConfiguration.text = localizedCurrencyDescription ?? serverCurrencyDescription
-                        contentConfiguration.secondaryText = currencyCode
-                    case .currencyCode:
-                        contentConfiguration.text = currencyCode
-                        contentConfiguration.secondaryText = localizedCurrencyDescription ?? serverCurrencyDescription
+                    print("###, \(self), \(#function), currency code, \(currencyCode), is selected: \(state.isSelected)")
+                    
+                    // content
+                    do {
+                        let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
+                        let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
+                        
+                        switch sortingMethod {
+                        case .currencyName, .currencyNameZhuyin:
+                            contentConfiguration.text = localizedCurrencyDescription ?? serverCurrencyDescription
+                            contentConfiguration.secondaryText = currencyCode
+                        case .currencyCode:
+                            contentConfiguration.text = currencyCode
+                            contentConfiguration.secondaryText = localizedCurrencyDescription ?? serverCurrencyDescription
+                        }
                     }
-                }
-                
-                // font
-                do {
-                    contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
-                    contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
                     
-                    contentConfiguration.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
-                    contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
+                    // font
+                    do {
+                        contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
+                        contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
+                        
+                        contentConfiguration.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
+                        contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
+                    }
+                    
+                    // other
+                    do {
+                        contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+                        contentConfiguration.textToSecondaryTextVerticalPadding = 4
+                        
+                    }
+                    
+                    cell.contentConfiguration = contentConfiguration
+                    cell.accessoryType = state.isSelected ? .checkmark : .none
                 }
                 
-                
-                cell.contentConfiguration = contentConfiguration
-                
-                viewModel.decorate(cell: cell, for: currencyCode)
+                cell.setSelected(viewModel.isSelected(for: currencyCode), animated: false)
                 
                 return cell
             }
@@ -106,7 +117,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             
             tableView.delegate = self
         }
-        
         
         // sort bar button item
         do {
@@ -178,7 +188,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             set(sortingMethod: .currencyName, sortingOrder: .ascending)
         }
         
-        
         // table view refresh controller
         do {
             tableView.refreshControl = UIRefreshControl()
@@ -190,6 +199,10 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             tableView.refreshControl?.sendActions(for: .primaryActionTriggered)
         }
     }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        
+    }
 }
 
 // MARK: - table view delegate relative
@@ -198,9 +211,9 @@ extension CurrencyTableViewController {
         viewModel.tableView(tableView, didSelectRowAt: indexPath, with: dataSource)
     }
     
-    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        viewModel.tableView(tableView, willSelectRowAt: indexPath, with: dataSource)
-    }
+//    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
+//        viewModel.tableView(tableView, willSelectRowAt: indexPath, with: dataSource)
+//    }
 }
 
 // MARK: - search bar delegate relative
@@ -331,8 +344,9 @@ extension CurrencyTableViewController {
             self.completionHandler = completionHandler
         }
         
-        func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
-            cell.accessoryType = currencyCode == baseCurrencyCode ? .checkmark : .none
+        func isSelected(for currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
+            print("###, \(self), \(#function), base, \(baseCurrencyCode), currencyCode: \(currencyCode)")
+            return currencyCode == baseCurrencyCode
         }
         
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
@@ -344,20 +358,20 @@ extension CurrencyTableViewController {
             
             completionHandler(newSelectedBaseCurrencyCode)
             
-            var identifiersNeedToBeReloaded = [newSelectedBaseCurrencyCode]
+//            var identifiersNeedToBeReloaded = [newSelectedBaseCurrencyCode]
             
-            if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode),
-               tableView.indexPathsForVisibleRows?.contains(oldSelectedBaseCurrencyIndexPath) == true {
-                identifiersNeedToBeReloaded.append(baseCurrencyCode)
-            }
+//            if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode),
+//               tableView.indexPathsForVisibleRows?.contains(oldSelectedBaseCurrencyIndexPath) == true {
+//                identifiersNeedToBeReloaded.append(baseCurrencyCode)
+//            }
             
             baseCurrencyCode = newSelectedBaseCurrencyCode
             
-            var snapshot = dataSource.snapshot()
-            snapshot.reloadItems(identifiersNeedToBeReloaded)
-            DispatchQueue.main.async {
-                dataSource.apply(snapshot)
-            }
+//            var snapshot = dataSource.snapshot()
+//            snapshot.reloadItems(identifiersNeedToBeReloaded)
+//            DispatchQueue.main.async {
+//                dataSource.apply(snapshot)
+//            }
         }
         
         func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
@@ -366,6 +380,7 @@ extension CurrencyTableViewController {
     }
     
     class CurrencyOfInterestSelectionViewModel: CurrencyTableViewModel {
+        
         
         let title: String
         
@@ -380,8 +395,8 @@ extension CurrencyTableViewController {
             self.completionHandler = completionHandler
         }
         
-        func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
-            cell.accessoryType = currencyOfInterest.contains(currencyCode) ? .checkmark : .none
+        func isSelected(for currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
+            currencyOfInterest.contains(currencyCode)
         }
         
         func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
@@ -409,5 +424,11 @@ extension CurrencyTableViewController {
         func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
             indexPath
         }
+    }
+}
+
+class MyCell: UITableViewCell {
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
     }
 }
