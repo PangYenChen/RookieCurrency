@@ -68,15 +68,19 @@ extension BaseCurrencyTableViewController: ErrorAlertPresenter {}
 
 // MARK: - Currency Table View Model
 protocol CurrencyTableViewModel {
+    
     var title: String { get }
     
-    func isSelected(for currencyCode: ResponseDataModel.CurrencyCode) -> Bool
+    var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { get }
     
     func tableView(_ tableView: UITableView,
                    didSelectRowAt indexPath: IndexPath,
                    with dataSource: BaseCurrencyTableViewController.DataSource)
-    
-    func tableView(_ tableView: UITableView,
-                   willSelectRowAt indexPath: IndexPath,
-                   with dataSource: BaseCurrencyTableViewController.DataSource) -> IndexPath?
+}
+
+
+class MyCell: UITableViewCell {
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+    }
 }
