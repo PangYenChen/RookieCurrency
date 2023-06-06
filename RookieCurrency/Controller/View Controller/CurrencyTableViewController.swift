@@ -51,8 +51,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         }
         
         title = viewModel.title
-        
-        clearsSelectionOnViewWillAppear = false
     }
     
     required init?(coder: NSCoder) {
@@ -61,6 +59,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        tableView.allowsMultipleSelection = viewModel.allowsMultipleSelection
         
         // table view data source and delegate
         do {
@@ -71,8 +71,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                 cell.automaticallyUpdatesContentConfiguration = true
                 cell.configurationUpdateHandler = { [unowned self] cell, state in
                     var contentConfiguration = cell.defaultContentConfiguration()
-                    
-                    print("###, \(self), \(#function), currency code, \(currencyCode), state is selected: \(state.isSelected)")
                     
                     // content
                     do {
@@ -204,7 +202,11 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
 // MARK: - table view delegate relative
 extension CurrencyTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.tableView(tableView, didSelectRowAt: indexPath, with: dataSource)
+        guard let selectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
+            assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
+            return
+        }
+        viewModel.select(currencyCode: selectedCurrencyCode)
     }
 }
 
@@ -340,6 +342,8 @@ extension CurrencyTableViewController {
         
         var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode] }
         
+        let allowsMultipleSelection: Bool = false
+        
         private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
         
         init(baseCurrencyCode: String, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
@@ -348,16 +352,10 @@ extension CurrencyTableViewController {
             self.completionHandler = completionHandler
         }
         
-        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
+        func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
             
-            guard let newSelectedBaseCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
-                assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
-                return
-            }
-            
-            completionHandler(newSelectedBaseCurrencyCode)
-            
-            baseCurrencyCode = newSelectedBaseCurrencyCode
+            completionHandler(selectedCurrencyCode)
+            baseCurrencyCode = selectedCurrencyCode
         }
     }
     
@@ -369,6 +367,8 @@ extension CurrencyTableViewController {
         
         var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { currencyOfInterest }
         
+        let allowsMultipleSelection: Bool = true
+        
         private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
         
         init(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
@@ -378,27 +378,11 @@ extension CurrencyTableViewController {
             self.completionHandler = completionHandler
         }
         
-        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
-            
-            guard let selectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
-                assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
-                return
-            }
-            
-#warning("確定一下已經selected的cell會不會進這裡")
-            if currencyOfInterest.contains(selectedCurrencyCode) {
-                currencyOfInterest.remove(selectedCurrencyCode)
-            } else {
-                currencyOfInterest.insert(selectedCurrencyCode)
-            }
-            
+        func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+            currencyOfInterest.insert(selectedCurrencyCode)
             completionHandler(currencyOfInterest)
-            
-            var snapshot = dataSource.snapshot()
-            snapshot.reloadItems([selectedCurrencyCode])
-            DispatchQueue.main.async {
-                dataSource.apply(snapshot)
-            }
         }
+        
+        #warning("還沒實作deselect")
     }
 }

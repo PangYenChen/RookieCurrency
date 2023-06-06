@@ -73,9 +73,9 @@ protocol CurrencyTableViewModel {
     
     var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { get }
     
-    func tableView(_ tableView: UITableView,
-                   didSelectRowAt indexPath: IndexPath,
-                   with dataSource: BaseCurrencyTableViewController.DataSource)
+    var allowsMultipleSelection: Bool { get }
+    
+    func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode)
 }
 
 
