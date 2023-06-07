@@ -65,7 +65,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         // table view data source and delegate
         do {
             dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
-                let identifier = R.reuseIdentifier.currencyCellAA.identifier
+                let identifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
                 cell.selectionStyle = .none
                 cell.automaticallyUpdatesContentConfiguration = true

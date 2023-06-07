@@ -55,22 +55,6 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "A8EACDE6-1728-45B1-87BF-CA8124535BDB"
-            shouldBeEnabled = "No"
-            ignoreCount = "13"
-            continueAfterRunningActions = "No"
-            filePath = "Controller/View Controller/BaseCurrencyTableViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "84"
-            endingLineNumber = "84"
-            landmarkName = "setSelected(_:animated:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
             uuid = "19411BDB-36C2-4B35-B4A4-B6635020D796"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
@@ -80,8 +64,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "216"
             endingLineNumber = "216"
-            landmarkName = "CurrencyTableViewController"
-            landmarkType = "21">
+            landmarkName = "search(text:)"
+            landmarkType = "7">
             <Locations>
                <Location
                   uuid = "19411BDB-36C2-4B35-B4A4-B6635020D796 - c51dd74f5fea7509"
