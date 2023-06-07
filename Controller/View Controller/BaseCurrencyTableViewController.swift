@@ -67,7 +67,7 @@ extension BaseCurrencyTableViewController {
 extension BaseCurrencyTableViewController: ErrorAlertPresenter {}
 
 // MARK: - Currency Table View Model
-protocol CurrencyTableViewModel {
+protocol CurrencyTableStrategy {
     
     var title: String { get }
     

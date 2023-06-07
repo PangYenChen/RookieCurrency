@@ -26,11 +26,11 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private let fetcher: Fetcher
     
-    private let viewModel: CurrencyTableViewModel
+    private let strategy: CurrencyTableStrategy
     
-    init?(coder: NSCoder, viewModel: CurrencyTableViewModel) {
+    init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
         
-        self.viewModel = viewModel
+        self.strategy = strategy
         
         sortingMethod = .currencyName
         
@@ -50,7 +50,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             searchController.searchBar.delegate = self
         }
         
-        title = viewModel.title
+        title = strategy.title
     }
     
     required init?(coder: NSCoder) {
@@ -60,7 +60,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.allowsMultipleSelection = viewModel.allowsMultipleSelection
+        tableView.allowsMultipleSelection = strategy.allowsMultipleSelection
         
         // table view data source and delegate
         do {
@@ -204,7 +204,7 @@ extension CurrencyTableViewController {
             assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
             return
         }
-        viewModel.select(currencyCode: selectedCurrencyCode)
+        strategy.select(currencyCode: selectedCurrencyCode)
     }
     
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -212,7 +212,7 @@ extension CurrencyTableViewController {
             assertionFailure("###, \(self), \(#function), 取消選取的 item 不在 data source 中，這不可能發生。")
             return
         }
-        viewModel.deselect(currencyCode: deselectedCurrencyCode)
+        strategy.deselect(currencyCode: deselectedCurrencyCode)
     }
 }
 
@@ -314,7 +314,7 @@ private extension CurrencyTableViewController {
         snapshot.appendItems(filteredCurrencyCodes)
         DispatchQueue.main.async { [weak self] in
             self?.dataSource.apply(snapshot)
-            self?.viewModel.selectedCurrencies
+            self?.strategy.selectedCurrencies
                 .compactMap { [weak self] currencyCode in
                     self?.dataSource.indexPath(for: currencyCode)
                     
@@ -337,10 +337,10 @@ private extension CurrencyTableViewController {
     }
 }
 
-// MARK: - view model
+// MARK: - strategy
 extension CurrencyTableViewController {
 
-    class BaseCurrencySelectionViewModel: CurrencyTableViewModel {
+    class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
         
         let title: String
         
@@ -365,11 +365,11 @@ extension CurrencyTableViewController {
         }
         
         func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            // allowsMultipleSelection = false，會呼叫這個 delegate method 的唯一時機是其他 cell 被選取了，table view deselect 原本被選取的 cell 
+            // allowsMultipleSelection = false，會呼叫這個 delegate method 的唯一時機是其他 cell 被選取了，table view deselect 原本被選取的 cell
         }
     }
     
-    class CurrencyOfInterestSelectionViewModel: CurrencyTableViewModel {
+    class CurrencyOfInterestSelectionStrategy: CurrencyTableStrategy {
         
         let title: String
         

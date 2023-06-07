@@ -114,8 +114,8 @@ class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - Navigation
     override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
         
-        let baseCurrencySelectionViewModel = CurrencyTableViewController
-            .BaseCurrencySelectionViewModel(baseCurrencyCode: editedBaseCurrency) { [unowned self] selectedBaseCurrency in
+        let baseCurrencySelectionStrategy = CurrencyTableViewController
+            .BaseCurrencySelectionStrategy(baseCurrencyCode: editedBaseCurrency) { [unowned self] selectedBaseCurrency in
                 editedBaseCurrency = selectedBaseCurrency
                 saveButton.isEnabled = hasChange
                 isModalInPresentation = hasChange
@@ -126,13 +126,13 @@ class SettingTableViewController: BaseSettingTableViewController {
                 }
             }
         
-        return CurrencyTableViewController(coder: coder, viewModel: baseCurrencySelectionViewModel)
+        return CurrencyTableViewController(coder: coder, strategy: baseCurrencySelectionStrategy)
     }
     
     override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
         
-        let currencyOfInterestSelectionViewModel = CurrencyTableViewController
-            .CurrencyOfInterestSelectionViewModel(currencyOfInterest: editedCurrencyOfInterest) { [unowned self] selectedCurrencyOfInterest in
+        let currencyOfInterestSelectionStrategy = CurrencyTableViewController
+            .CurrencyOfInterestSelectionStrategy(currencyOfInterest: editedCurrencyOfInterest) { [unowned self] selectedCurrencyOfInterest in
                 editedCurrencyOfInterest = selectedCurrencyOfInterest
                 saveButton.isEnabled = hasChange
                 isModalInPresentation = hasChange
@@ -143,7 +143,7 @@ class SettingTableViewController: BaseSettingTableViewController {
                 }
             }
 
-        return CurrencyTableViewController(coder: coder, viewModel: currencyOfInterestSelectionViewModel)
+        return CurrencyTableViewController(coder: coder, strategy: currencyOfInterestSelectionStrategy)
     }
     
 }
