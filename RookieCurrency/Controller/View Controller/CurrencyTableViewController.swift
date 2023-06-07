@@ -112,8 +112,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             }
             
             dataSource.defaultRowAnimation = .fade
-            
-            tableView.delegate = self
         }
         
         // sort bar button item
@@ -207,6 +205,14 @@ extension CurrencyTableViewController {
             return
         }
         viewModel.select(currencyCode: selectedCurrencyCode)
+    }
+    
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        guard let deselectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
+            assertionFailure("###, \(self), \(#function), 取消選取的 item 不在 data source 中，這不可能發生。")
+            return
+        }
+        viewModel.deselect(currencyCode: deselectedCurrencyCode)
     }
 }
 
@@ -357,6 +363,10 @@ extension CurrencyTableViewController {
             completionHandler(selectedCurrencyCode)
             baseCurrencyCode = selectedCurrencyCode
         }
+        
+        func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+            // allowsMultipleSelection = false，會呼叫這個 delegate method 的唯一時機是其他 cell 被選取了，table view deselect 原本被選取的 cell 
+        }
     }
     
     class CurrencyOfInterestSelectionViewModel: CurrencyTableViewModel {
@@ -383,6 +393,9 @@ extension CurrencyTableViewController {
             completionHandler(currencyOfInterest)
         }
         
-        #warning("還沒實作deselect")
+        func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+            currencyOfInterest.remove(deselectedCurrencyCode)
+            completionHandler(currencyOfInterest)
+        }
     }
 }

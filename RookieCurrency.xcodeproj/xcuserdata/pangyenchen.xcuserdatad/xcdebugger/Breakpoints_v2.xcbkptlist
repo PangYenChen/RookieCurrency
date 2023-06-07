@@ -7,224 +7,33 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "1C47FE52-8893-48FF-A2E3-2D76DAA09A6F"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CombineCurrency/Controller/View Controller/CurrencyTableViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "351"
-            endingLineNumber = "351"
-            landmarkName = "tableView(_:didSelectRowAt:with:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "AD058CC1-EDC8-46C9-93E0-FA5BE65F0DD1"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CombineCurrency/Controller/View Controller/CurrencyTableViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "353"
-            endingLineNumber = "353"
-            landmarkName = "tableView(_:didSelectRowAt:with:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "E0D9E974-05C0-48D0-AFC5-6D5F859C14B9"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "CombineCurrency/Controller/View Controller/CurrencyTableViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "272"
-            endingLineNumber = "272"
-            landmarkName = "viewDidLoad()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "19411BDB-36C2-4B35-B4A4-B6635020D796"
+            uuid = "179103A0-C461-4739-B308-2D2C33790C86"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RookieCurrency/Controller/View Controller/CurrencyTableViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "216"
-            endingLineNumber = "216"
-            landmarkName = "search(text:)"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "19411BDB-36C2-4B35-B4A4-B6635020D796 - c51dd74f5fea7509"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "RookieCurrency.CurrencyTableViewController.search(text: Swift.String) -&gt; ()"
-                  moduleName = "RookieCurrency"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/CurrencyTableViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "216"
-                  endingLineNumber = "216"
-                  offsetFromSymbolStart = "92">
-               </Location>
-               <Location
-                  uuid = "19411BDB-36C2-4B35-B4A4-B6635020D796 - c51dd74f5fea7509"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "RookieCurrency.CurrencyTableViewController.search(text: Swift.String) -&gt; ()"
-                  moduleName = "RookieCurrency"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/CurrencyTableViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "216"
-                  endingLineNumber = "216"
-                  offsetFromSymbolStart = "68">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "4EF88866-1E62-408F-AD2F-1F7BA29178C4"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "RookieCurrency/Controller/View Controller/CurrencyTableViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "68"
-            endingLineNumber = "68"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "211"
+            endingLineNumber = "211"
+            landmarkName = "tableView(_:didDeselectRowAt:)"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "511CD2E0-3211-49BB-8630-5EFB0AF5CBF6"
+            uuid = "197F9079-963C-45BD-8AED-75E19A5B5C79"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "RookieCurrency/Controller/View Controller/CurrencyTableViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "312"
-            endingLineNumber = "312"
-            landmarkName = "convertDataThenPopulateTableView()"
+            startingLineNumber = "203"
+            endingLineNumber = "203"
+            landmarkName = "tableView(_:didSelectRowAt:)"
             landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "511CD2E0-3211-49BB-8630-5EFB0AF5CBF6 - 575ce5bb10284215"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.String) -&gt; Swift.Optional&lt;Foundation.IndexPath&gt; in closure #3 @Swift.MainActor () -&gt; () in RookieCurrency.CurrencyTableViewController.convertDataThenPopulateTableView() -&gt; ()"
-                  moduleName = "RookieCurrency"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/CurrencyTableViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "313"
-                  endingLineNumber = "313"
-                  offsetFromSymbolStart = "456">
-               </Location>
-               <Location
-                  uuid = "511CD2E0-3211-49BB-8630-5EFB0AF5CBF6 - b0a40aa92d436b1e"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #3 @Swift.MainActor () -&gt; () in RookieCurrency.CurrencyTableViewController.convertDataThenPopulateTableView() -&gt; ()"
-                  moduleName = "RookieCurrency"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/CurrencyTableViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "312"
-                  endingLineNumber = "312"
-                  offsetFromSymbolStart = "1236">
-               </Location>
-               <Location
-                  uuid = "511CD2E0-3211-49BB-8630-5EFB0AF5CBF6 - 575ce5bb10284234"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.String) -&gt; Swift.Optional&lt;Foundation.IndexPath&gt; in closure #3 @Swift.MainActor () -&gt; () in RookieCurrency.CurrencyTableViewController.convertDataThenPopulateTableView() -&gt; ()"
-                  moduleName = "RookieCurrency"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/CurrencyTableViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "312"
-                  endingLineNumber = "312"
-                  offsetFromSymbolStart = "96">
-               </Location>
-            </Locations>
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "66A12401-3BFB-4285-BF60-C8692C1CC487"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "RookieCurrency/Controller/View Controller/CurrencyTableViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "317"
-            endingLineNumber = "317"
-            landmarkName = "convertDataThenPopulateTableView()"
-            landmarkType = "7">
-            <Locations>
-               <Location
-                  uuid = "66A12401-3BFB-4285-BF60-C8692C1CC487 - e8c0670e60d2392a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Foundation.IndexPath) -&gt; () in closure #3 @Swift.MainActor () -&gt; () in RookieCurrency.CurrencyTableViewController.convertDataThenPopulateTableView() -&gt; ()"
-                  moduleName = "RookieCurrency"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/CurrencyTableViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "317"
-                  endingLineNumber = "317"
-                  offsetFromSymbolStart = "560">
-               </Location>
-               <Location
-                  uuid = "66A12401-3BFB-4285-BF60-C8692C1CC487 - e8c0670e60d2392a"
-                  shouldBeEnabled = "Yes"
-                  ignoreCount = "0"
-                  continueAfterRunningActions = "No"
-                  symbolName = "closure #2 (Foundation.IndexPath) -&gt; () in closure #3 @Swift.MainActor () -&gt; () in RookieCurrency.CurrencyTableViewController.convertDataThenPopulateTableView() -&gt; ()"
-                  moduleName = "RookieCurrency"
-                  usesParentBreakpointCondition = "Yes"
-                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/CurrencyTableViewController.swift"
-                  startingColumnNumber = "9223372036854775807"
-                  endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "317"
-                  endingLineNumber = "317"
-                  offsetFromSymbolStart = "172">
-               </Location>
-            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
