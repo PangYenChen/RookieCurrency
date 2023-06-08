@@ -48,7 +48,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         editedNumberOfDay = CurrentValueSubject(userSetting.numberOfDay)
         
         editedBaseCurrency = CurrentValueSubject(userSetting.baseCurrency)
-
+        
         editedCurrencyOfInterest = CurrentValueSubject(userSetting.currencyOfInterest)
         
         didTapCancelButtonSubject = PassthroughSubject()
@@ -64,7 +64,7 @@ class SettingTableViewController: BaseSettingTableViewController {
                 .map { $0 || $1 || $2 }
                 .eraseToAnyPublisher()
         }
-
+        
         anyCancellableSet = Set<AnyCancellable>()
         
         super.init(coder: coder)
@@ -126,7 +126,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func stepperValueDidChange() {
         editedNumberOfDay.send(Int(stepper.value))
     }
-
+    
     @IBAction override func save() {
         didTapSaveButtonSubject.send()
         super.save()
@@ -138,18 +138,18 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - Navigation
     override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        let viewModel = CurrencyTableViewController
-            .BaseCurrencySelectionViewModel(baseCurrencyCode: editedBaseCurrencyString,
-                                            selectedBaseCurrencyCode: AnySubscriber(editedBaseCurrency))
+        let strategy = CurrencyTableViewController
+            .BaseCurrencySelectionStrategy(baseCurrencyCode: editedBaseCurrency.value,
+                                           selectedBaseCurrencyCode: AnySubscriber(editedBaseCurrency))
         
-        return CurrencyTableViewController(coder: coder, viewModel: viewModel)
+        return CurrencyTableViewController(coder: coder, strategy: strategy)
     }
     
     override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        let viewModel = CurrencyTableViewController
-            .CurrencyOfInterestSelectionViewModel(currencyOfInterest: editedCurrencyOfInterest.value,
-                                                  selectedCurrencyOfInterest: AnySubscriber(editedCurrencyOfInterest))
+        let strategy = CurrencyTableViewController
+            .CurrencyOfInterestSelectionStrategy(currencyOfInterest: editedCurrencyOfInterest.value,
+                                                 selectedCurrencyOfInterest: AnySubscriber(editedCurrencyOfInterest))
         
-        return CurrencyTableViewController(coder: coder, viewModel: viewModel)
+        return CurrencyTableViewController(coder: coder, strategy: strategy)
     }
 }

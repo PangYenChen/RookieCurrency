@@ -67,7 +67,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
                 let identifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
-                cell.selectionStyle = .none
+                
                 cell.automaticallyUpdatesContentConfiguration = true
                 cell.configurationUpdateHandler = { [unowned self] cell, state in
                     var contentConfiguration = cell.defaultContentConfiguration()
@@ -245,7 +245,7 @@ private extension CurrencyTableViewController {
             }
         }
     }
-        
+    
     func convertDataThenPopulateTableView() {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
@@ -315,14 +315,8 @@ private extension CurrencyTableViewController {
         DispatchQueue.main.async { [weak self] in
             self?.dataSource.apply(snapshot)
             self?.strategy.selectedCurrencies
-                .compactMap { [weak self] currencyCode in
-                    self?.dataSource.indexPath(for: currencyCode)
-                    
-                }
-                .forEach { [weak self] indexPath in
-                    self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none)
-                    
-                }
+                .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
+                .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
         }
         
     }
@@ -339,7 +333,7 @@ private extension CurrencyTableViewController {
 
 // MARK: - strategy
 extension CurrencyTableViewController {
-
+    
     class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
         
         let title: String
@@ -348,13 +342,14 @@ extension CurrencyTableViewController {
         
         var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode] }
         
-        let allowsMultipleSelection: Bool = false
+        let allowsMultipleSelection: Bool
         
         private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
         
         init(baseCurrencyCode: String, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
             title = R.string.localizable.baseCurrency()
             self.baseCurrencyCode = baseCurrencyCode
+            allowsMultipleSelection = false
             self.completionHandler = completionHandler
         }
         
@@ -377,7 +372,7 @@ extension CurrencyTableViewController {
         
         var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { currencyOfInterest }
         
-        let allowsMultipleSelection: Bool = true
+        let allowsMultipleSelection: Bool
         
         private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
         
@@ -385,6 +380,7 @@ extension CurrencyTableViewController {
              completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
             title = R.string.localizable.currencyOfInterest()
             self.currencyOfInterest = currencyOfInterest
+            allowsMultipleSelection = true
             self.completionHandler = completionHandler
         }
         

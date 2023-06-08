@@ -20,7 +20,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private let searchTest: PassthroughSubject<String, Never>
     
-    private let viewModel: CurrencyTableViewModel
+    private let strategy: CurrencyTableStrategy
     
     private(set) var dataSource: DataSource!
     
@@ -29,7 +29,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - methods
-    init?(coder: NSCoder, viewModel: CurrencyTableViewModel) {
+    init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
         
         currencyCodeDescriptionDictionary = [:]
         
@@ -37,7 +37,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         
         searchTest = PassthroughSubject<String, Never>()
         
-        self.viewModel = viewModel
+        self.strategy = strategy
         
         fetcher = Fetcher.shared
         
@@ -45,7 +45,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         
         super.init(coder: coder)
         
-        title = viewModel.title
+        title = strategy.title
     }
     
     required init?(coder: NSCoder) {
@@ -55,50 +55,56 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        tableView.allowsMultipleSelection = strategy.allowsMultipleSelection
+        
         // table view data source and delegate
         do {
             dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
                 let identifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
                 
-                var contentConfiguration = cell.defaultContentConfiguration()
-                contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-                contentConfiguration.textToSecondaryTextVerticalPadding = 4
-                
-                // content
-                do {
-                    let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
-                    let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
+                cell.automaticallyUpdatesContentConfiguration = true
+                cell.configurationUpdateHandler = { [unowned self] cell, state in
+                    var contentConfiguration = cell.defaultContentConfiguration()
                     
-                    switch sortingMethodAndOrder.value.method {
-                    case .currencyName, .currencyNameZhuyin:
-                        contentConfiguration.text = localizedCurrencyDescription ?? serverCurrencyDescription
-                        contentConfiguration.secondaryText = currencyCode
-                    case .currencyCode:
-                        contentConfiguration.text = currencyCode
-                        contentConfiguration.secondaryText = localizedCurrencyDescription ?? serverCurrencyDescription
+                    // content
+                    do {
+                        let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
+                        let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
+                        
+                        switch sortingMethodAndOrder.value.method {
+                        case .currencyName, .currencyNameZhuyin:
+                            contentConfiguration.text = localizedCurrencyDescription ?? serverCurrencyDescription
+                            contentConfiguration.secondaryText = currencyCode
+                        case .currencyCode:
+                            contentConfiguration.text = currencyCode
+                            contentConfiguration.secondaryText = localizedCurrencyDescription ?? serverCurrencyDescription
+                        }
                     }
-                }
-                
-                // font
-                do {
-                    contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
-                    contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
                     
-                    contentConfiguration.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
-                    contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
+                    // font
+                    do {
+                        contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
+                        contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
+                        
+                        contentConfiguration.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
+                        contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
+                    }
+                    
+                    // other
+                    do {
+                        contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+                        contentConfiguration.textToSecondaryTextVerticalPadding = 4
+                    }
+                    
+                    cell.contentConfiguration = contentConfiguration
+                    cell.accessoryType = state.isSelected ? .checkmark : .none
                 }
-                
-                cell.contentConfiguration = contentConfiguration
-                
-                viewModel.decorate(cell: cell, for: currencyCode)
                 
                 return cell
             }
             
             dataSource.defaultRowAnimation = .fade
-            
-            tableView.delegate = self
         }
         
         // sort bar button item
@@ -266,8 +272,11 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                     
                     snapshot.appendItems(filteredCurrencyCodes)
                     
-                    DispatchQueue.main.async { [unowned self] in
-                        dataSource.apply(snapshot)
+                    DispatchQueue.main.async { [weak self] in
+                        self?.dataSource.apply(snapshot)
+                        self?.strategy.selectedCurrencies
+                            .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
+                            .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
                     }
                     
                 }
@@ -300,107 +309,88 @@ private extension CurrencyTableViewController {
 // MARK: - table view delegate relative
 extension CurrencyTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        viewModel.tableView(tableView, didSelectRowAt: indexPath, with: dataSource)
+        guard let selectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
+            assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
+            return
+        }
+        
+        strategy.select(currencyCode: selectedCurrencyCode)
     }
     
-    override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-        viewModel.tableView(tableView, willSelectRowAt: indexPath, with: dataSource)
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        
+        guard let deselectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
+            assertionFailure("###, \(self), \(#function), 取消選取的 item 不在 data source 中，這不可能發生。")
+            return
+        }
+        strategy.deselect(currencyCode: deselectedCurrencyCode)
     }
 }
 
-// MARK: - view model
+// MARK: - strategy
 extension CurrencyTableViewController {
     
-    class BaseCurrencySelectionViewModel: CurrencyTableViewModel {
+    class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
         
         let title: String
         
         private let baseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
         
+        var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode.value] }
+        
+        let allowsMultipleSelection: Bool
+        
         init(baseCurrencyCode: String,
              selectedBaseCurrencyCode: AnySubscriber<ResponseDataModel.CurrencyCode, Never>) {
+            
             title = R.string.localizable.baseCurrency()
             self.baseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(baseCurrencyCode)
+            allowsMultipleSelection = false
+            // initialization completes
             
             self.baseCurrencyCode
                 .dropFirst()
                 .subscribe(selectedBaseCurrencyCode)
         }
         
-        func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
-            cell.accessoryType = currencyCode == baseCurrencyCode.value ? .checkmark : .none
+        func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+            baseCurrencyCode.send(selectedCurrencyCode)
         }
         
-        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
-            
-            guard let newSelectedBaseCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
-                assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
-                return
-            }
-            
-            var identifiersNeedToBeReloaded = [newSelectedBaseCurrencyCode]
-            
-            if let oldSelectedBaseCurrencyIndexPath = dataSource.indexPath(for: baseCurrencyCode.value),
-               tableView.indexPathsForVisibleRows?.contains(oldSelectedBaseCurrencyIndexPath) == true {
-                identifiersNeedToBeReloaded.append(baseCurrencyCode.value)
-            }
-            
-            baseCurrencyCode.send(newSelectedBaseCurrencyCode)
-            
-            var snapshot = dataSource.snapshot()
-            snapshot.reloadItems(identifiersNeedToBeReloaded)
-            DispatchQueue.main.async {
-                dataSource.apply(snapshot)
-            }
-        }
-        
-        func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
-            dataSource.indexPath(for: baseCurrencyCode.value) == indexPath ? nil : indexPath
+        func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+            // allowsMultipleSelection = false，會呼叫這個 delegate method 的唯一時機是其他 cell 被選取了，table view deselect 原本被選取的 cell
         }
     }
     
-    class CurrencyOfInterestSelectionViewModel: CurrencyTableViewModel {
+    class CurrencyOfInterestSelectionStrategy: CurrencyTableStrategy {
 
         let title: String
-
+        
         private let currencyOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
+
+        var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { currencyOfInterest.value }
+        
+        let allowsMultipleSelection: Bool
 
         init(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
              selectedCurrencyOfInterest: AnySubscriber<Set<ResponseDataModel.CurrencyCode>, Never>) {
+            
             title = R.string.localizable.currencyOfInterest()
             self.currencyOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyOfInterest)
+            allowsMultipleSelection = true
+            // initialization completes
             
             self.currencyOfInterest
                 .dropFirst()
                 .subscribe(selectedCurrencyOfInterest)
         }
-
-        func decorate(cell: UITableViewCell, for currencyCode: ResponseDataModel.CurrencyCode) {
-            cell.accessoryType = currencyOfInterest.value.contains(currencyCode) ? .checkmark : .none
+        
+        func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+            currencyOfInterest.value.insert(selectedCurrencyCode)
         }
-
-        func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath, with dataSource: DataSource) {
-
-            guard let selectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
-                assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
-                return
-            }
-
-            if currencyOfInterest.value.contains(selectedCurrencyCode) {
-                currencyOfInterest.value.remove(selectedCurrencyCode)
-            } else {
-                currencyOfInterest.value.insert(selectedCurrencyCode)
-            }
-
-            var snapshot = dataSource.snapshot()
-            snapshot.reloadItems([selectedCurrencyCode])
-            DispatchQueue.main.async {
-                dataSource.apply(snapshot)
-            }
-        }
-
-        func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath, with dataSource: DataSource) -> IndexPath? {
-            indexPath
+        
+        func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+            currencyOfInterest.value.remove(deselectedCurrencyCode)
         }
     }
 }

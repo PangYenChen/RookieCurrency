@@ -66,7 +66,7 @@ extension BaseCurrencyTableViewController {
 // MARK: - Error Alert Presenter
 extension BaseCurrencyTableViewController: ErrorAlertPresenter {}
 
-// MARK: - Currency Table View Model
+// MARK: - strategy
 protocol CurrencyTableStrategy {
     
     var title: String { get }

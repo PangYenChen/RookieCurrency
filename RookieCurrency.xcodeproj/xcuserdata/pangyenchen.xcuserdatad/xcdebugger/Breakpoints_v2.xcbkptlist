@@ -7,31 +7,31 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "179103A0-C461-4739-B308-2D2C33790C86"
+            uuid = "FEDF29ED-4CB4-4001-966D-893B155D7E98"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "RookieCurrency/Controller/View Controller/CurrencyTableViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "211"
-            endingLineNumber = "211"
-            landmarkName = "tableView(_:didDeselectRowAt:)"
+            filePath = "CombineCurrency/Controller/View Controller/CurrencyTableViewController.swift"
+            startingColumnNumber = "81"
+            endingColumnNumber = "81"
+            startingLineNumber = "279"
+            endingLineNumber = "279"
+            landmarkName = "viewDidLoad()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "197F9079-963C-45BD-8AED-75E19A5B5C79"
+            uuid = "CFCBBA9A-4A76-4B4D-9168-F3A179E5962A"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
-            filePath = "RookieCurrency/Controller/View Controller/CurrencyTableViewController.swift"
+            filePath = "CombineCurrency/Controller/View Controller/CurrencyTableViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "203"
-            endingLineNumber = "203"
+            startingLineNumber = "312"
+            endingLineNumber = "312"
             landmarkName = "tableView(_:didSelectRowAt:)"
             landmarkType = "7">
          </BreakpointContent>
