@@ -20,6 +20,7 @@ class BaseCurrencyTableViewController: UITableViewController {
             let searchController = UISearchController()
             navigationItem.searchController = searchController
             searchController.searchBar.delegate = self
+            navigationItem.hidesSearchBarWhenScrolling = false
         }
     }
 }

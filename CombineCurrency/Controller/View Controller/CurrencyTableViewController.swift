@@ -18,7 +18,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private let sortingMethodAndOrder: CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>
     
-    private let searchTest: PassthroughSubject<String, Never>
+    private let searchText: CurrentValueSubject<String, Never>
     
     private let strategy: CurrencyTableStrategy
     
@@ -37,7 +37,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         
         sortingMethodAndOrder = CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>((method: .currencyName, order: .ascending))
         
-        searchTest = PassthroughSubject<String, Never>()
+        searchText = CurrentValueSubject<String, Never>("")
         
         self.strategy = strategy
         
@@ -205,8 +205,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                 .handleEvents(receiveOutput: { [unowned self] supportedSymbols in
                     currencyCodeDescriptionDictionary = supportedSymbols.symbols
                 })
-                .combineLatest(sortingMethodAndOrder)
-                .sink { [unowned self] (supportedSymbols, sortingMethodAndOrder) in
+                .combineLatest(sortingMethodAndOrder, searchText)
+                .sink { [unowned self] (supportedSymbols, sortingMethodAndOrder, searchText) in
                     
                     let (sortingMethod, sortingOrder) = sortingMethodAndOrder
                     
@@ -265,14 +265,14 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                     
                     var filteredCurrencyCodes = sortedCurrencyCodes
                     
-                    //                if !searchText.isEmpty {
-                    //                    filteredCurrencyCodes = sortedCurrencyCodes
-                    //                        .filter { currencyCode in
-                    //                            [currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)]
-                    //                                .compactMap { $0 }
-                    //                                .contains { text in text.localizedStandardContains(searchText) }
-                    //                        }
-                    //                }
+                    if !searchText.isEmpty {
+                        filteredCurrencyCodes = sortedCurrencyCodes
+                            .filter { currencyCode in
+                                [currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)]
+                                    .compactMap { $0 }
+                                    .contains { text in text.localizedStandardContains(searchText) }
+                            }
+                    }
                     
                     snapshot.appendItems(filteredCurrencyCodes)
                     
@@ -321,6 +321,13 @@ private extension CurrencyTableViewController {
         sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
         
         sortingMethodAndOrder.send((method: sortingMethod, order: sortingOrder))
+    }
+}
+
+// MARK: - search bar delegate relative
+extension CurrencyTableViewController {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.searchText.send(searchText)
     }
 }
 

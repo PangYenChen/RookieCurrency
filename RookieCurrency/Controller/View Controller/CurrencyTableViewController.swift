@@ -227,7 +227,7 @@ extension CurrencyTableViewController {
 
 // MARK: - search bar delegate relative
 extension CurrencyTableViewController {
-    func search(text searchText: String) {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText = searchText
         convertDataThenPopulateTableView()
     }

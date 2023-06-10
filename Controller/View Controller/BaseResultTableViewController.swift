@@ -39,11 +39,16 @@ class BaseResultTableViewController: UITableViewController {
         do {
             let imageView = UIImageView(image: UIImage(named: "AppIcon"))
             let rightBarButton = UIBarButtonItem(customView: imageView)
-            rightBarButton.isEnabled = false
+//            rightBarButton.isEnabled = false
             navigationItem.setRightBarButton(rightBarButton, animated: false)
         }
         
-        title = R.string.localizable.analyzedResult()
+        // title
+        do {
+            title = R.string.localizable.analyzedResult()
+            navigationItem.prompt = "## 基準幣別：？？"
+            navigationItem.largeTitleDisplayMode = .automatic
+        }
     }
     
     override func viewDidLoad() {
