@@ -24,6 +24,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private var dataSource: DataSource!
     
+    private var isReceivingFirstData: Bool
+    
     private let fetcher: Fetcher
     
     private let strategy: CurrencyTableStrategy
@@ -39,6 +41,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         searchText = ""
         
         currencyCodeDescriptionDictionary = [:]
+        
+        isReceivingFirstData = true
         
         fetcher = Fetcher.shared
         
@@ -177,11 +181,16 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                                             children: [sortMenu])
             
             // set up the initial state
-            ascendingAction.state = .on
-            
-            // The value of properties `sortingMethod` and `sortingOrder` could be changed between the call of `init` and `viewDidLoad`,
-            // so we need to reset them in order to be consistent with the ascendingAction.state
-            set(sortingMethod: .currencyName, sortingOrder: .ascending)
+            do {
+                ascendingAction.state = .on
+                
+                // The value of properties `sortingMethod` and `sortingOrder` could be changed between the call of `init` and `viewDidLoad`,
+                // so we need to reset them in order to be consistent with the ascendingAction.state
+                sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
+                
+                self.sortingMethod = .currencyName
+                self.sortingOrder = .ascending
+            }
         }
         
         // table view refresh controller
@@ -312,11 +321,28 @@ private extension CurrencyTableViewController {
         }
         
         snapshot.appendItems(filteredCurrencyCodes)
+        
         DispatchQueue.main.async { [weak self] in
-            self?.dataSource.apply(snapshot)
-            self?.strategy.selectedCurrencies
-                .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
-                .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
+            
+            self?.dataSource.apply(snapshot) { [weak self] in
+                guard let self else { return }
+                
+                let selectedIndexPath = strategy.selectedCurrencies
+                    .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
+                
+                selectedIndexPath
+                    .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
+                
+                // scroll to first selected index path when first time receiving data
+                if self.isReceivingFirstData {
+                    guard let firstSelectedIndexPath = selectedIndexPath.min() else  {
+                        assertionFailure("###, \(self), \(#function), 資料發生錯誤，外面傳進來的資料不能是空的")
+                        return
+                    }
+                    tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
+                    self.isReceivingFirstData = false
+                }
+            }
         }
         
     }

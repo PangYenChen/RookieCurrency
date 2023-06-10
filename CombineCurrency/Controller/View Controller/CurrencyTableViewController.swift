@@ -26,6 +26,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private let fetcher: Fetcher
     
+    private var isReceivingFirstData: Bool
+    
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - methods
@@ -38,6 +40,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         searchTest = PassthroughSubject<String, Never>()
         
         self.strategy = strategy
+        
+        isReceivingFirstData = true
         
         fetcher = Fetcher.shared
         
@@ -273,12 +277,27 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                     snapshot.appendItems(filteredCurrencyCodes)
                     
                     DispatchQueue.main.async { [weak self] in
-                        self?.dataSource.apply(snapshot)
-                        self?.strategy.selectedCurrencies
-                            .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
-                            .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
+                        
+                        self?.dataSource.apply(snapshot) { [weak self] in
+                            guard let self else { return }
+                            
+                            let selectedIndexPath = strategy.selectedCurrencies
+                                .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
+                            
+                            selectedIndexPath
+                                .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
+                            
+                            // scroll to first selected index path when first time receiving data
+                            if self.isReceivingFirstData {
+                                guard let firstSelectedIndexPath = selectedIndexPath.min() else  {
+                                    assertionFailure("###, \(self), \(#function), 資料發生錯誤，外面傳進來的資料不能是空的")
+                                    return
+                                }
+                                tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
+                                self.isReceivingFirstData = false
+                            }
+                        }
                     }
-                    
                 }
                 .store(in: &anyCancellableSet)
         }
@@ -293,7 +312,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             tableView.refreshControl?.beginRefreshing()
             tableView.refreshControl?.sendActions(for: .primaryActionTriggered)
         }
-        
     }
 }
 
