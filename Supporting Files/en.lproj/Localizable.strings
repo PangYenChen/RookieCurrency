@@ -9,6 +9,7 @@
 "numberOfConsideredDay" = "Number of considered day";
 "latestUpdateTime" = "latest update time: %@";
 "baseCurrency" = "Base currency";
+"baseCurrencyInPrompt" = "Base currency: %@";
 "changeBaseCurrency" = "change";
 "alertTitle" = "Oops, something goes wrong.";
 "alertActionTitle" = "ok";

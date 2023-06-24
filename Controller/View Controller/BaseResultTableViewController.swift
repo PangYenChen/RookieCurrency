@@ -39,7 +39,6 @@ class BaseResultTableViewController: UITableViewController {
         do {
             let imageView = UIImageView(image: UIImage(named: "AppIcon"))
             let rightBarButton = UIBarButtonItem(customView: imageView)
-//            rightBarButton.isEnabled = false
             navigationItem.setRightBarButton(rightBarButton, animated: false)
         }
         
