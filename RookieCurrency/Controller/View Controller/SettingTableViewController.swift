@@ -92,13 +92,20 @@ class SettingTableViewController: BaseSettingTableViewController {
         // update number of day ui
         do {
             let numberOfDayIndexPath = IndexPath(row: Row.numberOfDay.rawValue, section: 0)
-            
+
             guard let cell = tableView.cellForRow(at: numberOfDayIndexPath) else {
                 assertionFailure("###, \(#function), \(self), 拿不到設定 number of day 的 cell。")
                 return
             }
+
+            guard var contentConfiguration = cell.contentConfiguration as? UIListContentConfiguration else {
+                assertionFailure("###, \(#function), \(self), 在 data source method 中，cell 的 content configuration 應該要是 UIListContentConfiguration，但是中途被改掉了。")
+                return
+            }
             
-            cell.detailTextLabel?.text = editedNumberOfDayString
+            contentConfiguration.secondaryText = editedNumberOfDayString
+
+            cell.contentConfiguration = contentConfiguration
         }
     }
     
