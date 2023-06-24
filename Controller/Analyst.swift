@@ -11,50 +11,79 @@ import Foundation
 /// 從數據中分析出貨幣的升貶值的物件
 enum Analyst {
     
-    /// <#Description#>
-    /// - Parameters:
-    ///   - latestRate: <#latestRate description#>
-    ///   - historicalRateSet: <#historicalRateSet description#>
-    ///   - baseCurrency: <#baseCurrency description#>
-    static func analyze(latestRate: ResponseDataModel.LatestRate,
+    static func analyze(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
+                        latestRate: ResponseDataModel.LatestRate,
                         historicalRateSet: Set<ResponseDataModel.HistoricalRate>,
                         baseCurrency: ResponseDataModel.CurrencyCode)
-    -> [ResponseDataModel.CurrencyCode: (latest: Double, mean: Double, deviation: Double)] {
+    -> [ResponseDataModel.CurrencyCode: Result<AnalyzedData, AnalyzedError>] {
         
-        var result = [ResponseDataModel.CurrencyCode: (latest: Double, mean: Double, deviation: Double)]()
+        // 計算平均值
+        var meanResultDictionary: [ResponseDataModel.CurrencyCode: Result<Double, AnalyzedError>] = [:]
         
-        for currencyCode in Currency.allCases.map { $0.rawValue } {
+        for currencyCode in currencyOfInterest {
+            var mean: Double = 0
             for historicalRate in historicalRateSet {
-                // 基準貨幣的換算
-                result[currencyCode, default: (latest: 0, mean: 0, deviation: 0)].mean += historicalRate[currencyCode: baseCurrency]! / historicalRate[currencyCode: currencyCode]!
+                
+                let rateConverter = RateConverter(rate: historicalRate, baseCurrency: baseCurrency)
+                
+                if let convertedHistoricalRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
+                    mean += convertedHistoricalRateForCurrencyCode
+                } else {
+                    meanResultDictionary[currencyCode] = .failure(.dataAbsent)
+                    break
+                }
             }
-            result[currencyCode]!.mean /= Double(historicalRateSet.count)
-            
-            
-            
-            
-            
-            result[currencyCode]!.latest = latestRate[currencyCode: baseCurrency]! / latestRate[currencyCode: currencyCode]!
-            result[currencyCode]!.deviation = (latestRate[currencyCode: baseCurrency]! / latestRate[currencyCode: currencyCode]! - result[currencyCode]!.mean) / result[currencyCode]!.mean
+            mean /= Double(historicalRateSet.count)
+            meanResultDictionary[currencyCode] = .success(mean)
         }
         
-        result.removeValue(forKey: baseCurrency)
+        // 計算偏差
+        var resultDictionary: [ResponseDataModel.CurrencyCode: Result<AnalyzedData, AnalyzedError>] = [:]
         
-        return result
+        for (currencyCode, meanResult) in meanResultDictionary {
+            resultDictionary[currencyCode] = meanResult.flatMap { mean in
+                let rateConverter = RateConverter(rate: latestRate, baseCurrency: baseCurrency)
+                
+                if let convertedLatestRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
+                    let deviation = (convertedLatestRateForCurrencyCode - mean) / mean
+                    return .success((latest: convertedLatestRateForCurrencyCode , mean: mean, deviation: deviation))
+                } else {
+                    return .failure(.dataAbsent)
+                }
+            }
+        }
+        
+        return resultDictionary
     }
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+// MARK: - name space
+extension Analyst {
+    typealias AnalyzedData = (latest: Double, mean: Double, deviation: Double)
+    
+    enum AnalyzedError: Error {
+        case dataAbsent
+    }
+    
+    // 基準貨幣的換算，api 的資料邏輯是「一單位的基準貨幣等於多少單位的其他貨幣」，app 的邏輯是「一單位的其他貨幣等於多少單位的基準貨幣」。
+    private struct RateConverter<Category> where Category: RateCategoryProtocol {
+        typealias Rate = ResponseDataModel.Rate<Category>
+        
+        private let rate: Rate
+        
+        private let baseCurrency: ResponseDataModel.CurrencyCode
+        
+        init(rate: Rate,
+             baseCurrency: ResponseDataModel.CurrencyCode) {
+            self.rate = rate
+            self.baseCurrency = baseCurrency
+        }
+        
+        subscript(currencyCode currencyCode: ResponseDataModel.CurrencyCode) -> Double? {
+            guard let rateForBaseCurrency = rate[currencyCode: baseCurrency],
+                  let rateForCurrency = rate[currencyCode: currencyCode] else { return nil }
+            
+            return rateForBaseCurrency / rateForCurrency
+        }
+    }
+}

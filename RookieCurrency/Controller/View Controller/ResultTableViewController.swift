@@ -131,13 +131,31 @@ class ResultTableViewController: BaseResultTableViewController {
                 
                 // update table view
                 do {
-                    analyzedDataDictionary = Analyst
-                        .analyze(latestRate: latestRate,
+                    let analyzedResult = Analyst
+                        .analyze(currencyOfInterest: currencyOfInterest,
+                                 latestRate: latestRate,
                                  historicalRateSet: historicalRateSet,
                                  baseCurrency: baseCurrency)
-                    populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
-                                      order: self.order,
-                                      searchText: self.searchText)
+                    
+                    let analyzedErrors = analyzedResult
+                        .filter { _, result in
+                            switch result {
+                            case .failure: return true
+                            case .success: return false
+                            }
+                        }
+                    
+                    if analyzedErrors.isEmpty {
+                        analyzedDataDictionary = analyzedResult
+                            .compactMapValues { result in try? result.get() }
+                        
+                        populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
+                                          order: self.order,
+                                          searchText: self.searchText)
+                    } else {
+                        analyzedErrors.keys
+                        #warning("這邊要present alert，告知使用者要刪掉本地資料，全部重拿")
+                    }
                 }
                 
             case .failure(let error):

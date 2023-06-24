@@ -33,7 +33,7 @@ extension ResponseDataModel {
         
         /// Returns the three-letter currency code of the base currency used for this request.
         /// 貨幣跟匯率的鍵值對，1 單位新台幣等於多少其他貨幣
-        let rates: [String: Double]
+        private let rates: [String: Double]
         
         subscript(currencyCode currencyCode: CurrencyCode) -> Double? {
             rates[currencyCode]
@@ -123,42 +123,4 @@ extension ResponseDataModel.HistoricalRate: Hashable {
     func hash(into hasher: inout Hasher) {
         hasher.combine(dateString)
     }
-}
-
-/// 表示貨幣的 enum
-enum Currency: String, CaseIterable {
-    /// 新台幣
-    case TWD
-    /// 美金
-    case USD
-    /// 日圓
-    case JPY
-    /// 歐元
-    case EUR
-    /// 人民幣
-    case CNY
-    /// 英鎊
-    case GBP
-    /// 瑞典克朗
-    case SEK
-    /// 加拿大幣
-    case CAD
-    /// 南非幣
-    case ZAR
-    /// 港幣
-    case HKD
-    /// 新加坡幣
-    case SGD
-    /// 瑞士法郎
-    case CHF
-    /// 紐西蘭幣
-    case NZD
-    /// 澳幣
-    case AUD
-    /// 白銀 Silver (troy ounce)
-    case XAG
-    /// 黃金 Gold (troy ounce)
-    case XAU
-    
-    var code: String { self.rawValue }
 }

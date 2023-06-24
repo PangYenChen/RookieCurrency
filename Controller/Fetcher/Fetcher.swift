@@ -20,7 +20,7 @@ class Fetcher {
         /// 提供資料的服務商集團： https://apilayer.com/marketplace/category/currency
         /// 服務商之一："https://api.apilayer.com/fixer/"
         /// 服務商之二："https://api.apilayer.com/exchangerates_data"
-        let baseURL = "https://api.apilayer.com/fixer/"
+        let baseURL = "https://api.apilayer.com/exchangerates_data/"
 
         var urlComponents = URLComponents(string: baseURL)
 
