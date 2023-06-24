@@ -138,9 +138,12 @@ class ResultTableViewController: BaseResultTableViewController {
             let analyzedDataDictionary = rateSetSuccess
                 .withLatestFrom(userSetting)
                 .map { rateSet, userSetting in
-                    Analyst.analyze(latestRate: rateSet.latestRate,
-                                    historicalRateSet: rateSet.historicalRateSet,
-                                    baseCurrency: userSetting.baseCurrency)
+                    return Analyst.analyze(currencyOfInterest: userSetting.currencyOfInterest,
+                                           latestRate: rateSet.latestRate,
+                                           historicalRateSet: rateSet.historicalRateSet,
+                                           baseCurrency: userSetting.baseCurrency)
+                    .compactMapValues { result in try? result.get() }
+#warning("還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿")
                 }
             
             let shouldPopulateTableView = Publishers.CombineLatest3(analyzedDataDictionary, order, searchText).share()
