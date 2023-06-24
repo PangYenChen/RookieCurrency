@@ -103,7 +103,14 @@ class SettingTableViewController: BaseSettingTableViewController {
                     return
                 }
                 
-                cell.detailTextLabel?.text = editedNumberOfDayString
+                guard var contentConfiguration = cell.contentConfiguration as? UIListContentConfiguration else {
+                    assertionFailure("###, \(#function), \(self), 在 data source method 中，cell 的 content configuration 應該要是 UIListContentConfiguration，但是中途被改掉了。")
+                    return
+                }
+                
+                contentConfiguration.secondaryText = editedNumberOfDayString
+                
+                cell.contentConfiguration = contentConfiguration
             }
             .store(in: &anyCancellableSet)
         
