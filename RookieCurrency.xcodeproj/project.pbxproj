@@ -45,6 +45,8 @@
 		515D3D8829ED8C7400B84F4B /* SupportedSymbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515D3D8629ED8C7400B84F4B /* SupportedSymbols.swift */; };
 		515D3D8F29EEE81000B84F4B /* Symbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515D3D8E29EEE81000B84F4B /* Symbols.swift */; };
 		515D3D9029EEE81000B84F4B /* Symbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515D3D8E29EEE81000B84F4B /* Symbols.swift */; };
+		517CD31E2A47EE3800AB1E32 /* AnalystTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517CD31D2A47EE3800AB1E32 /* AnalystTest.swift */; };
+		517CD3212A47F32D00AB1E32 /* AnalystTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517CD31D2A47EE3800AB1E32 /* AnalystTest.swift */; };
 		51869FD829D9D31D00EFA13D /* RateControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* RateControllerTests.swift */; };
 		51869FD929D9D31D00EFA13D /* RateControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* RateControllerTests.swift */; };
 		5189F9D029DAD630004234D3 /* ImperativeRateControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5189F9CF29DAD630004234D3 /* ImperativeRateControllerTests.swift */; };
@@ -136,6 +138,7 @@
 		515D3D8629ED8C7400B84F4B /* SupportedSymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedSymbols.swift; sourceTree = "<group>"; };
 		515D3D8E29EEE81000B84F4B /* Symbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Symbols.swift; sourceTree = "<group>"; };
 		516916B92983D4C800547B60 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		517CD31D2A47EE3800AB1E32 /* AnalystTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalystTest.swift; sourceTree = "<group>"; };
 		51869FD729D9D31D00EFA13D /* RateControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateControllerTests.swift; sourceTree = "<group>"; };
 		5189F9CF29DAD630004234D3 /* ImperativeRateControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImperativeRateControllerTests.swift; sourceTree = "<group>"; };
 		519A642F29B0D5D000918B84 /* ArchiverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiverTest.swift; sourceTree = "<group>"; };
@@ -250,6 +253,7 @@
 				519A643429B4615B00918B84 /* ResponseDataModelTest.swift */,
 				51869FD729D9D31D00EFA13D /* RateControllerTests.swift */,
 				519A642F29B0D5D000918B84 /* ArchiverTest.swift */,
+				517CD31D2A47EE3800AB1E32 /* AnalystTest.swift */,
 			);
 			path = SharedTests;
 			sourceTree = "<group>";
@@ -704,6 +708,7 @@
 				51362E2629B4CF3F00E3CE89 /* RateInstance.swift in Sources */,
 				51E731C829B4DCFA00C1DB2B /* ArchiverTest.swift in Sources */,
 				51E731CA29B4DCFF00C1DB2B /* ResponseDataModelTest.swift in Sources */,
+				517CD31E2A47EE3800AB1E32 /* AnalystTest.swift in Sources */,
 				51E1B4B929ADADD800D75669 /* RateData.swift in Sources */,
 				5121216C29E2D60C001D234B /* TestDoubles.swift in Sources */,
 				5189F9D029DAD630004234D3 /* ImperativeRateControllerTests.swift in Sources */,
@@ -755,6 +760,7 @@
 				51362E4F29B4D93500E3CE89 /* RateInstance.swift in Sources */,
 				51E731C729B4DCF900C1DB2B /* ArchiverTest.swift in Sources */,
 				51E731C929B4DCFE00C1DB2B /* ResponseDataModelTest.swift in Sources */,
+				517CD3212A47F32D00AB1E32 /* AnalystTest.swift in Sources */,
 				5121216929E2D59F001D234B /* ReactiveRateControllerTests.swift in Sources */,
 				5121216D29E2D60C001D234B /* TestDoubles.swift in Sources */,
 				519A643929B462AE00918B84 /* TestingData.swift in Sources */,
