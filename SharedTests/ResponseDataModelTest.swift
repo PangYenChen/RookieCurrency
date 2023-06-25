@@ -17,7 +17,7 @@ import XCTest
 final class ResponseDataModelTest: XCTestCase {
     
     func testDecodeHistoricalRate() throws {
-        let jsonDecoder = JSONDecoder()
+        let jsonDecoder = ResponseDataModel.jsonDecoder
         let historicalRate = try jsonDecoder
             .decode(ResponseDataModel.HistoricalRate.self,
                     from: TestingData.historicalData!)
@@ -25,7 +25,7 @@ final class ResponseDataModelTest: XCTestCase {
     }
     
     func testDecodeLatestRate() throws {
-        let jsonDecoder = JSONDecoder()
+        let jsonDecoder = ResponseDataModel.jsonDecoder
         let historicalRate = try jsonDecoder
             .decode(ResponseDataModel.LatestRate.self,
                     from: TestingData.latestData!)
@@ -33,9 +33,10 @@ final class ResponseDataModelTest: XCTestCase {
     }
     
     func testEncodeAndThanDecode() throws {
+        let jsonEncoder = ResponseDataModel.jsonEncoder
         let dummyDateString = "1970-01-01"
         let dummyHistoricalRate = TestingData.historicalRate(dateString: dummyDateString)
-        let historicalRateData = try JSONEncoder().encode(dummyHistoricalRate)
+        let historicalRateData = try jsonEncoder.encode(dummyHistoricalRate)
         let decodedHistoricalRate = try JSONDecoder()
             .decode(ResponseDataModel.HistoricalRate.self, from: historicalRateData)
         XCTAssertEqual(dummyHistoricalRate, decodedHistoricalRate)
