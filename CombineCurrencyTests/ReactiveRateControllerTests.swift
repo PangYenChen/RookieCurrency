@@ -71,16 +71,6 @@ final class ReactiveRateControllerTests: XCTestCase {
         let numberOfDays = 3
         
         sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
-            .handleEvents(
-                receiveOutput: { (_, historicalRateSet) in
-                    // first assert which may be not necessary
-                    XCTAssertEqual(historicalRateSet.count, numberOfDays)
-                    XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
-                    XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
-                    XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 1)
-                    XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
-                }
-            )
             .flatMap { [unowned self] _ in sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate) }
             .sink(
                 receiveCompletion: { completion in

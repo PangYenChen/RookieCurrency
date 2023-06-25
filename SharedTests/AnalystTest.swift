@@ -16,7 +16,7 @@ import XCTest
 
 final class AnalystTest: XCTestCase {
 
-    func testExample() throws {
+    func testSingleDay() throws {
         
         let currencyOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
         let dateString = "1970-01-01"
