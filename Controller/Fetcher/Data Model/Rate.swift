@@ -33,7 +33,7 @@ extension ResponseDataModel {
         
         /// Returns the three-letter currency code of the base currency used for this request.
         /// 貨幣跟匯率的鍵值對，1 單位新台幣等於多少其他貨幣
-        private let rates: [String: Double]
+        let rates: [String: Double]
         
         subscript(currencyCode currencyCode: CurrencyCode) -> Double? {
             rates[currencyCode]

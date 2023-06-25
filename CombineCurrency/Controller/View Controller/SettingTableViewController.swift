@@ -42,7 +42,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - methods
     required init?(coder: NSCoder,
-                   userSetting: AppUtility.UserSetting,
+                   userSetting: BaseResultTableViewController.UserSetting,
                    updateSetting: AnySubscriber<(numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>), Never>) {
         
         editedNumberOfDay = CurrentValueSubject(userSetting.numberOfDay)

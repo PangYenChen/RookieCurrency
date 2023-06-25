@@ -12,7 +12,7 @@ import Combine
 class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - stored properties
-    private let userSetting: CurrentValueSubject<AppUtility.UserSetting, Never>
+    private let userSetting: CurrentValueSubject<UserSetting, Never>
     
     private let order: PassthroughSubject<Order, Never>
     

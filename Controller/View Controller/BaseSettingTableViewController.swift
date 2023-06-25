@@ -14,6 +14,7 @@ class BaseSettingTableViewController: UITableViewController {
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
     @IBOutlet weak var sectionFooterView: UIView!
+    
     let stepper: UIStepper
     
     @IBOutlet weak var versionLabel: UILabel!

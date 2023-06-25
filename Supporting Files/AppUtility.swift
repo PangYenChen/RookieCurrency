@@ -109,7 +109,3 @@ extension AppUtility {
         }
     }
 }
-// MARK: - name space
-extension AppUtility {
-    typealias UserSetting = (numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
-}

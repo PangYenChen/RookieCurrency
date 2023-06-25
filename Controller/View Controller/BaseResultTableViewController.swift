@@ -181,7 +181,7 @@ extension BaseResultTableViewController {
     }
 }
 
-// MARK: - name space
+// MARK: - private name space
 private extension BaseResultTableViewController {
     enum Section {
         case main
@@ -190,4 +190,9 @@ private extension BaseResultTableViewController {
     typealias DataSource = UITableViewDiffableDataSource<Section, ResponseDataModel.CurrencyCode>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ResponseDataModel.CurrencyCode>
     
+}
+
+// MARK: - name space
+extension BaseResultTableViewController {
+    typealias UserSetting = (numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
 }
