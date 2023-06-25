@@ -3,4 +3,102 @@
    uuid = "FA6453AB-E753-4328-86DF-2F654CCAA8C4"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6C6B9977-3F0F-47E8-88F2-9E2467946219"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CombineCurrencyTests/FetcherTests.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "501"
+            endingLineNumber = "501"
+            landmarkName = "testTooManyRequestSimultaneously()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "6C6B9977-3F0F-47E8-88F2-9E2467946219 - be2e912535c6b3da"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CombineCurrencyTests.FetcherTests.testTooManyRequestSimultaneously() throws -&gt; ()"
+                  moduleName = "CombineCurrencyTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/CombineCurrencyTests/FetcherTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "503"
+                  endingLineNumber = "503"
+                  offsetFromSymbolStart = "2224">
+               </Location>
+               <Location
+                  uuid = "6C6B9977-3F0F-47E8-88F2-9E2467946219 - be2e912535c6b3da"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CombineCurrencyTests.FetcherTests.testTooManyRequestSimultaneously() throws -&gt; ()"
+                  moduleName = "CombineCurrencyTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/CombineCurrencyTests/FetcherTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "503"
+                  endingLineNumber = "503"
+                  offsetFromSymbolStart = "2316">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "BC4BB488-6762-4D98-AC33-45197F913A24"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "CombineCurrencyTests/FetcherTests.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "509"
+            endingLineNumber = "509"
+            landmarkName = "testTooManyRequestSimultaneously()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BC4BB488-6762-4D98-AC33-45197F913A24 - be2e912535c6b122"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CombineCurrencyTests.FetcherTests.testTooManyRequestSimultaneously() throws -&gt; ()"
+                  moduleName = "CombineCurrencyTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/CombineCurrencyTests/FetcherTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "511"
+                  endingLineNumber = "511"
+                  offsetFromSymbolStart = "2676">
+               </Location>
+               <Location
+                  uuid = "BC4BB488-6762-4D98-AC33-45197F913A24 - be2e912535c6b122"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "CombineCurrencyTests.FetcherTests.testTooManyRequestSimultaneously() throws -&gt; ()"
+                  moduleName = "CombineCurrencyTests"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/CombineCurrencyTests/FetcherTests.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "511"
+                  endingLineNumber = "511"
+                  offsetFromSymbolStart = "2768">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

@@ -20,6 +20,8 @@ final class ReactiveRateControllerTests: XCTestCase {
     override func tearDown() {
         sut = nil
         TestDouble.SpyArchiver.reset()
+        anyCancellableSet.forEach { anyCancellable in anyCancellable.cancel() }
+        anyCancellableSet = Set<AnyCancellable>()
     }
     
     func testtestNoCacheAndDiskData() {

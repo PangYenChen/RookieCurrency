@@ -28,6 +28,8 @@ class FetcherTests: XCTestCase {
     override func tearDown() {
         sut = nil
         stubRateSession = nil
+        anyCancellableSet.forEach { anyCancellable in anyCancellable.cancel() }
+        anyCancellableSet = Set<AnyCancellable>()
     }
     
     func testPublishLatestRate() throws {
@@ -452,6 +454,97 @@ class FetcherTests: XCTestCase {
         
         waitForExpectations(timeout: timeoutTimeInterval)
     }
+    
+    func testTooManyRequestSimultaneously() throws {
+        // arrange
+        let spyAPIKeySession = SpyAPIKeyRateSession()
+        sut = Fetcher(rateSession: spyAPIKeySession)
+        let dummyEndpoint = Endpoint.Latest()
+        let apiFinishingExpectation = expectation(description: "api 流程正常結束")
+        apiFinishingExpectation.expectedFulfillmentCount = 2
+        let apiOutputExpectation = expectation(description: "收到 fetcher 回傳的資料")
+        apiOutputExpectation.expectedFulfillmentCount = 2
+        
+        // action
+        sut.publisher(for: dummyEndpoint)
+            .sink(
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .finished             : apiFinishingExpectation.fulfill()
+                    case .failure(let failure) : XCTFail("不應該收到錯誤卻收到\(failure)")
+                    }
+                },
+                receiveValue: { _ in apiOutputExpectation.fulfill() }
+            )
+            .store(in: &anyCancellableSet)
+        
+        sut.publisher(for: dummyEndpoint)
+            .sink(
+                receiveCompletion: { completion in
+                    switch completion {
+                    case .finished             : apiFinishingExpectation.fulfill()
+                    case .failure(let failure) : XCTFail("不應該收到錯誤卻收到\(failure)")
+                    }
+                },
+                receiveValue: { _ in apiOutputExpectation.fulfill() }
+            )
+            .store(in: &anyCancellableSet)
+        
+        
+        do {
+            let data     = try XCTUnwrap(TestingData.tooManyRequestData)
+            let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 429, httpVersion : nil, headerFields : nil))
+            
+            if let firstOutPutSubject = spyAPIKeySession.outPutSubjects.first {
+                firstOutPutSubject.send((data, response))
+                firstOutPutSubject.send(completion: .finished)
+            } else {
+                XCTFail("arrange 失誤，第一個 api call，fetcher 應該會 subscribe spy api key session，進而產生一個 subject")
+            }
+            
+            if spyAPIKeySession.outPutSubjects.count >= 2 {
+                let secondOutPutSubject = spyAPIKeySession.outPutSubjects[1]
+                secondOutPutSubject.send((data, response))
+                secondOutPutSubject.send(completion: .finished)
+            } else {
+                XCTFail("arrange 失誤，第二個 api call，fetcher 應該會 subscribe spy api key session，進而產生二個 subject")
+            }
+        }
+        
+        
+        do {
+            let data     = try XCTUnwrap(TestingData.latestData)
+            let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 200, httpVersion : nil, headerFields : nil))
+            
+            if spyAPIKeySession.outPutSubjects.count >= 3 {
+                let thirdOutPutSubject = spyAPIKeySession.outPutSubjects[2]
+                thirdOutPutSubject.send((data, response))
+                thirdOutPutSubject.send(completion: .finished)
+            } else {
+                XCTFail("arrange 失誤，第一個 api call，spy api key session 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 subscribe spy api key session，這時後應該要產生第三個 subject。")
+            }
+            
+            if spyAPIKeySession.outPutSubjects.count >= 4 {
+                let fourthOutPutSubject = spyAPIKeySession.outPutSubjects[3]
+                fourthOutPutSubject.send((data, response))
+                fourthOutPutSubject.send(completion: .finished)
+            } else {
+                XCTFail("arrange 失誤，第二個 api call，spy api key session 回傳 too many request 給 fetcher，這次 fetcher 判斷不需換 api key，重新 subscribe spy api key session，這時後應該要產生第四個 subject。")
+            }
+        }
+        
+        // assert
+        if spyAPIKeySession.receivedAPIKeys.count == 4 {
+            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[0], spyAPIKeySession.receivedAPIKeys[1])
+            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[2], spyAPIKeySession.receivedAPIKeys[3])
+        } else {
+            XCTFail("spy api key session 應該要剛好收到 4 個 request")
+        }
+        
+        waitForExpectations(timeout: timeoutTimeInterval)
+    }
 }
 
 private class StubRateSession: RateSession {
@@ -465,9 +558,14 @@ private class StubRateSession: RateSession {
 
 private class SpyRateSession: RateSession {
     
-    private(set) var receivedAPIKeys = [String]()
+    private(set) var receivedAPIKeys: [String]
     
-    var outputPublishers = [AnyPublisher<(data: Data, response: URLResponse), URLError>]()
+    var outputPublishers: [AnyPublisher<(data: Data, response: URLResponse), URLError>]
+    
+    init() {
+        receivedAPIKeys = []
+        outputPublishers = []
+    }
     
     func rateDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
         
@@ -482,5 +580,28 @@ private class SpyRateSession: RateSession {
         } else {
             return outputPublishers.removeFirst()
         }
+    }
+}
+
+
+private final class SpyAPIKeyRateSession: RateSession {
+    private(set) var receivedAPIKeys: [String]
+    
+    private(set) var outPutSubjects: [PassthroughSubject<(data: Data, response: URLResponse), URLError>]
+    
+    init() {
+        receivedAPIKeys = []
+        outPutSubjects = []
+    }
+    
+    func rateDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+        if let receivedAPIKey = request.value(forHTTPHeaderField: "apikey") {
+            receivedAPIKeys.append(receivedAPIKey)
+        }
+        
+        let outPutSubject = PassthroughSubject<(data: Data, response: URLResponse), URLError>()
+        outPutSubjects.append(outPutSubject)
+        
+        return outPutSubject.eraseToAnyPublisher()
     }
 }
