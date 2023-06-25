@@ -345,6 +345,45 @@ final class FetcherTests: XCTestCase {
         
         waitForExpectations(timeout: timeoutTimeInterval)
     }
+    
+    func testTooManyRequestSimultaneously() throws {
+        // arrange
+        
+        let spyAPIKeySession = SpyAPIKeyRateSession()
+        sut = Fetcher(rateSession: spyAPIKeySession)
+        let dummyEndpoint = Endpoint.Latest()
+        
+        // action
+        sut.fetch(dummyEndpoint) { _ in }
+        sut.fetch(dummyEndpoint) { _ in }
+        
+        do {
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: 429, httpVersion: nil, headerFields: nil))
+            
+            if let firstFetcherCompletionHandler = spyAPIKeySession.completionHandlers.first {
+                firstFetcherCompletionHandler(TestingData.tooManyRequestData, response, nil)
+            } else {
+                XCTFail("arrange 失誤，spy api key session 應該要收到來自 fetcher 的 completion handler")
+            }
+            
+            if spyAPIKeySession.completionHandlers.count >= 2 {
+                let secondFetcherCompletionHandler = spyAPIKeySession.completionHandlers[1]
+                secondFetcherCompletionHandler(TestingData.tooManyRequestData, response, nil)
+            } else  {
+                XCTFail("arrange 失誤，spy api key session 應該要收到來自兩個 fetcher 的 completion handler")
+            }
+        }
+        
+        // assert
+        if spyAPIKeySession.receivedAPIKeys.count == 4 {
+            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[0], spyAPIKeySession.receivedAPIKeys[1])
+            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[2], spyAPIKeySession.receivedAPIKeys[3])
+        } else {
+            XCTFail("spy api key session 應該要剛好收到 4 個 request")
+        }
+        
+    }
 }
 
 // MARK: - test double
@@ -364,9 +403,14 @@ private final class StubRateSession: RateSession {
 
 private final class SpyRateSession: RateSession {
     
-    var outputs = [(data: Data?, response: URLResponse?, error: Error?)]()
+    var outputs: [(data: Data?, response: URLResponse?, error: Error?)]
     
-    private(set) var receivedAPIKeys = [String]()
+    private(set) var receivedAPIKeys: [String]
+    
+    init() {
+        outputs = []
+        receivedAPIKeys = []
+    }
     
     func rateDataTask(with request: URLRequest,
                       completionHandler: (Data?, URLResponse?, Error?) -> Void) {
@@ -379,5 +423,24 @@ private final class SpyRateSession: RateSession {
         
         let output = outputs.removeFirst()
         completionHandler(output.data, output.response, output.error)
+    }
+}
+
+private final class SpyAPIKeyRateSession: RateSession {
+    
+    private(set) var completionHandlers: [(Data?, URLResponse?, Error?) -> Void]
+    
+    private(set) var receivedAPIKeys: [String]
+    
+    init() {
+        completionHandlers = []
+        receivedAPIKeys = []
+    }
+    
+    func rateDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+        completionHandlers.append(completionHandler)
+        if let receivedAPIKey = request.value(forHTTPHeaderField: "apikey") {
+            receivedAPIKeys.append(receivedAPIKey)
+        }
     }
 }
