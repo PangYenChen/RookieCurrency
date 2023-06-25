@@ -84,17 +84,6 @@ extension AppUtility {
     }()
 }
 
-// MARK: - JSONDecoder and JSONEncoder
-extension AppUtility {
-    static let jsonDecoder = JSONDecoder()
-    
-    static let jsonEncoder: JSONEncoder = {
-        let jsonEncoder = JSONEncoder()
-        jsonEncoder.outputFormatting = .prettyPrinted
-        return jsonEncoder
-    }()
-}
-
 // MARK: - pretty print json
 extension AppUtility {
     /// 把 data 轉乘 json 格式的字串，並在 console 顯示
