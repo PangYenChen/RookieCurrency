@@ -35,7 +35,7 @@ extension Fetcher {
         _ endpoint: Endpoint,
         completionHandler: @escaping (Result<Endpoint.ResponseType, Swift.Error>) -> Void
     ) {
-        let apiKey = usingAPIKey
+        let apiKey = getUsingAPIKey()
         let urlRequest = createRequest(url: endpoint.url, withAPIKey: apiKey)
         
         rateSession.rateDataTask(with: urlRequest) { [unowned self] data, response, error in

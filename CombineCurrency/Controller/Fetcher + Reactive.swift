@@ -31,7 +31,7 @@ extension Fetcher {
     func publisher<Endpoint: EndpointProtocol>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error> {
         
         func dataTaskPublisherWithLimitHandling(for endpoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> {
-            let apiKey = usingAPIKey
+            let apiKey = getUsingAPIKey()
             
             return rateSession.rateDataTaskPublisher(for: createRequest(url: endpoint.url, withAPIKey: apiKey))
                 .mapError { $0 }

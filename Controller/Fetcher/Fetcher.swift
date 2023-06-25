@@ -29,16 +29,21 @@ class Fetcher {
     
     let rateSession: RateSession
 
-    let jsonDecoder = ResponseDataModel.jsonDecoder
+    let jsonDecoder: JSONDecoder
+    
+    private let concurrentQueue: DispatchQueue
     
     init(rateSession: RateSession = Fetcher.rateSession) {
         self.rateSession = rateSession
+        
+        jsonDecoder = ResponseDataModel.jsonDecoder
+        concurrentQueue = DispatchQueue(label: "read write lock for api keys")
     }
     
     // MARK: - api key 相關
     private var unusedAPIKeys: Set<String> = ["pT4L8AtpKOIWiGoE0ouiak003mdE0Wvg", "R7fbgnoWFqhDtzxrfbYNgTbRJqLcNplL"]
     
-    private(set) var usingAPIKey: String = "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"
+    private  var usingAPIKey: String = "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"
     
     private var usedAPIKeys: Set<String> = []
     
@@ -79,23 +84,30 @@ extension Fetcher {
     /// 若已無 api key 可用，回傳 false，讓 call cite 處理。
     /// - Returns: 是否需要從打一次 api
     func updateAPIKeySucceed(apiKeyToBeDeprecated: String) -> Bool {
-        
-        if apiKeyToBeDeprecated == usingAPIKey {
-            // 正在用的 api key 要被換掉
-            if unusedAPIKeys.isEmpty {
-                // 已經沒有 api key 可以用了。
-                return false
+        concurrentQueue.sync(flags: .barrier) {
+            if apiKeyToBeDeprecated == usingAPIKey {
+                // 正在用的 api key 要被換掉
+                if unusedAPIKeys.isEmpty {
+                    // 已經沒有 api key 可以用了。
+                    return false
+                } else {
+                    // 已經換上新的 api key，需要從打一次 api
+                    usedAPIKeys.insert(usingAPIKey)
+                    usingAPIKey = unusedAPIKeys.removeFirst()
+                    return true
+                }
             } else {
-                // 已經換上新的 api key，需要從打一次 api
-                usedAPIKeys.insert(usingAPIKey)
-                usingAPIKey = unusedAPIKeys.removeFirst()
+                // 要被換掉的 api key 已經被其他隻 api 換掉了
                 return true
             }
-        } else {
-            // 要被換掉的 api key 已經被其他隻 api 換掉了
-            return true
         }
     }
+    
+    func getUsingAPIKey() -> String {
+        concurrentQueue.sync { usingAPIKey }
+    }
+    
+    
 }
 
 // MARK: - name space
