@@ -24,7 +24,7 @@ final class ReactiveRateControllerTests: XCTestCase {
         anyCancellableSet = Set<AnyCancellable>()
     }
     
-    func testtestNoCacheAndDiskData() {
+    func testNoCacheAndDiskData() {
         // arrange
         let stubFetcher = StubFetcher()
         let spyArchiver = TestDouble.SpyArchiver.self
@@ -41,22 +41,24 @@ final class ReactiveRateControllerTests: XCTestCase {
             .sink(
                 receiveCompletion: { completion in
                     switch completion {
-                    case .finished:
-                        finishedExpectation.fulfill()
-                    case .failure(let error):
-                        XCTFail("should not receive any failure but receive: \(error)")
+                    case .finished           : finishedExpectation.fulfill()
+                    case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
                     }
                 },
                 receiveValue: { (_, historicalRateSet) in
+                    // assert
                     XCTAssertEqual(historicalRateSet.count, numberOfDays)
-                    XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
-                    XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
-                    XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 1)
-                    XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
                     valueExpectation.fulfill()
                 }
             )
             .store(in: &anyCancellableSet)
+        
+        sut.concurrentQueue.sync {
+            XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
+            XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
+            XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 1)
+            XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
+        }
         
         waitForExpectations(timeout: timeoutInterval)
     }
@@ -67,34 +69,31 @@ final class ReactiveRateControllerTests: XCTestCase {
         let spyArchiver = TestDouble.SpyArchiver.self
         sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
         
-        let outputExpectation = expectation(description: "should receive rate")
-        let finishedExpectation = expectation(description: "should finish normally")
         let dummyStartingDate = Date(timeIntervalSince1970: 0)
         let numberOfDays = 3
         
+        // action
         sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
             .flatMap { [unowned self] _ in sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate) }
             .sink(
                 receiveCompletion: { completion in
                     switch completion {
-                    case .finished:
-                        finishedExpectation.fulfill()
-                    case .failure(let error):
-                        XCTFail("should not receive any failure but receive: \(error)")
+                    case .finished           : break
+                    case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
                     }
                 },
-                receiveValue: { (_, historicalRateSet) in
+                receiveValue: { _, historicalRateSet in
                     XCTAssertEqual(historicalRateSet.count, numberOfDays)
-                    XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
-                    XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
-                    XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 2)
-                    XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
-                    outputExpectation.fulfill()
                 }
             )
             .store(in: &anyCancellableSet)
-
-        waitForExpectations(timeout: timeoutInterval)
+        
+        sut.concurrentQueue.sync {
+            XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
+            XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
+            XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 2)
+            XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
+        }
     }
 }
 

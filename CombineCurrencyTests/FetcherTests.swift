@@ -496,15 +496,15 @@ class FetcherTests: XCTestCase {
             let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
             let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 429, httpVersion : nil, headerFields : nil))
             
-            if let firstOutPutSubject = spyAPIKeySession.outPutSubjects.first {
+            if let firstOutPutSubject = spyAPIKeySession.outputSubjects.first {
                 firstOutPutSubject.send((data, response))
                 firstOutPutSubject.send(completion: .finished)
             } else {
                 XCTFail("arrange 失誤，第一個 api call，fetcher 應該會 subscribe spy api key session，進而產生一個 subject")
             }
             
-            if spyAPIKeySession.outPutSubjects.count >= 2 {
-                let secondOutPutSubject = spyAPIKeySession.outPutSubjects[1]
+            if spyAPIKeySession.outputSubjects.count >= 2 {
+                let secondOutPutSubject = spyAPIKeySession.outputSubjects[1]
                 secondOutPutSubject.send((data, response))
                 secondOutPutSubject.send(completion: .finished)
             } else {
@@ -518,16 +518,16 @@ class FetcherTests: XCTestCase {
             let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
             let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 200, httpVersion : nil, headerFields : nil))
             
-            if spyAPIKeySession.outPutSubjects.count >= 3 {
-                let thirdOutPutSubject = spyAPIKeySession.outPutSubjects[2]
+            if spyAPIKeySession.outputSubjects.count >= 3 {
+                let thirdOutPutSubject = spyAPIKeySession.outputSubjects[2]
                 thirdOutPutSubject.send((data, response))
                 thirdOutPutSubject.send(completion: .finished)
             } else {
                 XCTFail("arrange 失誤，第一個 api call，spy api key session 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 subscribe spy api key session，這時後應該要產生第三個 subject。")
             }
             
-            if spyAPIKeySession.outPutSubjects.count >= 4 {
-                let fourthOutPutSubject = spyAPIKeySession.outPutSubjects[3]
+            if spyAPIKeySession.outputSubjects.count >= 4 {
+                let fourthOutPutSubject = spyAPIKeySession.outputSubjects[3]
                 fourthOutPutSubject.send((data, response))
                 fourthOutPutSubject.send(completion: .finished)
             } else {
@@ -587,11 +587,11 @@ private class SpyRateSession: RateSession {
 private final class SpyAPIKeyRateSession: RateSession {
     private(set) var receivedAPIKeys: [String]
     
-    private(set) var outPutSubjects: [PassthroughSubject<(data: Data, response: URLResponse), URLError>]
+    private(set) var outputSubjects: [PassthroughSubject<(data: Data, response: URLResponse), URLError>]
     
     init() {
         receivedAPIKeys = []
-        outPutSubjects = []
+        outputSubjects = []
     }
     
     func rateDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
@@ -599,9 +599,9 @@ private final class SpyAPIKeyRateSession: RateSession {
             receivedAPIKeys.append(receivedAPIKey)
         }
         
-        let outPutSubject = PassthroughSubject<(data: Data, response: URLResponse), URLError>()
-        outPutSubjects.append(outPutSubject)
+        let outputSubject = PassthroughSubject<(data: Data, response: URLResponse), URLError>()
+        outputSubjects.append(outputSubject)
         
-        return outPutSubject.eraseToAnyPublisher()
+        return outputSubject.eraseToAnyPublisher()
     }
 }
