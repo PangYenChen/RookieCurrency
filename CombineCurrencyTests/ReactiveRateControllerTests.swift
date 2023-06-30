@@ -24,35 +24,28 @@ final class ReactiveRateControllerTests: XCTestCase {
         anyCancellableSet = Set<AnyCancellable>()
     }
     
-    func testNoCacheAndDiskData() {
+    func testNoCacheAndDiskData() throws {
         // arrange
         let stubFetcher = StubFetcher()
         let spyArchiver = TestDouble.SpyArchiver.self
         sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
         
-        let valueExpectation = expectation(description: "should receive rate")
-        let finishedExpectation = expectation(description: "should finish normally")
         let dummyStartingDate = Date(timeIntervalSince1970: 0)
         let numberOfDays = 3
+        
+        var expectedCompletion: Subscribers.Completion<Error>?
+        var expectedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
         
         // action
         sut
             .ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
             .sink(
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished           : finishedExpectation.fulfill()
-                    case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
-                    }
-                },
-                receiveValue: { (_, historicalRateSet) in
-                    // assert
-                    XCTAssertEqual(historicalRateSet.count, numberOfDays)
-                    valueExpectation.fulfill()
-                }
+                receiveCompletion: { completion in expectedCompletion = completion },
+                receiveValue: { _, historicalRateSet in expectedHistoricalRateSet = historicalRateSet }
             )
             .store(in: &anyCancellableSet)
         
+        // assert
         sut.concurrentQueue.sync {
             XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
             XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
@@ -60,7 +53,17 @@ final class ReactiveRateControllerTests: XCTestCase {
             XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
         }
         
-        waitForExpectations(timeout: timeoutInterval)
+        do {
+            switch expectedCompletion {
+            case .finished           : break
+            case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
+            case .none               : XCTFail("should receive a completion.")
+            }
+        }
+        
+        do {
+            XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
+        }
     }
     
     func testAllFromCache() throws {
@@ -72,27 +75,29 @@ final class ReactiveRateControllerTests: XCTestCase {
         let dummyStartingDate = Date(timeIntervalSince1970: 0)
         let numberOfDays = 3
         
-        var isNormallyFinish: Bool?
+        var expectedCompletion: Subscribers.Completion<Error>?
         var expectedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
         
         // action
         sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
             .flatMap { [unowned self] _ in sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate) }
             .sink(
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished           : isNormallyFinish = true
-                    case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
-                    }
-                },
+                receiveCompletion: { completion in expectedCompletion = completion },
                 receiveValue: { _, historicalRateSet in expectedHistoricalRateSet = historicalRateSet }
             )
             .store(in: &anyCancellableSet)
         
         // assert
         do {
-            let isNormallyFinish = try XCTUnwrap(isNormallyFinish)
-            XCTAssertTrue(isNormallyFinish)
+            switch expectedCompletion {
+            case .finished           : break
+            case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
+            case .none               : XCTFail("should receive a completion.")
+            }
+        }
+        
+        do {
+            XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
         }
         
         XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
