@@ -104,7 +104,7 @@ extension RateController {
                     } catch {
                         #warning("這段需要 unit test")
                         // fall back to fetch
-                        self.fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { [unowned self] result in
+                        fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { [unowned self] result in
                             switch result {
                             case .success(let fetchedHistoricalRate):
                                 concurrentQueue.async { [unowned self] in

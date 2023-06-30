@@ -35,7 +35,11 @@ extension RateController {
                     return Future<ResponseDataModel.HistoricalRate, Error> { [unowned self] promise in
                         concurrentQueue.async { [unowned self] in
                             do {
-                                try promise(.success(archiver.unarchive(historicalRateDateString: dateString)))
+                                let unarchivedHistoricalRate = try archiver.unarchive(historicalRateDateString: dateString)
+                                concurrentQueue.async(flags: .barrier) { [unowned self] in
+                                    historicalRateDictionary[unarchivedHistoricalRate.dateString] = unarchivedHistoricalRate
+                                }
+                                promise(.success(unarchivedHistoricalRate))
                             } catch {
                                 promise(.failure(error))
                             }

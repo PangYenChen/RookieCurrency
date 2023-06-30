@@ -26,26 +26,6 @@ enum Archiver {
 
 extension Archiver {
     
-    /// 讀取先前存放的資料
-    static func unarchive() throws -> Set<ResponseDataModel.HistoricalRate> {
-        
-        guard FileManager.default.fileExists(atPath: archiveURL.path) else { return [] }
-        
-        let data = try Data(contentsOf: archiveURL)
-        let historicalRateSet = try jsonDecoder.decode(Set<ResponseDataModel.HistoricalRate>.self, from: data)
-        
-        print("###", self, #function, "讀取資料:\n\t", historicalRateSet)
-        return historicalRateSet
-    }
-    
-    /// 寫入資料
-    /// - Parameter rateSet: 要寫入的資料
-    static func archive(_ historicalRateSet: Set<ResponseDataModel.HistoricalRate>) throws {
-        let data = try jsonEncoder.encode(historicalRateSet)
-        try data.write(to: archiveURL)
-        print("###", self, #function, "寫入資料:\n\t", historicalRateSet)
-    }
-    
     /// 寫入資料
     /// - Parameter historicalRate: 要寫入的資料
     static func archive(historicalRate: ResponseDataModel.HistoricalRate) throws {
