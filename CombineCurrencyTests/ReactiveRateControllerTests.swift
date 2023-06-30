@@ -63,7 +63,7 @@ final class ReactiveRateControllerTests: XCTestCase {
         waitForExpectations(timeout: timeoutInterval)
     }
     
-    func testAllFromCache() {
+    func testAllFromCache() throws {
         // arrange
         let stubFetcher = StubFetcher()
         let spyArchiver = TestDouble.SpyArchiver.self
@@ -72,21 +72,30 @@ final class ReactiveRateControllerTests: XCTestCase {
         let dummyStartingDate = Date(timeIntervalSince1970: 0)
         let numberOfDays = 3
         
+        var isNormallyFinish: Bool?
+        var expectedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
+        
         // action
         sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
             .flatMap { [unowned self] _ in sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate) }
             .sink(
                 receiveCompletion: { completion in
                     switch completion {
-                    case .finished           : break
+                    case .finished           : isNormallyFinish = true
                     case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
                     }
                 },
-                receiveValue: { _, historicalRateSet in
-                    XCTAssertEqual(historicalRateSet.count, numberOfDays)
-                }
+                receiveValue: { _, historicalRateSet in expectedHistoricalRateSet = historicalRateSet }
             )
             .store(in: &anyCancellableSet)
+        
+        // assert
+        do {
+            let isNormallyFinish = try XCTUnwrap(isNormallyFinish)
+            XCTAssertTrue(isNormallyFinish)
+        }
+        
+        XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
         
         sut.concurrentQueue.sync {
             XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)

@@ -73,9 +73,9 @@ extension Fetcher {
     /// 產生 timeout 時限為 5 秒，且帶上 api key 的 `URLRequest`
     /// - Parameter url: The URL to be retrieved.
     /// - Returns: The new url request.
-    func createRequest(url: URL, withAPIKey: String) -> URLRequest {
+    func createRequest(url: URL, withAPIKey apiKey: String) -> URLRequest {
         var urlRequest = URLRequest(url: url, timeoutInterval: 5)
-        urlRequest.addValue(usingAPIKey, forHTTPHeaderField: "apikey")
+        urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
         return urlRequest
     }
     
