@@ -30,14 +30,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         isReceivingFirstData = true
         
         super.init(coder: coder, strategy: strategy)
-        
-        do {
-            let searchController = UISearchController()
-            navigationItem.searchController = searchController
-            searchController.searchBar.delegate = self
-        }
-        
-        title = strategy.title
     }
     
     required init?(coder: NSCoder) {
@@ -46,81 +38,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        // sort bar button item
-        do {
-            
-            let currencyNameMenu: UIMenu
-            
-            let ascendingAction: UIAction
-            
-            do {
-                ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
-                                           image: UIImage(systemName: "arrow.up.right"),
-                                           state: .on,
-                                           handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .ascending) })
-                
-                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
-                                                image: UIImage(systemName: "arrow.down.right"),
-                                                handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .descending) })
-                
-                currencyNameMenu = UIMenu(title: SortingMethod.currencyName.localizedName,
-                                          children: [ascendingAction, descendingAction])
-            }
-            
-            let currencyCodeMenu: UIMenu
-            do {
-                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
-                                               image: UIImage(systemName: "arrow.up.right"),
-                                               handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .ascending) })
-                
-                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
-                                                image: UIImage(systemName: "arrow.down.right"),
-                                                handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .descending) })
-                
-                currencyCodeMenu = UIMenu(title: SortingMethod.currencyCode.localizedName,
-                                          children: [ascendingAction, descendingAction])
-            }
-            
-            var children = [currencyNameMenu, currencyCodeMenu]
-            
-            // 注音
-            if Bundle.main.preferredLocalizations.first == "zh-Hant" {
-                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
-                                               image: UIImage(systemName: "arrow.up.right"),
-                                               handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .ascending) })
-                
-                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
-                                                image: UIImage(systemName: "arrow.down.right"),
-                                                handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .descending) })
-                
-                let currencyZhuyinMenu = UIMenu(title: SortingMethod.currencyNameZhuyin.localizedName,
-                                                children: [ascendingAction, descendingAction])
-                
-                children.append(currencyZhuyinMenu)
-            }
-            
-            let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
-                                  image: UIImage(systemName: "arrow.up.arrow.down"),
-                                  options: .singleSelection,
-                                  children: children)
-            
-            sortBarButtonItem.menu = UIMenu(title: "",
-                                            options: .singleSelection,
-                                            children: [sortMenu])
-            
-            // set up the initial state
-            do {
-                ascendingAction.state = .on
-                
-                // The value of properties `sortingMethod` and `sortingOrder` could be changed between the call of `init` and `viewDidLoad`,
-                // so we need to reset them in order to be consistent with the ascendingAction.state
-                sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
-                
-                self.sortingMethod = .currencyName
-                self.sortingOrder = .ascending
-            }
-        }
         
         // table view refresh controller
         do {
@@ -134,8 +51,22 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         }
     }
     
+    // MARK: - Hook methods
+    override func getSortingOrder() -> BaseCurrencyTableViewController.SortingOrder {
+        sortingOrder
+    }
+    
     override func getSortingMethod() -> BaseCurrencyTableViewController.SortingMethod {
         sortingMethod
+    }
+    
+    override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
+        sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
+        
+        self.sortingMethod = sortingMethod
+        self.sortingOrder = sortingOrder
+        
+        convertDataThenPopulateTableView()
     }
 }
 
@@ -283,15 +214,6 @@ private extension CurrencyTableViewController {
             }
         }
         
-    }
-    
-    func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
-        sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
-        
-        self.sortingMethod = sortingMethod
-        self.sortingOrder = sortingOrder
-        
-        convertDataThenPopulateTableView()
     }
 }
 

@@ -39,6 +39,8 @@ class BaseCurrencyTableViewController: UITableViewController {
             searchController.searchBar.delegate = self
             navigationItem.hidesSearchBarWhenScrolling = false
         }
+        
+        title = strategy.title
     }
     
     override func viewDidLoad() {
@@ -95,14 +97,99 @@ class BaseCurrencyTableViewController: UITableViewController {
             
             dataSource.defaultRowAnimation = .fade
         }
+        
+        // sort bar button item
+        do {
+            
+            let currencyNameMenu: UIMenu
+            
+            let ascendingAction: UIAction
+            
+            do {
+                ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
+                                           image: UIImage(systemName: "arrow.up.right"),
+                                           state: .on,
+                                           handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .ascending) })
+                
+                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
+                                                image: UIImage(systemName: "arrow.down.right"),
+                                                handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .descending) })
+                
+                currencyNameMenu = UIMenu(title: SortingMethod.currencyName.localizedName,
+                                          children: [ascendingAction, descendingAction])
+            }
+            
+            let currencyCodeMenu: UIMenu
+            do {
+                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
+                                               image: UIImage(systemName: "arrow.up.right"),
+                                               handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .ascending) })
+                
+                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
+                                                image: UIImage(systemName: "arrow.down.right"),
+                                                handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .descending) })
+                
+                currencyCodeMenu = UIMenu(title: SortingMethod.currencyCode.localizedName,
+                                          children: [ascendingAction, descendingAction])
+            }
+            
+            var children = [currencyNameMenu, currencyCodeMenu]
+            
+            // 注音
+            if Bundle.main.preferredLocalizations.first == "zh-Hant" {
+                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
+                                               image: UIImage(systemName: "arrow.up.right"),
+                                               handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .ascending) })
+                
+                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
+                                                image: UIImage(systemName: "arrow.down.right"),
+                                                handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .descending) })
+                
+                let currencyZhuyinMenu = UIMenu(title: SortingMethod.currencyNameZhuyin.localizedName,
+                                                children: [ascendingAction, descendingAction])
+                
+                children.append(currencyZhuyinMenu)
+            }
+            
+            let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
+                                  image: UIImage(systemName: "arrow.up.arrow.down"),
+                                  options: .singleSelection,
+                                  children: children)
+            
+            sortBarButtonItem.menu = UIMenu(title: "",
+                                            options: .singleSelection,
+                                            children: [sortMenu])
+            
+            // set up the initial state
+            do {
+                ascendingAction.state = .on
+                
+                // The value of properties `sortingMethod` and `sortingOrder` could be changed between the call of `init` and `viewDidLoad`,
+                // so we need to reset them in order to be consistent with the ascendingAction.state
+                sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(getSortingMethod().localizedName, getSortingOrder().localizedName)
+                #warning("確定一下 subtitle 能不能跟後續點擊一樣改變")
+                
+//                set(sortingMethod: .currencyName, sortingOrder: .ascending)
+                #warning("出事啦 這樣給初始值 imperative target 會 crash")
+            }
+        }
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    // MARK: - Hook methods
     func getSortingMethod() -> SortingMethod {
         fatalError("getSortingMethod() has not been implemented")
+    }
+    
+    func getSortingOrder() -> SortingOrder {
+        fatalError("getSortingOrder() has not been implemented")
+    }
+    
+    func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
+        fatalError("set(sortingMethod:sortingOrder:) has not been implemented")
     }
 }
 
