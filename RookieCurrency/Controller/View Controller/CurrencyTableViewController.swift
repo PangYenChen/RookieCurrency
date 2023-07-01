@@ -70,25 +70,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     }
 }
 
-// MARK: - table view delegate relative
-extension CurrencyTableViewController {
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let selectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
-            assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
-            return
-        }
-        strategy.select(currencyCode: selectedCurrencyCode)
-    }
-    
-    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        guard let deselectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
-            assertionFailure("###, \(self), \(#function), 取消選取的 item 不在 data source 中，這不可能發生。")
-            return
-        }
-        strategy.deselect(currencyCode: deselectedCurrencyCode)
-    }
-}
-
 // MARK: - search bar delegate
 extension CurrencyTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
