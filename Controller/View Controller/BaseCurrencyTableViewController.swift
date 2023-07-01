@@ -14,8 +14,22 @@ class BaseCurrencyTableViewController: UITableViewController {
     // MARK: - property
     @IBOutlet weak var sortBarButtonItem: UIBarButtonItem!
     
+    let fetcher: Fetcher
+    
+    let strategy: CurrencyTableStrategy
+    
+    var dataSource: DataSource!
+    
+    var currencyCodeDescriptionDictionary: [String: String]
+    
     // MARK: - methods
-    required init?(coder: NSCoder) {
+    required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
+        
+        fetcher = Fetcher.shared
+        
+        self.strategy = strategy
+        
+        currencyCodeDescriptionDictionary = [:]
         
         super.init(coder: coder)
         
@@ -25,6 +39,70 @@ class BaseCurrencyTableViewController: UITableViewController {
             searchController.searchBar.delegate = self
             navigationItem.hidesSearchBarWhenScrolling = false
         }
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        tableView.allowsMultipleSelection = strategy.allowsMultipleSelection
+        
+        // table view data source and delegate
+        do {
+            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
+                let identifier = R.reuseIdentifier.currencyCell.identifier
+                let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+                
+                cell.automaticallyUpdatesContentConfiguration = true
+                cell.configurationUpdateHandler = { [unowned self] cell, state in
+                    var contentConfiguration = cell.defaultContentConfiguration()
+                    
+                    // content
+                    do {
+                        let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
+                        let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
+                        
+                        switch getSortingMethod() {
+                        case .currencyName, .currencyNameZhuyin:
+                            contentConfiguration.text = localizedCurrencyDescription ?? serverCurrencyDescription
+                            contentConfiguration.secondaryText = currencyCode
+                        case .currencyCode:
+                            contentConfiguration.text = currencyCode
+                            contentConfiguration.secondaryText = localizedCurrencyDescription ?? serverCurrencyDescription
+                        }
+                    }
+                    
+                    // font
+                    do {
+                        contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
+                        contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
+                        
+                        contentConfiguration.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
+                        contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
+                    }
+                    
+                    // other
+                    do {
+                        contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
+                        contentConfiguration.textToSecondaryTextVerticalPadding = 4
+                    }
+                    
+                    cell.contentConfiguration = contentConfiguration
+                    cell.accessoryType = state.isSelected ? .checkmark : .none
+                }
+                
+                return cell
+            }
+            
+            dataSource.defaultRowAnimation = .fade
+        }
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func getSortingMethod() -> SortingMethod {
+        fatalError("getSortingMethod() has not been implemented")
     }
 }
 

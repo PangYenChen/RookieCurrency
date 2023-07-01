@@ -17,19 +17,9 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private var searchText: String
     
-    private var currencyCodeDescriptionDictionary: [String: String]
-    
-    private var dataSource: DataSource!
-    
     private var isReceivingFirstData: Bool
     
-    private let fetcher: Fetcher
-    
-    private let strategy: CurrencyTableStrategy
-    
-    init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
-        
-        self.strategy = strategy
+    required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
         
         sortingMethod = .currencyName
         
@@ -37,13 +27,9 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         
         searchText = ""
         
-        currencyCodeDescriptionDictionary = [:]
-        
         isReceivingFirstData = true
         
-        fetcher = Fetcher.shared
-        
-        super.init(coder: coder)
+        super.init(coder: coder, strategy: strategy)
         
         do {
             let searchController = UISearchController()
@@ -60,60 +46,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        tableView.allowsMultipleSelection = strategy.allowsMultipleSelection
-        
-        // table view data source and delegate
-        do {
-            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
-                let identifier = R.reuseIdentifier.currencyCell.identifier
-                let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
-                
-                cell.automaticallyUpdatesContentConfiguration = true
-                cell.configurationUpdateHandler = { [unowned self] cell, state in
-                    var contentConfiguration = cell.defaultContentConfiguration()
-                    
-                    // content
-                    do {
-                        let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
-                        let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
-                        
-                        switch sortingMethod {
-                        case .currencyName, .currencyNameZhuyin:
-                            contentConfiguration.text = localizedCurrencyDescription ?? serverCurrencyDescription
-                            contentConfiguration.secondaryText = currencyCode
-                        case .currencyCode:
-                            contentConfiguration.text = currencyCode
-                            contentConfiguration.secondaryText = localizedCurrencyDescription ?? serverCurrencyDescription
-                        }
-                    }
-                    
-                    // font
-                    do {
-                        contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
-                        contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
-                        
-                        contentConfiguration.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
-                        contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
-                    }
-                    
-                    // other
-                    do {
-                        contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-                        contentConfiguration.textToSecondaryTextVerticalPadding = 4
-                        
-                    }
-                    
-                    cell.contentConfiguration = contentConfiguration
-                    cell.accessoryType = state.isSelected ? .checkmark : .none
-                }
-                
-                
-                return cell
-            }
-            
-            dataSource.defaultRowAnimation = .fade
-        }
         
         // sort bar button item
         do {
@@ -200,6 +132,10 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             tableView.refreshControl?.beginRefreshing()
             tableView.refreshControl?.sendActions(for: .primaryActionTriggered)
         }
+    }
+    
+    override func getSortingMethod() -> BaseCurrencyTableViewController.SortingMethod {
+        sortingMethod
     }
 }
 
