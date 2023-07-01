@@ -11,9 +11,6 @@ import Combine
 
 class CurrencyTableViewController: BaseCurrencyTableViewController {
     
-    // MARK: - property
-    @IBOutlet private weak var sortBarButtonItem: UIBarButtonItem!
-    
     private var currencyCodeDescriptionDictionary: [String: String]
     
     private let sortingMethodAndOrder: CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>
@@ -324,10 +321,14 @@ private extension CurrencyTableViewController {
     }
 }
 
-// MARK: - search bar delegate relative
+// MARK: - search bar delegate
 extension CurrencyTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText.send(searchText)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchText.send("")
     }
 }
 

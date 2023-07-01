@@ -10,9 +10,6 @@ import UIKit
 
 class CurrencyTableViewController: BaseCurrencyTableViewController {
     
-    // MARK: - IBOutlet
-    @IBOutlet private var sortBarButtonItem: UIBarButtonItem!
-    
     // MARK: - private properties
     private var sortingMethod: SortingMethod
     
@@ -225,10 +222,15 @@ extension CurrencyTableViewController {
     }
 }
 
-// MARK: - search bar delegate relative
+// MARK: - search bar delegate
 extension CurrencyTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText = searchText
+        convertDataThenPopulateTableView()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchText = ""
         convertDataThenPopulateTableView()
     }
 }

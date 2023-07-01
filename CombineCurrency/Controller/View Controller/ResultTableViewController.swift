@@ -195,6 +195,6 @@ extension ResultTableViewController {
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        self.searchText.send("")
+        searchText.send("")
     }
 }

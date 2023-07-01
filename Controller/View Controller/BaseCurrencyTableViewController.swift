@@ -11,6 +11,9 @@ import UIKit
 /// 這裡的 base 是 base class 的意思，不是基準貨幣
 class BaseCurrencyTableViewController: UITableViewController {
     
+    // MARK: - property
+    @IBOutlet weak var sortBarButtonItem: UIBarButtonItem!
+    
     // MARK: - methods
     required init?(coder: NSCoder) {
         
