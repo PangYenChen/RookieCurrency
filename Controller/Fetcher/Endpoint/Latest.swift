@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Endpoint {
+extension Endpoints {
     struct Latest: BaseOnTWD {
         typealias ResponseType = ResponseDataModel.LatestRate
         

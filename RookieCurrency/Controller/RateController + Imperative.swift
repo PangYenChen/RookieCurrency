@@ -64,7 +64,7 @@ extension RateController {
             .forEach { historicalRateDateString in
                 dispatchGroup.enter()
                 
-                fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { [unowned self] result in
+                fetcher.fetch(Endpoints.Historical(dateString: historicalRateDateString)) { [unowned self] result in
                     switch result {
                     case .success(let fetchedHistoricalRate):
                         concurrentQueue.async { [unowned self] in
@@ -104,7 +104,7 @@ extension RateController {
                     } catch {
                         #warning("這段需要 unit test")
                         // fall back to fetch
-                        fetcher.fetch(Endpoint.Historical(dateString: historicalRateDateString)) { [unowned self] result in
+                        fetcher.fetch(Endpoints.Historical(dateString: historicalRateDateString)) { [unowned self] result in
                             switch result {
                             case .success(let fetchedHistoricalRate):
                                 concurrentQueue.async { [unowned self] in
@@ -132,7 +132,7 @@ extension RateController {
         var latestRateResult: Result<ResponseDataModel.LatestRate, Error>!
         
         dispatchGroup.enter()
-        fetcher.fetch(Endpoint.Latest()) { result in
+        fetcher.fetch(Endpoints.Latest()) { result in
             latestRateResult = result
             dispatchGroup.leave()
         }

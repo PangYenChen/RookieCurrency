@@ -46,7 +46,7 @@ extension RateController {
                         }
                     }
                     .catch { [unowned self] _ in
-                        fetcher.publisher(for: Endpoint.Historical(dateString: dateString))
+                        fetcher.publisher(for: Endpoints.Historical(dateString: dateString))
                             .handleEvents(
                                 receiveOutput: { [unowned self] historicalRate in
                                     concurrentQueue.async(flags: .barrier) { [unowned self] in
@@ -58,7 +58,7 @@ extension RateController {
                     }
                     .eraseToAnyPublisher()
                 } else {
-                    return fetcher.publisher(for: Endpoint.Historical(dateString: dateString))
+                    return fetcher.publisher(for: Endpoints.Historical(dateString: dateString))
                         .handleEvents(
                             receiveOutput: { [unowned self] historicalRate in
                                 concurrentQueue.async(flags: .barrier) { [unowned self] in
@@ -71,7 +71,7 @@ extension RateController {
                 }
             }
             .collect(numberOfDay)
-            .combineLatest(fetcher.publisher(for: Endpoint.Latest()))
+            .combineLatest(fetcher.publisher(for: Endpoints.Latest()))
             .map { (latestRate: $0.1, historicalRateSet: Set($0.0)) }
             .eraseToAnyPublisher()
     }

@@ -187,7 +187,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         do {
             
             let symbolsResult = refreshControlTriggered
-                .flatMap { [unowned self] in fetcher.publisher(for: Endpoint.SupportedSymbols()) }
+                .flatMap { [unowned self] in fetcher.publisher(for: Endpoints.SupportedSymbols()) }
                 .convertOutputToResult()
                 .share()
             

@@ -54,7 +54,7 @@ class FetcherTests: XCTestCase {
         }
         
         // action
-        sut.publisher(for: Endpoint.Latest())
+        sut.publisher(for: Endpoints.Latest())
             .sink(
                 // assert
                 receiveCompletion: { completion in
@@ -102,7 +102,7 @@ class FetcherTests: XCTestCase {
         let dummyDateString = "1970-01-01"
         
         // action
-        sut.publisher(for: Endpoint.Historical(dateString: dummyDateString))
+        sut.publisher(for: Endpoints.Historical(dateString: dummyDateString))
             .sink(
                 // assert
                 receiveCompletion: { completion in
@@ -130,7 +130,7 @@ class FetcherTests: XCTestCase {
     func testInvalidJSONData() throws {
         // arrange
         let expectation = expectation(description: "should fail to decode")
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         
         do {
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
@@ -173,7 +173,7 @@ class FetcherTests: XCTestCase {
     func testTimeout() {
         // arrange
         let expectation = expectation(description: "should time out")
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         do {
             stubRateSession.outputPublisher = Fail(error: URLError(URLError.timedOut))
                 .eraseToAnyPublisher()
@@ -212,7 +212,7 @@ class FetcherTests: XCTestCase {
         
         let valueExpectation = expectation(description: "should receive a result")
         let finishedExpectation = expectation(description: "should complete normally")
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         
         do {
             // first response
@@ -271,7 +271,7 @@ class FetcherTests: XCTestCase {
     func testTooManyRequestFallBack() throws {
         // arrange
         let expectation = expectation(description: "should be unable to recover, pass error to down stream")
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         do {
             let dummyData = try XCTUnwrap(TestingData.latestData)
             
@@ -316,7 +316,7 @@ class FetcherTests: XCTestCase {
         // arrange
         let spyRateSession = SpyRateSession()
         sut = Fetcher(rateSession: spyRateSession)
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         let valueExpectation = expectation(description: "should receive a dummy rate instance")
         let finishedExpectation = expectation(description: "should complete normally")
         
@@ -374,7 +374,7 @@ class FetcherTests: XCTestCase {
     func testInvalidAPIKeyFallBack() throws {
         // arrange
         let errorExpectation = expectation(description: "should a receive Fetcher.Error.invalidAPIKey")
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         
         do {
             let dummyData = try XCTUnwrap(TestingData.invalidAPIKeyData)
@@ -434,7 +434,7 @@ class FetcherTests: XCTestCase {
         }
         
         // action
-        sut.publisher(for: Endpoint.SupportedSymbols())
+        sut.publisher(for: Endpoints.SupportedSymbols())
             .sink(
                 // assert
                 receiveCompletion: { completion in
@@ -459,7 +459,7 @@ class FetcherTests: XCTestCase {
         // arrange
         let spyAPIKeySession = SpyAPIKeyRateSession()
         sut = Fetcher(rateSession: spyAPIKeySession)
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         let apiFinishingExpectation = expectation(description: "api 流程正常結束")
         apiFinishingExpectation.expectedFulfillmentCount = 2
         let apiOutputExpectation = expectation(description: "收到 fetcher 回傳的資料")

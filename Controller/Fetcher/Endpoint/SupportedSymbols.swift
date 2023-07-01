@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Endpoint {
+extension Endpoints {
     struct SupportedSymbols: PartialPathProvider {
         typealias ResponseType = ResponseDataModel.Symbols
         

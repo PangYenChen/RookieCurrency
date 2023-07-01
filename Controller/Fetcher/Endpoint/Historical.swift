@@ -8,7 +8,7 @@
 
 import Foundation
 
-extension Endpoint {
+extension Endpoints {
     struct Historical: BaseOnTWD {
         typealias ResponseType = ResponseDataModel.HistoricalRate
         

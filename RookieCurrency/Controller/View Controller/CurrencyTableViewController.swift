@@ -236,7 +236,7 @@ extension CurrencyTableViewController {
 // MARK: - private method
 private extension CurrencyTableViewController {
     func refreshControlTriggered() {
-        fetcher.fetch(Endpoint.SupportedSymbols()) { [weak self] result in
+        fetcher.fetch(Endpoints.SupportedSymbols()) { [weak self] result in
             guard let self else { return }
             
             DispatchQueue.main.async { [weak self] in

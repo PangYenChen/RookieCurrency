@@ -1,5 +1,5 @@
 //
-//  Endpoint.swift
+//  Endpoints.swift
 //  RookieCurrency
 //
 //  Created by 陳邦彥 on 2023/2/28.
@@ -9,4 +9,4 @@
 import Foundation
 
 /// name space for type confirming `EndpointProtocol`
-enum Endpoint {}
+enum Endpoints {}

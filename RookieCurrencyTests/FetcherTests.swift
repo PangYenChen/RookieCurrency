@@ -45,7 +45,7 @@ final class FetcherTests: XCTestCase {
         
         // action
         sut
-            .fetch(Endpoint.Latest()) { result in
+            .fetch(Endpoints.Latest()) { result in
                 // assert
                 switch result {
                 case .success(let latestRate):
@@ -81,7 +81,7 @@ final class FetcherTests: XCTestCase {
         
         // action
         sut
-            .fetch(Endpoint.Historical(dateString: dummyDateString)) { result in
+            .fetch(Endpoints.Historical(dateString: dummyDateString)) { result in
                 // assert
                 switch result {
                 case .success(let rate):
@@ -102,7 +102,7 @@ final class FetcherTests: XCTestCase {
     func testInvalidJSONData() throws {
         // arrange
         let expectation = expectation(description: "should fail to decode")
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         do {
             stubRateSession.data = Data()
             
@@ -135,7 +135,7 @@ final class FetcherTests: XCTestCase {
     func testTimeout() {
         // arrange
         let expectation = expectation(description: "should time out")
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         do {
             stubRateSession.data = nil
             stubRateSession.response = nil
@@ -167,7 +167,7 @@ final class FetcherTests: XCTestCase {
         sut = Fetcher(rateSession: spyRateSession)
         
         let expectation = expectation(description: "should receive a result")
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         
         do {
             // first response
@@ -210,7 +210,7 @@ final class FetcherTests: XCTestCase {
     func testTooManyRequestFallBack() throws {
         // arrange
         let expectation = expectation(description: "should be unable to recover, pass error to call cite")
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         do {
             stubRateSession.data = TestingData.tooManyRequestData
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
@@ -246,7 +246,7 @@ final class FetcherTests: XCTestCase {
         sut = Fetcher(rateSession: spyRateSession)
         
         let expectation = expectation(description: "should receive a dummy rate")
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         
         do {
             // first response
@@ -286,7 +286,7 @@ final class FetcherTests: XCTestCase {
     func testInvalidAPIKeyFallBack() throws {
         // arrange
         let expectation = expectation(description: "should be unable to recover, pass error to call cite")
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         do {
             stubRateSession.data = TestingData.tooManyRequestData
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
@@ -332,7 +332,7 @@ final class FetcherTests: XCTestCase {
         }
             
         // action
-        sut.fetch(Endpoint.SupportedSymbols()) { result in
+        sut.fetch(Endpoints.SupportedSymbols()) { result in
             // assert
             switch result {
             case .success(let supportedSymbols):
@@ -351,7 +351,7 @@ final class FetcherTests: XCTestCase {
         
         let spyAPIKeySession = SpyAPIKeyRateSession()
         sut = Fetcher(rateSession: spyAPIKeySession)
-        let dummyEndpoint = Endpoint.Latest()
+        let dummyEndpoint = Endpoints.Latest()
         let apiFinishingExpectation = expectation(description: "spy 應該收到 4 個 api key，前兩個一樣，後兩個一樣")
         apiFinishingExpectation.expectedFulfillmentCount = 2
         
