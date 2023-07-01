@@ -173,6 +173,17 @@ class BaseCurrencyTableViewController: UITableViewController {
                 #warning("出事啦 這樣給初始值 imperative target 會 crash")
             }
         }
+        
+        // table view refresh controller
+        do {
+            tableView.refreshControl = UIRefreshControl()
+            
+            let action = UIAction { [unowned self] _ in triggerRefreshControl() }
+            tableView.refreshControl?.addAction(action, for: .primaryActionTriggered)
+            
+            tableView.refreshControl?.beginRefreshing()
+            tableView.refreshControl?.sendActions(for: .primaryActionTriggered)
+        }
     }
     
     required init?(coder: NSCoder) {
@@ -190,6 +201,10 @@ class BaseCurrencyTableViewController: UITableViewController {
     
     func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
         fatalError("set(sortingMethod:sortingOrder:) has not been implemented")
+    }
+    
+    func triggerRefreshControl() {
+        fatalError("triggerRefreshControl() has not been implemented")
     }
 }
 

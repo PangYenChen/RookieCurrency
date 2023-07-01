@@ -15,6 +15,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private let searchText: CurrentValueSubject<String, Never>
     
+    private let triggerRefreshControlSubject: PassthroughSubject<Void, Never>
+    
     private var isReceivingFirstData: Bool
     
     private var anyCancellableSet: Set<AnyCancellable>
@@ -25,6 +27,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         sortingMethodAndOrder = CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>((method: .currencyName, order: .ascending))
         
         searchText = CurrentValueSubject<String, Never>("")
+        
+        triggerRefreshControlSubject = PassthroughSubject<Void, Never>()
         
         isReceivingFirstData = true
         
@@ -39,14 +43,11 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
 
     // MARK: - Hook methods
     override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        let refreshControlTriggered = PassthroughSubject<Void, Never>()
-        
+
         // subscribe
         do {
             
-            let symbolsResult = refreshControlTriggered
+            let symbolsResult = triggerRefreshControlSubject
                 .flatMap { [unowned self] in fetcher.publisher(for: Endpoints.SupportedSymbols()) }
                 .convertOutputToResult()
                 .share()
@@ -162,16 +163,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                 .store(in: &anyCancellableSet)
         }
         
-        // table view refresh controller
-        do {
-            tableView.refreshControl = UIRefreshControl()
-            
-            let action = UIAction { _ in refreshControlTriggered.send() }
-            tableView.refreshControl?.addAction(action, for: .primaryActionTriggered)
-            
-            tableView.refreshControl?.beginRefreshing()
-            tableView.refreshControl?.sendActions(for: .primaryActionTriggered)
-        }
+        super.viewDidLoad()
     }
     
     override func getSortingMethod() -> BaseCurrencyTableViewController.SortingMethod {
@@ -186,6 +178,10 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
         
         sortingMethodAndOrder.send((method: sortingMethod, order: sortingOrder))
+    }
+    
+    override func triggerRefreshControl() {
+        triggerRefreshControlSubject.send()
     }
 }
 

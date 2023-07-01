@@ -36,21 +36,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        // table view refresh controller
-        do {
-            tableView.refreshControl = UIRefreshControl()
-            
-            let action = UIAction { [unowned self] _ in refreshControlTriggered() }
-            tableView.refreshControl?.addAction(action, for: .primaryActionTriggered)
-            
-            tableView.refreshControl?.beginRefreshing()
-            tableView.refreshControl?.sendActions(for: .primaryActionTriggered)
-        }
-    }
-    
     // MARK: - Hook methods
     override func getSortingOrder() -> BaseCurrencyTableViewController.SortingOrder {
         sortingOrder
@@ -68,24 +53,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         
         convertDataThenPopulateTableView()
     }
-}
-
-// MARK: - search bar delegate
-extension CurrencyTableViewController {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.searchText = searchText
-        convertDataThenPopulateTableView()
-    }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchText = ""
-        convertDataThenPopulateTableView()
-    }
-}
-
-// MARK: - private method
-private extension CurrencyTableViewController {
-    func refreshControlTriggered() {
+    override func triggerRefreshControl() {
         fetcher.fetch(Endpoints.SupportedSymbols()) { [weak self] result in
             guard let self else { return }
             
@@ -104,6 +73,23 @@ private extension CurrencyTableViewController {
             }
         }
     }
+}
+
+// MARK: - search bar delegate
+extension CurrencyTableViewController {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        self.searchText = searchText
+        convertDataThenPopulateTableView()
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        searchText = ""
+        convertDataThenPopulateTableView()
+    }
+}
+
+// MARK: - private method
+private extension CurrencyTableViewController {
     
     func convertDataThenPopulateTableView() {
         var snapshot = Snapshot()
