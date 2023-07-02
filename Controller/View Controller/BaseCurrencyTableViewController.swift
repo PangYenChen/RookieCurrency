@@ -261,6 +261,7 @@ class BaseCurrencyTableViewController: UITableViewController {
         }
         
         snapshot.appendItems(filteredCurrencyCodes)
+        snapshot.reloadSections([.main])
         
         DispatchQueue.main.async { [weak self] in
             
