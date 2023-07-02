@@ -17,7 +17,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private let triggerRefreshControlSubject: PassthroughSubject<Void, Never>
     
-    private var isReceivingFirstData: Bool
+    private var isFirstTimePopulate: Bool
     
     private var anyCancellableSet: Set<AnyCancellable>
     
@@ -30,7 +30,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         
         triggerRefreshControlSubject = PassthroughSubject<Void, Never>()
         
-        isReceivingFirstData = true
+        isFirstTimePopulate = true
         
         anyCancellableSet = Set<AnyCancellable>()
         
@@ -46,7 +46,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
 
         // subscribe
         do {
-            
             let symbolsResult = triggerRefreshControlSubject
                 .flatMap { [unowned self] in fetcher.publisher(for: Endpoints.SupportedSymbols()) }
                 .convertOutputToResult()
@@ -63,106 +62,23 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                 .store(in: &anyCancellableSet)
             
             symbolsResult.resultSuccess()
-                .handleEvents(receiveOutput: { [unowned self] supportedSymbols in
-                    currencyCodeDescriptionDictionary = supportedSymbols.symbols
-                })
                 .combineLatest(sortingMethodAndOrder, searchText)
                 .sink { [unowned self] (supportedSymbols, sortingMethodAndOrder, searchText) in
+                    currencyCodeDescriptionDictionary = supportedSymbols.symbols
                     
                     let (sortingMethod, sortingOrder) = sortingMethodAndOrder
                     
-                    var snapshot = Snapshot()
-                    snapshot.appendSections([.main])
-                    
-                    let currencyCodes = currencyCodeDescriptionDictionary.keys
-                    
-                    let sortedCurrencyCodes = currencyCodes.sorted { lhs, rhs in
-                        
-                        switch sortingMethod {
-                        case .currencyName, .currencyNameZhuyin:
-                            let lhsString: String
-                            do {
-                                let lhsLocalizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: lhs)
-                                let lhsServerCurrencyDescription = currencyCodeDescriptionDictionary[lhs]
-                                lhsString = lhsLocalizedCurrencyDescription ?? lhsServerCurrencyDescription ?? lhs
-                            }
-                            
-                            let rhsString: String
-                            do {
-                                let rhsLocalizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: rhs)
-                                let rhsServerCurrencyDescription = currencyCodeDescriptionDictionary[rhs]
-                                rhsString = rhsLocalizedCurrencyDescription ?? rhsServerCurrencyDescription ?? rhs
-                            }
-                            
-                            if sortingMethod == .currencyName {
-                                switch sortingOrder {
-                                case .ascending:
-                                    return lhsString.localizedStandardCompare(rhsString) == .orderedAscending
-                                case .descending:
-                                    return lhsString.localizedStandardCompare(rhsString) == .orderedDescending
-                                }
-                            } else if sortingMethod == .currencyNameZhuyin {
-                                let zhuyinLocale = Locale(identifier: "zh@collation=zhuyin")
-                                switch sortingOrder {
-                                case .ascending:
-                                    return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedAscending
-                                case .descending:
-                                    return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedDescending
-                                }
-                            } else {
-                                assertionFailure("###, \(self), \(#function), 這段是 dead code")
-                                return false
-                            }
-                            
-                        case .currencyCode:
-                            switch sortingOrder {
-                            case .ascending:
-                                return lhs.localizedStandardCompare(rhs) == .orderedAscending
-                            case .descending:
-                                return lhs.localizedStandardCompare(rhs) == .orderedDescending
-                            }
-                        }
-                    }
-                    
-                    var filteredCurrencyCodes = sortedCurrencyCodes
-                    
-                    if !searchText.isEmpty {
-                        filteredCurrencyCodes = sortedCurrencyCodes
-                            .filter { currencyCode in
-                                [currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)]
-                                    .compactMap { $0 }
-                                    .contains { text in text.localizedStandardContains(searchText) }
-                            }
-                    }
-                    
-                    snapshot.appendItems(filteredCurrencyCodes)
-                    
-                    DispatchQueue.main.async { [weak self] in
-                        
-                        self?.dataSource.apply(snapshot) { [weak self] in
-                            guard let self else { return }
-                            
-                            let selectedIndexPath = strategy.selectedCurrencies
-                                .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
-                            
-                            selectedIndexPath
-                                .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
-                            
-                            // scroll to first selected index path when first time receiving data
-                            if self.isReceivingFirstData {
-                                guard let firstSelectedIndexPath = selectedIndexPath.min() else  {
-                                    assertionFailure("###, \(self), \(#function), 資料發生錯誤，外面傳進來的資料不能是空的")
-                                    return
-                                }
-                                tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
-                                self.isReceivingFirstData = false
-                            }
-                        }
-                    }
+                    convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
+                                                     sortingMethod: sortingMethod,
+                                                     sortingOrder: sortingOrder,
+                                                     searchText: searchText,
+                                                     isFirstTimePopulate: isFirstTimePopulate)
+                    isFirstTimePopulate = false
                 }
                 .store(in: &anyCancellableSet)
         }
         
+        // super 的 viewDidLoad 給初始值，所以要在最後 call
         super.viewDidLoad()
     }
     

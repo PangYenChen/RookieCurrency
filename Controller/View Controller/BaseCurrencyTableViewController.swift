@@ -42,6 +42,10 @@ class BaseCurrencyTableViewController: UITableViewController {
         
         title = strategy.title
     }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -186,8 +190,101 @@ class BaseCurrencyTableViewController: UITableViewController {
         }
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    // MARK: - method
+    func convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],
+                                          sortingMethod: SortingMethod,
+                                          sortingOrder: SortingOrder,
+                                          searchText: String,
+                                          isFirstTimePopulate: Bool) {
+        var snapshot = Snapshot()
+        snapshot.appendSections([.main])
+        
+        let currencyCodes = currencyCodeDescriptionDictionary.keys
+        
+        let sortedCurrencyCodes = currencyCodes.sorted { lhs, rhs in
+            
+            switch sortingMethod {
+            case .currencyName, .currencyNameZhuyin:
+                let lhsString: String
+                do {
+                    let lhsLocalizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: lhs)
+                    let lhsServerCurrencyDescription = currencyCodeDescriptionDictionary[lhs]
+                    lhsString = lhsLocalizedCurrencyDescription ?? lhsServerCurrencyDescription ?? lhs
+                }
+                
+                let rhsString: String
+                do {
+                    let rhsLocalizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: rhs)
+                    let rhsServerCurrencyDescription = currencyCodeDescriptionDictionary[rhs]
+                    rhsString = rhsLocalizedCurrencyDescription ?? rhsServerCurrencyDescription ?? rhs
+                }
+                
+                if sortingMethod == .currencyName {
+                    switch sortingOrder {
+                    case .ascending:
+                        return lhsString.localizedStandardCompare(rhsString) == .orderedAscending
+                    case .descending:
+                        return lhsString.localizedStandardCompare(rhsString) == .orderedDescending
+                    }
+                } else if sortingMethod == .currencyNameZhuyin {
+                    let zhuyinLocale = Locale(identifier: "zh@collation=zhuyin")
+                    switch sortingOrder {
+                    case .ascending:
+                        return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedAscending
+                    case .descending:
+                        return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedDescending
+                    }
+                } else {
+                    assertionFailure("###, \(self), \(#function), 這段是 dead code")
+                    return false
+                }
+                
+            case .currencyCode:
+                switch sortingOrder {
+                case .ascending:
+                    return lhs.localizedStandardCompare(rhs) == .orderedAscending
+                case .descending:
+                    return lhs.localizedStandardCompare(rhs) == .orderedDescending
+                }
+            }
+        }
+        
+        var filteredCurrencyCodes = sortedCurrencyCodes
+        
+        if !searchText.isEmpty {
+            filteredCurrencyCodes = sortedCurrencyCodes
+                .filter { currencyCode in
+                    [currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)]
+                        .compactMap { $0 }
+                        .contains { text in text.localizedStandardContains(searchText) }
+                }
+        }
+        
+        snapshot.appendItems(filteredCurrencyCodes)
+        
+        DispatchQueue.main.async { [weak self] in
+            
+            self?.dataSource.apply(snapshot) { [weak self] in
+                guard let self else { return }
+                
+                let selectedIndexPath = strategy.selectedCurrencies
+                    .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
+                
+                selectedIndexPath
+                    .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
+                
+                // scroll to first selected index path when first time receiving data
+                if isFirstTimePopulate {
+                    
+                    if let firstSelectedIndexPath = selectedIndexPath.min()  {
+                        tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
+                    }
+                    else {
+                        presentAlert(message: "### 服務商已不支援先前所選的貨幣，請重新選取。")
+                    }
+                }
+            }
+        }
     }
 
     // MARK: - Hook methods
@@ -262,14 +359,14 @@ extension BaseCurrencyTableViewController {
         var localizedName: String {
             switch self {
             case .ascending: return R.string.localizable.ascending()
-            case .descending: return R.string.localizable.decreasing()
+            case .descending: return R.string.localizable.descending()
             }
         }
     }
 }
 
 // MARK: - Error Alert Presenter
-extension BaseCurrencyTableViewController: ErrorAlertPresenter {}
+extension BaseCurrencyTableViewController: AlertPresenter {}
 
 // MARK: - strategy
 protocol CurrencyTableStrategy {

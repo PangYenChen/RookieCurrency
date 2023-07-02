@@ -159,7 +159,7 @@ class ResultTableViewController: BaseResultTableViewController {
                 }
                 
             case .failure(let error):
-                presentErrorAlert(error: error)
+                presentAlert(error: error)
             }
             
             do { // update updatingStatusItem

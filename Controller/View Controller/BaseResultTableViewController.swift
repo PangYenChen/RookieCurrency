@@ -158,7 +158,7 @@ class BaseResultTableViewController: UITableViewController {
 }
 
 // MARK: - Error Alert Presenter
-extension BaseResultTableViewController: ErrorAlertPresenter {}
+extension BaseResultTableViewController: AlertPresenter {}
 
 // MARK: - Search Bar Delegate
 extension BaseResultTableViewController: UISearchBarDelegate {}

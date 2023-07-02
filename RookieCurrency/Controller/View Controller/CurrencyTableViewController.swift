@@ -17,7 +17,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private var searchText: String
     
-    private var isReceivingFirstData: Bool
+    private var isFirstTimePopulate: Bool
     
     required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
         
@@ -27,7 +27,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         
         searchText = ""
         
-        isReceivingFirstData = true
+        isFirstTimePopulate = true
         
         super.init(coder: coder, strategy: strategy)
     }
@@ -51,7 +51,14 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         self.sortingMethod = sortingMethod
         self.sortingOrder = sortingOrder
         
-        convertDataThenPopulateTableView()
+        convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
+                                         sortingMethod: self.sortingMethod,
+                                         sortingOrder: self.sortingOrder,
+                                         searchText: searchText,
+                                         isFirstTimePopulate: isFirstTimePopulate)
+        if isFirstTimePopulate {
+            isFirstTimePopulate = false
+        }
     }
     
     override func triggerRefreshControl() {
@@ -65,10 +72,15 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             switch result {
             case .success(let supportedSymbols):
                 currencyCodeDescriptionDictionary = supportedSymbols.symbols
-                convertDataThenPopulateTableView()
+                convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
+                                                 sortingMethod: sortingMethod,
+                                                 sortingOrder: sortingOrder,
+                                                 searchText: searchText,
+                                                 isFirstTimePopulate: isFirstTimePopulate)
+                isFirstTimePopulate = false
             case .failure(let failure):
                 DispatchQueue.main.async { [weak self] in
-                    self?.presentErrorAlert(error: failure)
+                    self?.presentAlert(error: failure)
                 }
             }
         }
@@ -79,108 +91,22 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
 extension CurrencyTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText = searchText
-        convertDataThenPopulateTableView()
+        convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
+                                         sortingMethod: sortingMethod,
+                                         sortingOrder: sortingOrder,
+                                         searchText: self.searchText,
+                                         isFirstTimePopulate: isFirstTimePopulate)
+        isFirstTimePopulate = false
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchText = ""
-        convertDataThenPopulateTableView()
-    }
-}
-
-// MARK: - private method
-private extension CurrencyTableViewController {
-    
-    func convertDataThenPopulateTableView() {
-        var snapshot = Snapshot()
-        snapshot.appendSections([.main])
-        
-        let currencyCodes = currencyCodeDescriptionDictionary.keys
-        
-        let sortedCurrencyCodes = currencyCodes.sorted { lhs, rhs in
-            
-            switch sortingMethod {
-            case .currencyName, .currencyNameZhuyin:
-                let lhsString: String
-                do {
-                    let lhsLocalizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: lhs)
-                    let lhsServerCurrencyDescription = currencyCodeDescriptionDictionary[lhs]
-                    lhsString = lhsLocalizedCurrencyDescription ?? lhsServerCurrencyDescription ?? lhs
-                }
-                
-                let rhsString: String
-                do {
-                    let rhsLocalizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: rhs)
-                    let rhsServerCurrencyDescription = currencyCodeDescriptionDictionary[rhs]
-                    rhsString = rhsLocalizedCurrencyDescription ?? rhsServerCurrencyDescription ?? rhs
-                }
-                
-                if sortingMethod == .currencyName {
-                    switch sortingOrder {
-                    case .ascending:
-                        return lhsString.localizedStandardCompare(rhsString) == .orderedAscending
-                    case .descending:
-                        return lhsString.localizedStandardCompare(rhsString) == .orderedDescending
-                    }
-                } else if sortingMethod == .currencyNameZhuyin {
-                    let zhuyinLocale = Locale(identifier: "zh@collation=zhuyin")
-                    switch sortingOrder {
-                    case .ascending:
-                        return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedAscending
-                    case .descending:
-                        return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedDescending
-                    }
-                } else {
-                    assertionFailure("###, \(self), \(#function), 這段是 dead code")
-                    return false
-                }
-                
-            case .currencyCode:
-                switch sortingOrder {
-                case .ascending:
-                    return lhs.localizedStandardCompare(rhs) == .orderedAscending
-                case .descending:
-                    return lhs.localizedStandardCompare(rhs) == .orderedDescending
-                }
-            }
-        }
-        
-        var filteredCurrencyCodes = sortedCurrencyCodes
-        
-        if !searchText.isEmpty {
-            filteredCurrencyCodes = sortedCurrencyCodes
-                .filter { currencyCode in
-                    [currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)]
-                        .compactMap { $0 }
-                        .contains { text in text.localizedStandardContains(searchText) }
-                }
-        }
-        
-        snapshot.appendItems(filteredCurrencyCodes)
-        
-        DispatchQueue.main.async { [weak self] in
-            
-            self?.dataSource.apply(snapshot) { [weak self] in
-                guard let self else { return }
-                
-                let selectedIndexPath = strategy.selectedCurrencies
-                    .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
-                
-                selectedIndexPath
-                    .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
-                
-                // scroll to first selected index path when first time receiving data
-                if self.isReceivingFirstData {
-                    guard let firstSelectedIndexPath = selectedIndexPath.min() else  {
-                        assertionFailure("###, \(self), \(#function), 資料發生錯誤，外面傳進來的資料不能是空的")
-                        return
-                    }
-                    tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
-                    self.isReceivingFirstData = false
-                }
-            }
-        }
-        
+        convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
+                                         sortingMethod: sortingMethod,
+                                         sortingOrder: sortingOrder,
+                                         searchText: searchText,
+                                         isFirstTimePopulate: isFirstTimePopulate)
+        isFirstTimePopulate = false
     }
 }
 

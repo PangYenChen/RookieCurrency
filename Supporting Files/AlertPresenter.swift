@@ -8,20 +8,21 @@
 
 import UIKit
 
-protocol ErrorAlertPresenter {
-    func presentErrorAlert(error: Error)
+protocol AlertPresenter {
+    func presentAlert(error: Error)
+    func presentAlert(message: String)
 }
 
-extension ErrorAlertPresenter where Self: UIViewController {
-    func presentErrorAlert(error: Error) {
-        
+extension AlertPresenter where Self: UIViewController {
+    
+    func presentAlert(message: String) {
         let alertController: UIAlertController
         
         // alert controller
         do {
             let alertTitle = R.string.localizable.alertTitle()
             alertController = UIAlertController(title: alertTitle,
-                                                message: error.localizedDescription,
+                                                message: message,
                                                 preferredStyle: .alert)
         }
         
@@ -33,5 +34,9 @@ extension ErrorAlertPresenter where Self: UIViewController {
         }
         
         present(alertController, animated: true)
+    }
+    
+    func presentAlert(error: Error) {
+        presentAlert(message: error.localizedDescription)
     }
 }
