@@ -46,6 +46,12 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
 
         // subscribe
         do {
+            sortingMethodAndOrder
+                .sink { [unowned self] (sortingMethod, sortingOrder) in
+                    sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
+                }
+                .store(in: &anyCancellableSet)
+            
             let symbolsResult = triggerRefreshControlSubject
                 .flatMap { [unowned self] in fetcher.publisher(for: Endpoints.SupportedSymbols()) }
                 .convertOutputToResult()
@@ -58,7 +64,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             
             symbolsResult.resultFailure()
                 .receive(on: DispatchQueue.main)
-                .sink { [weak self] error in self?.presentErrorAlert(error: error) }
+                .sink { [weak self] error in self?.presentAlert(error: error) }
                 .store(in: &anyCancellableSet)
             
             symbolsResult.resultSuccess()
@@ -68,7 +74,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
                     
                     let (sortingMethod, sortingOrder) = sortingMethodAndOrder
                     
-                    convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
+                    convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: supportedSymbols.symbols,
                                                      sortingMethod: sortingMethod,
                                                      sortingOrder: sortingOrder,
                                                      searchText: searchText,
@@ -86,13 +92,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         sortingMethodAndOrder.value.method
     }
     
-    override func getSortingOrder() -> BaseCurrencyTableViewController.SortingOrder {
-        sortingMethodAndOrder.value.order
-    }
-    
     override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
-        sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
-        
         sortingMethodAndOrder.send((method: sortingMethod, order: sortingOrder))
     }
     

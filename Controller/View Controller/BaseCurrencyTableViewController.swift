@@ -20,7 +20,7 @@ class BaseCurrencyTableViewController: UITableViewController {
     
     var dataSource: DataSource!
     
-    var currencyCodeDescriptionDictionary: [String: String]
+    var currencyCodeDescriptionDictionary: [String: String]?
     
     // MARK: - methods
     required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
@@ -29,7 +29,7 @@ class BaseCurrencyTableViewController: UITableViewController {
         
         self.strategy = strategy
         
-        currencyCodeDescriptionDictionary = [:]
+        currencyCodeDescriptionDictionary = nil
         
         super.init(coder: coder)
         
@@ -65,15 +65,21 @@ class BaseCurrencyTableViewController: UITableViewController {
                     // content
                     do {
                         let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
+                        guard let currencyCodeDescriptionDictionary else {
+                            assertionFailure("###, \(self), \(#function), 這段是 dead code，因為會進到這裡的 currency code 都是從 currencyCodeDescriptionDictionary 中 filter 剩下的。")
+                            return
+                        }
                         let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
+                        
+                        let currencyDescription = localizedCurrencyDescription ?? serverCurrencyDescription
                         
                         switch getSortingMethod() {
                         case .currencyName, .currencyNameZhuyin:
-                            contentConfiguration.text = localizedCurrencyDescription ?? serverCurrencyDescription
+                            contentConfiguration.text = currencyDescription
                             contentConfiguration.secondaryText = currencyCode
                         case .currencyCode:
                             contentConfiguration.text = currencyCode
-                            contentConfiguration.secondaryText = localizedCurrencyDescription ?? serverCurrencyDescription
+                            contentConfiguration.secondaryText = currencyDescription
                         }
                     }
                     
@@ -167,14 +173,8 @@ class BaseCurrencyTableViewController: UITableViewController {
             // set up the initial state
             do {
                 ascendingAction.state = .on
-                
-                // The value of properties `sortingMethod` and `sortingOrder` could be changed between the call of `init` and `viewDidLoad`,
-                // so we need to reset them in order to be consistent with the ascendingAction.state
-                sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(getSortingMethod().localizedName, getSortingOrder().localizedName)
-                #warning("確定一下 subtitle 能不能跟後續點擊一樣改變")
-                
-//                set(sortingMethod: .currencyName, sortingOrder: .ascending)
-                #warning("出事啦 這樣給初始值 imperative target 會 crash")
+                // action state 的初始值只能在這裡設定，但不能用程式模擬使用者點擊 action，為了確保初始值一致，必須在這裡設定一次 sorting method 跟 sorting order
+                set(sortingMethod: .currencyName, sortingOrder: .ascending)
             }
         }
         
@@ -290,10 +290,6 @@ class BaseCurrencyTableViewController: UITableViewController {
     // MARK: - Hook methods
     func getSortingMethod() -> SortingMethod {
         fatalError("getSortingMethod() has not been implemented")
-    }
-    
-    func getSortingOrder() -> SortingOrder {
-        fatalError("getSortingOrder() has not been implemented")
     }
     
     func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {

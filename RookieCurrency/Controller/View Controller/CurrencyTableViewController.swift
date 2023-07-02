@@ -37,10 +37,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     }
     
     // MARK: - Hook methods
-    override func getSortingOrder() -> BaseCurrencyTableViewController.SortingOrder {
-        sortingOrder
-    }
-    
     override func getSortingMethod() -> BaseCurrencyTableViewController.SortingMethod {
         sortingMethod
     }
@@ -51,14 +47,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         self.sortingMethod = sortingMethod
         self.sortingOrder = sortingOrder
         
-        convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
-                                         sortingMethod: self.sortingMethod,
-                                         sortingOrder: self.sortingOrder,
-                                         searchText: searchText,
-                                         isFirstTimePopulate: isFirstTimePopulate)
-        if isFirstTimePopulate {
-            isFirstTimePopulate = false
-        }
+        populateTableViewIfPossible()
     }
     
     override func triggerRefreshControl() {
@@ -72,12 +61,8 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             switch result {
             case .success(let supportedSymbols):
                 currencyCodeDescriptionDictionary = supportedSymbols.symbols
-                convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
-                                                 sortingMethod: sortingMethod,
-                                                 sortingOrder: sortingOrder,
-                                                 searchText: searchText,
-                                                 isFirstTimePopulate: isFirstTimePopulate)
-                isFirstTimePopulate = false
+                
+                populateTableViewIfPossible()
             case .failure(let failure):
                 DispatchQueue.main.async { [weak self] in
                     self?.presentAlert(error: failure)
@@ -87,26 +72,36 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     }
 }
 
+// MARK: - private method
+extension CurrencyTableViewController {
+    func populateTableViewIfPossible() {
+        guard let currencyCodeDescriptionDictionary else {
+            return
+        }
+        
+        convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
+                                         sortingMethod: self.sortingMethod,
+                                         sortingOrder: self.sortingOrder,
+                                         searchText: searchText,
+                                         isFirstTimePopulate: isFirstTimePopulate)
+        if isFirstTimePopulate {
+            isFirstTimePopulate = false
+        }
+    }
+}
+
 // MARK: - search bar delegate
 extension CurrencyTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText = searchText
-        convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
-                                         sortingMethod: sortingMethod,
-                                         sortingOrder: sortingOrder,
-                                         searchText: self.searchText,
-                                         isFirstTimePopulate: isFirstTimePopulate)
-        isFirstTimePopulate = false
+   
+        populateTableViewIfPossible()
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchText = ""
-        convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
-                                         sortingMethod: sortingMethod,
-                                         sortingOrder: sortingOrder,
-                                         searchText: searchText,
-                                         isFirstTimePopulate: isFirstTimePopulate)
-        isFirstTimePopulate = false
+        
+        populateTableViewIfPossible()
     }
 }
 
