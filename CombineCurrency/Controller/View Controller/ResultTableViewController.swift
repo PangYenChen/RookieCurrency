@@ -14,7 +14,7 @@ class ResultTableViewController: BaseResultTableViewController {
     // MARK: - stored properties
     private let userSetting: CurrentValueSubject<UserSetting, Never>
     
-    private let order: PassthroughSubject<Order, Never>
+    private let order: CurrentValueSubject<Order, Never>
     
     private let searchText: PassthroughSubject<String, Never>
     
@@ -25,7 +25,7 @@ class ResultTableViewController: BaseResultTableViewController {
     // MARK: - Methods
     required init?(coder: NSCoder) {
         userSetting = CurrentValueSubject((AppUtility.numberOfDay, AppUtility.baseCurrency, AppUtility.currencyOfInterest))
-        order = PassthroughSubject<Order, Never>()
+        order = CurrentValueSubject<Order, Never>(AppUtility.order)
         searchText = PassthroughSubject<String, Never>()
         refresh = PassthroughSubject<Void, Never>()
         anyCancellableSet = Set<AnyCancellable>()
@@ -36,34 +36,8 @@ class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // sort item menu
+        // subscribe
         do {
-            order.first()
-                .sink { [unowned self] order in
-                    let increasingAction = UIAction(title: Order.increasing.localizedName,
-                                                    image: UIImage(systemName: "arrow.up.right"),
-                                                    handler: { [unowned self] _ in setOrder(.increasing) })
-                    let decreasingAction = UIAction(title: Order.decreasing.localizedName,
-                                                    image: UIImage(systemName: "arrow.down.right"),
-                                                    handler: { [unowned self] _ in setOrder(.decreasing) })
-                    switch order {
-                    case .increasing:
-                        increasingAction.state = .on
-                    case .decreasing:
-                        decreasingAction.state = .on
-                    }
-                    
-                    let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
-                                          image: UIImage(systemName: "arrow.up.arrow.down"),
-                                          options: .singleSelection,
-                                          children: [increasingAction, decreasingAction])
-                    
-                    sortItem.menu = UIMenu(title: "",
-                                           options: .singleSelection,
-                                           children: [sortMenu])
-                }
-                .store(in: &anyCancellableSet)
-            
             order
                 .dropFirst()
                 .sink { [unowned self] order in
@@ -71,10 +45,7 @@ class ResultTableViewController: BaseResultTableViewController {
                     sortItem.menu?.children.first?.subtitle = order.localizedName
                 }
                 .store(in: &anyCancellableSet)
-        }
-        
-        // subscribe
-        do {
+            
             userSetting
                 .dropFirst()
                 .sink { numberOfDay, baseCurrency, currencyOfInterest in
@@ -167,7 +138,7 @@ class ResultTableViewController: BaseResultTableViewController {
         
         // send initial value
         do {
-            order.send(AppUtility.order)
+            
             searchText.send("")
             refresh.send()
         }
@@ -175,6 +146,10 @@ class ResultTableViewController: BaseResultTableViewController {
     
     override func setOrder(_ order: BaseResultTableViewController.Order) {
         self.order.send(order)
+    }
+    
+    override func getOrder() -> BaseResultTableViewController.Order {
+        order.value
     }
     
     override func refreshControlTriggered() {
