@@ -13,6 +13,8 @@ class ResultTableViewController: BaseResultTableViewController {
     // MARK: - stored properties
     private var numberOfDay: Int
     
+    private var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+    
     private var baseCurrency: ResponseDataModel.CurrencyCode
     
     private var order: Order
@@ -21,17 +23,15 @@ class ResultTableViewController: BaseResultTableViewController {
     
     private var latestUpdateTime: Date?
     
-    private var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
-    
     // MARK: - Methods
     required init?(coder: NSCoder) {
         
         numberOfDay = AppUtility.numberOfDay
         baseCurrency = AppUtility.baseCurrency
+        currencyOfInterest = Set(AppUtility.currencyOfInterest)
         order = AppUtility.order
         searchText = String()
         latestUpdateTime =  nil
-        currencyOfInterest = Set(AppUtility.currencyOfInterest)
         
         super.init(coder: coder)
     }
@@ -40,33 +40,6 @@ class ResultTableViewController: BaseResultTableViewController {
         super.viewDidLoad()
         
         updatingStatusItem.title = R.string.localizable.latestUpdateTime("-")
-        
-        // sort Item
-        do {
-            let increasingAction = UIAction(title: Order.increasing.localizedName,
-                                            image: UIImage(systemName: "arrow.up.right"),
-                                            handler: { [unowned self] _ in setOrder(.increasing) })
-            let decreasingAction = UIAction(title: Order.decreasing.localizedName,
-                                            image: UIImage(systemName: "arrow.down.right"),
-                                            handler: { [unowned self] _ in setOrder(.decreasing) })
-            
-            switch order {
-            case .increasing:
-                increasingAction.state = .on
-            case .decreasing:
-                decreasingAction.state = .on
-            }
-            
-            let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
-                                  subtitle: order.localizedName,
-                                  image: UIImage(systemName: "arrow.up.arrow.down"),
-                                  options: .singleSelection,
-                                  children: [increasingAction, decreasingAction])
-            
-            sortItem.menu = UIMenu(title: "",
-                                   options: .singleSelection,
-                                   children: [sortMenu])
-        }
         
         refreshDataAndPopulateTableView()
     }
@@ -79,6 +52,8 @@ class ResultTableViewController: BaseResultTableViewController {
                           order: self.order,
                           searchText: self.searchText)
     }
+    
+    override func getOrder() -> BaseResultTableViewController.Order { order }
     
     override func refreshControlTriggered() {
         refreshDataAndPopulateTableView()

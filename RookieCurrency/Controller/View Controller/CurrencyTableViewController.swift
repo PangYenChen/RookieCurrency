@@ -19,6 +19,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private var isFirstTimePopulate: Bool
     
+    // MARK: - life cycle
     required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
         
         sortingMethod = .currencyName
@@ -73,7 +74,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
 }
 
 // MARK: - private method
-extension CurrencyTableViewController {
+private extension CurrencyTableViewController {
     func populateTableViewIfPossible() {
         guard let currencyCodeDescriptionDictionary else {
             return
@@ -92,13 +93,13 @@ extension CurrencyTableViewController {
 
 // MARK: - search bar delegate
 extension CurrencyTableViewController {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+    final func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText = searchText
    
         populateTableViewIfPossible()
     }
     
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+    final func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchText = ""
         
         populateTableViewIfPossible()
@@ -108,7 +109,7 @@ extension CurrencyTableViewController {
 // MARK: - strategy
 extension CurrencyTableViewController {
     
-    class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
+    final class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
         
         let title: String
         
@@ -138,7 +139,7 @@ extension CurrencyTableViewController {
         }
     }
     
-    class CurrencyOfInterestSelectionStrategy: CurrencyTableStrategy {
+    final class CurrencyOfInterestSelectionStrategy: CurrencyTableStrategy {
         
         let title: String
         

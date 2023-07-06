@@ -9,7 +9,7 @@
 import UIKit
 import Combine
 
-class CurrencyTableViewController: BaseCurrencyTableViewController {
+final class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private let sortingMethodAndOrder: CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>
     
@@ -17,11 +17,12 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private let triggerRefreshControlSubject: PassthroughSubject<Void, Never>
     
+#warning("看這個能不能要 publisher 之類的取代")
     private var isFirstTimePopulate: Bool
     
     private var anyCancellableSet: Set<AnyCancellable>
     
-    // MARK: - methods
+    // MARK: - life cycle
     required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
         
         sortingMethodAndOrder = CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>((method: .currencyName, order: .ascending))
@@ -41,7 +42,6 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         fatalError("init(coder:) has not been implemented")
     }
 
-    // MARK: - Hook methods
     override func viewDidLoad() {
 
         // subscribe
@@ -88,6 +88,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         super.viewDidLoad()
     }
     
+    // MARK: - Hook methods
     override func getSortingMethod() -> BaseCurrencyTableViewController.SortingMethod {
         sortingMethodAndOrder.value.method
     }
@@ -115,7 +116,7 @@ extension CurrencyTableViewController {
 // MARK: - strategy
 extension CurrencyTableViewController {
     
-    class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
+    final class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
         
         let title: String
         
@@ -147,7 +148,7 @@ extension CurrencyTableViewController {
         }
     }
     
-    class CurrencyOfInterestSelectionStrategy: CurrencyTableStrategy {
+    final class CurrencyOfInterestSelectionStrategy: CurrencyTableStrategy {
 
         let title: String
         

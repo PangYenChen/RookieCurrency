@@ -20,7 +20,7 @@ class BaseResultTableViewController: UITableViewController {
     
     private var dataSource: DataSource!
     
-    // MARK: - Methods
+    // MARK: - life cycle
     required init?(coder: NSCoder) {
         
         analyzedDataDictionary = [:]
@@ -110,19 +110,35 @@ class BaseResultTableViewController: UITableViewController {
             
             dataSource.defaultRowAnimation = .fade
         }
+        
+        // sort Item
+        do {
+            let increasingAction = UIAction(title: Order.increasing.localizedName,
+                                            image: UIImage(systemName: "arrow.up.right"),
+                                            handler: { [unowned self] _ in setOrder(.increasing) })
+            let decreasingAction = UIAction(title: Order.decreasing.localizedName,
+                                            image: UIImage(systemName: "arrow.down.right"),
+                                            handler: { [unowned self] _ in setOrder(.decreasing) })
+            
+            switch getOrder() {
+            case .increasing:
+                increasingAction.state = .on
+            case .decreasing:
+                decreasingAction.state = .on
+            }
+            
+            let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
+                                  image: UIImage(systemName: "arrow.up.arrow.down"),
+                                  options: .singleSelection,
+                                  children: [increasingAction, decreasingAction])
+            
+            sortItem.menu = UIMenu(title: "",
+                                   options: .singleSelection,
+                                   children: [sortMenu])
+        }
     }
     
-    func setOrder(_ order: Order) {
-        fatalError("select(order:) has not been implemented")
-    }
-    
-    func refreshControlTriggered() {
-        fatalError("refreshControlTriggered()")
-    }
-    
-    @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        fatalError("showSetting(_:) has not been implemented")
-    }
+    // MARK: - method
     
     /// 更新 table view，純粹把資料填入 table view，不動資料。
     final func populateTableView(analyzedDataDictionary: [ResponseDataModel.CurrencyCode: (latest: Double, mean: Double, deviation: Double)],
@@ -155,9 +171,26 @@ class BaseResultTableViewController: UITableViewController {
         
         dataSource.apply(snapshot)
     }
+    
+    // MARK: - Hook methods
+    func setOrder(_ order: Order) {
+        fatalError("select(order:) has not been implemented")
+    }
+    
+    func getOrder() -> Order {
+        fatalError("getOrder() has not been implemented")
+    }
+    
+    func refreshControlTriggered() {
+        fatalError("refreshControlTriggered()")
+    }
+    
+    @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
+        fatalError("showSetting(_:) has not been implemented")
+    }
 }
 
-// MARK: - Error Alert Presenter
+// MARK: - Alert Presenter
 extension BaseResultTableViewController: AlertPresenter {}
 
 // MARK: - Search Bar Delegate
@@ -177,8 +210,9 @@ extension BaseResultTableViewController {
             case .decreasing: return R.string.localizable.decreasing()
             }
         }
-        
     }
+    
+    typealias UserSetting = (numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
 }
 
 // MARK: - private name space
@@ -190,9 +224,4 @@ private extension BaseResultTableViewController {
     typealias DataSource = UITableViewDiffableDataSource<Section, ResponseDataModel.CurrencyCode>
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ResponseDataModel.CurrencyCode>
     
-}
-
-// MARK: - name space
-extension BaseResultTableViewController {
-    typealias UserSetting = (numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
 }

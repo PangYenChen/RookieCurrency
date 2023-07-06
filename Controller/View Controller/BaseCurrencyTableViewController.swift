@@ -22,7 +22,7 @@ class BaseCurrencyTableViewController: UITableViewController {
     
     var currencyCodeDescriptionDictionary: [String: String]?
     
-    // MARK: - methods
+    // MARK: - life cycle
     required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
         
         fetcher = Fetcher.shared
@@ -191,11 +191,11 @@ class BaseCurrencyTableViewController: UITableViewController {
     }
     
     // MARK: - method
-    func convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],
-                                          sortingMethod: SortingMethod,
-                                          sortingOrder: SortingOrder,
-                                          searchText: String,
-                                          isFirstTimePopulate: Bool) {
+    final func convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],
+                                                sortingMethod: SortingMethod,
+                                                sortingOrder: SortingOrder,
+                                                searchText: String,
+                                                isFirstTimePopulate: Bool) {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         
@@ -328,13 +328,6 @@ extension BaseCurrencyTableViewController: UISearchBarDelegate {}
 
 // MARK: - name space
 extension BaseCurrencyTableViewController {
-    enum Section {
-        case main
-    }
-    
-    typealias DataSource = UITableViewDiffableDataSource<Section, ResponseDataModel.CurrencyCode>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ResponseDataModel.CurrencyCode>
-    
     enum SortingMethod {
         case currencyName
         case currencyCode
@@ -362,7 +355,18 @@ extension BaseCurrencyTableViewController {
     }
 }
 
-// MARK: - Error Alert Presenter
+// MARK: - private name space
+extension BaseCurrencyTableViewController {
+    enum Section {
+        case main
+    }
+    
+    typealias DataSource = UITableViewDiffableDataSource<Section, ResponseDataModel.CurrencyCode>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ResponseDataModel.CurrencyCode>
+    
+}
+
+// MARK: - Alert Presenter
 extension BaseCurrencyTableViewController: AlertPresenter {}
 
 // MARK: - strategy
