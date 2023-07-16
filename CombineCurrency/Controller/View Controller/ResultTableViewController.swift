@@ -22,6 +22,10 @@ class ResultTableViewController: BaseResultTableViewController {
     
     private var anyCancellableSet: Set<AnyCancellable>
     
+    private var timerCancellable: AnyCancellable?
+    
+    private var timerTearDownCancellable: AnyCancellable?
+    
     // MARK: - Methods
     required init?(coder: NSCoder) {
         userSetting = CurrentValueSubject((AppUtility.numberOfDay, AppUtility.baseCurrency, AppUtility.currencyOfInterest))
@@ -29,6 +33,7 @@ class ResultTableViewController: BaseResultTableViewController {
         searchText = PassthroughSubject<String, Never>()
         refresh = PassthroughSubject<Void, Never>()
         anyCancellableSet = Set<AnyCancellable>()
+        timerCancellable = nil
         
         super.init(coder: coder)
     }
@@ -56,7 +61,10 @@ class ResultTableViewController: BaseResultTableViewController {
                 .store(in: &anyCancellableSet)
             
             userSetting
-                .sink { [unowned self] _ in refreshControl?.beginRefreshing() }
+                .sink { [unowned self] _ in
+                    refreshControl?.beginRefreshing()
+                    tearDownTimer()
+                }
                 .store(in: &anyCancellableSet)
             
             let updating = Publishers.CombineLatest(refresh, userSetting).share()
@@ -65,6 +73,7 @@ class ResultTableViewController: BaseResultTableViewController {
                 .map { _, _  in R.string.localizable.updating() }
             
             let rateSetResult = updating
+                .handleEvents(receiveOutput: { [unowned self] _ in tearDownTimer() })
                 .flatMap { _, numberOfDayAndBaseCurrency in
                     RateController.shared
                         .ratePublisher(numberOfDay: numberOfDayAndBaseCurrency.numberOfDay)
@@ -125,6 +134,7 @@ class ResultTableViewController: BaseResultTableViewController {
                     populateTableView(analyzedDataDictionary: analyzedDataDictionary,
                                       order: order,
                                       searchText: searchText)
+                    setUpTimer()
                 }
                 .store(in: &anyCancellableSet)
             
@@ -157,9 +167,29 @@ class ResultTableViewController: BaseResultTableViewController {
     }
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        SettingTableViewController(coder: coder,
-                                   userSetting: userSetting.value,
-                                   updateSetting: AnySubscriber(userSetting))
+        tearDownTimer()
+        
+        let timerTearDownSubject = PassthroughSubject<Void, Never>()
+        timerCancellable = timerTearDownSubject.sink { [unowned self] _ in setUpTimer() }
+        
+        return SettingTableViewController(coder: coder,
+                                          userSetting: userSetting.value,
+                                          settingSubscriber: AnySubscriber(userSetting),
+                                          cancelSubscriber: AnySubscriber(timerTearDownSubject))
+    }
+}
+
+// MARK: - private methods
+private extension ResultTableViewController {
+    func setUpTimer() {
+        timerCancellable = Timer.publish(every: autoRefreshTimeInterval, on: .main, in: .default)
+            .autoconnect()
+            .sink { [unowned self] _ in refresh.send() }
+    }
+    
+    func tearDownTimer() {
+        timerCancellable?.cancel()
+        timerCancellable = nil
     }
 }
 

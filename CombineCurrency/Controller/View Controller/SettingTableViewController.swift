@@ -36,6 +36,8 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     private let didTapCancelButtonSubject: PassthroughSubject<Void, Never>
     
+    private let cancelSubject: PassthroughSubject<Void, Never>
+    
     private let didTapSaveButtonSubject: PassthroughSubject<Void, Never>
     
     private var anyCancellableSet: Set<AnyCancellable>
@@ -43,17 +45,20 @@ class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - methods
     required init?(coder: NSCoder,
                    userSetting: BaseResultTableViewController.UserSetting,
-                   updateSetting: AnySubscriber<(numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>), Never>) {
+                   settingSubscriber: AnySubscriber<(numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>), Never>,
+                   cancelSubscriber: AnySubscriber<Void, Never>) {
         
-        editedNumberOfDay = CurrentValueSubject(userSetting.numberOfDay)
+        editedNumberOfDay = CurrentValueSubject<Int, Never>(userSetting.numberOfDay)
         
-        editedBaseCurrency = CurrentValueSubject(userSetting.baseCurrency)
+        editedBaseCurrency = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(userSetting.baseCurrency)
         
-        editedCurrencyOfInterest = CurrentValueSubject(userSetting.currencyOfInterest)
+        editedCurrencyOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(userSetting.currencyOfInterest)
         
-        didTapCancelButtonSubject = PassthroughSubject()
+        didTapCancelButtonSubject = PassthroughSubject<Void, Never>()
         
-        didTapSaveButtonSubject = PassthroughSubject()
+        cancelSubject = PassthroughSubject<Void, Never>()
+        
+        didTapSaveButtonSubject = PassthroughSubject<Void, Never>()
         
         // has changes
         do {
@@ -73,7 +78,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         didTapCancelButtonSubject
             .withLatestFrom(hasChanges)
-            .sink { [unowned self] _, hasChanges in hasChanges ? presentCancelAlert(showingSave: false) : dismiss(animated: true) }
+            .sink { [unowned self] _, hasChanges in hasChanges ? presentCancelAlert(showingSave: false) : cancel() }
             .store(in: &anyCancellableSet)
         
         didTapSaveButtonSubject
@@ -82,7 +87,10 @@ class SettingTableViewController: BaseSettingTableViewController {
             .withLatestFrom(editedBaseCurrency)
             .withLatestFrom(editedCurrencyOfInterest)
             .map { (numberOfDay: $0.0, baseCurrency: $0.1, currencyOfInterest: $1) }
-            .subscribe(updateSetting)
+            .subscribe(settingSubscriber)
+        
+        cancelSubject
+            .subscribe(cancelSubscriber)
     }
     
     required init?(coder: NSCoder) {
@@ -132,6 +140,11 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     override func stepperValueDidChange() {
         editedNumberOfDay.send(Int(stepper.value))
+    }
+    
+    override func cancel() {
+        super.cancel()
+        cancelSubject.send()
     }
     
     @IBAction override func save() {
