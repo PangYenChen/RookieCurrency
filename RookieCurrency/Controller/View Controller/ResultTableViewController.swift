@@ -165,7 +165,7 @@ private extension ResultTableViewController {
             }
             
             do { // update updatingStatusItem
-                let dateString = latestUpdateTime?.formatted(date: .omitted, time: .standard) ?? "-"
+                let dateString = latestUpdateTime?.formatted(.relative(presentation: .named)) ?? "-"
                 updatingStatusItem.title = R.string.localizable.latestUpdateTime(dateString)
             }
             
