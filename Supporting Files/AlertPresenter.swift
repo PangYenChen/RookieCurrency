@@ -9,13 +9,13 @@
 import UIKit
 
 protocol AlertPresenter {
-    func presentAlert(error: Error)
-    func presentAlert(message: String)
+    func presentAlert(error: Error, handler: ((UIAlertAction) -> Void)?)
+    func presentAlert(message: String, handler: ((UIAlertAction) -> Void)?)
 }
 
 extension AlertPresenter where Self: UIViewController {
     
-    func presentAlert(message: String) {
+    func presentAlert(message: String, handler: ((UIAlertAction) -> Void)? = nil) {
         let alertController: UIAlertController
         
         // alert controller
@@ -29,14 +29,14 @@ extension AlertPresenter where Self: UIViewController {
         // alert action
         do {
             let alertActionTitle = R.string.localizable.alertActionTitle()
-            let alertAction = UIAlertAction(title: alertActionTitle, style: .cancel)
+            let alertAction = UIAlertAction(title: alertActionTitle, style: .cancel, handler: handler)
             alertController.addAction(alertAction)
         }
         
         present(alertController, animated: true)
     }
     
-    func presentAlert(error: Error) {
-        presentAlert(message: error.localizedDescription)
+    func presentAlert(error: Error, handler: ((UIAlertAction) -> Void)? = nil) {
+        presentAlert(message: error.localizedDescription, handler: handler)
     }
 }

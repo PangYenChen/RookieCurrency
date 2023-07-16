@@ -23,7 +23,9 @@ class ResultTableViewController: BaseResultTableViewController {
     
     private var latestUpdateTime: Date?
     
-    // MARK: - Methods
+    private var timer: Timer?
+    
+    // MARK: - life cycle
     required init?(coder: NSCoder) {
         
         numberOfDay = AppUtility.numberOfDay
@@ -32,6 +34,7 @@ class ResultTableViewController: BaseResultTableViewController {
         order = AppUtility.order
         searchText = String()
         latestUpdateTime =  nil
+        timer = nil
         
         super.init(coder: coder)
     }
@@ -44,6 +47,7 @@ class ResultTableViewController: BaseResultTableViewController {
         refreshDataAndPopulateTableView()
     }
     
+    // MARK: - Hook methods
     override func setOrder(_ order: BaseResultTableViewController.Order) {
         self.order = order
         AppUtility.order = order
@@ -60,10 +64,12 @@ class ResultTableViewController: BaseResultTableViewController {
     }
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        SettingTableViewController(coder: coder,
-                                   numberOfDay: numberOfDay,
-                                   baseCurrency: baseCurrency,
-                                   currencyOfInterest: currencyOfInterest) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
+        tearDownTimer()
+        
+        return SettingTableViewController(coder: coder,
+                                          numberOfDay: numberOfDay,
+                                          baseCurrency: baseCurrency,
+                                          currencyOfInterest: currencyOfInterest) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
             // base currency
             do {
                 baseCurrency = editedBaseCurrency
@@ -83,11 +89,29 @@ class ResultTableViewController: BaseResultTableViewController {
             }
             
             refreshDataAndPopulateTableView()
+        } cancelCompletionHandler: { [unowned self] in
+            setUpTimer()
+        }
+    }
+}
+
+private extension ResultTableViewController {
+    
+    func setUpTimer() {
+        timer = Timer.scheduledTimer(withTimeInterval: autoRefreshTimeInterval, repeats : true) { [unowned self] _ in
+            refreshDataAndPopulateTableView()
         }
     }
     
+    func tearDownTimer() {
+        timer?.invalidate()
+        timer = nil
+    }
     /// 更新資料並且填入 table view
-    private func refreshDataAndPopulateTableView() {
+    func refreshDataAndPopulateTableView() {
+        
+        tearDownTimer()
+        
         if refreshControl?.isRefreshing == false {
             refreshControl?.beginRefreshing()
         }
@@ -127,6 +151,7 @@ class ResultTableViewController: BaseResultTableViewController {
                         populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
                                           order: self.order,
                                           searchText: self.searchText)
+                        setUpTimer()
                     } else {
                         analyzedErrors.keys
                         #warning("這邊要present alert，告知使用者要刪掉本地資料，全部重拿")
@@ -134,7 +159,9 @@ class ResultTableViewController: BaseResultTableViewController {
                 }
                 
             case .failure(let error):
-                presentAlert(error: error)
+                presentAlert(error: error) { [unowned self] _ in
+                    setUpTimer()
+                }
             }
             
             do { // update updatingStatusItem

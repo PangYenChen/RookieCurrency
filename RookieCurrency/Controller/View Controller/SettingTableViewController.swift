@@ -43,14 +43,17 @@ class SettingTableViewController: BaseSettingTableViewController {
         originalCurrencyOfInterest != editedCurrencyOfInterest
     }
     
-    private let completionHandler: (Int, ResponseDataModel.CurrencyCode, Set<ResponseDataModel.CurrencyCode>) -> Void
+    private let saveCompletionHandler: (Int, ResponseDataModel.CurrencyCode, Set<ResponseDataModel.CurrencyCode>) -> Void
+    
+    private let cancelCompletionHandler: () -> Void
     
     // MARK: - methods
     required init?(coder: NSCoder,
                    numberOfDay: Int,
                    baseCurrency: ResponseDataModel.CurrencyCode,
                    currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
-                   completionHandler: @escaping (Int, ResponseDataModel.CurrencyCode, Set<ResponseDataModel.CurrencyCode>) -> Void) {
+                   saveCompletionHandler: @escaping (Int, ResponseDataModel.CurrencyCode, Set<ResponseDataModel.CurrencyCode>) -> Void,
+                   cancelCompletionHandler: @escaping () -> Void) {
         
         // number of day
         do {
@@ -70,7 +73,8 @@ class SettingTableViewController: BaseSettingTableViewController {
             editedCurrencyOfInterest = currencyOfInterest
         }
         
-        self.completionHandler = completionHandler
+        self.saveCompletionHandler = saveCompletionHandler
+        self.cancelCompletionHandler = cancelCompletionHandler
         
         super.init(coder: coder)
         
@@ -110,12 +114,17 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     @IBAction override func save() {
-        completionHandler(editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest)
+        saveCompletionHandler(editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest)
         super.save()
     }
     
+    override func cancel() {
+        super.cancel()
+        cancelCompletionHandler()
+    }
+    
     @IBAction private func didTapCancelButton() {
-        hasChange ? presentCancelAlert(showingSave: false) : dismiss(animated: true)
+        hasChange ? presentCancelAlert(showingSave: false) : cancel()
     }
     
     // MARK: - Navigation

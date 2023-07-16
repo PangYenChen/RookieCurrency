@@ -20,10 +20,14 @@ class BaseResultTableViewController: UITableViewController {
     
     private var dataSource: DataSource!
     
+    let autoRefreshTimeInterval: TimeInterval
+    
     // MARK: - life cycle
     required init?(coder: NSCoder) {
         
         analyzedDataDictionary = [:]
+        
+        autoRefreshTimeInterval = 10
         
         super.init(coder: coder)
         

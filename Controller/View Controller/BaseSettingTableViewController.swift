@@ -73,6 +73,10 @@ class BaseSettingTableViewController: UITableViewController {
         dismiss(animated: true)
     }
     
+    func cancel() {
+        dismiss(animated: true)
+    }
+    
     func presentCancelAlert(showingSave: Bool) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
@@ -88,7 +92,7 @@ class BaseSettingTableViewController: UITableViewController {
         do {
             let title = R.string.localizable.cancelAlertDiscardTitle()
             let discardChangeAction = UIAlertAction(title: title,
-                                                    style: .default) { [unowned self] _ in dismiss(animated: true) }
+                                                    style: .default) { [unowned self] _ in cancel() }
             
             alertController.addAction(discardChangeAction)
         }
