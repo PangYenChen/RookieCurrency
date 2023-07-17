@@ -45,6 +45,7 @@ class ResultTableViewController: BaseResultTableViewController {
         do {
             order
                 .dropFirst()
+                .removeDuplicates()
                 .sink { [unowned self] order in
                     AppUtility.order = order
                     sortItem.menu?.children.first?.subtitle = order.localizedName
@@ -126,7 +127,10 @@ class ResultTableViewController: BaseResultTableViewController {
 #warning("還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿")
                 }
             
-            let shouldPopulateTableView = Publishers.CombineLatest3(analyzedDataDictionary, order, searchText).share()
+            let shouldPopulateTableView = Publishers.CombineLatest3(analyzedDataDictionary,
+                                                                    order.removeDuplicates(),
+                                                                    searchText.removeDuplicates())
+                .share()
             
             shouldPopulateTableView
                 .sink { [unowned self] analyzedDataDictionary, order, searchText  in

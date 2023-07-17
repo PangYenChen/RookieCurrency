@@ -49,6 +49,9 @@ class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - Hook methods
     override func setOrder(_ order: BaseResultTableViewController.Order) {
+        guard self.order != order else {
+            return
+        }
         self.order = order
         AppUtility.order = order
         sortItem.menu?.children.first?.subtitle = order.localizedName
@@ -177,6 +180,9 @@ private extension ResultTableViewController {
 // MARK: - Search Bar Delegate
 extension ResultTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        guard self.searchText != searchText else {
+            return
+        }
         self.searchText = searchText
         populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
                           order: self.order,
