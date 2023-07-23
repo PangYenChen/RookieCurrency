@@ -70,9 +70,6 @@ class ResultTableViewController: BaseResultTableViewController {
             
             let updating = Publishers.CombineLatest(refresh, userSetting).share()
             
-            let updatingString = updating
-                .map { _, _  in R.string.localizable.updating() }
-            
             let rateSetResult = updating
                 .handleEvents(receiveOutput: { [unowned self] _ in tearDownTimer() })
                 .flatMap { _, numberOfDayAndBaseCurrency in
@@ -83,12 +80,15 @@ class ResultTableViewController: BaseResultTableViewController {
                 }
                 .share()
             
+            let isUpdating = Publishers.Merge(updating.map { _ in true },
+                                              rateSetResult.map { _ in false } )
+            
             let rateSetFailure = rateSetResult
                 .resultFailure()
                 .share()
             
             rateSetFailure
-                .sink { [unowned self] failure in presentAlert(error: failure) }
+                .sink { [unowned self] failure in presentAlert(error: failure, handler: { [unowned self] _ in setUpTimer() }) }
                 .store(in: &anyCancellableSet)
             
             let rateSetSuccess = rateSetResult
@@ -100,20 +100,16 @@ class ResultTableViewController: BaseResultTableViewController {
                 .map(Double.init)
                 .map(Date.init(timeIntervalSince1970:))
                 .map { $0.formatted(.relative(presentation: .named)) }
-                .map { R.string.localizable.latestUpdateTime($0) }
-            
-            let updateFailTimeString = rateSetFailure
-                .withLatestFrom(latestUpdateTimeString)
-                .map { $1 }
                 .prepend("-")
+                .map { R.string.localizable.latestUpdateTime($0) }
             
             let updateSuccessTimeString = latestUpdateTimeString
             
             Publishers
-                .Merge3(updatingString,
-                        updateFailTimeString,
-                        updateSuccessTimeString)
-                .sink { [unowned self] updateResult in updatingStatusItem.title = updateResult }
+                .CombineLatest(isUpdating, latestUpdateTimeString)
+                .sink { [unowned self] isUpdating, latestUpdateTimeString in
+                    updatingStatusItem.title = isUpdating ? R.string.localizable.updating() : latestUpdateTimeString
+                }
                 .store(in: &anyCancellableSet)
             
             let analyzedDataDictionary = rateSetSuccess
