@@ -36,3 +36,5 @@
 "ascending" = "升冪排列";
 "descending" = "降冪排列";
 "sortingWay" = "%1$@%2$@";
+"removeFiles" = "移除先前下載的資料";
+"removeFilesDescription" = "可以刪除過舊且不需使用的資料";

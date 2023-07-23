@@ -167,6 +167,11 @@ extension BaseSettingTableViewController {
                 }
                 contentConfiguration.image = UIImage(systemName: "character")
                 cell.accessoryType = .disclosureIndicator
+            case .removeFile:
+                contentConfiguration.text = R.string.localizable.removeFiles()
+                contentConfiguration.secondaryText = R.string.localizable.removeFilesDescription()
+                contentConfiguration.image = UIImage(systemName: "folder.badge.minus")
+                cell.accessoryType = .none
 #if DEBUG
             case .debugInfo:
                 contentConfiguration.text = R.string.localizable.debugInfo()
@@ -192,7 +197,7 @@ extension BaseSettingTableViewController {
         switch row {
         case .numberOfDay:
             return nil
-        case .baseCurrency, .currencyOfInterest, .language:
+        case .baseCurrency, .currencyOfInterest, .language, .removeFile:
             return indexPath
 #if DEBUG
         case .debugInfo:
@@ -222,6 +227,9 @@ extension BaseSettingTableViewController {
             UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             tableView.deselectRow(at: indexPath, animated: true)
             
+        case .removeFile:
+            RateController.shared.removeCachedAndStoredData()
+            tableView.deselectRow(at: indexPath, animated: true)
 #if DEBUG
         case .debugInfo:
             let identifier = R.segue.settingTableViewController.showDebugInfo.identifier
@@ -262,6 +270,7 @@ extension BaseSettingTableViewController {
         case baseCurrency
         case currencyOfInterest
         case language
+        case removeFile
 #if DEBUG
         case debugInfo
 #endif

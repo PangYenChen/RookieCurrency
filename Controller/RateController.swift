@@ -40,5 +40,9 @@ class RateController {
                 }
         )
     }
-
+    
+    func removeCachedAndStoredData() {
+        concurrentQueue.async(flags: .barrier) { [unowned self] in historicalRateDictionary = [:] }
+        try? archiver.removeAllStoredFile()
+    }
 }

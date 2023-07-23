@@ -36,3 +36,5 @@
 "ascending" = "ascending";
 "descending" = "descending";
 "sortingWay" = "%1$@ in %2$@ order";
+"removeFiles" = "remove downloaded data";
+"removeFilesDescription" = "this would remove data which is unused";

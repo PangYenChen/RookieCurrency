@@ -14,14 +14,13 @@ enum Archiver {
     /// app 的路徑
     private static let documentsDirectory = URL.documentsDirectory
     
-    /// 存放資料的路徑
-    private static let archiveURL = documentsDirectory.appendingPathComponent("rateSet.json")
-    
     /// 共用的 decoder
     private static let jsonDecoder = ResponseDataModel.jsonDecoder
     
     /// 共用的 encoder
     private static let jsonEncoder = ResponseDataModel.jsonEncoder
+    
+    private static let jsonPathExtension: String = "json"
 }
 
 extension Archiver {
@@ -31,7 +30,7 @@ extension Archiver {
     static func archive(historicalRate: ResponseDataModel.HistoricalRate) throws {
         let data = try jsonEncoder.encode(historicalRate)
         let url = documentsDirectory.appendingPathComponent(historicalRate.dateString)
-            .appendingPathExtension("json")
+            .appendingPathExtension(jsonPathExtension)
         try data.write(to: url)
         
         print("###", self, #function, "寫入資料:\n\t", historicalRate)
@@ -42,7 +41,7 @@ extension Archiver {
     /// - Returns: historical rate
     static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
         let url = documentsDirectory.appending(component: fileName)
-            .appendingPathExtension("json")
+            .appendingPathExtension(jsonPathExtension)
         let data: Data
         
         do {
@@ -71,9 +70,19 @@ extension Archiver {
     
     static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool {
         let fileURL = documentsDirectory.appendingPathComponent(fileName)
-            .appendingPathExtension("json")
+            .appendingPathExtension(jsonPathExtension)
         
         return FileManager.default.fileExists(atPath: fileURL.path)
+    }
+    
+    static func removeAllStoredFile() throws {
+
+        try FileManager.default
+            .contentsOfDirectory(at: documentsDirectory,
+                                 includingPropertiesForKeys: nil,
+                                 options: .skipsHiddenFiles)
+            .filter { fileURL in fileURL.pathExtension == jsonPathExtension }
+            .forEach { fileURL in try FileManager.default.removeItem(at: fileURL) }
     }
 }
 
@@ -83,6 +92,8 @@ protocol ArchiverProtocol {
     static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate
     
     static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool
+    
+    static func removeAllStoredFile() throws
 }
 
 extension Archiver: ArchiverProtocol {}
