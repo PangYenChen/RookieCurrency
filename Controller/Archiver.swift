@@ -29,7 +29,7 @@ extension Archiver {
     /// - Parameter historicalRate: 要寫入的資料
     static func archive(historicalRate: ResponseDataModel.HistoricalRate) throws {
         let data = try jsonEncoder.encode(historicalRate)
-        let url = documentsDirectory.appendingPathComponent(historicalRate.dateString)
+        let url = documentsDirectory.appending(path: historicalRate.dateString)
             .appendingPathExtension(jsonPathExtension)
         try data.write(to: url)
         
@@ -40,7 +40,7 @@ extension Archiver {
     /// - Parameter fileName: historical rate 的日期，也是檔案名稱
     /// - Returns: historical rate
     static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
-        let url = documentsDirectory.appending(component: fileName)
+        let url = documentsDirectory.appending(path: fileName)
             .appendingPathExtension(jsonPathExtension)
         let data: Data
         
@@ -69,10 +69,10 @@ extension Archiver {
     
     
     static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool {
-        let fileURL = documentsDirectory.appendingPathComponent(fileName)
+        let fileURL = documentsDirectory.appending(path: fileName)
             .appendingPathExtension(jsonPathExtension)
         
-        return FileManager.default.fileExists(atPath: fileURL.path)
+        return FileManager.default.fileExists(atPath: fileURL.path())
     }
     
     static func removeAllStoredFile() throws {
