@@ -65,6 +65,16 @@ class BaseSettingTableViewController: UITableViewController {
         }
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
+        let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
+        DispatchQueue.main.async { [unowned self] in
+            tableView.reloadRows(at: [baseCurrencyIndexPath, currencyOfInterestIndexPath], with: .automatic)
+        }
+    }
+    
     func stepperValueDidChange() {
         fatalError("stepperValueDidChange() has not been implemented")
     }

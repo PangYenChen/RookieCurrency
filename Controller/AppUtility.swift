@@ -68,6 +68,8 @@ extension AppUtility {
             UserDefaults.standard.setValue(newValue.sorted(), forKey: Key.currencyOfInterest.rawValue)
         }
     }
+    
+    static var supportedSymbols: [ResponseDataModel.CurrencyCode: String]?
 }
 
 // MARK: - formatter

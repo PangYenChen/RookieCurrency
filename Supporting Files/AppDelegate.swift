@@ -12,7 +12,11 @@ import UIKit
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        
+        // supported symbols 算是整個 app 要用到的資料，而且可以假定 app 一次生命週期內不會變更，
+        // 所以跟伺服器拿，然後存起來。
+        AppUtility.fetchSupportedSymbols { _ in }
+        
         return true
     }
 

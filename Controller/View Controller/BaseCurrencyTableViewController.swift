@@ -14,6 +14,7 @@ class BaseCurrencyTableViewController: UITableViewController {
     // MARK: - property
     @IBOutlet weak var sortBarButtonItem: UIBarButtonItem!
     
+    #warning("改完可以刪掉 fetcher")
     let fetcher: Fetcher
     
     let strategy: CurrencyTableStrategy

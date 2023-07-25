@@ -52,7 +52,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     }
     
     override func triggerRefreshControl() {
-        fetcher.fetch(Endpoints.SupportedSymbols()) { [weak self] result in
+        AppUtility.fetchSupportedSymbols { [weak self] result in
             guard let self else { return }
             
             DispatchQueue.main.async { [weak self] in
@@ -61,7 +61,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
             
             switch result {
             case .success(let supportedSymbols):
-                currencyCodeDescriptionDictionary = supportedSymbols.symbols
+                currencyCodeDescriptionDictionary = supportedSymbols
                 
                 populateTableViewIfPossible()
             case .failure(let failure):

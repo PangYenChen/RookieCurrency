@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import Combine
 
 /// 讀寫 Historical Rate 的類別
 enum Archiver {
