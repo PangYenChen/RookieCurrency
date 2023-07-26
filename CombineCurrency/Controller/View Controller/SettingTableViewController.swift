@@ -15,12 +15,18 @@ class SettingTableViewController: BaseSettingTableViewController {
     override var editedNumberOfDayString: String { String(editedNumberOfDay.value) }
     
     override var editedBaseCurrencyString: String {
-        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: editedBaseCurrency.value) ?? editedBaseCurrency.value
+        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: editedBaseCurrency.value) ??
+        AppUtility.supportedSymbols?[editedBaseCurrency.value] ??
+        editedBaseCurrency.value
     }
     
     override var editedCurrencyOfInterestString: String {
         let editedCurrencyDisplayString = editedCurrencyOfInterest.value
-            .map { currencyCode in Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ?? currencyCode }
+            .map { currencyCode in
+                Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ??
+                AppUtility.supportedSymbols?[currencyCode] ??
+                currencyCode
+            }
             .sorted()
         
         return ListFormatter.localizedString(byJoining: editedCurrencyDisplayString)
@@ -120,14 +126,6 @@ class SettingTableViewController: BaseSettingTableViewController {
                 
                 cell.contentConfiguration = contentConfiguration
             }
-            .store(in: &anyCancellableSet)
-        
-        editedBaseCurrency
-            .sink { [unowned self] _ in tableView.reloadRows(at: [IndexPath(row: Row.baseCurrency.rawValue, section: 0)], with: .none) }
-            .store(in: &anyCancellableSet)
-        
-        editedCurrencyOfInterest
-            .sink { [unowned self] currencyOfInterest in tableView.reloadRows(at: [IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)], with: .none) }
             .store(in: &anyCancellableSet)
         
         hasChanges

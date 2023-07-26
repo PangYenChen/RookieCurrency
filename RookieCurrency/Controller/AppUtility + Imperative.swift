@@ -10,7 +10,7 @@ import Foundation
 
 extension AppUtility {
     
-    static var isFetching: Bool = false
+    private static var isFetching: Bool = false
     #warning("這裡應該會有同時性問題，等我讀完 concurrency 之後再處理")
     private static var completionHandlers: [(Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void] = []
     
@@ -33,5 +33,9 @@ extension AppUtility {
                 isFetching = false
             }
         }
+    }
+    
+    static func start() {
+        fetchSupportedSymbols { _ in }
     }
 }

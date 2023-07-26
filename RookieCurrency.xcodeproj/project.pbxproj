@@ -38,6 +38,7 @@
 		514C4D0D29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514C4D0C29A3416A0049E192 /* BaseResultTableViewController.swift */; };
 		514C4D0E29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514C4D0C29A3416A0049E192 /* BaseResultTableViewController.swift */; };
 		514D69412A7003B40030138A /* AppUtility + Imperative.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514D69402A7003B40030138A /* AppUtility + Imperative.swift */; };
+		514D69442A70270C0030138A /* AppUtility + Reactive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514D69432A70270C0030138A /* AppUtility + Reactive.swift */; };
 		514F72FE29AB682D0080DD8B /* AppUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514F72FD29AB682D0080DD8B /* AppUtility.swift */; };
 		514F72FF29AB682D0080DD8B /* AppUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514F72FD29AB682D0080DD8B /* AppUtility.swift */; };
 		51578B7129A85A1000BE890F /* Git Commit Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51578B7029A85A1000BE890F /* Git Commit Info.swift */; };
@@ -135,6 +136,7 @@
 		514C4D0929A0D9FA0049E192 /* BaseSettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSettingTableViewController.swift; sourceTree = "<group>"; };
 		514C4D0C29A3416A0049E192 /* BaseResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResultTableViewController.swift; sourceTree = "<group>"; };
 		514D69402A7003B40030138A /* AppUtility + Imperative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppUtility + Imperative.swift"; sourceTree = "<group>"; };
+		514D69432A70270C0030138A /* AppUtility + Reactive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppUtility + Reactive.swift"; sourceTree = "<group>"; };
 		514F72FD29AB682D0080DD8B /* AppUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUtility.swift; sourceTree = "<group>"; };
 		51578B7029A85A1000BE890F /* Git Commit Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Git Commit Info.swift"; sourceTree = "<group>"; };
 		515D3D8629ED8C7400B84F4B /* SupportedSymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedSymbols.swift; sourceTree = "<group>"; };
@@ -244,8 +246,9 @@
 			isa = PBXGroup;
 			children = (
 				E1FB994224FF9E340096FE2C /* View Controller */,
-				512087AD29A9F4A7005ED87A /* Fetcher + Reactive.swift */,
 				512087AF29A9F858005ED87A /* RateController + Reactive.swift */,
+				512087AD29A9F4A7005ED87A /* Fetcher + Reactive.swift */,
+				514D69432A70270C0030138A /* AppUtility + Reactive.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -723,6 +726,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				514D69442A70270C0030138A /* AppUtility + Reactive.swift in Sources */,
 				512087AE29A9F4A7005ED87A /* Fetcher + Reactive.swift in Sources */,
 				5120879929A8DC71005ED87A /* DebugInfoViewController.swift in Sources */,
 				51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */,

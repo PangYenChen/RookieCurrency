@@ -21,7 +21,7 @@ class BaseCurrencyTableViewController: UITableViewController {
     
     var dataSource: DataSource!
     
-    var currencyCodeDescriptionDictionary: [String: String]?
+    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]?
     
     // MARK: - life cycle
     required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {

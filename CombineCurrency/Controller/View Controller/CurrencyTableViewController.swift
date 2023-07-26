@@ -17,7 +17,7 @@ final class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private let triggerRefreshControlSubject: PassthroughSubject<Void, Never>
     
-#warning("看這個能不能要 publisher 之類的取代")
+#warning("看這個能不能用 publisher 之類的取代")
     private var isFirstTimePopulate: Bool
     
     private var anyCancellableSet: Set<AnyCancellable>
@@ -53,8 +53,7 @@ final class CurrencyTableViewController: BaseCurrencyTableViewController {
                 .store(in: &anyCancellableSet)
             
             let symbolsResult = triggerRefreshControlSubject
-                .flatMap { [unowned self] in fetcher.publisher(for: Endpoints.SupportedSymbols()) }
-                .convertOutputToResult()
+                .flatMap { _ in AppUtility.supportedSymbolsPublisher().convertOutputToResult() }
                 .share()
             
             symbolsResult
@@ -70,11 +69,11 @@ final class CurrencyTableViewController: BaseCurrencyTableViewController {
             symbolsResult.resultSuccess()
                 .combineLatest(sortingMethodAndOrder, searchText)
                 .sink { [unowned self] (supportedSymbols, sortingMethodAndOrder, searchText) in
-                    currencyCodeDescriptionDictionary = supportedSymbols.symbols
+                    currencyCodeDescriptionDictionary = supportedSymbols
                     
                     let (sortingMethod, sortingOrder) = sortingMethodAndOrder
                     
-                    convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: supportedSymbols.symbols,
+                    convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: supportedSymbols,
                                                      sortingMethod: sortingMethod,
                                                      sortingOrder: sortingOrder,
                                                      searchText: searchText,
