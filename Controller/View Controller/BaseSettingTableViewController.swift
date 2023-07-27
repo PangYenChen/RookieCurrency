@@ -270,6 +270,10 @@ extension BaseSettingTableViewController: UIAdaptivePresentationControllerDelega
     func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
         presentCancelAlert(showingSave: true)
     }
+    
+    func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        print("###, \(self), \(#function), aa,")
+    }
 }
 
 // MARK: - name space

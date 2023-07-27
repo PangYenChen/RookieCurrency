@@ -47,6 +47,7 @@ extension TestDouble {
         static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool {
             archivedFileNames.contains(fileName)
         }
+        
+        static func removeAllStoredFile() throws {}
     }
-
 }
