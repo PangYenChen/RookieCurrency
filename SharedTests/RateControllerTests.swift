@@ -8,10 +8,10 @@
 
 import XCTest
 
-#if RookieCurrency_Tests
-@testable import RookieCurrency
+#if IMPERATIVE_CURRENCY_TESTS
+@testable import ImperativeCurrency
 #else
-@testable import CombineCurrency
+@testable import ReactiveCurrency
 import Combine
 #endif
 
@@ -48,7 +48,7 @@ final class FakeFetcher: FetcherProtocol {
     
     private(set) var numberOfMethodCall = 0
     
-    #if RookieCurrency_Tests
+    #if IMPERATIVE_CURRENCY_TESTS
     
     func fetch<Endpoint: EndpointProtocol>(
         _ endpoint: Endpoint,
@@ -61,7 +61,7 @@ final class FakeFetcher: FetcherProtocol {
     
     #else
     
-    func publisher<Endpoint>(for endPoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> where Endpoint : CombineCurrency.EndpointProtocol {
+    func publisher<Endpoint>(for endPoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> where Endpoint : ReactiveCurrency.EndpointProtocol {
         // This is a fake instance, and any of it's method should not be called.
         
         numberOfMethodCall += 1

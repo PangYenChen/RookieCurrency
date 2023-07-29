@@ -15,15 +15,15 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E15BA6AA24FCA66600CA5B1B"
-               BuildableName = "CombineCurrency.app"
-               BlueprintName = "CombineCurrency"
+               BuildableName = "ReactiveCurrency.app"
+               BlueprintName = "ReactiveCurrency"
                ReferencedContainer = "container:RookieCurrency.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "CombineCurrencyTests"
+      buildConfiguration = "ReactiveCurrencyTests"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -33,8 +33,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E15BA6BF24FCA66900CA5B1B"
-               BuildableName = "CombineCurrencyTests.xctest"
-               BlueprintName = "CombineCurrencyTests"
+               BuildableName = "ReactiveCurrencyTests.xctest"
+               BlueprintName = "ReactiveCurrencyTests"
                ReferencedContainer = "container:RookieCurrency.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -55,8 +55,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E15BA6AA24FCA66600CA5B1B"
-            BuildableName = "CombineCurrency.app"
-            BlueprintName = "CombineCurrency"
+            BuildableName = "ReactiveCurrency.app"
+            BlueprintName = "ReactiveCurrency"
             ReferencedContainer = "container:RookieCurrency.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -72,8 +72,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E15BA6AA24FCA66600CA5B1B"
-            BuildableName = "CombineCurrency.app"
-            BlueprintName = "CombineCurrency"
+            BuildableName = "ReactiveCurrency.app"
+            BlueprintName = "ReactiveCurrency"
             ReferencedContainer = "container:RookieCurrency.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

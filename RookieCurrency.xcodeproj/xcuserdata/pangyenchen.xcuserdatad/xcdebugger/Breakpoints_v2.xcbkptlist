@@ -18,6 +18,38 @@
             endingLineNumber = "183"
             landmarkName = "searchBar(_:textDidChange:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "C0F89E06-F375-4265-9D22-FECE43447521 - 645f5ef3d0b73339"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "RookieCurrency.ResultTableViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "183"
+                  endingLineNumber = "183"
+                  offsetFromSymbolStart = "64">
+               </Location>
+               <Location
+                  uuid = "C0F89E06-F375-4265-9D22-FECE43447521 - 1f3ff2ad275b2be9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.ResultTableViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "183"
+                  endingLineNumber = "183"
+                  offsetFromSymbolStart = "64">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -34,6 +66,38 @@
             endingLineNumber = "184"
             landmarkName = "searchBar(_:textDidChange:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "0E4692E2-A56D-46E7-A299-5014E03BF481 - 645f5ef3d0b733da"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "RookieCurrency.ResultTableViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "184"
+                  endingLineNumber = "184"
+                  offsetFromSymbolStart = "304">
+               </Location>
+               <Location
+                  uuid = "0E4692E2-A56D-46E7-A299-5014E03BF481 - 1f3ff2ad275b2b0a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.ResultTableViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "184"
+                  endingLineNumber = "184"
+                  offsetFromSymbolStart = "304">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -50,6 +114,38 @@
             endingLineNumber = "186"
             landmarkName = "searchBar(_:textDidChange:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2FA67441-0371-4AF0-A073-F8E53553C2F9 - 645f5ef3d0b7339c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "RookieCurrency.ResultTableViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "186"
+                  endingLineNumber = "186"
+                  offsetFromSymbolStart = "164">
+               </Location>
+               <Location
+                  uuid = "2FA67441-0371-4AF0-A073-F8E53553C2F9 - 1f3ff2ad275b2b4c"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.ResultTableViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "186"
+                  endingLineNumber = "186"
+                  offsetFromSymbolStart = "164">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -66,6 +162,38 @@
             endingLineNumber = "52"
             landmarkName = "setOrder(_:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "74A71299-8C12-4DA0-A6E1-8A96A02C91AE - b81f53d0558b7961"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "RookieCurrency.ResultTableViewController.setOrder(RookieCurrency.BaseResultTableViewController.Order) -&gt; ()"
+                  moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "52"
+                  endingLineNumber = "52"
+                  offsetFromSymbolStart = "96">
+               </Location>
+               <Location
+                  uuid = "74A71299-8C12-4DA0-A6E1-8A96A02C91AE - c90ca82901e0f66b"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.ResultTableViewController.setOrder(ImperativeCurrency.BaseResultTableViewController.Order) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "52"
+                  endingLineNumber = "52"
+                  offsetFromSymbolStart = "96">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -82,6 +210,38 @@
             endingLineNumber = "53"
             landmarkName = "setOrder(_:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "808F4F31-730D-42EC-9DC3-F1135B17CF80 - b81f53d0558b7940"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "RookieCurrency.ResultTableViewController.setOrder(RookieCurrency.BaseResultTableViewController.Order) -&gt; ()"
+                  moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "924">
+               </Location>
+               <Location
+                  uuid = "808F4F31-730D-42EC-9DC3-F1135B17CF80 - c90ca82901e0f64a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.ResultTableViewController.setOrder(ImperativeCurrency.BaseResultTableViewController.Order) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "53"
+                  endingLineNumber = "53"
+                  offsetFromSymbolStart = "924">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -98,6 +258,38 @@
             endingLineNumber = "55"
             landmarkName = "setOrder(_:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "BB9C9D6E-C1C4-4A81-ADE4-3DE913AA7245 - b81f53d0558b790e"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "RookieCurrency.ResultTableViewController.setOrder(RookieCurrency.BaseResultTableViewController.Order) -&gt; ()"
+                  moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "55"
+                  endingLineNumber = "55"
+                  offsetFromSymbolStart = "192">
+               </Location>
+               <Location
+                  uuid = "BB9C9D6E-C1C4-4A81-ADE4-3DE913AA7245 - c90ca82901e0f604"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.ResultTableViewController.setOrder(ImperativeCurrency.BaseResultTableViewController.Order) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "55"
+                  endingLineNumber = "55"
+                  offsetFromSymbolStart = "192">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -137,6 +329,36 @@
                   continueAfterRunningActions = "No"
                   symbolName = "closure #3 (__C.UIAlertAction) -&gt; () in closure #1 (Swift.Result&lt;(latestRate: RookieCurrency.ResponseDataModel.Rate&lt;RookieCurrency.ResponseDataModel.Category.Latest&gt;, historicalRateSet: Swift.Set&lt;RookieCurrency.ResponseDataModel.Rate&lt;RookieCurrency.ResponseDataModel.Category.Historical&gt;&gt;), Swift.Error&gt;) -&gt; () in RookieCurrency.ResultTableViewController.refreshDataAndPopulateTableView() -&gt; ()"
                   moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "165"
+                  endingLineNumber = "165"
+                  offsetFromSymbolStart = "28">
+               </Location>
+               <Location
+                  uuid = "B19232BA-EFC6-4D3C-9915-919F8ECFBF57 - 2b40d39ca4ebd08d"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;(latestRate: ImperativeCurrency.ResponseDataModel.Rate&lt;ImperativeCurrency.ResponseDataModel.Category.Latest&gt;, historicalRateSet: Swift.Set&lt;ImperativeCurrency.ResponseDataModel.Rate&lt;ImperativeCurrency.ResponseDataModel.Category.Historical&gt;&gt;), Swift.Error&gt;) -&gt; () in ImperativeCurrency.ResultTableViewController.refreshDataAndPopulateTableView() -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "165"
+                  endingLineNumber = "165"
+                  offsetFromSymbolStart = "1700">
+               </Location>
+               <Location
+                  uuid = "B19232BA-EFC6-4D3C-9915-919F8ECFBF57 - f6239802cce15dcd"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #3 (__C.UIAlertAction) -&gt; () in closure #1 (Swift.Result&lt;(latestRate: ImperativeCurrency.ResponseDataModel.Rate&lt;ImperativeCurrency.ResponseDataModel.Category.Latest&gt;, historicalRateSet: Swift.Set&lt;ImperativeCurrency.ResponseDataModel.Rate&lt;ImperativeCurrency.ResponseDataModel.Category.Historical&gt;&gt;), Swift.Error&gt;) -&gt; () in ImperativeCurrency.ResultTableViewController.refreshDataAndPopulateTableView() -&gt; ()"
+                  moduleName = "ImperativeCurrency"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/RookieCurrency/Controller/View%20Controller/ResultTableViewController.swift"
                   startingColumnNumber = "9223372036854775807"
@@ -185,6 +407,36 @@
                   continueAfterRunningActions = "No"
                   symbolName = "RookieCurrency.BaseSettingTableViewController.presentationControllerDidDismiss(__C.UIPresentationController) -&gt; ()"
                   moduleName = "RookieCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Controller/View%20Controller/BaseSettingTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "275"
+                  endingLineNumber = "275"
+                  offsetFromSymbolStart = "80">
+               </Location>
+               <Location
+                  uuid = "87AB54B3-F77E-4F93-851A-BAFF9383C75D - 47483a761c349bf7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.BaseSettingTableViewController.presentationControllerDidDismiss(__C.UIPresentationController) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Controller/View%20Controller/BaseSettingTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "275"
+                  endingLineNumber = "275"
+                  offsetFromSymbolStart = "80">
+               </Location>
+               <Location
+                  uuid = "87AB54B3-F77E-4F93-851A-BAFF9383C75D - 91ddf6228f1870d7"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ReactiveCurrency.BaseSettingTableViewController.presentationControllerDidDismiss(__C.UIPresentationController) -&gt; ()"
+                  moduleName = "ReactiveCurrency"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Controller/View%20Controller/BaseSettingTableViewController.swift"
                   startingColumnNumber = "9223372036854775807"

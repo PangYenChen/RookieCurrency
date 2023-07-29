@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import RookieCurrency
+@testable import ImperativeCurrency
 
 final class FetcherTests: XCTestCase {
     

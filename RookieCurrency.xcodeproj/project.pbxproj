@@ -157,20 +157,20 @@
 		51E1B4CA29AE490300D75669 /* Latest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Latest.swift; sourceTree = "<group>"; };
 		51E1B4CD29AE4C7100D75669 /* Historical.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Historical.swift; sourceTree = "<group>"; };
 		E1133334248A924D00B8E67F /* Archiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Archiver.swift; sourceTree = "<group>"; };
-		E13B274224758ACB00E0A07D /* RookieCurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RookieCurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E13B274224758ACB00E0A07D /* ImperativeCurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImperativeCurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E13B274524758ACB00E0A07D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		E13B274724758ACB00E0A07D /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
 		E13B274C24758ACB00E0A07D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		E13B274E24758ACF00E0A07D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E13B275124758ACF00E0A07D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		E13B275824758ACF00E0A07D /* RookieCurrencyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RookieCurrencyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E13B275824758ACF00E0A07D /* ImperativeCurrencyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ImperativeCurrencyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E13B275C24758ACF00E0A07D /* FetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherTests.swift; sourceTree = "<group>"; };
 		E13B276824758BCB00E0A07D /* Response Data Model.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Response Data Model.swift"; sourceTree = "<group>"; };
-		E15BA6AB24FCA66600CA5B1B /* CombineCurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = CombineCurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		E15BA6AB24FCA66600CA5B1B /* ReactiveCurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ReactiveCurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E15BA6B624FCA66900CA5B1B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E15BA6B924FCA66900CA5B1B /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		E15BA6BB24FCA66900CA5B1B /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		E15BA6C024FCA66900CA5B1B /* CombineCurrencyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CombineCurrencyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		E15BA6C024FCA66900CA5B1B /* ReactiveCurrencyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReactiveCurrencyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherTests.swift; sourceTree = "<group>"; };
 		E1CE96A9248555680029ED73 /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
 		E1CE96AB248555C30029ED73 /* Analyst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyst.swift; sourceTree = "<group>"; };
@@ -359,10 +359,10 @@
 		E13B274324758ACB00E0A07D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				E13B274224758ACB00E0A07D /* RookieCurrency.app */,
-				E13B275824758ACF00E0A07D /* RookieCurrencyTests.xctest */,
-				E15BA6AB24FCA66600CA5B1B /* CombineCurrency.app */,
-				E15BA6C024FCA66900CA5B1B /* CombineCurrencyTests.xctest */,
+				E13B274224758ACB00E0A07D /* ImperativeCurrency.app */,
+				E13B275824758ACF00E0A07D /* ImperativeCurrencyTests.xctest */,
+				E15BA6AB24FCA66600CA5B1B /* ReactiveCurrency.app */,
+				E15BA6C024FCA66900CA5B1B /* ReactiveCurrencyTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -457,9 +457,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		E13B274124758ACB00E0A07D /* RookieCurrency */ = {
+		E13B274124758ACB00E0A07D /* ImperativeCurrency */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E13B276124758ACF00E0A07D /* Build configuration list for PBXNativeTarget "RookieCurrency" */;
+			buildConfigurationList = E13B276124758ACF00E0A07D /* Build configuration list for PBXNativeTarget "ImperativeCurrency" */;
 			buildPhases = (
 				51578B7429A865FB00BE890F /* Get Git Commit Info */,
 				E13B273E24758ACB00E0A07D /* Sources */,
@@ -471,17 +471,17 @@
 			dependencies = (
 				51433D35298FD7D800F2B4E6 /* PBXTargetDependency */,
 			);
-			name = RookieCurrency;
+			name = ImperativeCurrency;
 			packageProductDependencies = (
 				51433D32298FD7BF00F2B4E6 /* RswiftLibrary */,
 			);
 			productName = RookieCurrnecy;
-			productReference = E13B274224758ACB00E0A07D /* RookieCurrency.app */;
+			productReference = E13B274224758ACB00E0A07D /* ImperativeCurrency.app */;
 			productType = "com.apple.product-type.application";
 		};
-		E13B275724758ACF00E0A07D /* RookieCurrencyTests */ = {
+		E13B275724758ACF00E0A07D /* ImperativeCurrencyTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E13B276424758ACF00E0A07D /* Build configuration list for PBXNativeTarget "RookieCurrencyTests" */;
+			buildConfigurationList = E13B276424758ACF00E0A07D /* Build configuration list for PBXNativeTarget "ImperativeCurrencyTests" */;
 			buildPhases = (
 				E13B275424758ACF00E0A07D /* Sources */,
 				E13B275524758ACF00E0A07D /* Frameworks */,
@@ -492,14 +492,14 @@
 			dependencies = (
 				E13B275A24758ACF00E0A07D /* PBXTargetDependency */,
 			);
-			name = RookieCurrencyTests;
+			name = ImperativeCurrencyTests;
 			productName = RookieCurrnecyTests;
-			productReference = E13B275824758ACF00E0A07D /* RookieCurrencyTests.xctest */;
+			productReference = E13B275824758ACF00E0A07D /* ImperativeCurrencyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		E15BA6AA24FCA66600CA5B1B /* CombineCurrency */ = {
+		E15BA6AA24FCA66600CA5B1B /* ReactiveCurrency */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E15BA6CB24FCA66900CA5B1B /* Build configuration list for PBXNativeTarget "CombineCurrency" */;
+			buildConfigurationList = E15BA6CB24FCA66900CA5B1B /* Build configuration list for PBXNativeTarget "ReactiveCurrency" */;
 			buildPhases = (
 				516F363029BC15E400357FB2 /* Get Git Commit Info */,
 				E15BA6A724FCA66600CA5B1B /* Sources */,
@@ -511,17 +511,17 @@
 			dependencies = (
 				51433D38298FD8AC00F2B4E6 /* PBXTargetDependency */,
 			);
-			name = CombineCurrency;
+			name = ReactiveCurrency;
 			packageProductDependencies = (
 				51433D3A298FD8C400F2B4E6 /* RswiftLibrary */,
 			);
 			productName = CombineCurrency;
-			productReference = E15BA6AB24FCA66600CA5B1B /* CombineCurrency.app */;
+			productReference = E15BA6AB24FCA66600CA5B1B /* ReactiveCurrency.app */;
 			productType = "com.apple.product-type.application";
 		};
-		E15BA6BF24FCA66900CA5B1B /* CombineCurrencyTests */ = {
+		E15BA6BF24FCA66900CA5B1B /* ReactiveCurrencyTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = E15BA6CC24FCA66900CA5B1B /* Build configuration list for PBXNativeTarget "CombineCurrencyTests" */;
+			buildConfigurationList = E15BA6CC24FCA66900CA5B1B /* Build configuration list for PBXNativeTarget "ReactiveCurrencyTests" */;
 			buildPhases = (
 				E15BA6BC24FCA66900CA5B1B /* Sources */,
 				E15BA6BD24FCA66900CA5B1B /* Frameworks */,
@@ -532,9 +532,9 @@
 			dependencies = (
 				E15BA6C224FCA66900CA5B1B /* PBXTargetDependency */,
 			);
-			name = CombineCurrencyTests;
+			name = ReactiveCurrencyTests;
 			productName = CombineCurrencyTests;
-			productReference = E15BA6C024FCA66900CA5B1B /* CombineCurrencyTests.xctest */;
+			productReference = E15BA6C024FCA66900CA5B1B /* ReactiveCurrencyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 /* End PBXNativeTarget section */
@@ -580,10 +580,10 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				E13B274124758ACB00E0A07D /* RookieCurrency */,
-				E13B275724758ACF00E0A07D /* RookieCurrencyTests */,
-				E15BA6AA24FCA66600CA5B1B /* CombineCurrency */,
-				E15BA6BF24FCA66900CA5B1B /* CombineCurrencyTests */,
+				E13B274124758ACB00E0A07D /* ImperativeCurrency */,
+				E13B275724758ACF00E0A07D /* ImperativeCurrencyTests */,
+				E15BA6AA24FCA66600CA5B1B /* ReactiveCurrency */,
+				E15BA6BF24FCA66900CA5B1B /* ReactiveCurrencyTests */,
 			);
 		};
 /* End PBXProject section */
@@ -788,12 +788,12 @@
 		};
 		E13B275A24758ACF00E0A07D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E13B274124758ACB00E0A07D /* RookieCurrency */;
+			target = E13B274124758ACB00E0A07D /* ImperativeCurrency */;
 			targetProxy = E13B275924758ACF00E0A07D /* PBXContainerItemProxy */;
 		};
 		E15BA6C224FCA66900CA5B1B /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = E15BA6AA24FCA66600CA5B1B /* CombineCurrency */;
+			target = E15BA6AA24FCA66600CA5B1B /* ReactiveCurrency */;
 			targetProxy = E15BA6C124FCA66900CA5B1B /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -836,7 +836,7 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		51362E2A29B4D63500E3CE89 /* RookieCurrencyTests */ = {
+		51362E2A29B4D63500E3CE89 /* ImperativeCurrencyTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -895,12 +895,12 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = Users/1902470/Desktop/RookieCurrnecy/RookieCurrency/Info.plist;
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = RookieCurrency_Tests;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = IMPERATIVE_CURRENCY_TESTS;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = RookieCurrencyTests;
+			name = ImperativeCurrencyTests;
 		};
-		51362E2B29B4D63500E3CE89 /* RookieCurrencyTests */ = {
+		51362E2B29B4D63500E3CE89 /* ImperativeCurrencyTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -912,14 +912,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.RookieCurrency;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.Imperative-Currency";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = RookieCurrencyTests;
+			name = ImperativeCurrencyTests;
 		};
-		51362E2C29B4D63500E3CE89 /* RookieCurrencyTests */ = {
+		51362E2C29B4D63500E3CE89 /* ImperativeCurrencyTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -938,11 +938,11 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RookieCurrency.app/RookieCurrency";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ImperativeCurrency.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ImperativeCurrency";
 			};
-			name = RookieCurrencyTests;
+			name = ImperativeCurrencyTests;
 		};
-		51362E2D29B4D63500E3CE89 /* RookieCurrencyTests */ = {
+		51362E2D29B4D63500E3CE89 /* ImperativeCurrencyTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -954,14 +954,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.CombineCurrency;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.Reactive-Currency";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = RookieCurrencyTests;
+			name = ImperativeCurrencyTests;
 		};
-		51362E2E29B4D63500E3CE89 /* RookieCurrencyTests */ = {
+		51362E2E29B4D63500E3CE89 /* ImperativeCurrencyTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -980,11 +980,11 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CombineCurrency.app/CombineCurrency";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReactiveCurrency.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ReactiveCurrency";
 			};
-			name = RookieCurrencyTests;
+			name = ImperativeCurrencyTests;
 		};
-		51362E3129B4D67100E3CE89 /* CombineCurrencyTests */ = {
+		51362E3129B4D67100E3CE89 /* ReactiveCurrencyTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -1043,12 +1043,12 @@
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = Users/1902470/Desktop/RookieCurrnecy/RookieCurrency/Info.plist;
 				SDKROOT = iphoneos;
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = CombineCurrency_Tests;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = REACTIVE_CURRENCY_TESTS;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
-			name = CombineCurrencyTests;
+			name = ReactiveCurrencyTests;
 		};
-		51362E3229B4D67100E3CE89 /* CombineCurrencyTests */ = {
+		51362E3229B4D67100E3CE89 /* ReactiveCurrencyTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1060,14 +1060,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.RookieCurrency;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.Imperative-Currency";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = CombineCurrencyTests;
+			name = ReactiveCurrencyTests;
 		};
-		51362E3329B4D67100E3CE89 /* CombineCurrencyTests */ = {
+		51362E3329B4D67100E3CE89 /* ReactiveCurrencyTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -1086,11 +1086,11 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RookieCurrency.app/RookieCurrency";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ImperativeCurrency.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ImperativeCurrency";
 			};
-			name = CombineCurrencyTests;
+			name = ReactiveCurrencyTests;
 		};
-		51362E3429B4D67100E3CE89 /* CombineCurrencyTests */ = {
+		51362E3429B4D67100E3CE89 /* ReactiveCurrencyTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
@@ -1102,14 +1102,14 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.CombineCurrency;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.Reactive-Currency";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
 			};
-			name = CombineCurrencyTests;
+			name = ReactiveCurrencyTests;
 		};
-		51362E3529B4D67100E3CE89 /* CombineCurrencyTests */ = {
+		51362E3529B4D67100E3CE89 /* ReactiveCurrencyTests */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
@@ -1128,9 +1128,9 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CombineCurrency.app/CombineCurrency";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReactiveCurrency.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ReactiveCurrency";
 			};
-			name = CombineCurrencyTests;
+			name = ReactiveCurrencyTests;
 		};
 		E13B275F24758ACF00E0A07D /* Debug */ = {
 			isa = XCBuildConfiguration;
@@ -1266,7 +1266,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.RookieCurrency;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.Imperative-Currency";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1285,7 +1285,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.RookieCurrency;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.Imperative-Currency";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1311,7 +1311,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RookieCurrency.app/RookieCurrency";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ImperativeCurrency.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ImperativeCurrency";
 			};
 			name = Debug;
 		};
@@ -1334,7 +1334,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RookieCurrency.app/RookieCurrency";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ImperativeCurrency.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ImperativeCurrency";
 			};
 			name = Release;
 		};
@@ -1350,7 +1350,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.CombineCurrency;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.Reactive-Currency";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1369,7 +1369,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.example.CombineCurrency;
+				PRODUCT_BUNDLE_IDENTIFIER = "com.example.Reactive-Currency";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1395,7 +1395,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CombineCurrency.app/CombineCurrency";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReactiveCurrency.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ReactiveCurrency";
 			};
 			name = Debug;
 		};
@@ -1418,7 +1418,7 @@
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/CombineCurrency.app/CombineCurrency";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/ReactiveCurrency.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/ReactiveCurrency";
 			};
 			name = Release;
 		};
@@ -1429,52 +1429,52 @@
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E13B275F24758ACF00E0A07D /* Debug */,
-				51362E3129B4D67100E3CE89 /* CombineCurrencyTests */,
-				51362E2A29B4D63500E3CE89 /* RookieCurrencyTests */,
+				51362E3129B4D67100E3CE89 /* ReactiveCurrencyTests */,
+				51362E2A29B4D63500E3CE89 /* ImperativeCurrencyTests */,
 				E13B276024758ACF00E0A07D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E13B276124758ACF00E0A07D /* Build configuration list for PBXNativeTarget "RookieCurrency" */ = {
+		E13B276124758ACF00E0A07D /* Build configuration list for PBXNativeTarget "ImperativeCurrency" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E13B276224758ACF00E0A07D /* Debug */,
-				51362E3229B4D67100E3CE89 /* CombineCurrencyTests */,
-				51362E2B29B4D63500E3CE89 /* RookieCurrencyTests */,
+				51362E3229B4D67100E3CE89 /* ReactiveCurrencyTests */,
+				51362E2B29B4D63500E3CE89 /* ImperativeCurrencyTests */,
 				E13B276324758ACF00E0A07D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E13B276424758ACF00E0A07D /* Build configuration list for PBXNativeTarget "RookieCurrencyTests" */ = {
+		E13B276424758ACF00E0A07D /* Build configuration list for PBXNativeTarget "ImperativeCurrencyTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E13B276524758ACF00E0A07D /* Debug */,
-				51362E3329B4D67100E3CE89 /* CombineCurrencyTests */,
-				51362E2C29B4D63500E3CE89 /* RookieCurrencyTests */,
+				51362E3329B4D67100E3CE89 /* ReactiveCurrencyTests */,
+				51362E2C29B4D63500E3CE89 /* ImperativeCurrencyTests */,
 				E13B276624758ACF00E0A07D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E15BA6CB24FCA66900CA5B1B /* Build configuration list for PBXNativeTarget "CombineCurrency" */ = {
+		E15BA6CB24FCA66900CA5B1B /* Build configuration list for PBXNativeTarget "ReactiveCurrency" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E15BA6C724FCA66900CA5B1B /* Debug */,
-				51362E3429B4D67100E3CE89 /* CombineCurrencyTests */,
-				51362E2D29B4D63500E3CE89 /* RookieCurrencyTests */,
+				51362E3429B4D67100E3CE89 /* ReactiveCurrencyTests */,
+				51362E2D29B4D63500E3CE89 /* ImperativeCurrencyTests */,
 				E15BA6C824FCA66900CA5B1B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		E15BA6CC24FCA66900CA5B1B /* Build configuration list for PBXNativeTarget "CombineCurrencyTests" */ = {
+		E15BA6CC24FCA66900CA5B1B /* Build configuration list for PBXNativeTarget "ReactiveCurrencyTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E15BA6C924FCA66900CA5B1B /* Debug */,
-				51362E3529B4D67100E3CE89 /* CombineCurrencyTests */,
-				51362E2E29B4D63500E3CE89 /* RookieCurrencyTests */,
+				51362E3529B4D67100E3CE89 /* ReactiveCurrencyTests */,
+				51362E2E29B4D63500E3CE89 /* ImperativeCurrencyTests */,
 				E15BA6CA24FCA66900CA5B1B /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;

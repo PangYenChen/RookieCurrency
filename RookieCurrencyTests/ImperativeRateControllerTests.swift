@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import RookieCurrency
+@testable import ImperativeCurrency
 
 
 final class ImperativeRateControllerTests: XCTestCase {
@@ -102,7 +102,7 @@ final class StubFetcher: FetcherProtocol {
     
     private(set) var dateStringOfHistoricalEndpointCall: Set<String> = []
     
-    func fetch<Endpoint>(_ endpoint: Endpoint, completionHandler: @escaping (Result<Endpoint.ResponseType, Error>) -> Void) where Endpoint : RookieCurrency.EndpointProtocol {
+    func fetch<Endpoint>(_ endpoint: Endpoint, completionHandler: @escaping (Result<Endpoint.ResponseType, Error>) -> Void) where Endpoint : ImperativeCurrency.EndpointProtocol {
         
         if endpoint.url.path.contains("latest"),
            let latestRate = TestingData.latestRate as? Endpoint.ResponseType {

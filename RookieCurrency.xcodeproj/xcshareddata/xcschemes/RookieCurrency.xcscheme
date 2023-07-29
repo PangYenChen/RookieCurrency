@@ -15,15 +15,15 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E13B274124758ACB00E0A07D"
-               BuildableName = "RookieCurrency.app"
-               BlueprintName = "RookieCurrency"
+               BuildableName = "ImperativeCurrency.app"
+               BlueprintName = "ImperativeCurrency"
                ReferencedContainer = "container:RookieCurrency.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
-      buildConfiguration = "RookieCurrencyTests"
+      buildConfiguration = "ImperativeCurrencyTests"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
@@ -34,8 +34,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "E13B275724758ACF00E0A07D"
-               BuildableName = "RookieCurrencyTests.xctest"
-               BlueprintName = "RookieCurrencyTests"
+               BuildableName = "ImperativeCurrencyTests.xctest"
+               BlueprintName = "ImperativeCurrencyTests"
                ReferencedContainer = "container:RookieCurrency.xcodeproj">
             </BuildableReference>
          </TestableReference>
@@ -56,8 +56,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E13B274124758ACB00E0A07D"
-            BuildableName = "RookieCurrency.app"
-            BlueprintName = "RookieCurrency"
+            BuildableName = "ImperativeCurrency.app"
+            BlueprintName = "ImperativeCurrency"
             ReferencedContainer = "container:RookieCurrency.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -73,8 +73,8 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "E13B274124758ACB00E0A07D"
-            BuildableName = "RookieCurrency.app"
-            BlueprintName = "RookieCurrency"
+            BuildableName = "ImperativeCurrency.app"
+            BlueprintName = "ImperativeCurrency"
             ReferencedContainer = "container:RookieCurrency.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

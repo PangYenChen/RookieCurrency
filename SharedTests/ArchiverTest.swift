@@ -8,10 +8,10 @@
 
 import XCTest
 
-#if RookieCurrency_Tests
-@testable import RookieCurrency
+#if IMPERATIVE_CURRENCY_TESTS
+@testable import ImperativeCurrency
 #else
-@testable import CombineCurrency
+@testable import ReactiveCurrency
 #endif
 
 final class ArchiverTest: XCTestCase {

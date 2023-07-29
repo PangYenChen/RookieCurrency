@@ -8,7 +8,7 @@
 
 import XCTest
 import Combine
-@testable import CombineCurrency
+@testable import ReactiveCurrency
 
 final class ReactiveRateControllerTests: XCTestCase {
     let timeoutInterval: TimeInterval = 1

@@ -8,10 +8,10 @@
 
 import Foundation
 
-#if RookieCurrency_Tests
-@testable import RookieCurrency
+#if IMPERATIVE_CURRENCY_TESTS
+@testable import ImperativeCurrency
 #else
-@testable import CombineCurrency
+@testable import ReactiveCurrency
 #endif
 
 enum TestDouble {}

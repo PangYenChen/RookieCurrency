@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import CombineCurrency
+@testable import ReactiveCurrency
 import Combine
 
 class FetcherTests: XCTestCase {
