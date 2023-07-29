@@ -277,9 +277,8 @@
 				E13B274E24758ACF00E0A07D /* Assets.xcassets */,
 				E13B275024758ACF00E0A07D /* LaunchScreen.storyboard */,
 			);
-			name = "Supporting Files";
-			path = "RookieCurrency/Supporting Files";
-			sourceTree = SOURCE_ROOT;
+			path = "Supporting Files";
+			sourceTree = "<group>";
 		};
 		51D67ED1297590B0008B8928 /* Supporting Files */ = {
 			isa = PBXGroup;
@@ -343,14 +342,14 @@
 				516916B92983D4C800547B60 /* README.md */,
 				51D67ED2297591BC008B8928 /* Supporting Files */,
 				E1CE96A8248555530029ED73 /* Controller */,
-				E13B274424758ACB00E0A07D /* RookieCurrency */,
-				E15BA6AC24FCA66600CA5B1B /* CombineCurrency */,
+				E13B274424758ACB00E0A07D /* ImperativeCurrency */,
+				E15BA6AC24FCA66600CA5B1B /* ReactiveCurrency */,
 				E1CE96A32485549D0029ED73 /* Extension */,
 				51119A172999D3C8002758B3 /* Segue */,
 				51E1B4B529ADAD5300D75669 /* TestingData */,
-				E13B275B24758ACF00E0A07D /* RookieCurrencyTests */,
-				E15BA6C324FCA66900CA5B1B /* CombineCurrencyTests */,
 				51362E3B29B4D7D700E3CE89 /* SharedTests */,
+				E13B275B24758ACF00E0A07D /* ImperativeCurrencyTests */,
+				E15BA6C324FCA66900CA5B1B /* ReactiveCurrencyTests */,
 				E13B274324758ACB00E0A07D /* Products */,
 				51433D39298FD8C400F2B4E6 /* Frameworks */,
 			);
@@ -367,40 +366,40 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		E13B274424758ACB00E0A07D /* RookieCurrency */ = {
+		E13B274424758ACB00E0A07D /* ImperativeCurrency */ = {
 			isa = PBXGroup;
 			children = (
 				512087A129A9EE5B005ED87A /* Controller */,
 				51D67ED029758F07008B8928 /* Supporting Files */,
 			);
-			path = RookieCurrency;
+			path = ImperativeCurrency;
 			sourceTree = "<group>";
 		};
-		E13B275B24758ACF00E0A07D /* RookieCurrencyTests */ = {
+		E13B275B24758ACF00E0A07D /* ImperativeCurrencyTests */ = {
 			isa = PBXGroup;
 			children = (
 				E13B275C24758ACF00E0A07D /* FetcherTests.swift */,
 				5189F9CF29DAD630004234D3 /* ImperativeRateControllerTests.swift */,
 			);
-			path = RookieCurrencyTests;
+			path = ImperativeCurrencyTests;
 			sourceTree = "<group>";
 		};
-		E15BA6AC24FCA66600CA5B1B /* CombineCurrency */ = {
+		E15BA6AC24FCA66600CA5B1B /* ReactiveCurrency */ = {
 			isa = PBXGroup;
 			children = (
 				512087AB29A9F482005ED87A /* Controller */,
 				51D67ED1297590B0008B8928 /* Supporting Files */,
 			);
-			path = CombineCurrency;
+			path = ReactiveCurrency;
 			sourceTree = "<group>";
 		};
-		E15BA6C324FCA66900CA5B1B /* CombineCurrencyTests */ = {
+		E15BA6C324FCA66900CA5B1B /* ReactiveCurrencyTests */ = {
 			isa = PBXGroup;
 			children = (
 				E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */,
 				5121216829E2D59F001D234B /* ReactiveRateControllerTests.swift */,
 			);
-			path = CombineCurrencyTests;
+			path = ReactiveCurrencyTests;
 			sourceTree = "<group>";
 		};
 		E1CE96A02485535D0029ED73 /* Data Model */ = {
