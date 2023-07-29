@@ -103,14 +103,14 @@
 			containerPortal = E13B273A24758ACB00E0A07D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = E13B274124758ACB00E0A07D;
-			remoteInfo = RookieCurrnecy;
+			remoteInfo = ImperativeCurrnecy;
 		};
 		E15BA6C124FCA66900CA5B1B /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = E13B273A24758ACB00E0A07D /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = E15BA6AA24FCA66600CA5B1B;
-			remoteInfo = CombineCurrency;
+			remoteInfo = ReactiveCurrency;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -474,7 +474,7 @@
 			packageProductDependencies = (
 				51433D32298FD7BF00F2B4E6 /* RswiftLibrary */,
 			);
-			productName = RookieCurrnecy;
+			productName = ImperativeCurrnecy;
 			productReference = E13B274224758ACB00E0A07D /* ImperativeCurrency.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -492,7 +492,7 @@
 				E13B275A24758ACF00E0A07D /* PBXTargetDependency */,
 			);
 			name = ImperativeCurrencyTests;
-			productName = RookieCurrnecyTests;
+			productName = ImperativeCurrnecyTests;
 			productReference = E13B275824758ACF00E0A07D /* ImperativeCurrencyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
@@ -514,7 +514,7 @@
 			packageProductDependencies = (
 				51433D3A298FD8C400F2B4E6 /* RswiftLibrary */,
 			);
-			productName = CombineCurrency;
+			productName = ReactiveCurrency;
 			productReference = E15BA6AB24FCA66600CA5B1B /* ReactiveCurrency.app */;
 			productType = "com.apple.product-type.application";
 		};
@@ -532,7 +532,7 @@
 				E15BA6C224FCA66900CA5B1B /* PBXTargetDependency */,
 			);
 			name = ReactiveCurrencyTests;
-			productName = CombineCurrencyTests;
+			productName = ReactiveCurrencyTests;
 			productReference = E15BA6C024FCA66900CA5B1B /* ReactiveCurrencyTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
