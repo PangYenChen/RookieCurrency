@@ -18,24 +18,28 @@ final class ResponseDataModelTest: XCTestCase {
     
     func testDecodeHistoricalRate() throws {
         let jsonDecoder = ResponseDataModel.jsonDecoder
+        let dateString = "2000-01-01"
+        let historicalData = try XCTUnwrap(TestingData.historicalDataFor(dateString: dateString))
         let historicalRate = try jsonDecoder
             .decode(ResponseDataModel.HistoricalRate.self,
-                    from: TestingData.historicalData!)
+                    from: historicalData)
+        XCTAssertEqual(historicalRate.dateString, dateString)
         XCTAssertFalse(historicalRate.rates.isEmpty)
     }
     
     func testDecodeLatestRate() throws {
         let jsonDecoder = ResponseDataModel.jsonDecoder
+        let latestData = try XCTUnwrap(TestingData.latestData)
         let historicalRate = try jsonDecoder
             .decode(ResponseDataModel.LatestRate.self,
-                    from: TestingData.latestData!)
+                    from: latestData)
         XCTAssertFalse(historicalRate.rates.isEmpty)
     }
     
     func testEncodeAndThanDecode() throws {
         let jsonEncoder = ResponseDataModel.jsonEncoder
         let dummyDateString = "1970-01-01"
-        let dummyHistoricalRate = TestingData.historicalRate(dateString: dummyDateString)
+        let dummyHistoricalRate = try TestingData.historicalRateFor(dateString: dummyDateString)
         let historicalRateData = try jsonEncoder.encode(dummyHistoricalRate)
         let decodedHistoricalRate = try JSONDecoder()
             .decode(ResponseDataModel.HistoricalRate.self, from: historicalRateData)

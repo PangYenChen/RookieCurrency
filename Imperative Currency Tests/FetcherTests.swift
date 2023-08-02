@@ -66,8 +66,10 @@ final class FetcherTests: XCTestCase {
         // arrange
         let expectation = expectation(description: "should get a historical rate instance")
         
+        let dummyDateString = "1970-01-01"
+        
         do {
-            stubRateSession.data = TestingData.historicalData
+            stubRateSession.data = TestingData.historicalDataFor(dateString: dummyDateString)
             
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
             stubRateSession.response = HTTPURLResponse(url: url,
@@ -76,8 +78,6 @@ final class FetcherTests: XCTestCase {
                                                        headerFields: nil)
             stubRateSession.error = nil
         }
-        
-        let dummyDateString = "1970-01-01"
         
         // action
         sut

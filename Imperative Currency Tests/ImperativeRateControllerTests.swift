@@ -113,13 +113,20 @@ final class StubFetcher: FetcherProtocol {
             
         } else {
             let dateString = endpoint.url.lastPathComponent
-            if AppUtility.requestDateFormatter.date(from: dateString) != nil,
-               let historicalRate = TestingData.historicalRate(dateString: dateString) as? Endpoint.ResponseType {
+            do {
+                if AppUtility.requestDateFormatter.date(from: dateString) != nil,
+                   let historicalRate = try TestingData.historicalRateFor(dateString: dateString) as? Endpoint.ResponseType {
+                    
+                    dateStringOfHistoricalEndpointCall.insert(dateString)
+                    
+                    completionHandler(.success(historicalRate))
+                    return
+                    
+#warning("這邊邏輯要檢查一下")
+                }
+            } catch {
+                completionHandler(.failure(error))
                 
-                dateStringOfHistoricalEndpointCall.insert(dateString)
-                
-                completionHandler(.success(historicalRate))
-                return
             }
         }
         

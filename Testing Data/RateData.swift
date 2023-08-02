@@ -8,12 +8,24 @@
 
 import Foundation
 
+#if IMPERATIVE_CURRENCY_TESTS
+@testable import ImperativeCurrency
+#else
+@testable import ReactiveCurrency
+#endif
+
 extension TestingData {
     
-    static let historicalData = """
+    static func historicalDataFor(dateString: String) -> Data? {
+        
+        guard let timestamp = AppUtility.requestDateFormatter.date(from: dateString)
+            .map({ Int($0.timeIntervalSince1970) })
+            .map(String.init(describing:)) else { return nil }
+        
+        return """
 {
   "base": "USD",
-  "date": "2023-02-02",
+  "date": "\(dateString)",
   "historical": true,
   "rates": {
     "AED": 3.673102,
@@ -188,10 +200,10 @@ extension TestingData {
     "ZWL": 321.999592
   },
   "success": true,
-  "timestamp": 1675382399
+  "timestamp": \(timestamp)
 }
 """.data(using: .utf8)
-    
+    }
     
     static let latestData = """
 {

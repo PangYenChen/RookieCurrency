@@ -20,7 +20,7 @@ final class ArchiverTest: XCTestCase {
     
     func testArchiveAndThenUnarchive() throws {
         let dummyDateString = "1970-01-01"
-        let dummyHistoricalRate = TestingData.historicalRate(dateString: dummyDateString)
+        let dummyHistoricalRate = try TestingData.historicalRateFor(dateString: dummyDateString)
         try sut.archive(historicalRate: dummyHistoricalRate)
         let unarchivedHistoricalRate = try sut.unarchive(historicalRateDateString: dummyHistoricalRate.dateString)
         

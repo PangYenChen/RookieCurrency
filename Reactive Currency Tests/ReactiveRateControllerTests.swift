@@ -127,14 +127,18 @@ final class StubFetcher: FetcherProtocol {
                 .eraseToAnyPublisher()
         } else {
             let dateString = endpoint.url.lastPathComponent
-            if AppUtility.requestDateFormatter.date(from: dateString) != nil,
-               let historicalRate = TestingData.historicalRate(dateString: dateString) as? Endpoint.ResponseType {
-                
-                dateStringOfHistoricalEndpointCall.insert(dateString)
-                
-                return Just(historicalRate)
-                    .setFailureType(to: Error.self)
-                    .eraseToAnyPublisher()
+            do {
+                if AppUtility.requestDateFormatter.date(from: dateString) != nil,
+                   let historicalRate = try TestingData.historicalRateFor(dateString: dateString) as? Endpoint.ResponseType {
+                    
+                    dateStringOfHistoricalEndpointCall.insert(dateString)
+                    
+                    return Just(historicalRate)
+                        .setFailureType(to: Error.self)
+                        .eraseToAnyPublisher()
+                }
+            } catch {
+                return Fail(error: error).eraseToAnyPublisher()
             }
         }
         

@@ -84,8 +84,10 @@ class FetcherTests: XCTestCase {
         let valueExpectation = expectation(description: "should receive a historical rate")
         let finishedExpectation = expectation(description: "should receive a .finished")
         
+        let dummyDateString = "1970-01-01"
+
         do {
-            let data = try XCTUnwrap(TestingData.historicalData)
+            let data = try XCTUnwrap(TestingData.historicalDataFor(dateString: dummyDateString))
             
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
             
@@ -98,8 +100,6 @@ class FetcherTests: XCTestCase {
                 .setFailureType(to: URLError.self)
                 .eraseToAnyPublisher()
         }
-        
-        let dummyDateString = "1970-01-01"
         
         // action
         sut.publisher(for: Endpoints.Historical(dateString: dummyDateString))

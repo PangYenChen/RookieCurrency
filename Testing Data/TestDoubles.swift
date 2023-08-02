@@ -41,7 +41,7 @@ extension TestDouble {
         static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
             numberOfUnarchiveCall += 1
             
-            return TestingData.historicalRate(dateString: fileName)
+            return try TestingData.historicalRateFor(dateString: fileName)
         }
         
         static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool {
