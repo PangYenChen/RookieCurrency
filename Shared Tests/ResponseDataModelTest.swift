@@ -1,6 +1,5 @@
 //
 //  ResponseDataModelTest.swift
-//  RookieCurrencyTests
 //
 //  Created by 陳邦彥 on 2023/3/5.
 //  Copyright © 2023 Pang-yen Chen. All rights reserved.
@@ -23,7 +22,7 @@ final class ResponseDataModelTest: XCTestCase {
         let dateString = "1970-01-01"
         let historicalData = try XCTUnwrap(TestingData.historicalRateDataFor(dateString: dateString))
         
-        // action
+        // act
         let historicalRate = try ResponseDataModel.jsonDecoder
             .decode(ResponseDataModel.HistoricalRate.self,
                     from: historicalData)
@@ -38,7 +37,7 @@ final class ResponseDataModelTest: XCTestCase {
         // arrange
         let latestData = try XCTUnwrap(TestingData.latestData)
 
-        // action
+        // act
         let historicalRate = try ResponseDataModel.jsonDecoder
             .decode(ResponseDataModel.LatestRate.self,
                     from: latestData)
@@ -53,7 +52,7 @@ final class ResponseDataModelTest: XCTestCase {
         let dateString = "1970-01-01"
         let dummyHistoricalRate = try TestingData.historicalRateFor(dateString: dateString)
         
-        // action
+        // act
         let historicalRateData = try ResponseDataModel.jsonEncoder.encode(dummyHistoricalRate)
         let decodedHistoricalRate = try ResponseDataModel.jsonDecoder
             .decode(ResponseDataModel.HistoricalRate.self, from: historicalRateData)

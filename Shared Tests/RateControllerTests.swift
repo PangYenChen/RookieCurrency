@@ -1,6 +1,5 @@
 //
 //  RateControllerTests.swift
-//  RookieCurrency
 //
 //  Created by 陳邦彥 on 2023/4/2.
 //  Copyright © 2023 Pang-yen Chen. All rights reserved.
@@ -34,11 +33,11 @@ final class RateControllerTests: XCTestCase {
     
     /// 測試 RateController.historicalRateDateStrings(numberOfDaysAgo:from:) method
     /// 模擬從執行當下的時間往前計算日期字串
-    func testHistoricalRateDateString() throws {
+    func testHistoricalRateDateStrings() throws {
         // arrange
         let startDay = Date(timeIntervalSince1970: 0)
         
-        // action
+        // act
         let historicalDateStrings = sut.historicalRateDateStrings(numberOfDaysAgo: 3, from: startDay)
         
         // assert
