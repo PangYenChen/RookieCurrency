@@ -69,7 +69,7 @@ final class FetcherTests: XCTestCase {
         let dummyDateString = "1970-01-01"
         
         do {
-            stubRateSession.data = TestingData.historicalDataFor(dateString: dummyDateString)
+            stubRateSession.data = TestingData.historicalRateDataFor(dateString: dummyDateString)
             
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
             stubRateSession.response = HTTPURLResponse(url: url,

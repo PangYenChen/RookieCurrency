@@ -14,35 +14,50 @@ import XCTest
 @testable import ReactiveCurrency
 #endif
 
+/// 這個 test case 測試 data model 是否正確對應到伺服器提供的 json
 final class ResponseDataModelTest: XCTestCase {
     
     func testDecodeHistoricalRate() throws {
-        let jsonDecoder = ResponseDataModel.jsonDecoder
-        let dateString = "2000-01-01"
-        let historicalData = try XCTUnwrap(TestingData.historicalDataFor(dateString: dateString))
-        let historicalRate = try jsonDecoder
+        // arrange
+        let dateString = "1970-01-01"
+        let historicalData = try XCTUnwrap(TestingData.historicalRateDataFor(dateString: dateString))
+        
+        // action
+        let historicalRate = try ResponseDataModel.jsonDecoder
             .decode(ResponseDataModel.HistoricalRate.self,
                     from: historicalData)
+        
+        // assert
         XCTAssertEqual(historicalRate.dateString, dateString)
         XCTAssertFalse(historicalRate.rates.isEmpty)
     }
     
     func testDecodeLatestRate() throws {
-        let jsonDecoder = ResponseDataModel.jsonDecoder
+        // arrange
         let latestData = try XCTUnwrap(TestingData.latestData)
-        let historicalRate = try jsonDecoder
+
+        // action
+        let historicalRate = try ResponseDataModel.jsonDecoder
             .decode(ResponseDataModel.LatestRate.self,
                     from: latestData)
+        
+        // assert
         XCTAssertFalse(historicalRate.rates.isEmpty)
     }
     
     func testEncodeAndThanDecode() throws {
-        let jsonEncoder = ResponseDataModel.jsonEncoder
-        let dummyDateString = "1970-01-01"
-        let dummyHistoricalRate = try TestingData.historicalRateFor(dateString: dummyDateString)
-        let historicalRateData = try jsonEncoder.encode(dummyHistoricalRate)
-        let decodedHistoricalRate = try JSONDecoder()
+        // arrange
+        let dateString = "1970-01-01"
+        let dummyHistoricalRate = try TestingData.historicalRateFor(dateString: dateString)
+        
+        // action
+        let historicalRateData = try ResponseDataModel.jsonEncoder.encode(dummyHistoricalRate)
+        let decodedHistoricalRate = try ResponseDataModel.jsonDecoder
             .decode(ResponseDataModel.HistoricalRate.self, from: historicalRateData)
+        
+        // assert
         XCTAssertEqual(dummyHistoricalRate, decodedHistoricalRate)
+        XCTAssertEqual(dummyHistoricalRate.rates, decodedHistoricalRate.rates)
+        XCTAssertEqual(dummyHistoricalRate.timestamp, decodedHistoricalRate.timestamp)
     }
 }

@@ -43,6 +43,14 @@ extension ResponseDataModel {
         enum CodingKeys: String, CodingKey {
             case date, timestamp, rates
         }
+        
+//        private init(dateString: String, timestamp: Int, rates: [String : Double]) {
+//            self.dateString = dateString
+//            self.timestamp = timestamp
+//            self.rates = rates
+//            
+//            assertionFailure("###, \(#function), \(self), 刻意阻擋這個預設的 initializer")
+//        }
     }
 }
 

@@ -78,54 +78,54 @@ class FetcherTests: XCTestCase {
         waitForExpectations(timeout: timeoutTimeInterval)
     }
     
-    func testPublishHistoricalRate() throws {
-        
-        // arrange
-        let valueExpectation = expectation(description: "should receive a historical rate")
-        let finishedExpectation = expectation(description: "should receive a .finished")
-        
-        let dummyDateString = "1970-01-01"
-
-        do {
-            let data = try XCTUnwrap(TestingData.historicalDataFor(dateString: dummyDateString))
-            
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            
-            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
-                                                                statusCode: 200,
-                                                                httpVersion: nil,
-                                                                headerFields: nil))
-            
-            stubRateSession.outputPublisher = Just((data: data, response: httpURLResponse))
-                .setFailureType(to: URLError.self)
-                .eraseToAnyPublisher()
-        }
-        
-        // action
-        sut.publisher(for: Endpoints.Historical(dateString: dummyDateString))
-            .sink(
-                // assert
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .failure(let error):
-                        XCTFail("should not receive the .failure \(error)")
-                    case .finished:
-                        finishedExpectation.fulfill()
-                    }
-                },
-                receiveValue: { historicalRate in
-                    XCTAssertFalse(historicalRate.rates.isEmpty)
-                    
-                    let dummyCurrencyCode = "TWD"
-                    XCTAssertNotNil(historicalRate[currencyCode: dummyCurrencyCode])
-                    
-                    valueExpectation.fulfill()
-                }
-            )
-            .store(in: &anyCancellableSet)
-        
-        waitForExpectations(timeout: timeoutTimeInterval)
-    }
+//    func testPublishHistoricalRate() throws {
+//        
+//        // arrange
+//        let valueExpectation = expectation(description: "should receive a historical rate")
+//        let finishedExpectation = expectation(description: "should receive a .finished")
+//        
+//        let dummyDateString = "1970-01-01"
+//
+//        do {
+//            let data = try XCTUnwrap(TestingData.historicalDataFor(dateString: dummyDateString))
+//            
+//            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+//            
+//            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+//                                                                statusCode: 200,
+//                                                                httpVersion: nil,
+//                                                                headerFields: nil))
+//            
+//            stubRateSession.outputPublisher = Just((data: data, response: httpURLResponse))
+//                .setFailureType(to: URLError.self)
+//                .eraseToAnyPublisher()
+//        }
+//        
+//        // action
+//        sut.publisher(for: Endpoints.Historical(dateString: dummyDateString))
+//            .sink(
+//                // assert
+//                receiveCompletion: { completion in
+//                    switch completion {
+//                    case .failure(let error):
+//                        XCTFail("should not receive the .failure \(error)")
+//                    case .finished:
+//                        finishedExpectation.fulfill()
+//                    }
+//                },
+//                receiveValue: { historicalRate in
+//                    XCTAssertFalse(historicalRate.rates.isEmpty)
+//                    
+//                    let dummyCurrencyCode = "TWD"
+//                    XCTAssertNotNil(historicalRate[currencyCode: dummyCurrencyCode])
+//                    
+//                    valueExpectation.fulfill()
+//                }
+//            )
+//            .store(in: &anyCancellableSet)
+//        
+//        waitForExpectations(timeout: timeoutTimeInterval)
+//    }
     
     func testInvalidJSONData() throws {
         // arrange

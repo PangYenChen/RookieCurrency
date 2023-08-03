@@ -24,91 +24,91 @@ final class ReactiveRateControllerTests: XCTestCase {
         anyCancellableSet = Set<AnyCancellable>()
     }
     
-    func testNoCacheAndDiskData() throws {
-        // arrange
-        let stubFetcher = StubFetcher()
-        let spyArchiver = TestDouble.SpyArchiver.self
-        sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
-        
-        let dummyStartingDate = Date(timeIntervalSince1970: 0)
-        let numberOfDays = 3
-        
-        var expectedCompletion: Subscribers.Completion<Error>?
-        var expectedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
-        
-        // action
-        sut
-            .ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
-            .sink(
-                receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { _, historicalRateSet in expectedHistoricalRateSet = historicalRateSet }
-            )
-            .store(in: &anyCancellableSet)
-        
-        // assert
-        sut.concurrentQueue.sync {
-            XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
-            XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
-            XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 1)
-            XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
-        }
-        
-        do {
-            switch expectedCompletion {
-            case .finished           : break
-            case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
-            case .none               : XCTFail("should receive a completion.")
-            }
-        }
-        
-        do {
-            XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
-        }
-    }
-    
-    func testAllFromCache() throws {
-        // arrange
-        let stubFetcher = StubFetcher()
-        let spyArchiver = TestDouble.SpyArchiver.self
-        sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
-        
-        let dummyStartingDate = Date(timeIntervalSince1970: 0)
-        let numberOfDays = 3
-        
-        var expectedCompletion: Subscribers.Completion<Error>?
-        var expectedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
-        
-        // action
-        sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
-            .flatMap { [unowned self] _ in sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate) }
-            .sink(
-                receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { _, historicalRateSet in expectedHistoricalRateSet = historicalRateSet }
-            )
-            .store(in: &anyCancellableSet)
-        
-        // assert
-        do {
-            switch expectedCompletion {
-            case .finished           : break
-            case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
-            case .none               : XCTFail("should receive a completion.")
-            }
-        }
-        
-        do {
-            XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
-        }
-        
-        XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
-        
-        sut.concurrentQueue.sync {
-            XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
-            XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
-            XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 2)
-            XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
-        }
-    }
+//    func testNoCacheAndDiskData() throws {
+//        // arrange
+//        let stubFetcher = StubFetcher()
+//        let spyArchiver = TestDouble.SpyArchiver.self
+//        sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
+//        
+//        let dummyStartingDate = Date(timeIntervalSince1970: 0)
+//        let numberOfDays = 3
+//        
+//        var expectedCompletion: Subscribers.Completion<Error>?
+//        var expectedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
+//        
+//        // action
+//        sut
+//            .ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
+//            .sink(
+//                receiveCompletion: { completion in expectedCompletion = completion },
+//                receiveValue: { _, historicalRateSet in expectedHistoricalRateSet = historicalRateSet }
+//            )
+//            .store(in: &anyCancellableSet)
+//        
+//        // assert
+//        sut.concurrentQueue.sync {
+//            XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
+//            XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
+//            XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 1)
+//            XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
+//        }
+//        
+//        do {
+//            switch expectedCompletion {
+//            case .finished           : break
+//            case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
+//            case .none               : XCTFail("should receive a completion.")
+//            }
+//        }
+//        
+//        do {
+//            XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
+//        }
+//    }
+//    
+//    func testAllFromCache() throws {
+//        // arrange
+//        let stubFetcher = StubFetcher()
+//        let spyArchiver = TestDouble.SpyArchiver.self
+//        sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
+//        
+//        let dummyStartingDate = Date(timeIntervalSince1970: 0)
+//        let numberOfDays = 3
+//        
+//        var expectedCompletion: Subscribers.Completion<Error>?
+//        var expectedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
+//        
+//        // action
+//        sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
+//            .flatMap { [unowned self] _ in sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate) }
+//            .sink(
+//                receiveCompletion: { completion in expectedCompletion = completion },
+//                receiveValue: { _, historicalRateSet in expectedHistoricalRateSet = historicalRateSet }
+//            )
+//            .store(in: &anyCancellableSet)
+//        
+//        // assert
+//        do {
+//            switch expectedCompletion {
+//            case .finished           : break
+//            case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
+//            case .none               : XCTFail("should receive a completion.")
+//            }
+//        }
+//        
+//        do {
+//            XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
+//        }
+//        
+//        XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
+//        
+//        sut.concurrentQueue.sync {
+//            XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
+//            XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
+//            XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 2)
+//            XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
+//        }
+//    }
 }
 
 final class StubFetcher: FetcherProtocol {

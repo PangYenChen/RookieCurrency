@@ -16,7 +16,7 @@ import Foundation
 
 extension TestingData {
     
-    static func historicalDataFor(dateString: String) -> Data? {
+    static func historicalRateDataFor(dateString: String) -> Data? {
         
         guard let timestamp = AppUtility.requestDateFormatter.date(from: dateString)
             .map({ Int($0.timeIntervalSince1970) })
