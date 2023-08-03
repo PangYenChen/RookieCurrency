@@ -33,9 +33,9 @@ extension ResponseDataModel {
         
         /// Returns the three-letter currency code of the base currency used for this request.
         /// 貨幣跟匯率的鍵值對，1 單位新台幣等於多少其他貨幣
-        let rates: [String: Double]
+        let rates: [String: Decimal]
         
-        subscript(currencyCode currencyCode: CurrencyCode) -> Double? {
+        subscript(currencyCode currencyCode: CurrencyCode) -> Decimal? {
             rates[currencyCode]
         }
         
@@ -97,7 +97,7 @@ extension ResponseDataModel.Rate: Decodable {
         
         timestamp = try container.decode(Int.self, forKey: .timestamp)
         
-        rates = try container.decode([String: Double].self, forKey: .rates)
+        rates = try container.decode([String: Decimal].self, forKey: .rates)
     }
 }
 

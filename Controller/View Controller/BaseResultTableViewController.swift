@@ -16,7 +16,7 @@ class BaseResultTableViewController: UITableViewController {
     @IBOutlet weak var sortItem: UIBarButtonItem!
     
     /// 分析過的匯率資料
-    var analyzedDataDictionary: [ResponseDataModel.CurrencyCode: (latest: Double, mean: Double, deviation: Double)]
+    var analyzedDataDictionary: [ResponseDataModel.CurrencyCode: Analyst.AnalyzedData]
     
     private var dataSource: DataSource!
     
@@ -84,7 +84,9 @@ class BaseResultTableViewController: UITableViewController {
                 
                 // text
                 do {
-                    let deviationString = NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
+                    #warning("要檢查一下這個字串")
+                    let deviationString = data.deviation.formatted()
+//                    NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
                     
                     contentConfiguration.text = [currencyCode,
                                                  Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode),
@@ -99,8 +101,10 @@ class BaseResultTableViewController: UITableViewController {
                 
                 // secondary text
                 do {
-                    let meanString = NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
-                    let latestString = NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
+                    let meanString = data.mean.formatted()
+//                    NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
+                    let latestString = data.latest.formatted()
+//                    NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
                     
                     contentConfiguration.secondaryText = R.string.localizable.currencyCellDetail(meanString, latestString)
                     contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
@@ -145,7 +149,7 @@ class BaseResultTableViewController: UITableViewController {
     // MARK: - method
     
     /// 更新 table view，純粹把資料填入 table view，不動資料。
-    final func populateTableView(analyzedDataDictionary: [ResponseDataModel.CurrencyCode: (latest: Double, mean: Double, deviation: Double)],
+    final func populateTableView(analyzedDataDictionary: [ResponseDataModel.CurrencyCode: Analyst.AnalyzedData],
                                  order: Order,
                                  searchText: String) {
         var sortedTuple = analyzedDataDictionary

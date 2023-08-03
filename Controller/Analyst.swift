@@ -18,10 +18,10 @@ enum Analyst {
     -> [ResponseDataModel.CurrencyCode: Result<AnalyzedData, AnalyzedError>] {
         
         // 計算平均值
-        var meanResultDictionary: [ResponseDataModel.CurrencyCode: Result<Double, AnalyzedError>] = [:]
+        var meanResultDictionary: [ResponseDataModel.CurrencyCode: Result<Decimal, AnalyzedError>] = [:]
         
         for currencyCode in currencyOfInterest {
-            var mean: Double = 0
+            var mean: Decimal = 0
             for historicalRate in historicalRateSet {
                 
                 let rateConverter = RateConverter(rate: historicalRate, baseCurrency: baseCurrency)
@@ -33,7 +33,7 @@ enum Analyst {
                     break
                 }
             }
-            mean /= Double(historicalRateSet.count)
+            mean /= Decimal(historicalRateSet.count)
             meanResultDictionary[currencyCode] = .success(mean)
         }
         
@@ -59,7 +59,7 @@ enum Analyst {
 
 // MARK: - name space
 extension Analyst {
-    typealias AnalyzedData = (latest: Double, mean: Double, deviation: Double)
+    typealias AnalyzedData = (latest: Decimal, mean: Decimal, deviation: Decimal)
     
     enum AnalyzedError: Error {
         case dataAbsent
@@ -79,7 +79,7 @@ extension Analyst {
             self.baseCurrency = baseCurrency
         }
         
-        subscript(currencyCode currencyCode: ResponseDataModel.CurrencyCode) -> Double? {
+        subscript(currencyCode currencyCode: ResponseDataModel.CurrencyCode) -> Decimal? {
             guard let rateForBaseCurrency = rate[currencyCode: baseCurrency],
                   let rateForCurrency = rate[currencyCode: currencyCode] else { return nil }
             
