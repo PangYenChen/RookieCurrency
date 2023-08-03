@@ -12,9 +12,10 @@ import XCTest
 @testable import ImperativeCurrency
 #else
 @testable import ReactiveCurrency
-import Combine
 #endif
 
+/// 這個 test case 測試 rate controller 跟 fetcher 無關的 method
+/// 即時間計算的 method
 final class RateControllerTests: XCTestCase {
     
     var sut: RateController!
@@ -31,6 +32,8 @@ final class RateControllerTests: XCTestCase {
         fakeFetcher = nil
     }
     
+    /// 測試 RateController.historicalRateDateStrings(numberOfDaysAgo:from:) method
+    /// 模擬從執行當下的時間往前計算日期字串
     func testHistoricalRateDateString() throws {
         // arrange
         let startDay = Date(timeIntervalSince1970: 0)
@@ -42,33 +45,4 @@ final class RateControllerTests: XCTestCase {
         XCTAssertEqual(historicalDateStrings, Set(["1969-12-31", "1969-12-30", "1969-12-29"]))
         XCTAssertEqual(fakeFetcher.numberOfMethodCall, 0)
     }
-}
-
-final class FakeFetcher: FetcherProtocol {
-    
-    private(set) var numberOfMethodCall = 0
-    
-    #if IMPERATIVE_CURRENCY_TESTS
-    
-    func fetch<Endpoint: EndpointProtocol>(
-        _ endpoint: Endpoint,
-        completionHandler: @escaping (Result<Endpoint.ResponseType, Swift.Error>) -> Void
-    ){
-        // This is a fake instance, and any of it's method should not be called.
-        
-        numberOfMethodCall += 1
-    }
-    
-    #else
-    
-    func publisher<Endpoint>(for endPoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> where Endpoint : ReactiveCurrency.EndpointProtocol {
-        // This is a fake instance, and any of it's method should not be called.
-        
-        numberOfMethodCall += 1
-        
-        // the following code should be dead code
-        return Empty().eraseToAnyPublisher()
-    }
-    
-    #endif
 }
