@@ -19,6 +19,7 @@ enum Archiver {
     /// 共用的 encoder
     private static let jsonEncoder = ResponseDataModel.jsonEncoder
     
+    /// 儲存的檔案的副檔名
     private static let jsonPathExtension: String = "json"
 }
 
@@ -39,34 +40,30 @@ extension Archiver {
     /// - Parameter fileName: historical rate 的日期，也是檔案名稱
     /// - Returns: historical rate
     static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
+        
         let url = documentsDirectory.appending(path: fileName)
             .appendingPathExtension(jsonPathExtension)
-        let data: Data
         
         do {
-            data = try Data(contentsOf: url)
+            let data = try Data(contentsOf: url)
+            
+            AppUtility.prettyPrint(data)
+            
+            let historicalRate = try jsonDecoder.decode(ResponseDataModel.HistoricalRate.self, from: data)
+        
+            print("###", self, #function, "讀取資料:\n\t", historicalRate)
+            
+            return historicalRate
+            
         } catch {
             try? FileManager.default.removeItem(at: url)
             throw error
         }
-        
-        AppUtility.prettyPrint(data)
-        
-        let historicalRate: ResponseDataModel.HistoricalRate
-        
-        do {
-            historicalRate = try jsonDecoder.decode(ResponseDataModel.HistoricalRate.self, from: data)
-        } catch {
-            try? FileManager.default.removeItem(at: url)
-            throw error
-        }
-        
-        print("###", self, #function, "讀取資料:\n\t", historicalRate)
-        
-        return historicalRate
     }
     
-    
+    /// 查看某 historical rate 是否存於本地
+    /// - Parameter fileName: historical rate 的日期字串
+    /// - Returns: historical rate 是否存於本地
     static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool {
         let fileURL = documentsDirectory.appending(path: fileName)
             .appendingPathExtension(jsonPathExtension)
@@ -74,6 +71,7 @@ extension Archiver {
         return FileManager.default.fileExists(atPath: fileURL.path())
     }
     
+    /// 移除全部存於本地的檔案
     static func removeAllStoredFile() throws {
 
         try FileManager.default
