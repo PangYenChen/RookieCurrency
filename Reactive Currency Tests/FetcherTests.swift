@@ -35,8 +35,8 @@ class FetcherTests: XCTestCase {
     func testPublishLatestRate() throws {
         
         // arrange
-        let valueExpectation = expectation(description: "should gate a latest rate instance")
-        let finishedExpectation = expectation(description: "should receive .finished")
+        var expectedOutput: ResponseDataModel.LatestRate?
+        var expectedCompletion: Subscribers.Completion<Error>?
         
         do {
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
@@ -56,26 +56,29 @@ class FetcherTests: XCTestCase {
         // act
         sut.publisher(for: Endpoints.Latest())
             .sink(
-                // assert
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        finishedExpectation.fulfill()
-                    case .failure(let error):
-                        XCTFail("should not receive the .failure \(error)")
-                    }
-                },
-                receiveValue: { latestRate in
-                    let dummyCurrencyCode = "TWD"
-                    XCTAssertNotNil(latestRate[currencyCode: dummyCurrencyCode])
-                    
-                    XCTAssertFalse(latestRate.rates.isEmpty)
-                    valueExpectation.fulfill()
-                }
+                receiveCompletion: { completion in expectedCompletion = completion },
+                receiveValue: { latestRate in expectedOutput = latestRate }
             )
             .store(in: &anyCancellableSet)
         
-        waitForExpectations(timeout: timeoutTimeInterval)
+        // assert
+        do {
+            let dummyCurrencyCode = "TWD"
+            let expectedOutput = try XCTUnwrap(expectedOutput)
+            XCTAssertNotNil(expectedOutput[currencyCode: dummyCurrencyCode])
+            XCTAssertFalse(expectedOutput.rates.isEmpty)
+        }
+        
+        do {
+            let expectedCompletion = try XCTUnwrap(expectedCompletion)
+            
+            switch expectedCompletion {
+            case .failure(let error):
+                XCTFail("should not receive the .failure \(error)")
+            case .finished:
+                break
+            }
+        }
     }
     
 //    func testPublishHistoricalRate() throws {
