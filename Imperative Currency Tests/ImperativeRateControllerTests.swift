@@ -11,7 +11,7 @@ import XCTest
 
 
 final class ImperativeRateControllerTests: XCTestCase {
-    
+#warning("要拿掉time interval")
     let timeoutInterval: TimeInterval = 1
     
     var sut: RateController!
@@ -31,7 +31,7 @@ final class ImperativeRateControllerTests: XCTestCase {
 //        let dummyStartingDate = Date(timeIntervalSince1970: 0)
 //        let numberOfDays = 3
 //        
-//        // action
+//        // act
 //        sut.getRateFor(numberOfDays: numberOfDays,
 //                       from: dummyStartingDate) { result in
 //            // assert
@@ -71,7 +71,7 @@ final class ImperativeRateControllerTests: XCTestCase {
 //                XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
 //                XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 1)
 //                XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
-//                // action
+//                // act
 //                sut.getRateFor(numberOfDays: numberOfDays,
 //                               from: dummyStartingDate) { result in
 //                    switch result {

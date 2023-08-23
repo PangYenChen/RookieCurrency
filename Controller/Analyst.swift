@@ -19,23 +19,23 @@ enum Analyst {
         
         // 計算平均值
         var meanResultDictionary: [ResponseDataModel.CurrencyCode: Result<Decimal, AnalyzedError>] = [:]
-        
-        for currencyCode in currencyOfInterest {
-            var mean: Decimal = 0
-            for historicalRate in historicalRateSet {
-                
-                let rateConverter = RateConverter(rate: historicalRate, baseCurrency: baseCurrency)
-                
-                if let convertedHistoricalRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
-                    mean += convertedHistoricalRateForCurrencyCode
-                } else {
-                    meanResultDictionary[currencyCode] = .failure(.dataAbsent)
-                    break
-                }
+        #warning("好醜想重寫，不用擔心會改壞，已經有unit test了。")
+    outer: for currencyCode in currencyOfInterest {
+        var mean: Decimal = 0
+        for historicalRate in historicalRateSet {
+            
+            let rateConverter = RateConverter(rate: historicalRate, baseCurrency: baseCurrency)
+            
+            if let convertedHistoricalRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
+                mean += convertedHistoricalRateForCurrencyCode
+            } else {
+                meanResultDictionary[currencyCode] = .failure(.dataAbsent)
+                continue outer
             }
-            mean /= Decimal(historicalRateSet.count)
-            meanResultDictionary[currencyCode] = .success(mean)
         }
+        mean /= Decimal(historicalRateSet.count)
+        meanResultDictionary[currencyCode] = .success(mean)
+    }
         
         // 計算偏差
         var resultDictionary: [ResponseDataModel.CurrencyCode: Result<AnalyzedData, AnalyzedError>] = [:]

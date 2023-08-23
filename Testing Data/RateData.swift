@@ -196,7 +196,8 @@ extension TestingData {
     "ZAR": 17.084018,
     "ZMK": 9001.197048,
     "ZMW": 19.099244,
-    "ZWL": 321.999592
+    "ZWL": 321.999592,
+    "FakeCurrencyInHistoricalRate": -1.0
   },
   "success": true,
   "timestamp": \(timestamp)
@@ -378,7 +379,8 @@ extension TestingData {
     "ZAR": 18.321765,
     "ZMK": 9001.203589,
     "ZMW": 20.095824,
-    "ZWL": 321.999592
+    "ZWL": 321.999592,
+    "FakeCurrencyInLatestRate": -2.0
   },
   "success": true,
   "timestamp": 1678501623

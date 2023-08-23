@@ -15,7 +15,7 @@ class FetcherTests: XCTestCase {
     private var sut: Fetcher!
     
     private var stubRateSession: StubRateSession!
-    
+#warning("要拿掉time interval")
     private let timeoutTimeInterval: TimeInterval = 1
     
     private var anyCancellableSet = Set<AnyCancellable>()
@@ -53,7 +53,7 @@ class FetcherTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
         
-        // action
+        // act
         sut.publisher(for: Endpoints.Latest())
             .sink(
                 // assert
@@ -101,7 +101,7 @@ class FetcherTests: XCTestCase {
 //                .eraseToAnyPublisher()
 //        }
 //        
-//        // action
+//        // act
 //        sut.publisher(for: Endpoints.Historical(dateString: dummyDateString))
 //            .sink(
 //                // assert
@@ -144,7 +144,7 @@ class FetcherTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
         
-        // action
+        // act
         sut
             .publisher(for: dummyEndpoint)
             .sink(
@@ -179,7 +179,7 @@ class FetcherTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
         
-        // action
+        // act
         sut
             .publisher(for: dummyEndpoint)
             .sink(
@@ -245,7 +245,7 @@ class FetcherTests: XCTestCase {
             spyRateSession.outputPublishers.append(outputPublisher)
         }
         
-        // action
+        // act
         sut
             .publisher(for: dummyEndpoint)
             .sink(
@@ -286,7 +286,7 @@ class FetcherTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
         
-        // action
+        // act
         sut
             .publisher(for: dummyEndpoint)
             .sink(
@@ -348,7 +348,7 @@ class FetcherTests: XCTestCase {
             spyRateSession.outputPublishers.append(outputPublisher)
         }
         
-        // action
+        // act
         sut
             .publisher(for: dummyEndpoint)
             .sink(
@@ -389,7 +389,7 @@ class FetcherTests: XCTestCase {
             stubRateSession.outputPublisher = outputPublish
         }
         
-        // action
+        // act
         sut
             .publisher(for: dummyEndpoint)
             .sink(
@@ -433,7 +433,7 @@ class FetcherTests: XCTestCase {
                 .eraseToAnyPublisher()
         }
         
-        // action
+        // act
         sut.publisher(for: Endpoints.SupportedSymbols())
             .sink(
                 // assert
@@ -465,7 +465,7 @@ class FetcherTests: XCTestCase {
         let apiOutputExpectation = expectation(description: "收到 fetcher 回傳的資料")
         apiOutputExpectation.expectedFulfillmentCount = 2
         
-        // action
+        // act
         sut.publisher(for: dummyEndpoint)
             .sink(
                 receiveCompletion: { completion in

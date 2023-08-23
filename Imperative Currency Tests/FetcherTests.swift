@@ -15,6 +15,7 @@ final class FetcherTests: XCTestCase {
     
     private var stubRateSession: StubRateSession!
     
+#warning("要拿掉time interval")
     private let timeoutTimeInterval: TimeInterval = 1
     
     override func setUp() {
@@ -30,7 +31,7 @@ final class FetcherTests: XCTestCase {
     func testFetchLatestRate() throws {
         
         // arrange
-        let expectation = expectation(description: "should get a latest rate instance")
+        var expectedLatestRateResult: Result<ResponseDataModel.LatestRate, Error>?
         
         do {
             stubRateSession.data = TestingData.latestData
@@ -43,23 +44,22 @@ final class FetcherTests: XCTestCase {
             stubRateSession.error = nil
         }
         
-        // action
-        sut
-            .fetch(Endpoints.Latest()) { result in
-                // assert
-                switch result {
-                case .success(let latestRate):
-                    XCTAssertFalse(latestRate.rates.isEmpty)
-                    
-                    let dummyCurrencyCode = "TWD"
-                    XCTAssertNotNil(latestRate[currencyCode: dummyCurrencyCode])
-                    expectation.fulfill()
-                case .failure:
-                    XCTFail("should get a latest rate instance")
-                }
-            }
+        // act
+        sut.fetch(Endpoints.Latest()) { result in expectedLatestRateResult = result }
         
-        waitForExpectations(timeout: timeoutTimeInterval)
+        // assert
+        switch expectedLatestRateResult {
+        case .success(let latestRate):
+            XCTAssertFalse(latestRate.rates.isEmpty)
+            
+            let dummyCurrencyCode = "TWD"
+            XCTAssertNotNil(latestRate[currencyCode: dummyCurrencyCode])
+        case .failure(let error):
+            XCTFail("不應該發生錯誤，卻收到\(error)")
+        case .none:
+            XCTFail("expected latest rate result 不應該是 nil，可能是因為沒有成功把非同步的code轉成同步")
+        }
+        
     }
     
     func testFetchHistoricalRate() throws {
@@ -79,7 +79,7 @@ final class FetcherTests: XCTestCase {
             stubRateSession.error = nil
         }
         
-        // action
+        // act
         sut
             .fetch(Endpoints.Historical(dateString: dummyDateString)) { result in
                 // assert
@@ -114,7 +114,7 @@ final class FetcherTests: XCTestCase {
             stubRateSession.error = nil
         }
         
-        // action
+        // act
         sut
             .fetch(dummyEndpoint) { result in
                 switch result {
@@ -142,7 +142,7 @@ final class FetcherTests: XCTestCase {
             stubRateSession.error = URLError(URLError.timedOut)
         }
         
-        // action
+        // act
         sut
             .fetch(dummyEndpoint) { result in
                 // assert
@@ -191,7 +191,7 @@ final class FetcherTests: XCTestCase {
             spyRateSession.outputs.append((data: TestingData.latestData, response: response, error: nil))
         }
 
-        // action
+        // act
         sut
             .fetch(dummyEndpoint) { result in
                 // assert
@@ -221,7 +221,7 @@ final class FetcherTests: XCTestCase {
             stubRateSession.error = nil
         }
         
-        // action
+        // act
         sut
             .fetch(dummyEndpoint) { result in
                 // assert
@@ -268,7 +268,7 @@ final class FetcherTests: XCTestCase {
             spyRateSession.outputs.append((data: TestingData.latestData, response: httpURLResponse, error: nil))
         }
         
-        // action
+        // act
         sut.fetch(dummyEndpoint) { result in
             // assert
             switch result {
@@ -297,7 +297,7 @@ final class FetcherTests: XCTestCase {
             stubRateSession.error = nil
         }
         
-        // action
+        // act
         sut
             .fetch(dummyEndpoint) { result in
                 // assert
@@ -331,7 +331,7 @@ final class FetcherTests: XCTestCase {
             stubRateSession.error = nil
         }
             
-        // action
+        // act
         sut.fetch(Endpoints.SupportedSymbols()) { result in
             // assert
             switch result {
@@ -355,7 +355,7 @@ final class FetcherTests: XCTestCase {
         let apiFinishingExpectation = expectation(description: "spy 應該收到 4 個 api key，前兩個一樣，後兩個一樣")
         apiFinishingExpectation.expectedFulfillmentCount = 2
         
-        // action
+        // act
         sut.fetch(dummyEndpoint) { _ in apiFinishingExpectation.fulfill()  }
         sut.fetch(dummyEndpoint) { _ in apiFinishingExpectation.fulfill()  }
         

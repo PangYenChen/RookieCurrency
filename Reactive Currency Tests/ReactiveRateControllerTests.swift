@@ -11,6 +11,7 @@ import Combine
 @testable import ReactiveCurrency
 
 final class ReactiveRateControllerTests: XCTestCase {
+#warning("要拿掉time interval")
     let timeoutInterval: TimeInterval = 1
     
     var sut: RateController!
@@ -36,7 +37,7 @@ final class ReactiveRateControllerTests: XCTestCase {
 //        var expectedCompletion: Subscribers.Completion<Error>?
 //        var expectedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
 //        
-//        // action
+//        // act
 //        sut
 //            .ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
 //            .sink(
@@ -78,7 +79,7 @@ final class ReactiveRateControllerTests: XCTestCase {
 //        var expectedCompletion: Subscribers.Completion<Error>?
 //        var expectedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
 //        
-//        // action
+//        // act
 //        sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
 //            .flatMap { [unowned self] _ in sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate) }
 //            .sink(
