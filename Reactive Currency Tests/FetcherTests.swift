@@ -65,9 +65,9 @@ class FetcherTests: XCTestCase {
         // assert
         do {
             let dummyCurrencyCode = "TWD"
-            let expectedOutput = try XCTUnwrap(expectedOutput)
-            XCTAssertNotNil(expectedOutput[currencyCode: dummyCurrencyCode])
-            XCTAssertFalse(expectedOutput.rates.isEmpty)
+            let expectedLatestRate = try XCTUnwrap(expectedOutput)
+            XCTAssertNotNil(expectedLatestRate[currencyCode: dummyCurrencyCode])
+            XCTAssertFalse(expectedLatestRate.rates.isEmpty)
         }
         
         do {
@@ -82,54 +82,58 @@ class FetcherTests: XCTestCase {
         }
     }
     /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `HistoricalRate` instance
-//    func testPublishHistoricalRate() throws {
-//        
-//        // arrange
-//        let valueExpectation = expectation(description: "should receive a historical rate")
-//        let finishedExpectation = expectation(description: "should receive a .finished")
-//        
-//        let dummyDateString = "1970-01-01"
-//
-//        do {
-//            let data = try XCTUnwrap(TestingData.historicalDataFor(dateString: dummyDateString))
-//            
-//            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-//            
-//            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
-//                                                                statusCode: 200,
-//                                                                httpVersion: nil,
-//                                                                headerFields: nil))
-//            
-//            stubRateSession.outputPublisher = Just((data: data, response: httpURLResponse))
-//                .setFailureType(to: URLError.self)
-//                .eraseToAnyPublisher()
-//        }
-//        
-//        // act
-//        sut.publisher(for: Endpoints.Historical(dateString: dummyDateString))
-//            .sink(
-//                // assert
-//                receiveCompletion: { completion in
-//                    switch completion {
-//                    case .failure(let error):
-//                        XCTFail("should not receive the .failure \(error)")
-//                    case .finished:
-//                        finishedExpectation.fulfill()
-//                    }
-//                },
-//                receiveValue: { historicalRate in
-//                    XCTAssertFalse(historicalRate.rates.isEmpty)
-//                    
-//                    let dummyCurrencyCode = "TWD"
-//                    XCTAssertNotNil(historicalRate[currencyCode: dummyCurrencyCode])
-//                    
-//                    valueExpectation.fulfill()
-//                }
-//            )
-//            .store(in: &anyCancellableSet)
-//        
-//        waitForExpectations(timeout: timeoutTimeInterval)
-//    }
+    func testPublishHistoricalRate() throws {
+        
+        // arrange
+        var expectedOutput: ResponseDataModel.HistoricalRate?
+        var expectedCompletion: Subscribers.Completion<Error>?
+        
+        let dummyDateString = "1970-01-01"
+
+        do {
+            let data = try XCTUnwrap(TestingData.historicalRateDataFor(dateString: dummyDateString))
+            
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            
+            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                                statusCode: 200,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
+            
+            stubRateSession.outputPublisher = Just((data: data, response: httpURLResponse))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+        }
+        
+        // act
+        sut.publisher(for: Endpoints.Historical(dateString: dummyDateString))
+            .sink(
+                receiveCompletion: { completion in expectedCompletion = completion },
+                receiveValue: { historicalRate in expectedOutput = historicalRate }
+            )
+            .store(in: &anyCancellableSet)
+        
+        // assert
+        do {
+            let expectedCompletion = try XCTUnwrap(expectedCompletion)
+            
+            switch expectedCompletion {
+            case .failure(let error):
+                XCTFail("不應該收到錯誤，但收到\(error)")
+            case .finished:
+                break
+            }
+        }
+        
+        do {
+            let expectedHistoricalRate = try XCTUnwrap(expectedOutput)
+            XCTAssertFalse(expectedHistoricalRate.rates.isEmpty)
+            
+            let dummyCurrencyCode = "TWD"
+            XCTAssertNotNil(expectedHistoricalRate[currencyCode: dummyCurrencyCode])
+        }
+        
+    }
     
     func testInvalidJSONData() throws {
         // arrange
