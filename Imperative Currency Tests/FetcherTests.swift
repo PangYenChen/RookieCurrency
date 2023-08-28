@@ -28,6 +28,7 @@ final class FetcherTests: XCTestCase {
         stubRateSession = nil
     }
     
+    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `LatestRate` instance
     func testFetchLatestRate() throws {
         
         // arrange
@@ -56,15 +57,17 @@ final class FetcherTests: XCTestCase {
             XCTAssertNotNil(latestRate[currencyCode: dummyCurrencyCode])
         case .failure(let error):
             XCTFail("不應該發生錯誤，卻收到\(error)")
-        case .none:
+        case nil:
             XCTFail("expected latest rate result 不應該是 nil，可能是因為沒有成功把非同步的code轉成同步")
         }
         
     }
     
+    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `HistoricalRate` instance
     func testFetchHistoricalRate() throws {
+        
         // arrange
-        let expectation = expectation(description: "should get a historical rate instance")
+        var expectedOutput: Result<ResponseDataModel.HistoricalRate, Error>?
         
         let dummyDateString = "1970-01-01"
         
@@ -80,23 +83,23 @@ final class FetcherTests: XCTestCase {
         }
         
         // act
-        sut
-            .fetch(Endpoints.Historical(dateString: dummyDateString)) { result in
-                // assert
-                switch result {
-                case .success(let rate):
-                    XCTAssertFalse(rate.rates.isEmpty)
-                    
-                    let dummyCurrencyCode = "TWD"
-                    XCTAssertNotNil(rate[currencyCode: dummyCurrencyCode])
-                    
-                    expectation.fulfill()
-                case .failure:
-                    XCTFail("should get a historical rate instance")
-                }
-            }
+        sut.fetch(Endpoints.Historical(dateString: dummyDateString)) { result in expectedOutput = result }
         
-        waitForExpectations(timeout: timeoutTimeInterval)
+        // assert
+        
+        switch expectedOutput {
+        case .success(let historicalRate):
+            XCTAssertFalse(historicalRate.rates.isEmpty)
+            
+            let dummyCurrencyCode = "TWD"
+            XCTAssertNotNil(historicalRate[currencyCode: dummyCurrencyCode])
+            
+        case .failure(let error):
+            XCTFail("不應該收到錯誤，卻收到\(error)")
+        case nil:
+            XCTFail("不應該收到 nil，可能是沒有成功把非同步的 code 轉成同步的 code，所以錯過了 output")
+        }
+        
     }
     
     func testInvalidJSONData() throws {

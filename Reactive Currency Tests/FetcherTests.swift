@@ -32,6 +32,7 @@ class FetcherTests: XCTestCase {
         anyCancellableSet = Set<AnyCancellable>()
     }
     
+    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `LatestRate` instance
     func testPublishLatestRate() throws {
         
         // arrange
@@ -80,7 +81,7 @@ class FetcherTests: XCTestCase {
             }
         }
     }
-    
+    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `HistoricalRate` instance
 //    func testPublishHistoricalRate() throws {
 //        
 //        // arrange
