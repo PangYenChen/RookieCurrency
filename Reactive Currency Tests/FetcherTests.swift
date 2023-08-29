@@ -182,9 +182,12 @@ class FetcherTests: XCTestCase {
         }
     }
     
-    func testTimeout() {
+    /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
+    func testTimeout() throws {
         // arrange
-        let expectation = expectation(description: "should time out")
+        var expectedValue: ResponseDataModel.LatestRate?
+        var expectedCompletion: Subscribers.Completion<Error>?
+        
         let dummyEndpoint = Endpoints.Latest()
         do {
             stubRateSession.outputPublisher = Fail(error: URLError(URLError.timedOut))
@@ -195,28 +198,36 @@ class FetcherTests: XCTestCase {
         sut
             .publisher(for: dummyEndpoint)
             .sink(
-                // assert
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .failure(let error):
-                        if let urlError = error as? URLError, urlError.code.rawValue == URLError.timedOut.rawValue {
-                            expectation.fulfill()
-                        } else {
-                            XCTFail("should not receive error other than timeout: \(error)")
-                        }
-                    case .finished:
-                        XCTFail("should not complete normally")
-                    }
-                },
-                receiveValue: { value in
-                    XCTFail("should not receive value: \(value)")
-                }
+                receiveCompletion: { completion in expectedCompletion = completion },
+                receiveValue: { value in expectedValue = value }
             )
             .store(in: &anyCancellableSet)
         
-        waitForExpectations(timeout: timeoutTimeInterval)
+        // assert
+        do {
+            let expectedCompletion = try XCTUnwrap(expectedCompletion)
+            switch expectedCompletion {
+            case .failure(let error):
+                guard let urlError = error as? URLError else {
+                    XCTFail("應該要是 URLError，而不是其他 Error，例如 DecodingError。")
+                    return
+                }
+                
+                guard urlError.code.rawValue == URLError.timedOut.rawValue else {
+                    XCTFail("get an error other than timedOut: \(error)")
+                    return
+                }
+            case .finished:
+                XCTFail("should not complete normally")
+            }
+        }
+        
+        do {
+            XCTAssertNil(expectedValue)
+        }
     }
     
+    /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
     func testTooManyRequestRecovery() throws {
         // arrange
         let spyRateSession = SpyRateSession()

@@ -140,10 +140,13 @@ final class FetcherTests: XCTestCase {
         }
     }
     
-    func testTimeout() {
+    /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
+    func testTimeout() throws {
         // arrange
-        let expectation = expectation(description: "should time out")
+        var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        
         let dummyEndpoint = Endpoints.Latest()
+        
         do {
             stubRateSession.data = nil
             stubRateSession.response = nil
@@ -151,22 +154,26 @@ final class FetcherTests: XCTestCase {
         }
         
         // act
-        sut
-            .fetch(dummyEndpoint) { result in
-                // assert
-                switch result {
-                case .success:
-                    XCTFail("should time out")
-                case .failure(let error):
-                    if let urlError = error as? URLError, urlError.code.rawValue == URLError.timedOut.rawValue  {
-                        expectation.fulfill()
-                    } else {
-                        XCTFail("get an error other than timedOut: \(error)")
-                    }
+        sut.fetch(dummyEndpoint) { result in expectedResult = result }
+        
+        // assert
+        do {
+            let expectedResult = try XCTUnwrap(expectedResult)
+            switch expectedResult {
+            case .success:
+                XCTFail("should time out")
+            case .failure(let error):
+                guard let urlError = error as? URLError else {
+                    XCTFail("應該要是 URLError，而不是其他 Error，例如 DecodingError。")
+                    return
+                }
+                
+                guard urlError.code.rawValue == URLError.timedOut.rawValue else {
+                    XCTFail("get an error other than timedOut: \(error)")
+                    return
                 }
             }
-        
-        waitForExpectations(timeout: timeoutTimeInterval)
+        }
     }
     
     func testTooManyRequestRecovery() throws {
