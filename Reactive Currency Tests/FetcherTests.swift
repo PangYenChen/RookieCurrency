@@ -36,7 +36,7 @@ class FetcherTests: XCTestCase {
     func testPublishLatestRate() throws {
         
         // arrange
-        var expectedOutput: ResponseDataModel.LatestRate?
+        var expectedValue: ResponseDataModel.LatestRate?
         var expectedCompletion: Subscribers.Completion<Error>?
         
         do {
@@ -58,14 +58,14 @@ class FetcherTests: XCTestCase {
         sut.publisher(for: Endpoints.Latest())
             .sink(
                 receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { latestRate in expectedOutput = latestRate }
+                receiveValue: { latestRate in expectedValue = latestRate }
             )
             .store(in: &anyCancellableSet)
         
         // assert
         do {
             let dummyCurrencyCode = "TWD"
-            let expectedLatestRate = try XCTUnwrap(expectedOutput)
+            let expectedLatestRate = try XCTUnwrap(expectedValue)
             XCTAssertNotNil(expectedLatestRate[currencyCode: dummyCurrencyCode])
             XCTAssertFalse(expectedLatestRate.rates.isEmpty)
         }
@@ -85,7 +85,7 @@ class FetcherTests: XCTestCase {
     func testPublishHistoricalRate() throws {
         
         // arrange
-        var expectedOutput: ResponseDataModel.HistoricalRate?
+        var expectedValue: ResponseDataModel.HistoricalRate?
         var expectedCompletion: Subscribers.Completion<Error>?
         
         let dummyDateString = "1970-01-01"
@@ -109,7 +109,7 @@ class FetcherTests: XCTestCase {
         sut.publisher(for: Endpoints.Historical(dateString: dummyDateString))
             .sink(
                 receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { historicalRate in expectedOutput = historicalRate }
+                receiveValue: { historicalRate in expectedValue = historicalRate }
             )
             .store(in: &anyCancellableSet)
         
@@ -126,7 +126,7 @@ class FetcherTests: XCTestCase {
         }
         
         do {
-            let expectedHistoricalRate = try XCTUnwrap(expectedOutput)
+            let expectedHistoricalRate = try XCTUnwrap(expectedValue)
             XCTAssertFalse(expectedHistoricalRate.rates.isEmpty)
             
             let dummyCurrencyCode = "TWD"
@@ -135,9 +135,12 @@ class FetcherTests: XCTestCase {
         
     }
     
+    /// 當 session 回傳無法 decode 的 json data 時，要能回傳 decoding error
     func testInvalidJSONData() throws {
         // arrange
-        let expectation = expectation(description: "should fail to decode")
+        var expectedValue: ResponseDataModel.LatestRate?
+        var expectedCompletion: Subscribers.Completion<Error>?
+        
         let dummyEndpoint = Endpoints.Latest()
         
         do {
@@ -156,26 +159,27 @@ class FetcherTests: XCTestCase {
         sut
             .publisher(for: dummyEndpoint)
             .sink(
-                // assert
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .failure(let error):
-                        if error is DecodingError {
-                            expectation.fulfill()
-                        } else {
-                            XCTFail("should not receive error other than decoding error: \(error)")
-                        }
-                    case .finished:
-                        XCTFail("should not complete normally")
-                    }
-                },
-                receiveValue: { value in
-                    XCTFail("should not receive value: \(value)")
-                }
+                receiveCompletion: { completion in expectedCompletion = completion },
+                receiveValue: { value in expectedValue = value }
             )
             .store(in: &anyCancellableSet)
         
-        waitForExpectations(timeout: timeoutTimeInterval)
+        // assert
+        do {
+            let expectedCompletion = try XCTUnwrap(expectedCompletion)
+            switch expectedCompletion {
+            case .failure(let error):
+                if !(error is DecodingError) {
+                    XCTFail("should not receive error other than decoding error: \(error)")
+                }
+            case .finished:
+                XCTFail("should not complete normally")
+            }
+        }
+        
+        do {
+            XCTAssertNil(expectedValue)
+        }
     }
     
     func testTimeout() {

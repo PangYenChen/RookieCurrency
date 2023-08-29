@@ -103,9 +103,12 @@ final class FetcherTests: XCTestCase {
         }
     }
     
+    
+    /// 當 session 回傳無法 decode 的 json data 時，要能回傳 decoding error
     func testInvalidJSONData() throws {
         // arrange
-        let expectation = expectation(description: "should fail to decode")
+        var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        
         let dummyEndpoint = Endpoints.Latest()
         do {
             stubRateSession.data = Data()
@@ -119,21 +122,22 @@ final class FetcherTests: XCTestCase {
         }
         
         // act
-        sut
-            .fetch(dummyEndpoint) { result in
-                switch result {
-                case .success:
-                    XCTFail("should fail to decode")
-                case .failure(let error):
-                    if error is DecodingError {
-                        expectation.fulfill()
-                    } else {
-                        XCTFail("get an error other than decoding error: \(error)")
-                    }
+        sut.fetch(dummyEndpoint) { result in expectedResult = result }
+        
+        // assert
+        do {
+            let expectedResult = try XCTUnwrap(expectedResult)
+            
+            switch expectedResult {
+            
+            case .success:
+                XCTFail("should fail to decode")
+            case .failure(let error):
+                if !(error is DecodingError) {
+                    XCTFail("get an error other than decoding error: \(error)")
                 }
             }
-        
-        waitForExpectations(timeout: timeoutTimeInterval)
+        }
     }
     
     func testTimeout() {
