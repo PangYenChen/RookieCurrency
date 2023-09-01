@@ -227,14 +227,17 @@ class FetcherTests: XCTestCase {
         }
     }
     
-    /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
+    /// 當 session 回應正在使用的 api key 的額度用罄時，
+    /// fetcher 能更換新的 api key 後重新 call session 的 method，
+    /// 且新的 api key 尚有額度，session 正常回應。
     func testTooManyRequestRecovery() throws {
         // arrange
         let spyRateSession = SpyRateSession()
         sut = Fetcher(rateSession: spyRateSession)
         
-        let valueExpectation = expectation(description: "should receive a result")
-        let finishedExpectation = expectation(description: "should complete normally")
+        var expectedValue: ResponseDataModel.LatestRate?
+        var expectedCompletion: Subscribers.Completion<Error>?
+        
         let dummyEndpoint = Endpoints.Latest()
         
         do {
@@ -272,23 +275,27 @@ class FetcherTests: XCTestCase {
         sut
             .publisher(for: dummyEndpoint)
             .sink(
-                // assert
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .failure(let error):
-                        XCTFail("should not receive error: \(error)")
-                    case .finished:
-                        finishedExpectation.fulfill()
-                    }
-                },
-                receiveValue: { _ in
-                    XCTAssertEqual(Set(spyRateSession.receivedAPIKeys).count, 2)
-                    valueExpectation.fulfill()
-                }
+                receiveCompletion: { completion in expectedCompletion = completion },
+                receiveValue: { value in expectedValue = value }
             )
             .store(in: &anyCancellableSet)
         
-        waitForExpectations(timeout: timeoutTimeInterval)
+        // assert
+        do {
+            let expectedCompletion = try XCTUnwrap(expectedCompletion)
+            
+            switch expectedCompletion {
+            case .failure(let error):
+                XCTFail("should not receive error: \(error)")
+            case .finished:
+                break
+            }
+        }
+        
+        do {
+            XCTAssertNotNil(expectedValue)
+            XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
+        }
     }
     
     func testTooManyRequestFallBack() throws {

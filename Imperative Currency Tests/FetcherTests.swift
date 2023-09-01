@@ -103,7 +103,6 @@ final class FetcherTests: XCTestCase {
         }
     }
     
-    
     /// 當 session 回傳無法 decode 的 json data 時，要能回傳 decoding error
     func testInvalidJSONData() throws {
         // arrange
@@ -176,12 +175,16 @@ final class FetcherTests: XCTestCase {
         }
     }
     
+    /// 當 session 回應正在使用的 api key 的額度用罄時，
+    /// fetcher 能更換新的 api key 後重新 call session 的 method，
+    /// 且新的 api key 尚有額度，session 正常回應。
     func testTooManyRequestRecovery() throws {
         // arrange
         let spyRateSession = SpyRateSession()
         sut = Fetcher(rateSession: spyRateSession)
         
-        let expectation = expectation(description: "should receive a result")
+        var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        
         let dummyEndpoint = Endpoints.Latest()
         
         do {
@@ -207,19 +210,19 @@ final class FetcherTests: XCTestCase {
         }
 
         // act
-        sut
-            .fetch(dummyEndpoint) { result in
-                // assert
-                switch result {
-                case .success:
-                    XCTAssertEqual(Set(spyRateSession.receivedAPIKeys).count, 2)
-                    expectation.fulfill()
-                case .failure:
-                    XCTFail("should not get any error")
-                }
+        sut.fetch(dummyEndpoint) { result in expectedResult = result }
+        
+        // assert
+        do {
+            let expectedResult = try XCTUnwrap(expectedResult)
+            
+            switch expectedResult {
+            case .success:
+                XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
+            case .failure:
+                XCTFail("should not get any error")
             }
-
-        waitForExpectations(timeout: timeoutTimeInterval)
+        }
     }
     
     func testTooManyRequestFallBack() throws {
