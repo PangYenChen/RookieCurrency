@@ -14,9 +14,6 @@ class BaseCurrencyTableViewController: UITableViewController {
     // MARK: - property
     @IBOutlet weak var sortBarButtonItem: UIBarButtonItem!
     
-    #warning("改完可以刪掉 fetcher")
-    let fetcher: Fetcher
-    
     let strategy: CurrencyTableStrategy
     
     var dataSource: DataSource!
@@ -25,8 +22,6 @@ class BaseCurrencyTableViewController: UITableViewController {
     
     // MARK: - life cycle
     required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
-        
-        fetcher = Fetcher.shared
         
         self.strategy = strategy
         
