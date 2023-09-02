@@ -479,7 +479,7 @@ class FetcherTests: XCTestCase {
 
     }
 
-    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `Symbols` instance
+    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `SupportedSymbols` instance
     func testFetchSupportedSymbols() throws {
         // arrange
         var expectedValue: ResponseDataModel.Symbols?

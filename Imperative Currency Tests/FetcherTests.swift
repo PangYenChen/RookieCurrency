@@ -32,14 +32,7 @@ final class FetcherTests: XCTestCase {
         var expectedLatestRateResult: Result<ResponseDataModel.LatestRate, Error>?
         
         do {
-            stubRateSession.data = TestingData.latestData
-            
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            stubRateSession.response = HTTPURLResponse(url: url,
-                                                       statusCode: 200,
-                                                       httpVersion: nil,
-                                                       headerFields: nil)
-            stubRateSession.error = nil
+            stubRateSession.tuple = try TestingData.SessionData.latestRate()
         }
         
         // act
@@ -70,14 +63,7 @@ final class FetcherTests: XCTestCase {
         let dummyDateString = "1970-01-01"
         
         do {
-            stubRateSession.data = TestingData.historicalRateDataFor(dateString: dummyDateString)
-            
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            stubRateSession.response = HTTPURLResponse(url: url,
-                                                       statusCode: 200,
-                                                       httpVersion: nil,
-                                                       headerFields: nil)
-            stubRateSession.error = nil
+            stubRateSession.tuple = try TestingData.SessionData.historicalRate(dateString: dummyDateString)
         }
         
         // act
@@ -107,14 +93,7 @@ final class FetcherTests: XCTestCase {
         
         let dummyEndpoint = Endpoints.Latest()
         do {
-            stubRateSession.data = Data()
-            
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            stubRateSession.response = HTTPURLResponse(url: url,
-                                                       statusCode: 204,
-                                                       httpVersion: nil,
-                                                       headerFields: nil)
-            stubRateSession.error = nil
+            stubRateSession.tuple = try TestingData.SessionData.noContent()
         }
         
         // act
@@ -144,9 +123,7 @@ final class FetcherTests: XCTestCase {
         let dummyEndpoint = Endpoints.Latest()
         
         do {
-            stubRateSession.data = nil
-            stubRateSession.response = nil
-            stubRateSession.error = URLError(URLError.timedOut)
+            stubRateSession.tuple = try TestingData.SessionData.timeout()
         }
         
         // act
@@ -186,24 +163,14 @@ final class FetcherTests: XCTestCase {
         
         do {
             // first response
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = HTTPURLResponse(url: url,
-                                           statusCode: 429,
-                                           httpVersion: nil,
-                                           headerFields: nil)
-
-            spyRateSession.outputs.append((data: TestingData.tooManyRequestData, response: response, error: nil))
+            let tooManyRequestTuple = try TestingData.SessionData.tooManyRequest()
+            spyRateSession.outputs.append(tooManyRequestTuple)
         }
 
         do {
             // second response
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = HTTPURLResponse(url: url,
-                                           statusCode: 200,
-                                           httpVersion: nil,
-                                           headerFields: nil)
-            
-            spyRateSession.outputs.append((data: TestingData.latestData, response: response, error: nil))
+            let latestTuple = try TestingData.SessionData.latestRate()
+            spyRateSession.outputs.append(latestTuple)
         }
 
         // act
@@ -232,13 +199,7 @@ final class FetcherTests: XCTestCase {
         
         let dummyEndpoint = Endpoints.Latest()
         do {
-            stubRateSession.data = TestingData.tooManyRequestData
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            stubRateSession.response = HTTPURLResponse(url: url,
-                                                       statusCode: 429,
-                                                       httpVersion: nil,
-                                                       headerFields: nil)
-            stubRateSession.error = nil
+            stubRateSession.tuple = try TestingData.SessionData.tooManyRequest()
         }
         
         // act
@@ -279,22 +240,14 @@ final class FetcherTests: XCTestCase {
 
         do {
             // first response
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
-                                                                statusCode: 401,
-                                                                httpVersion: nil,
-                                                                headerFields: nil))
-            spyRateSession.outputs.append((data: TestingData.invalidAPIKeyData, response: httpURLResponse, error: nil))
+            let invalidAPIKeyTuple = try TestingData.SessionData.invalidAPIKey()
+            spyRateSession.outputs.append(invalidAPIKeyTuple)
         }
 
         do {
             // second response
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
-                                                                statusCode: 200,
-                                                                httpVersion: nil,
-                                                                headerFields: nil))
-            spyRateSession.outputs.append((data: TestingData.latestData, response: httpURLResponse, error: nil))
+            let latestTuple = try TestingData.SessionData.latestRate()
+            spyRateSession.outputs.append(latestTuple)
         }
 
         // act
@@ -322,14 +275,9 @@ final class FetcherTests: XCTestCase {
         var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
         
         let dummyEndpoint = Endpoints.Latest()
+        
         do {
-            stubRateSession.data = TestingData.tooManyRequestData
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            stubRateSession.response = HTTPURLResponse(url: url,
-                                                       statusCode: 401,
-                                                       httpVersion: nil,
-                                                       headerFields: nil)
-            stubRateSession.error = nil
+            stubRateSession.tuple = try TestingData.SessionData.invalidAPIKey()
         }
         
         // act
@@ -355,21 +303,14 @@ final class FetcherTests: XCTestCase {
             }
         }
     }
-    
-    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `Symbols` instance
+
+    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `SupportedSymbols` instance
     func testFetchSupportedSymbols() throws {
         // arrange
-        var expectedResult: Result<ResponseDataModel.Symbols, Error>?
+        var expectedResult: Result<ResponseDataModel.SupportedSymbols, Error>?
 
         do {
-            stubRateSession.data = TestingData.supportedSymbols
-
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            stubRateSession.response = HTTPURLResponse(url: url,
-                                                       statusCode: 200,
-                                                       httpVersion: nil,
-                                                       headerFields: nil)
-            stubRateSession.error = nil
+            stubRateSession.tuple = try TestingData.SessionData.supportedSymbols()
         }
 
         // act
@@ -378,7 +319,7 @@ final class FetcherTests: XCTestCase {
         // assert
         do {
             let expectedResult = try XCTUnwrap(expectedResult)
-            
+
             switch expectedResult {
             case .success(let supportedSymbols):
                 XCTAssertFalse(supportedSymbols.symbols.isEmpty)
@@ -386,9 +327,8 @@ final class FetcherTests: XCTestCase {
                 XCTFail("should not receive any failure, but receive: \(failure)")
             }
         }
-        
     }
-    
+
     /// 同時 call 兩次 session 的 method，
     /// 都回應 api key 的額度用罄，
     /// fetcher 要只更新 api key 一次。
@@ -408,13 +348,11 @@ final class FetcherTests: XCTestCase {
         sut.fetch(dummyEndpoint) { result in secondExpectedResult = result }
 
         do {
-            let data = TestingData.tooManyRequestData
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: 429, httpVersion: nil, headerFields: nil))
+            let tooManyRequestTuple = try TestingData.SessionData.tooManyRequest()
             
             // session 執行第一個 completion handler
             if let firstFetcherCompletionHandler = spyAPIKeySession.completionHandlers.first {
-                firstFetcherCompletionHandler(data, response, nil)
+                firstFetcherCompletionHandler(tooManyRequestTuple.data, tooManyRequestTuple.response, tooManyRequestTuple.error)
             } else {
                 XCTFail("arrange 失誤，第一次 call `sut.fetch(:)` 應該會給 spy api key session 一個 completion handler")
             }
@@ -422,7 +360,7 @@ final class FetcherTests: XCTestCase {
             // session 執行第二個 completion handler
             if spyAPIKeySession.completionHandlers.count >= 2 {
                 let secondFetcherCompletionHandler = spyAPIKeySession.completionHandlers[1]
-                secondFetcherCompletionHandler(data, response, nil)
+                secondFetcherCompletionHandler(tooManyRequestTuple.data, tooManyRequestTuple.response, tooManyRequestTuple.error)
             } else  {
                 XCTFail("arrange 失誤，第二次 call `sut.fetch(:)` 應該會給 spy api key session 第二個 completion handler")
             }
@@ -433,14 +371,12 @@ final class FetcherTests: XCTestCase {
         }
 
         do {
-            let data     = try XCTUnwrap(TestingData.latestData)
-            let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 200, httpVersion : nil, headerFields : nil))
-
+            let latestTuple = try TestingData.SessionData.latestRate()
+            
             // session 執行第三個 completion handler
             if spyAPIKeySession.completionHandlers.count >= 3 {
                 let thirdFetcherCompletionHandler = spyAPIKeySession.completionHandlers[2]
-                thirdFetcherCompletionHandler(data, response, nil)
+                thirdFetcherCompletionHandler(latestTuple.data, latestTuple.response, latestTuple.error)
             } else  {
                 XCTFail("arrange 失誤，spy api key session 對於第一個 call 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 call 一次 session 的 method，此時 spy api key session 會收到第三個 completion handler")
             }
@@ -448,7 +384,7 @@ final class FetcherTests: XCTestCase {
             // session 執行第四個 completion handler
             if spyAPIKeySession.completionHandlers.count >= 4 {
                 let fourthFetcherCompletionHandler = spyAPIKeySession.completionHandlers[3]
-                fourthFetcherCompletionHandler(data, response, nil)
+                fourthFetcherCompletionHandler(latestTuple.data, latestTuple.response, latestTuple.error)
             } else  {
                 XCTFail("arrange 失誤，spy api key session 對於第二個 call 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 call 一次 session 的 method，此時 spy api key session 會收到第四個 completion handler")
             }
@@ -470,15 +406,11 @@ final class FetcherTests: XCTestCase {
 // MARK: - test double
 private final class StubRateSession: RateSession {
     
-    var data: Data?
-    
-    var response: URLResponse?
-    
-    var error: Error?
+    var tuple: (data: Data?, response: URLResponse?, error: Error?)
     
     func rateDataTask(with request: URLRequest,
                       completionHandler: (Data?, URLResponse?, Error?) -> Void) {
-        completionHandler(data, response, error)
+        completionHandler(tuple.data, tuple.response, tuple.error)
     }
 }
 

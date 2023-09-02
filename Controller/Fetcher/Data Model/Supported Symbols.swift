@@ -1,5 +1,5 @@
 //
-//  Symbols.swift
+//  SupportedSymbols.swift
 //  RookieCurrency
 //
 //  Created by 陳邦彥 on 2023/4/18.
@@ -9,7 +9,7 @@
 import Foundation
 
 extension ResponseDataModel {
-    struct Symbols: Decodable {
+    struct SupportedSymbols: Decodable {
         let symbols: [ResponseDataModel.CurrencyCode: String]
     }
 }
