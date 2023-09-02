@@ -351,67 +351,75 @@ class FetcherTests: XCTestCase {
         do {
             XCTAssertNil(expectedValue)
         }
-        
     }
     
-//    func testInvalidAPIKeyRecovery() throws {
-//        // arrange
-//        let spyRateSession = SpyRateSession()
-//        sut = Fetcher(rateSession: spyRateSession)
-//        let dummyEndpoint = Endpoints.Latest()
-//        let valueExpectation = expectation(description: "should receive a dummy rate instance")
-//        let finishedExpectation = expectation(description: "should complete normally")
-//
-//        do {
-//            // first output
-//            let dummyData = try XCTUnwrap(TestingData.invalidAPIKeyData)
-//            let dummyURL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-//            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyURL,
-//                                                                statusCode: 401,
-//                                                                httpVersion: nil,
-//                                                                headerFields: nil))
-//            let outputPublisher = Just((data: dummyData, response: httpURLResponse))
-//                .setFailureType(to: URLError.self)
-//                .eraseToAnyPublisher()
-//            spyRateSession.outputPublishers.append(outputPublisher)
-//        }
-//
-//        do {
-//            // second output
-//            let dummyData = try XCTUnwrap(TestingData.latestData)
-//            let dummyURL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-//            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyURL,
-//                                                                             statusCode: 200,
-//                                                                             httpVersion: nil,
-//                                                                             headerFields: nil))
-//            let outputPublisher = Just((data: dummyData, response: httpURLResponse))
-//                .setFailureType(to: URLError.self)
-//                .eraseToAnyPublisher()
-//            spyRateSession.outputPublishers.append(outputPublisher)
-//        }
-//
-//        // act
-//        sut
-//            .publisher(for: dummyEndpoint)
-//            .sink(
-//                // assert
-//                receiveCompletion: { completion in
-//                    switch completion {
-//                    case .finished:
-//                        finishedExpectation.fulfill()
-//                    case .failure(let error):
-//                        XCTFail("should not receive any error:\(error)")
-//                    }
-//                },
-//                receiveValue: { rate in
-//                    XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
-//                    valueExpectation.fulfill()
-//                }
-//            )
-//            .store(in: &anyCancellableSet)
-//
-//        waitForExpectations(timeout: timeoutTimeInterval)
-//    }
+    /// session 回應 api key 無效，
+    /// fetcher 更換新的 api key 後再次 call session 的 method，
+    /// 新的 api key 有效， session 回應正常資料。
+    func testInvalidAPIKeyRecovery() throws {
+        // arrange
+        let spyRateSession = SpyRateSession()
+        sut = Fetcher(rateSession: spyRateSession)
+        
+        let dummyEndpoint = Endpoints.Latest()
+        
+        var expectedValue: ResponseDataModel.LatestRate?
+        var expectedCompletion: Subscribers.Completion<Error>?
+        
+        do {
+            // first output
+            let dummyData = try XCTUnwrap(TestingData.invalidAPIKeyData)
+            let dummyURL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyURL,
+                                                                statusCode: 401,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
+            let outputPublisher = Just((data: dummyData, response: httpURLResponse))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+            spyRateSession.outputPublishers.append(outputPublisher)
+        }
+
+        do {
+            // second output
+            let dummyData = try XCTUnwrap(TestingData.latestData)
+            let dummyURL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyURL,
+                                                                             statusCode: 200,
+                                                                             httpVersion: nil,
+                                                                             headerFields: nil))
+            let outputPublisher = Just((data: dummyData, response: httpURLResponse))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+            spyRateSession.outputPublishers.append(outputPublisher)
+        }
+
+        // act
+        sut
+            .publisher(for: dummyEndpoint)
+            .sink(
+                receiveCompletion: { completion in expectedCompletion = completion },
+                receiveValue: { value in expectedValue = value }
+            )
+            .store(in: &anyCancellableSet)
+        
+        // assert
+        do {
+            let expectedCompletion = try XCTUnwrap(expectedCompletion)
+            
+            switch expectedCompletion {
+            case .finished:
+                break
+            case .failure(let error):
+                XCTFail("should not receive any error:\(error)")
+            }
+        }
+        
+        do {
+            XCTAssertNotNil(expectedValue)
+            XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
+        }
+    }
 //
 //    func testInvalidAPIKeyFallBack() throws {
 //        // arrange

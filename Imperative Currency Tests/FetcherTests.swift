@@ -265,48 +265,54 @@ final class FetcherTests: XCTestCase {
         }
     }
     
-//    func testInvalidAPIKeyRecovery() throws {
-//        // arrange
-//        let spyRateSession = SpyRateSession()
-//        sut = Fetcher(rateSession: spyRateSession)
-//
-//        let expectation = expectation(description: "should receive a dummy rate")
-//        let dummyEndpoint = Endpoints.Latest()
-//
-//        do {
-//            // first response
-//            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-//            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
-//                                                                statusCode: 401,
-//                                                                httpVersion: nil,
-//                                                                headerFields: nil))
-//            spyRateSession.outputs.append((data: TestingData.invalidAPIKeyData, response: httpURLResponse, error: nil))
-//        }
-//
-//        do {
-//            // second response
-//            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-//            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
-//                                                                statusCode: 200,
-//                                                                httpVersion: nil,
-//                                                                headerFields: nil))
-//            spyRateSession.outputs.append((data: TestingData.latestData, response: httpURLResponse, error: nil))
-//        }
-//
-//        // act
-//        sut.fetch(dummyEndpoint) { result in
-//            // assert
-//            switch result {
-//            case .success:
-//                expectation.fulfill()
-//                XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
-//            case .failure:
-//                XCTFail("should not receive any error")
-//            }
-//        }
-//
-//        waitForExpectations(timeout: timeoutTimeInterval)
-//    }
+    /// session 回應 api key 無效，
+    /// fetcher 更換新的 api key 後再次 call session 的 method，
+    /// 新的 api key 有效， session 回應正常資料。
+    func testInvalidAPIKeyRecovery() throws {
+        // arrange
+        let spyRateSession = SpyRateSession()
+        sut = Fetcher(rateSession: spyRateSession)
+
+        var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        
+        let dummyEndpoint = Endpoints.Latest()
+
+        do {
+            // first response
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                                statusCode: 401,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
+            spyRateSession.outputs.append((data: TestingData.invalidAPIKeyData, response: httpURLResponse, error: nil))
+        }
+
+        do {
+            // second response
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let httpURLResponse = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                                statusCode: 200,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
+            spyRateSession.outputs.append((data: TestingData.latestData, response: httpURLResponse, error: nil))
+        }
+
+        // act
+        sut.fetch(dummyEndpoint) { result in expectedResult = result
+        }
+
+        // assert
+        do {
+            let expectedResult = try XCTUnwrap(expectedResult)
+            
+            switch expectedResult {
+            case .success:
+                XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
+            case .failure:
+                XCTFail("should not receive any error")
+            }
+        }
+    }
 //
 //    func testInvalidAPIKeyFallBack() throws {
 //        // arrange
