@@ -350,41 +350,44 @@ final class FetcherTests: XCTestCase {
                 
                 guard fetcherError == Fetcher.Error.invalidAPIKey else {
                     XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
-                    return                    
+                    return
                 }
             }
         }
     }
-//
-//    func testFetchSupportedSymbols() throws {
-//        // arrange
-//        let expectation = expectation(description: "should gat a list of supported symbols")
-//
-//        do {
-//            stubRateSession.data = TestingData.supportedSymbols
-//
-//            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-//            stubRateSession.response = HTTPURLResponse(url: url,
-//                                                       statusCode: 200,
-//                                                       httpVersion: nil,
-//                                                       headerFields: nil)
-//            stubRateSession.error = nil
-//        }
-//
-//        // act
-//        sut.fetch(Endpoints.SupportedSymbols()) { result in
-//            // assert
-//            switch result {
-//            case .success(let supportedSymbols):
-//                XCTAssertFalse(supportedSymbols.symbols.isEmpty)
-//                expectation.fulfill()
-//            case .failure(let failure):
-//                XCTFail("should not receive any failure, but receive: \(failure)")
-//            }
-//        }
-//
-//        waitForExpectations(timeout: timeoutTimeInterval)
-//    }
+    
+    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `Symbols` instance
+    func testFetchSupportedSymbols() throws {
+        // arrange
+        var expectedResult: Result<ResponseDataModel.Symbols, Error>?
+
+        do {
+            stubRateSession.data = TestingData.supportedSymbols
+
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            stubRateSession.response = HTTPURLResponse(url: url,
+                                                       statusCode: 200,
+                                                       httpVersion: nil,
+                                                       headerFields: nil)
+            stubRateSession.error = nil
+        }
+
+        // act
+        sut.fetch(Endpoints.SupportedSymbols()) { result in expectedResult = result }
+
+        // assert
+        do {
+            let expectedResult = try XCTUnwrap(expectedResult)
+            
+            switch expectedResult {
+            case .success(let supportedSymbols):
+                XCTAssertFalse(supportedSymbols.symbols.isEmpty)
+            case .failure(let failure):
+                XCTFail("should not receive any failure, but receive: \(failure)")
+            }
+        }
+        
+    }
 //
 //    func testTooManyRequestSimultaneously() throws {
 //        // arrange

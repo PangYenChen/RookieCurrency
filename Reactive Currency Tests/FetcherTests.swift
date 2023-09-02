@@ -478,45 +478,51 @@ class FetcherTests: XCTestCase {
         }
 
     }
-//
-//    func testFetchSupportedSymbols() throws {
-//        // arrange
-//        let outputExpectation = expectation(description: "should gat a list of supported symbols")
-//        let finishedExpectation = expectation(description: "should finish normally")
-//
-//        do {
-//            let data = try XCTUnwrap(TestingData.supportedSymbols)
-//            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-//            let response = try XCTUnwrap(HTTPURLResponse(url: url,
-//                                                         statusCode: 200,
-//                                                         httpVersion: nil,
-//                                                         headerFields: nil))
-//            stubRateSession.outputPublisher = Just((data: data, response: response))
-//                .setFailureType(to: URLError.self)
-//                .eraseToAnyPublisher()
-//        }
-//
-//        // act
-//        sut.publisher(for: Endpoints.SupportedSymbols())
-//            .sink(
-//                // assert
-//                receiveCompletion: { completion in
-//                    switch completion {
-//                    case .finished:
-//                        finishedExpectation.fulfill()
-//                    case .failure(let error):
-//                        XCTFail("should not receive any error, but receive: \(error)")
-//                    }
-//                },
-//                receiveValue: { supportedSymbol in
-//                    XCTAssertFalse(supportedSymbol.symbols.isEmpty)
-//                    outputExpectation.fulfill()
-//                }
-//            )
-//            .store(in: &anyCancellableSet)
-//
-//        waitForExpectations(timeout: timeoutTimeInterval)
-//    }
+
+    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `Symbols` instance
+    func testFetchSupportedSymbols() throws {
+        // arrange
+        var expectedValue: ResponseDataModel.Symbols?
+        var expectedCompletion: Subscribers.Completion<Error>?
+        
+        do {
+            let data = try XCTUnwrap(TestingData.supportedSymbols)
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response = try XCTUnwrap(HTTPURLResponse(url: url,
+                                                         statusCode: 200,
+                                                         httpVersion: nil,
+                                                         headerFields: nil))
+            stubRateSession.outputPublisher = Just((data: data, response: response))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+        }
+
+        // act
+        sut.publisher(for: Endpoints.SupportedSymbols())
+            .sink(
+                receiveCompletion: { completion in expectedCompletion = completion },
+                receiveValue: { value in expectedValue = value }
+            )
+            .store(in: &anyCancellableSet)
+        
+        // assert
+        do {
+            let expectedCompletion = try XCTUnwrap(expectedCompletion)
+            
+            switch expectedCompletion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    XCTFail("should not receive any error, but receive: \(error)")
+            }
+        }
+        
+        do {
+            let expectedSupportedSymbols = try XCTUnwrap(expectedValue)
+            
+            XCTAssertFalse(expectedSupportedSymbols.symbols.isEmpty)
+        }
+    }
 //
 //    func testTooManyRequestSimultaneously() throws {
 //        // arrange
