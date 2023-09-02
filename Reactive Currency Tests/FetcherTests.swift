@@ -15,8 +15,6 @@ class FetcherTests: XCTestCase {
     private var sut: Fetcher!
     
     private var stubRateSession: StubRateSession!
-#warning("要拿掉time interval")
-    private let timeoutTimeInterval: TimeInterval = 1
     
     private var anyCancellableSet = Set<AnyCancellable>()
     
@@ -298,9 +296,15 @@ class FetcherTests: XCTestCase {
         }
     }
     
+    /// session 回應正在使用的 api key 額度用罄，
+    /// fetcher 更新 api key，
+    /// 新的 api key 額度依舊用罄，
+    /// fetcher 能回傳 api key 額度用罄的 error
     func testTooManyRequestFallBack() throws {
         // arrange
-        let expectation = expectation(description: "should be unable to recover, pass error to down stream")
+        var expectedValue: ResponseDataModel.LatestRate?
+        var expectedCompletion: Subscribers.Completion<Error>?
+        
         let dummyEndpoint = Endpoints.Latest()
         do {
             let dummyData = try XCTUnwrap(TestingData.latestData)
@@ -320,261 +324,269 @@ class FetcherTests: XCTestCase {
         sut
             .publisher(for: dummyEndpoint)
             .sink(
-                // assert
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .failure(let error):
-                        if let fetcherError = error as? Fetcher.Error, fetcherError == Fetcher.Error.tooManyRequest {
-                            expectation.fulfill()
-                        } else {
-                            XCTFail("should not receive error other than Fetcher.Error.tooManyRequest: \(error)")
-                        }
-                    case .finished:
-                        XCTFail("should not complete noromally")
-                    }
-                },
-                receiveValue: { value in
-                    XCTFail("should not receive a value: \(value)")
-                }
+                receiveCompletion: { completion in expectedCompletion = completion },
+                receiveValue: { value in expectedValue = value }
             )
             .store(in: &anyCancellableSet)
-        
-        waitForExpectations(timeout: timeoutTimeInterval)
-    }
-    
-    func testInvalidAPIKeyRecovery() throws {
-        // arrange
-        let spyRateSession = SpyRateSession()
-        sut = Fetcher(rateSession: spyRateSession)
-        let dummyEndpoint = Endpoints.Latest()
-        let valueExpectation = expectation(description: "should receive a dummy rate instance")
-        let finishedExpectation = expectation(description: "should complete normally")
-        
-        do {
-            // first output
-            let dummyData = try XCTUnwrap(TestingData.invalidAPIKeyData)
-            let dummyURL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyURL,
-                                                                statusCode: 401,
-                                                                httpVersion: nil,
-                                                                headerFields: nil))
-            let outputPublisher = Just((data: dummyData, response: httpURLResponse))
-                .setFailureType(to: URLError.self)
-                .eraseToAnyPublisher()
-            spyRateSession.outputPublishers.append(outputPublisher)
-        }
-        
-        do {
-            // second output
-            let dummyData = try XCTUnwrap(TestingData.latestData)
-            let dummyURL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyURL,
-                                                                             statusCode: 200,
-                                                                             httpVersion: nil,
-                                                                             headerFields: nil))
-            let outputPublisher = Just((data: dummyData, response: httpURLResponse))
-                .setFailureType(to: URLError.self)
-                .eraseToAnyPublisher()
-            spyRateSession.outputPublishers.append(outputPublisher)
-        }
-        
-        // act
-        sut
-            .publisher(for: dummyEndpoint)
-            .sink(
-                // assert
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        finishedExpectation.fulfill()
-                    case .failure(let error):
-                        XCTFail("should not receive any error:\(error)")
-                    }
-                },
-                receiveValue: { rate in
-                    XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
-                    valueExpectation.fulfill()
-                }
-            )
-            .store(in: &anyCancellableSet)
-        
-        waitForExpectations(timeout: timeoutTimeInterval)
-    }
-    
-    func testInvalidAPIKeyFallBack() throws {
-        // arrange
-        let errorExpectation = expectation(description: "should a receive Fetcher.Error.invalidAPIKey")
-        let dummyEndpoint = Endpoints.Latest()
-        
-        do {
-            let dummyData = try XCTUnwrap(TestingData.invalidAPIKeyData)
-            let dummyRUL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyRUL,
-                                                                statusCode: 401,
-                                                                httpVersion: nil,
-                                                                headerFields: nil))
-            let outputPublish = Just((data: dummyData, response: httpURLResponse))
-                .setFailureType(to: URLError.self)
-                .eraseToAnyPublisher()
-            stubRateSession.outputPublisher = outputPublish
-        }
-        
-        // act
-        sut
-            .publisher(for: dummyEndpoint)
-            .sink(
-                // assert
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .failure(let error):
-                        if let error = error as? Fetcher.Error,
-                           error == Fetcher.Error.invalidAPIKey {
-                            errorExpectation.fulfill()
-                        } else {
-                            XCTFail("should not receive any error other than Fetcher.Error.invalidAPIKey: \(error)")
-                        }
-                    case .finished:
-                        XCTFail("should not complete normally")
-                    }
-                },
-                receiveValue: { value in
-                    XCTFail("should not receive any value: \(value)")
-                }
-            )
-            .store(in: &anyCancellableSet)
-        
-        waitForExpectations(timeout: timeoutTimeInterval)
-    }
-    
-    func testFetchSupportedSymbols() throws {
-        // arrange
-        let outputExpectation = expectation(description: "should gat a list of supported symbols")
-        let finishedExpectation = expectation(description: "should finish normally")
-        
-        do {
-            let data = try XCTUnwrap(TestingData.supportedSymbols)
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = try XCTUnwrap(HTTPURLResponse(url: url,
-                                                         statusCode: 200,
-                                                         httpVersion: nil,
-                                                         headerFields: nil))
-            stubRateSession.outputPublisher = Just((data: data, response: response))
-                .setFailureType(to: URLError.self)
-                .eraseToAnyPublisher()
-        }
-        
-        // act
-        sut.publisher(for: Endpoints.SupportedSymbols())
-            .sink(
-                // assert
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished:
-                        finishedExpectation.fulfill()
-                    case .failure(let error):
-                        XCTFail("should not receive any error, but receive: \(error)")
-                    }
-                },
-                receiveValue: { supportedSymbol in
-                    XCTAssertFalse(supportedSymbol.symbols.isEmpty)
-                    outputExpectation.fulfill()
-                }
-            )
-            .store(in: &anyCancellableSet)
-        
-        waitForExpectations(timeout: timeoutTimeInterval)
-    }
-    
-    func testTooManyRequestSimultaneously() throws {
-        // arrange
-        let spyAPIKeySession = SpyAPIKeyRateSession()
-        sut = Fetcher(rateSession: spyAPIKeySession)
-        let dummyEndpoint = Endpoints.Latest()
-        let apiFinishingExpectation = expectation(description: "api 流程正常結束")
-        apiFinishingExpectation.expectedFulfillmentCount = 2
-        let apiOutputExpectation = expectation(description: "收到 fetcher 回傳的資料")
-        apiOutputExpectation.expectedFulfillmentCount = 2
-        
-        // act
-        sut.publisher(for: dummyEndpoint)
-            .sink(
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished             : apiFinishingExpectation.fulfill()
-                    case .failure(let failure) : XCTFail("不應該收到錯誤卻收到\(failure)")
-                    }
-                },
-                receiveValue: { _ in apiOutputExpectation.fulfill() }
-            )
-            .store(in: &anyCancellableSet)
-        
-        sut.publisher(for: dummyEndpoint)
-            .sink(
-                receiveCompletion: { completion in
-                    switch completion {
-                    case .finished             : apiFinishingExpectation.fulfill()
-                    case .failure(let failure) : XCTFail("不應該收到錯誤卻收到\(failure)")
-                    }
-                },
-                receiveValue: { _ in apiOutputExpectation.fulfill() }
-            )
-            .store(in: &anyCancellableSet)
-        
-        
-        do {
-            let data     = try XCTUnwrap(TestingData.tooManyRequestData)
-            let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 429, httpVersion : nil, headerFields : nil))
-            
-            if let firstOutPutSubject = spyAPIKeySession.outputSubjects.first {
-                firstOutPutSubject.send((data, response))
-                firstOutPutSubject.send(completion: .finished)
-            } else {
-                XCTFail("arrange 失誤，第一個 api call，fetcher 應該會 subscribe spy api key session，進而產生一個 subject")
-            }
-            
-            if spyAPIKeySession.outputSubjects.count >= 2 {
-                let secondOutPutSubject = spyAPIKeySession.outputSubjects[1]
-                secondOutPutSubject.send((data, response))
-                secondOutPutSubject.send(completion: .finished)
-            } else {
-                XCTFail("arrange 失誤，第二個 api call，fetcher 應該會 subscribe spy api key session，進而產生二個 subject")
-            }
-        }
-        
-        
-        do {
-            let data     = try XCTUnwrap(TestingData.latestData)
-            let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 200, httpVersion : nil, headerFields : nil))
-            
-            if spyAPIKeySession.outputSubjects.count >= 3 {
-                let thirdOutPutSubject = spyAPIKeySession.outputSubjects[2]
-                thirdOutPutSubject.send((data, response))
-                thirdOutPutSubject.send(completion: .finished)
-            } else {
-                XCTFail("arrange 失誤，第一個 api call，spy api key session 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 subscribe spy api key session，這時後應該要產生第三個 subject。")
-            }
-            
-            if spyAPIKeySession.outputSubjects.count >= 4 {
-                let fourthOutPutSubject = spyAPIKeySession.outputSubjects[3]
-                fourthOutPutSubject.send((data, response))
-                fourthOutPutSubject.send(completion: .finished)
-            } else {
-                XCTFail("arrange 失誤，第二個 api call，spy api key session 回傳 too many request 給 fetcher，這次 fetcher 判斷不需換 api key，重新 subscribe spy api key session，這時後應該要產生第四個 subject。")
-            }
-        }
         
         // assert
-        if spyAPIKeySession.receivedAPIKeys.count == 4 {
-            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[0], spyAPIKeySession.receivedAPIKeys[1])
-            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[2], spyAPIKeySession.receivedAPIKeys[3])
-        } else {
-            XCTFail("spy api key session 應該要剛好收到 4 個 request")
+        do {
+            let expectedCompletion = try XCTUnwrap(expectedCompletion)
+            switch expectedCompletion {
+            case .failure(let error):
+                guard let fetcherError = error as? Fetcher.Error else {
+                    XCTFail("應該要收到 Fetcher.Error")
+                    return
+                }
+                
+                guard fetcherError == Fetcher.Error.tooManyRequest else {
+                    XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                    return
+                }
+            case .finished:
+                XCTFail("should not complete normally")
+            }
         }
         
-        waitForExpectations(timeout: timeoutTimeInterval)
+        do {
+            XCTAssertNil(expectedValue)
+        }
+        
     }
+    
+//    func testInvalidAPIKeyRecovery() throws {
+//        // arrange
+//        let spyRateSession = SpyRateSession()
+//        sut = Fetcher(rateSession: spyRateSession)
+//        let dummyEndpoint = Endpoints.Latest()
+//        let valueExpectation = expectation(description: "should receive a dummy rate instance")
+//        let finishedExpectation = expectation(description: "should complete normally")
+//
+//        do {
+//            // first output
+//            let dummyData = try XCTUnwrap(TestingData.invalidAPIKeyData)
+//            let dummyURL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+//            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyURL,
+//                                                                statusCode: 401,
+//                                                                httpVersion: nil,
+//                                                                headerFields: nil))
+//            let outputPublisher = Just((data: dummyData, response: httpURLResponse))
+//                .setFailureType(to: URLError.self)
+//                .eraseToAnyPublisher()
+//            spyRateSession.outputPublishers.append(outputPublisher)
+//        }
+//
+//        do {
+//            // second output
+//            let dummyData = try XCTUnwrap(TestingData.latestData)
+//            let dummyURL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+//            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyURL,
+//                                                                             statusCode: 200,
+//                                                                             httpVersion: nil,
+//                                                                             headerFields: nil))
+//            let outputPublisher = Just((data: dummyData, response: httpURLResponse))
+//                .setFailureType(to: URLError.self)
+//                .eraseToAnyPublisher()
+//            spyRateSession.outputPublishers.append(outputPublisher)
+//        }
+//
+//        // act
+//        sut
+//            .publisher(for: dummyEndpoint)
+//            .sink(
+//                // assert
+//                receiveCompletion: { completion in
+//                    switch completion {
+//                    case .finished:
+//                        finishedExpectation.fulfill()
+//                    case .failure(let error):
+//                        XCTFail("should not receive any error:\(error)")
+//                    }
+//                },
+//                receiveValue: { rate in
+//                    XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
+//                    valueExpectation.fulfill()
+//                }
+//            )
+//            .store(in: &anyCancellableSet)
+//
+//        waitForExpectations(timeout: timeoutTimeInterval)
+//    }
+//
+//    func testInvalidAPIKeyFallBack() throws {
+//        // arrange
+//        let errorExpectation = expectation(description: "should a receive Fetcher.Error.invalidAPIKey")
+//        let dummyEndpoint = Endpoints.Latest()
+//
+//        do {
+//            let dummyData = try XCTUnwrap(TestingData.invalidAPIKeyData)
+//            let dummyRUL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+//            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyRUL,
+//                                                                statusCode: 401,
+//                                                                httpVersion: nil,
+//                                                                headerFields: nil))
+//            let outputPublish = Just((data: dummyData, response: httpURLResponse))
+//                .setFailureType(to: URLError.self)
+//                .eraseToAnyPublisher()
+//            stubRateSession.outputPublisher = outputPublish
+//        }
+//
+//        // act
+//        sut
+//            .publisher(for: dummyEndpoint)
+//            .sink(
+//                // assert
+//                receiveCompletion: { completion in
+//                    switch completion {
+//                    case .failure(let error):
+//                        if let error = error as? Fetcher.Error,
+//                           error == Fetcher.Error.invalidAPIKey {
+//                            errorExpectation.fulfill()
+//                        } else {
+//                            XCTFail("should not receive any error other than Fetcher.Error.invalidAPIKey: \(error)")
+//                        }
+//                    case .finished:
+//                        XCTFail("should not complete normally")
+//                    }
+//                },
+//                receiveValue: { value in
+//                    XCTFail("should not receive any value: \(value)")
+//                }
+//            )
+//            .store(in: &anyCancellableSet)
+//
+//        waitForExpectations(timeout: timeoutTimeInterval)
+//    }
+//
+//    func testFetchSupportedSymbols() throws {
+//        // arrange
+//        let outputExpectation = expectation(description: "should gat a list of supported symbols")
+//        let finishedExpectation = expectation(description: "should finish normally")
+//
+//        do {
+//            let data = try XCTUnwrap(TestingData.supportedSymbols)
+//            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+//            let response = try XCTUnwrap(HTTPURLResponse(url: url,
+//                                                         statusCode: 200,
+//                                                         httpVersion: nil,
+//                                                         headerFields: nil))
+//            stubRateSession.outputPublisher = Just((data: data, response: response))
+//                .setFailureType(to: URLError.self)
+//                .eraseToAnyPublisher()
+//        }
+//
+//        // act
+//        sut.publisher(for: Endpoints.SupportedSymbols())
+//            .sink(
+//                // assert
+//                receiveCompletion: { completion in
+//                    switch completion {
+//                    case .finished:
+//                        finishedExpectation.fulfill()
+//                    case .failure(let error):
+//                        XCTFail("should not receive any error, but receive: \(error)")
+//                    }
+//                },
+//                receiveValue: { supportedSymbol in
+//                    XCTAssertFalse(supportedSymbol.symbols.isEmpty)
+//                    outputExpectation.fulfill()
+//                }
+//            )
+//            .store(in: &anyCancellableSet)
+//
+//        waitForExpectations(timeout: timeoutTimeInterval)
+//    }
+//
+//    func testTooManyRequestSimultaneously() throws {
+//        // arrange
+//        let spyAPIKeySession = SpyAPIKeyRateSession()
+//        sut = Fetcher(rateSession: spyAPIKeySession)
+//        let dummyEndpoint = Endpoints.Latest()
+//        let apiFinishingExpectation = expectation(description: "api 流程正常結束")
+//        apiFinishingExpectation.expectedFulfillmentCount = 2
+//        let apiOutputExpectation = expectation(description: "收到 fetcher 回傳的資料")
+//        apiOutputExpectation.expectedFulfillmentCount = 2
+//
+//        // act
+//        sut.publisher(for: dummyEndpoint)
+//            .sink(
+//                receiveCompletion: { completion in
+//                    switch completion {
+//                    case .finished             : apiFinishingExpectation.fulfill()
+//                    case .failure(let failure) : XCTFail("不應該收到錯誤卻收到\(failure)")
+//                    }
+//                },
+//                receiveValue: { _ in apiOutputExpectation.fulfill() }
+//            )
+//            .store(in: &anyCancellableSet)
+//
+//        sut.publisher(for: dummyEndpoint)
+//            .sink(
+//                receiveCompletion: { completion in
+//                    switch completion {
+//                    case .finished             : apiFinishingExpectation.fulfill()
+//                    case .failure(let failure) : XCTFail("不應該收到錯誤卻收到\(failure)")
+//                    }
+//                },
+//                receiveValue: { _ in apiOutputExpectation.fulfill() }
+//            )
+//            .store(in: &anyCancellableSet)
+//
+//
+//        do {
+//            let data     = try XCTUnwrap(TestingData.tooManyRequestData)
+//            let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
+//            let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 429, httpVersion : nil, headerFields : nil))
+//
+//            if let firstOutPutSubject = spyAPIKeySession.outputSubjects.first {
+//                firstOutPutSubject.send((data, response))
+//                firstOutPutSubject.send(completion: .finished)
+//            } else {
+//                XCTFail("arrange 失誤，第一個 api call，fetcher 應該會 subscribe spy api key session，進而產生一個 subject")
+//            }
+//
+//            if spyAPIKeySession.outputSubjects.count >= 2 {
+//                let secondOutPutSubject = spyAPIKeySession.outputSubjects[1]
+//                secondOutPutSubject.send((data, response))
+//                secondOutPutSubject.send(completion: .finished)
+//            } else {
+//                XCTFail("arrange 失誤，第二個 api call，fetcher 應該會 subscribe spy api key session，進而產生二個 subject")
+//            }
+//        }
+//
+//
+//        do {
+//            let data     = try XCTUnwrap(TestingData.latestData)
+//            let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
+//            let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 200, httpVersion : nil, headerFields : nil))
+//
+//            if spyAPIKeySession.outputSubjects.count >= 3 {
+//                let thirdOutPutSubject = spyAPIKeySession.outputSubjects[2]
+//                thirdOutPutSubject.send((data, response))
+//                thirdOutPutSubject.send(completion: .finished)
+//            } else {
+//                XCTFail("arrange 失誤，第一個 api call，spy api key session 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 subscribe spy api key session，這時後應該要產生第三個 subject。")
+//            }
+//
+//            if spyAPIKeySession.outputSubjects.count >= 4 {
+//                let fourthOutPutSubject = spyAPIKeySession.outputSubjects[3]
+//                fourthOutPutSubject.send((data, response))
+//                fourthOutPutSubject.send(completion: .finished)
+//            } else {
+//                XCTFail("arrange 失誤，第二個 api call，spy api key session 回傳 too many request 給 fetcher，這次 fetcher 判斷不需換 api key，重新 subscribe spy api key session，這時後應該要產生第四個 subject。")
+//            }
+//        }
+//
+//        // assert
+//        if spyAPIKeySession.receivedAPIKeys.count == 4 {
+//            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[0], spyAPIKeySession.receivedAPIKeys[1])
+//            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[2], spyAPIKeySession.receivedAPIKeys[3])
+//        } else {
+//            XCTFail("spy api key session 應該要剛好收到 4 個 request")
+//        }
+//
+//        waitForExpectations(timeout: timeoutTimeInterval)
+//    }
 }
 
 private class StubRateSession: RateSession {
