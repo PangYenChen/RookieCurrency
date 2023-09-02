@@ -353,7 +353,7 @@ class FetcherTests: XCTestCase {
         }
     }
     
-    /// session 回應 api key 無效，
+    /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
     /// fetcher 更換新的 api key 後再次 call session 的 method，
     /// 新的 api key 有效， session 回應正常資料。
     func testInvalidAPIKeyRecovery() throws {
@@ -420,51 +420,64 @@ class FetcherTests: XCTestCase {
             XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
         }
     }
-//
-//    func testInvalidAPIKeyFallBack() throws {
-//        // arrange
-//        let errorExpectation = expectation(description: "should a receive Fetcher.Error.invalidAPIKey")
-//        let dummyEndpoint = Endpoints.Latest()
-//
-//        do {
-//            let dummyData = try XCTUnwrap(TestingData.invalidAPIKeyData)
-//            let dummyRUL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-//            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyRUL,
-//                                                                statusCode: 401,
-//                                                                httpVersion: nil,
-//                                                                headerFields: nil))
-//            let outputPublish = Just((data: dummyData, response: httpURLResponse))
-//                .setFailureType(to: URLError.self)
-//                .eraseToAnyPublisher()
-//            stubRateSession.outputPublisher = outputPublish
-//        }
-//
-//        // act
-//        sut
-//            .publisher(for: dummyEndpoint)
-//            .sink(
-//                // assert
-//                receiveCompletion: { completion in
-//                    switch completion {
-//                    case .failure(let error):
-//                        if let error = error as? Fetcher.Error,
-//                           error == Fetcher.Error.invalidAPIKey {
-//                            errorExpectation.fulfill()
-//                        } else {
-//                            XCTFail("should not receive any error other than Fetcher.Error.invalidAPIKey: \(error)")
-//                        }
-//                    case .finished:
-//                        XCTFail("should not complete normally")
-//                    }
-//                },
-//                receiveValue: { value in
-//                    XCTFail("should not receive any value: \(value)")
-//                }
-//            )
-//            .store(in: &anyCancellableSet)
-//
-//        waitForExpectations(timeout: timeoutTimeInterval)
-//    }
+    
+    /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
+    /// fetcher 更換新的 api key 後再次 call session 的 method，
+    /// 後續的 api key 全都無效，fetcher 能回傳 api key 無效的 error。
+    func testInvalidAPIKeyFallBack() throws {
+        // arrange
+        var expectedValue: ResponseDataModel.LatestRate?
+        var expectedCompletion: Subscribers.Completion<Error>?
+        
+        let dummyEndpoint = Endpoints.Latest()
+
+        do {
+            let dummyData = try XCTUnwrap(TestingData.invalidAPIKeyData)
+            let dummyRUL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let httpURLResponse: URLResponse = try XCTUnwrap(HTTPURLResponse(url: dummyRUL,
+                                                                statusCode: 401,
+                                                                httpVersion: nil,
+                                                                headerFields: nil))
+            let outputPublish = Just((data: dummyData, response: httpURLResponse))
+                .setFailureType(to: URLError.self)
+                .eraseToAnyPublisher()
+            stubRateSession.outputPublisher = outputPublish
+        }
+
+        // act
+        sut
+            .publisher(for: dummyEndpoint)
+            .sink(
+                receiveCompletion: { completion in expectedCompletion = completion },
+                receiveValue: { value in expectedValue = value }
+            )
+            .store(in: &anyCancellableSet)
+        
+        // assert
+        do {
+            let expectedCompletion = try XCTUnwrap(expectedCompletion)
+            
+            switch expectedCompletion {
+            case .failure(let error):
+                guard let fetcherError = error as? Fetcher.Error else {
+                    XCTFail("should receive Fetcher.Error")
+                    return
+                }
+                
+                guard fetcherError == Fetcher.Error.invalidAPIKey else {
+                    XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                    return
+                }
+            case .finished:
+                XCTFail("should not complete normally")
+            }
+        }
+        
+        do {
+            XCTAssertNil(expectedValue)
+        }
+
+    }
 //
 //    func testFetchSupportedSymbols() throws {
 //        // arrange

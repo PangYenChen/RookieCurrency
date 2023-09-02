@@ -265,7 +265,7 @@ final class FetcherTests: XCTestCase {
         }
     }
     
-    /// session 回應 api key 無效，
+    /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
     /// fetcher 更換新的 api key 後再次 call session 的 method，
     /// 新的 api key 有效， session 回應正常資料。
     func testInvalidAPIKeyRecovery() throws {
@@ -313,39 +313,48 @@ final class FetcherTests: XCTestCase {
             }
         }
     }
-//
-//    func testInvalidAPIKeyFallBack() throws {
-//        // arrange
-//        let expectation = expectation(description: "should be unable to recover, pass error to call cite")
-//        let dummyEndpoint = Endpoints.Latest()
-//        do {
-//            stubRateSession.data = TestingData.tooManyRequestData
-//            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-//            stubRateSession.response = HTTPURLResponse(url: url,
-//                                                       statusCode: 401,
-//                                                       httpVersion: nil,
-//                                                       headerFields: nil)
-//            stubRateSession.error = nil
-//        }
-//
-//        // act
-//        sut
-//            .fetch(dummyEndpoint) { result in
-//                // assert
-//                switch result {
-//                case .success:
-//                    XCTFail("should not receive any instance")
-//                case .failure(let error):
-//                    if let fetcherError = error as? Fetcher.Error, fetcherError == Fetcher.Error.invalidAPIKey {
-//                        expectation.fulfill()
-//                    } else {
-//                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
-//                    }
-//                }
-//            }
-//
-//        waitForExpectations(timeout: timeoutTimeInterval)
-//    }
+
+    /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
+    /// fetcher 更換新的 api key 後再次 call session 的 method，
+    /// 後續的 api key 全都無效，fetcher 能回傳 api key 無效的 error。
+    func testInvalidAPIKeyFallBack() throws {
+        // arrange
+        var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        
+        let dummyEndpoint = Endpoints.Latest()
+        do {
+            stubRateSession.data = TestingData.tooManyRequestData
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            stubRateSession.response = HTTPURLResponse(url: url,
+                                                       statusCode: 401,
+                                                       httpVersion: nil,
+                                                       headerFields: nil)
+            stubRateSession.error = nil
+        }
+        
+        // act
+        sut.fetch(dummyEndpoint) { result in expectedResult = result }
+        
+        // assert
+        do {
+            let expectedResult = try XCTUnwrap(expectedResult)
+            
+            switch expectedResult {
+            case .success:
+                XCTFail("should not receive any instance")
+            case .failure(let error):
+                guard let fetcherError = error as? Fetcher.Error else {
+                    XCTFail("should receive Fetcher.Error")
+                    return
+                }
+                
+                guard fetcherError == Fetcher.Error.invalidAPIKey else {
+                    XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                    return                    
+                }
+            }
+        }
+    }
 //
 //    func testFetchSupportedSymbols() throws {
 //        // arrange
