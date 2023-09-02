@@ -388,69 +388,83 @@ final class FetcherTests: XCTestCase {
         }
         
     }
-//
-//    func testTooManyRequestSimultaneously() throws {
-//        // arrange
-//
-//        let spyAPIKeySession = SpyAPIKeyRateSession()
-//        sut = Fetcher(rateSession: spyAPIKeySession)
-//        let dummyEndpoint = Endpoints.Latest()
-//        let apiFinishingExpectation = expectation(description: "spy 應該收到 4 個 api key，前兩個一樣，後兩個一樣")
-//        apiFinishingExpectation.expectedFulfillmentCount = 2
-//
-//        // act
-//        sut.fetch(dummyEndpoint) { _ in apiFinishingExpectation.fulfill()  }
-//        sut.fetch(dummyEndpoint) { _ in apiFinishingExpectation.fulfill()  }
-//
-//        do {
-//            let data = TestingData.tooManyRequestData
-//            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-//            let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: 429, httpVersion: nil, headerFields: nil))
-//
-//            if let firstFetcherCompletionHandler = spyAPIKeySession.completionHandlers.first {
-//                firstFetcherCompletionHandler(data, response, nil)
-//            } else {
-//                XCTFail("arrange 失誤，第一個 api call，fetcher 應該會 subscribe spy api key session，進而產生一個 subject")
-//            }
-//
-//            if spyAPIKeySession.completionHandlers.count >= 2 {
-//                let secondFetcherCompletionHandler = spyAPIKeySession.completionHandlers[1]
-//                secondFetcherCompletionHandler(data, response, nil)
-//            } else  {
-//                XCTFail("arrange 失誤，第二個 api call，fetcher 應該會 subscribe spy api key session，進而產生二個 subject")
-//            }
-//        }
-//
-//        do {
-//            let data     = try XCTUnwrap(TestingData.latestData)
-//            let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
-//            let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 200, httpVersion : nil, headerFields : nil))
-//
-//            if spyAPIKeySession.completionHandlers.count >= 3 {
-//                let thirdFetcherCompletionHandler = spyAPIKeySession.completionHandlers[2]
-//                thirdFetcherCompletionHandler(data, response, nil)
-//            } else  {
-//                XCTFail("arrange 失誤，第一個 api call，spy api key session 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 subscribe spy api key session，這時後應該要產生第三個 subject。")
-//            }
-//
-//            if spyAPIKeySession.completionHandlers.count >= 4 {
-//                let fourthFetcherCompletionHandler = spyAPIKeySession.completionHandlers[3]
-//                fourthFetcherCompletionHandler(data, response, nil)
-//            } else  {
-//                XCTFail("arrange 失誤，第二個 api call，spy api key session 回傳 too many request 給 fetcher，這次 fetcher 判斷不需換 api key，重新 subscribe spy api key session，這時後應該要產生第四個 subject。")
-//            }
-//        }
-//
-//        // assert
-//        if spyAPIKeySession.receivedAPIKeys.count == 4 {
-//            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[0], spyAPIKeySession.receivedAPIKeys[1])
-//            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[2], spyAPIKeySession.receivedAPIKeys[3])
-//        } else {
-//            XCTFail("spy api key session 應該要剛好收到 4 個 request")
-//        }
-//
-//        waitForExpectations(timeout: timeoutTimeInterval)
-//    }
+    
+    /// 同時 call 兩次 session 的 method，
+    /// 都回應 api key 的額度用罄，
+    /// fetcher 要只更新 api key 一次。
+    func testTooManyRequestSimultaneously() throws {
+        // arrange
+
+        let spyAPIKeySession = SpyAPIKeyRateSession()
+        sut = Fetcher(rateSession: spyAPIKeySession)
+        
+        let dummyEndpoint = Endpoints.Latest()
+        
+        var firstExpectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var secondExpectedResult: Result<ResponseDataModel.LatestRate, Error>?
+
+        // act
+        sut.fetch(dummyEndpoint) { result in firstExpectedResult = result }
+        sut.fetch(dummyEndpoint) { result in secondExpectedResult = result }
+
+        do {
+            let data = TestingData.tooManyRequestData
+            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response = try XCTUnwrap(HTTPURLResponse(url: url, statusCode: 429, httpVersion: nil, headerFields: nil))
+            
+            // session 執行第一個 completion handler
+            if let firstFetcherCompletionHandler = spyAPIKeySession.completionHandlers.first {
+                firstFetcherCompletionHandler(data, response, nil)
+            } else {
+                XCTFail("arrange 失誤，第一次 call `sut.fetch(:)` 應該會給 spy api key session 一個 completion handler")
+            }
+
+            // session 執行第二個 completion handler
+            if spyAPIKeySession.completionHandlers.count >= 2 {
+                let secondFetcherCompletionHandler = spyAPIKeySession.completionHandlers[1]
+                secondFetcherCompletionHandler(data, response, nil)
+            } else  {
+                XCTFail("arrange 失誤，第二次 call `sut.fetch(:)` 應該會給 spy api key session 第二個 completion handler")
+            }
+            
+            // 現階段 fetcher 應該還沒執行過 caller 傳進來的 completion handler
+            XCTAssertNil(firstExpectedResult)
+            XCTAssertNil(secondExpectedResult)
+        }
+
+        do {
+            let data     = try XCTUnwrap(TestingData.latestData)
+            let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 200, httpVersion : nil, headerFields : nil))
+
+            // session 執行第三個 completion handler
+            if spyAPIKeySession.completionHandlers.count >= 3 {
+                let thirdFetcherCompletionHandler = spyAPIKeySession.completionHandlers[2]
+                thirdFetcherCompletionHandler(data, response, nil)
+            } else  {
+                XCTFail("arrange 失誤，spy api key session 對於第一個 call 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 call 一次 session 的 method，此時 spy api key session 會收到第三個 completion handler")
+            }
+            
+            // session 執行第四個 completion handler
+            if spyAPIKeySession.completionHandlers.count >= 4 {
+                let fourthFetcherCompletionHandler = spyAPIKeySession.completionHandlers[3]
+                fourthFetcherCompletionHandler(data, response, nil)
+            } else  {
+                XCTFail("arrange 失誤，spy api key session 對於第二個 call 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 call 一次 session 的 method，此時 spy api key session 會收到第四個 completion handler")
+            }
+        }
+
+        // assert
+        if spyAPIKeySession.receivedAPIKeys.count == 4 {
+            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[0], spyAPIKeySession.receivedAPIKeys[1])
+            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[2], spyAPIKeySession.receivedAPIKeys[3])
+        } else {
+            XCTFail("spy api key session 應該要剛好收到 4 個 request")
+        }
+        
+        XCTAssertNotNil(firstExpectedResult)
+        XCTAssertNotNil(secondExpectedResult)
+    }
 }
 
 // MARK: - test double
