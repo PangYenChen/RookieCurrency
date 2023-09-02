@@ -15,13 +15,16 @@ import Foundation
 
 extension TestingData {
     
-    static func historicalRateDataFor(dateString: String) -> Data? {
+    /// 用來放`Data`型別的測試資料的 name space
+    enum TestingData {
         
-        guard let timestamp = AppUtility.requestDateFormatter.date(from: dateString)
-            .map({ Int($0.timeIntervalSince1970) })
-            .map(String.init(describing:)) else { return nil }
-        
-        return """
+        static func historicalRateDataFor(dateString: String) -> Data? {
+            
+            guard let timestamp = AppUtility.requestDateFormatter.date(from: dateString)
+                .map({ Int($0.timeIntervalSince1970) })
+                .map(String.init(describing:)) else { return nil }
+            
+            return """
 {
   "base": "USD",
   "date": "\(dateString)",
@@ -203,9 +206,9 @@ extension TestingData {
   "timestamp": \(timestamp)
 }
 """.data(using: .utf8)
-    }
-    
-    static let latestData = """
+        }
+        
+        static let latestData = """
 {
   "base": "USD",
   "date": "2023-03-11",
@@ -386,18 +389,18 @@ extension TestingData {
   "timestamp": 1678501623
 }
 """.data(using: .utf8)
-    
-    static let tooManyRequestData: Data? = """
+        
+        static let tooManyRequestData: Data? = """
 {
   "message": "You have exceeded your daily/monthly API rate limit. Please review and upgrade your subscription plan at https://promptapi.com/subscriptions to continue."
 }
 """.data(using: .utf8)
-    
-    static let invalidAPIKeyData: Data? = """
+        
+        static let invalidAPIKeyData: Data? = """
 Invalid authentication credentials
 """.data(using: .utf8)
-    
-    static let supportedSymbols: Data? = """
+        
+        static let supportedSymbols: Foundation.Data? = """
 {
   "success" : true,
   "symbols" : {
@@ -574,5 +577,5 @@ Invalid authentication credentials
   }
 }
 """.data(using: .utf8)
+    }
 }
-

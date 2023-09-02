@@ -105,7 +105,7 @@ final class StubFetcher: FetcherProtocol {
     func fetch<Endpoint>(_ endpoint: Endpoint, completionHandler: @escaping (Result<Endpoint.ResponseType, Error>) -> Void) where Endpoint : ImperativeCurrency.EndpointProtocol {
         
         if endpoint.url.path.contains("latest"),
-           let latestRate = TestingData.latestRate as? Endpoint.ResponseType {
+           let latestRate = TestingData.Instance.latestRate as? Endpoint.ResponseType {
             numberOfLatestEndpointCall += 1
             
             completionHandler(.success(latestRate))
@@ -115,7 +115,7 @@ final class StubFetcher: FetcherProtocol {
             let dateString = endpoint.url.lastPathComponent
             do {
                 if AppUtility.requestDateFormatter.date(from: dateString) != nil,
-                   let historicalRate = try TestingData.historicalRateFor(dateString: dateString) as? Endpoint.ResponseType {
+                   let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dateString) as? Endpoint.ResponseType {
                     
                     dateStringOfHistoricalEndpointCall.insert(dateString)
                     

@@ -466,9 +466,10 @@ class FetcherTests: XCTestCase {
 
 
         do {
-            let data     = try XCTUnwrap(TestingData.tooManyRequestData)
-            let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 429, httpVersion : nil, headerFields : nil))
+            let tooManyRequestTuple = try XCTUnwrap(TestingData.SessionData.tooManyRequest())
+            
+            let data = try XCTUnwrap(tooManyRequestTuple.data)
+            let response = try XCTUnwrap(tooManyRequestTuple.response)
 
             // session publish 第一個 output
             if let firstOutPutSubject = spyAPIKeySession.outputSubjects.first {
@@ -493,9 +494,10 @@ class FetcherTests: XCTestCase {
 
 
         do {
-            let data     = try XCTUnwrap(TestingData.latestData)
-            let url      = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = try XCTUnwrap(HTTPURLResponse(url : url, statusCode : 200, httpVersion : nil, headerFields : nil))
+            let latestRateTuple = try TestingData.SessionData.latestRate()
+            
+            let data = try XCTUnwrap(latestRateTuple.data)
+            let response = try XCTUnwrap(latestRateTuple.response)
             
             // session publish 第三個 output
             if spyAPIKeySession.outputSubjects.count >= 3 {

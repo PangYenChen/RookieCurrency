@@ -20,7 +20,7 @@ final class ResponseDataModelTest: XCTestCase {
     func testDecodeHistoricalRate() throws {
         // arrange
         let dateString = "1970-01-01"
-        let historicalData = try XCTUnwrap(TestingData.historicalRateDataFor(dateString: dateString))
+        let historicalData = try XCTUnwrap(TestingData.TestingData.historicalRateDataFor(dateString: dateString))
         
         // act
         let historicalRate = try ResponseDataModel.jsonDecoder
@@ -35,7 +35,7 @@ final class ResponseDataModelTest: XCTestCase {
     /// 測試將 json decode 成 latest rate
     func testDecodeLatestRate() throws {
         // arrange
-        let latestData = try XCTUnwrap(TestingData.latestData)
+        let latestData = try XCTUnwrap(TestingData.TestingData.latestData)
 
         // act
         let historicalRate = try ResponseDataModel.jsonDecoder
@@ -50,7 +50,7 @@ final class ResponseDataModelTest: XCTestCase {
     func testEncodeAndThanDecode() throws {
         // arrange
         let dateString = "1970-01-01"
-        let dummyHistoricalRate = try TestingData.historicalRateFor(dateString: dateString)
+        let dummyHistoricalRate = try TestingData.Instance.historicalRateFor(dateString: dateString)
         
         // act
         let historicalRateData = try ResponseDataModel.jsonEncoder.encode(dummyHistoricalRate)

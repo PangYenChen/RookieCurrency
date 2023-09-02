@@ -23,8 +23,8 @@ final class AnalystTest: XCTestCase {
         // 使用的 currency of interest 就是強勢貨幣，但就這個 test method 的測試目的來說，只要 currency of interest 包含於測試資料中即可
         let currencyOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
         let dummyDateString = "1970-01-01"
-        let historicalRate = try TestingData.historicalRateFor(dateString: dummyDateString)
-        let latestRate = try TestingData.latestRate()
+        let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
+        let latestRate = try TestingData.Instance.latestRate()
         let baseCurrency = "USD"
         
         // act
@@ -63,9 +63,9 @@ final class AnalystTest: XCTestCase {
         let currencyOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF", currencyLossInHistoricalRate]
         
         let dummyDateString = "1970-01-01"
-        let historicalRate = try TestingData.historicalRateFor(dateString: dummyDateString)
+        let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
         XCTAssertNil(historicalRate[currencyCode: currencyLossInHistoricalRate])
-        let latestRate = try TestingData.latestRate()
+        let latestRate = try TestingData.Instance.latestRate()
         XCTAssertNotNil(latestRate[currencyCode: currencyLossInHistoricalRate])
         let baseCurrency = "USD"
         
@@ -93,9 +93,9 @@ final class AnalystTest: XCTestCase {
         let currencyOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF", currencyLossInLatestRate]
         
         let dummyDateString = "1970-01-01"
-        let historicalRate = try TestingData.historicalRateFor(dateString: dummyDateString)
+        let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
         XCTAssertNotNil(historicalRate[currencyCode: currencyLossInLatestRate])
-        let latestRate = try TestingData.latestRate()
+        let latestRate = try TestingData.Instance.latestRate()
         XCTAssertNil(latestRate[currencyCode: currencyLossInLatestRate])
         let baseCurrency = "USD"
         

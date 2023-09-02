@@ -120,7 +120,7 @@ final class StubFetcher: FetcherProtocol {
     
     func publisher<Endpoint>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> where Endpoint : EndpointProtocol {
         if endpoint.url.path.contains("latest"),
-           let latestRate = TestingData.latestRate as? Endpoint.ResponseType {
+           let latestRate = TestingData.Instance.latestRate as? Endpoint.ResponseType {
             numberOfLatestEndpointCall += 1
             
             return Just(latestRate)
@@ -130,7 +130,7 @@ final class StubFetcher: FetcherProtocol {
             let dateString = endpoint.url.lastPathComponent
             do {
                 if AppUtility.requestDateFormatter.date(from: dateString) != nil,
-                   let historicalRate = try TestingData.historicalRateFor(dateString: dateString) as? Endpoint.ResponseType {
+                   let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dateString) as? Endpoint.ResponseType {
                     
                     dateStringOfHistoricalEndpointCall.insert(dateString)
                     

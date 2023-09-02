@@ -70,8 +70,8 @@
 		51DF9167299FD0B200CEA5A6 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */; };
 		51DF916A299FD0C100CEA5A6 /* CurrencyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DF9169299FD0C100CEA5A6 /* CurrencyTableViewController.swift */; };
 		51E0DEB5299FD4980046652B /* PresentWithNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51119A192999D79C002758B3 /* PresentWithNavigationController.swift */; };
-		51E1B4B929ADADD800D75669 /* Rate Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4B629ADAD7F00D75669 /* Rate Data.swift */; };
-		51E1B4BA29ADADD800D75669 /* Rate Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4B629ADAD7F00D75669 /* Rate Data.swift */; };
+		51E1B4B929ADADD800D75669 /* TestingData For Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4B629ADAD7F00D75669 /* TestingData For Data.swift */; };
+		51E1B4BA29ADADD800D75669 /* TestingData For Data.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4B629ADAD7F00D75669 /* TestingData For Data.swift */; };
 		51E1B4C429AE3DE300D75669 /* Rate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4C329AE3DE300D75669 /* Rate.swift */; };
 		51E1B4C529AE3DE300D75669 /* Rate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4C329AE3DE300D75669 /* Rate.swift */; };
 		51E1B4C829AE488900D75669 /* Endpoints.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51E1B4C729AE488900D75669 /* Endpoints.swift */; };
@@ -164,7 +164,7 @@
 		519BD8A929BD7E8F00D2CB29 /* EndpointProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointProtocol.swift; sourceTree = "<group>"; };
 		51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
 		51DF9169299FD0C100CEA5A6 /* CurrencyTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyTableViewController.swift; sourceTree = "<group>"; };
-		51E1B4B629ADAD7F00D75669 /* Rate Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rate Data.swift"; sourceTree = "<group>"; };
+		51E1B4B629ADAD7F00D75669 /* TestingData For Data.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "TestingData For Data.swift"; sourceTree = "<group>"; };
 		51E1B4C329AE3DE300D75669 /* Rate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Rate.swift; sourceTree = "<group>"; };
 		51E1B4C729AE488900D75669 /* Endpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoints.swift; sourceTree = "<group>"; };
 		51E1B4CA29AE490300D75669 /* Latest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Latest.swift; sourceTree = "<group>"; };
@@ -359,7 +359,7 @@
 			isa = PBXGroup;
 			children = (
 				519A643729B4627500918B84 /* TestingData.swift */,
-				51E1B4B629ADAD7F00D75669 /* Rate Data.swift */,
+				51E1B4B629ADAD7F00D75669 /* TestingData For Data.swift */,
 				51362E2529B4CF3F00E3CE89 /* Rate Instance.swift */,
 				515DE3722AA31FE6005E719C /* Session Output.swift */,
 			);
@@ -772,7 +772,7 @@
 				51E731C829B4DCFA00C1DB2B /* ArchiverTest.swift in Sources */,
 				51E731CA29B4DCFF00C1DB2B /* ResponseDataModelTest.swift in Sources */,
 				517CD31E2A47EE3800AB1E32 /* AnalystTest.swift in Sources */,
-				51E1B4B929ADADD800D75669 /* Rate Data.swift in Sources */,
+				51E1B4B929ADADD800D75669 /* TestingData For Data.swift in Sources */,
 				5121216C29E2D60C001D234B /* TestDouble.swift in Sources */,
 				5143C8802A7B5B5200EDEFFF /* Archiver.swift in Sources */,
 				5189F9D029DAD630004234D3 /* ImperativeRateControllerTests.swift in Sources */,
@@ -821,7 +821,7 @@
 			files = (
 				E15BA6C524FCA66900CA5B1B /* FetcherTests.swift in Sources */,
 				51869FD929D9D31D00EFA13D /* RateControllerTests.swift in Sources */,
-				51E1B4BA29ADADD800D75669 /* Rate Data.swift in Sources */,
+				51E1B4BA29ADADD800D75669 /* TestingData For Data.swift in Sources */,
 				51362E4F29B4D93500E3CE89 /* Rate Instance.swift in Sources */,
 				5143C88C2A7B864400EDEFFF /* FakeFetcher.swift in Sources */,
 				515DE3742AA31FE6005E719C /* Session Output.swift in Sources */,
