@@ -32,7 +32,7 @@ custom segue
 
 在服務商回傳 status code 429(too many request) 時，更換 api key 重打。 
 
-用 phantom type 區分本質上一樣，但用途不同的 data model。
+用 phantom type 區分雖然本質上一樣，但用途不同的 data model。
 
 處理 api 呼叫的物件使用 Generic type。
 
