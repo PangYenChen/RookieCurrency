@@ -16,15 +16,21 @@ class RateController {
     
     let archiver: ArchiverProtocol.Type
     
+    /// 用來
+    /// - 同時讀寫 historicalRateDictionary、
+    /// - archive 和 unarchive 檔案
     let concurrentQueue: DispatchQueue
     
     var historicalRateDictionary: [String: ResponseDataModel.HistoricalRate]
     
-    init(fetcher: FetcherProtocol = Fetcher.shared, archiver: ArchiverProtocol.Type = Archiver.self) {
+    init(fetcher: FetcherProtocol = Fetcher.shared,
+         archiver: ArchiverProtocol.Type = Archiver.self,
+         concurrentQueue: DispatchQueue = DispatchQueue(label: "rate controller concurrent queue", attributes: .concurrent)
+         
+    ) {
         self.fetcher = fetcher
         self.archiver = archiver
-        
-        concurrentQueue = DispatchQueue(label: "rate controller concurrent queue", attributes: .concurrent)
+        self.concurrentQueue = concurrentQueue
         
         historicalRateDictionary = [:]
     }

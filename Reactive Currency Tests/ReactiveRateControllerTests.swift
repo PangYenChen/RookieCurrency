@@ -11,8 +11,8 @@ import Combine
 @testable import ReactiveCurrency
 
 final class ReactiveRateControllerTests: XCTestCase {
-#warning("要拿掉time interval")
-    let timeoutInterval: TimeInterval = 1
+
+#warning("`RateController` 的 method 太長了，不好測試。等 method 拆解好之後再來寫測試。")
     
     var sut: RateController!
     
@@ -119,13 +119,19 @@ final class StubFetcher: FetcherProtocol {
     private(set) var dateStringOfHistoricalEndpointCall: Set<String> = []
     
     func publisher<Endpoint>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> where Endpoint : EndpointProtocol {
-        if endpoint.url.path.contains("latest"),
-           let latestRate = TestingData.Instance.latestRate as? Endpoint.ResponseType {
-            numberOfLatestEndpointCall += 1
-            
-            return Just(latestRate)
-                .setFailureType(to: Error.self)
-                .eraseToAnyPublisher()
+        if endpoint.url.path.contains("latest") {
+            do {
+                let latestRate = try XCTUnwrap(TestingData.Instance.latestRate() as? Endpoint.ResponseType)
+                numberOfLatestEndpointCall += 1
+                
+                return Just(latestRate)
+                    .setFailureType(to: Error.self)
+                    .eraseToAnyPublisher()
+                
+            } catch {
+                return Fail(error: error)
+                    .eraseToAnyPublisher()
+            }
         } else {
             let dateString = endpoint.url.lastPathComponent
             do {

@@ -11,9 +11,7 @@ import XCTest
 
 
 final class ImperativeRateControllerTests: XCTestCase {
-#warning("要拿掉time interval")
-    let timeoutInterval: TimeInterval = 1
-    
+
     var sut: RateController!
     
     override func tearDown() {
@@ -21,35 +19,50 @@ final class ImperativeRateControllerTests: XCTestCase {
         TestDouble.SpyArchiver.reset()
     }
     
-//    func testNoCacheAndDiskData() {
-//        // arrange
-//        let stubFetcher = StubFetcher()
-//        let spyArchiver = TestDouble.SpyArchiver.self
-//        sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
-//        
-//        let expectation = expectation(description: "should receive rate")
-//        let dummyStartingDate = Date(timeIntervalSince1970: 0)
-//        let numberOfDays = 3
-//        
-//        // act
-//        sut.getRateFor(numberOfDays: numberOfDays,
-//                       from: dummyStartingDate) { result in
-//            // assert
-//            switch result {
-//            case .success(let (_ , historicalRateSet)):
-//                XCTAssertEqual(historicalRateSet.count, numberOfDays)
-//                XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
-//                XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
-//                XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 1)
-//                XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
-//                expectation.fulfill()
-//            case .failure(let failure):
-//                XCTFail("should not receive any failure but receive: \(failure)")
-//            }
-//        }
-//        
-//        waitForExpectations(timeout: timeoutInterval)
-//    }
+    #warning("`RateController` 的 method 太長了，不好測試。等 method 拆解好之後再來寫測試。")
+    
+    func testNoCacheAndDiskData() throws {
+        // arrange
+        let stubFetcher = StubFetcher()
+        let spyArchiver = TestDouble.SpyArchiver.self
+        let concurrentQueue = DispatchQueue(label: "testing queue", attributes: .concurrent)
+        
+        sut = RateController(fetcher: stubFetcher,
+                             archiver: spyArchiver,
+                             concurrentQueue: concurrentQueue)
+        
+        var expectedResult: Result<(latestRate: ResponseDataModel.LatestRate,
+                                    historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
+                                   Error>?
+        let dummyStartingDate = Date(timeIntervalSince1970: 0)
+        let numberOfDays = 3
+        
+        // act
+        sut.getRateFor(numberOfDays: numberOfDays,
+                       from: dummyStartingDate,
+                       completionHandlerQueue: concurrentQueue) { result in expectedResult = result }
+        
+        concurrentQueue.sync(flags: .barrier) { } // 卡一個空的 work item，等 sut 執行完 completion handler 在繼續
+        
+        // assert
+        do {
+            let expectedResult = try XCTUnwrap(expectedResult)
+            
+            switch expectedResult {
+            case .success(let (_ , historicalRateSet)):
+                XCTAssertEqual(historicalRateSet.count, numberOfDays)
+            case .failure(let failure):
+                XCTFail("should not receive any failure but receive: \(failure)")
+            }
+        }
+        
+        do {
+            XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)
+            XCTAssertEqual(spyArchiver.numberOfUnarchiveCall, 0)
+            XCTAssertEqual(stubFetcher.numberOfLatestEndpointCall, 1)
+            XCTAssertEqual(stubFetcher.dateStringOfHistoricalEndpointCall.count, numberOfDays)
+        }
+    }
 //    
 //    func testAllFromCache() {
 //        // arrange
@@ -102,15 +115,17 @@ final class StubFetcher: FetcherProtocol {
     
     private(set) var dateStringOfHistoricalEndpointCall: Set<String> = []
     
-    func fetch<Endpoint>(_ endpoint: Endpoint, completionHandler: @escaping (Result<Endpoint.ResponseType, Error>) -> Void) where Endpoint : ImperativeCurrency.EndpointProtocol {
+    func fetch<Endpoint>(_ endpoint: Endpoint, completionHandler: @escaping (Result<Endpoint.ResponseType, Error>) -> Void) where Endpoint: ImperativeCurrency.EndpointProtocol {
         
-        if endpoint.url.path.contains("latest"),
-           let latestRate = TestingData.Instance.latestRate as? Endpoint.ResponseType {
-            numberOfLatestEndpointCall += 1
-            
-            completionHandler(.success(latestRate))
-            return
-            
+        if endpoint.url.path.contains("latest") {
+            do {
+                let latestRate = try XCTUnwrap(TestingData.Instance.latestRate() as? Endpoint.ResponseType)
+                numberOfLatestEndpointCall += 1
+                
+                completionHandler(.success(latestRate))
+            } catch {
+                completionHandler(.failure(error))
+            }
         } else {
             let dateString = endpoint.url.lastPathComponent
             do {
@@ -120,17 +135,13 @@ final class StubFetcher: FetcherProtocol {
                     dateStringOfHistoricalEndpointCall.insert(dateString)
                     
                     completionHandler(.success(historicalRate))
-                    return
-                    
-#warning("這邊邏輯要檢查一下")
+                } else {
+                    completionHandler(.failure(Fetcher.Error.unknownError))
                 }
             } catch {
                 completionHandler(.failure(error))
                 
             }
         }
-        
-        // the following should be dead code, which purely make compiler silent
-        completionHandler(.failure(Fetcher.Error.unknownError))
     }
 }

@@ -21,12 +21,7 @@ extension Fetcher: FetcherProtocol {}
 
 #warning("這裡的 method 好長 看能不能拆開")
 extension RateController {
-    /// <#Description#>
-    /// - Parameters:
-    ///   - numberOfDays: <#numberOfDays description#>
-    ///   - start: <#start description#>
-    ///   - completionHandlerQueue: <#completionHandlerQueue description#>
-    ///   - completionHandler: <#completionHandler description#>
+    
     func getRateFor(
         numberOfDays: Int,
         from start: Date = .now,
