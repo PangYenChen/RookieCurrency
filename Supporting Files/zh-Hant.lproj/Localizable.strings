@@ -38,3 +38,4 @@
 "sortingWay" = "%1$@%2$@";
 "removeFiles" = "移除先前下載的資料";
 "removeFilesDescription" = "可以刪除不想使用的過舊資料";
+"fluctuation" = "漲跌: %@";

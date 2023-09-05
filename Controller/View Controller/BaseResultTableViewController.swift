@@ -49,7 +49,6 @@ class BaseResultTableViewController: UITableViewController {
         // title
         do {
             title = R.string.localizable.analyzedResult()
-            navigationItem.prompt = "## 基準幣別：？？"
             navigationItem.largeTitleDisplayMode = .automatic
         }
     }
@@ -84,13 +83,12 @@ class BaseResultTableViewController: UITableViewController {
                 
                 // text
                 do {
-                    #warning("要檢查一下這個字串")
                     let deviationString = data.deviation.formatted()
-//                    NumberFormatter.localizedString(from: NSNumber(value: data.deviation), number: .decimal)
-                    
+                    let fluctuationString = R.string.localizable.fluctuation(deviationString)
+
                     contentConfiguration.text = [currencyCode,
                                                  Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode),
-                                                 deviationString]
+                                                 fluctuationString]
                         .compactMap { $0 }
                         .joined(separator: ", ")
                     
@@ -102,9 +100,7 @@ class BaseResultTableViewController: UITableViewController {
                 // secondary text
                 do {
                     let meanString = data.mean.formatted()
-//                    NumberFormatter.localizedString(from: NSNumber(value: data.mean), number: .decimal)
                     let latestString = data.latest.formatted()
-//                    NumberFormatter.localizedString(from: NSNumber(value: data.latest), number: .decimal)
                     
                     contentConfiguration.secondaryText = R.string.localizable.currencyCellDetail(meanString, latestString)
                     contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
