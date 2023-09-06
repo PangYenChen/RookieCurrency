@@ -54,9 +54,9 @@
     
     - 匯率資料儲存的位置
 
-- 顯示 app 版本號、commit hash、commit 時間
+- 顯示 App 版本號、commit hash、commit 時間
 
-- 重新開啟 app 後，先前改變的設定會保留。
+- 重新開啟 App 後，先前改變的設定會保留。
 
 ## 實作功能
 
