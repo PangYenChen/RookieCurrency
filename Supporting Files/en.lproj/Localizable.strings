@@ -11,7 +11,7 @@
 "baseCurrency" = "Base currency";
 "baseCurrencyInPrompt" = "Base currency: %@";
 "changeBaseCurrency" = "change";
-"alertTitle" = "Oops, something goes wrong.";
+"alertTitle" = "Notice";
 "alertActionTitle" = "ok";
 "currencyCellDetail" = "historical mean：%2$@，today：%1$@";
 "cancel" = "cancel";
@@ -39,3 +39,4 @@
 "removeFiles" = "remove downloaded data";
 "removeFilesDescription" = "this would remove data which may be unused";
 "fluctuation" = "fluctuation: %@";
+"dataHaveBeenRemoved" = "data have been remove";

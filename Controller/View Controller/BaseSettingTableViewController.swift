@@ -8,7 +8,7 @@
 
 import UIKit
 
-class BaseSettingTableViewController: UITableViewController {
+class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     
     // MARK: - properties
     @IBOutlet weak var saveButton: UIBarButtonItem!
@@ -239,6 +239,7 @@ extension BaseSettingTableViewController {
             
         case .removeFile:
             RateController.shared.removeCachedAndStoredData()
+            presentAlert(message: R.string.localizable.dataHaveBeenRemoved())
             tableView.deselectRow(at: indexPath, animated: true)
 #if DEBUG
         case .debugInfo:
