@@ -23,7 +23,7 @@ extension AppUtility {
     static var numberOfDay: Int {
         get {
             let numberOfDayInUserDefaults = UserDefaults.standard.integer(forKey: Key.numberOfDay.rawValue)
-            return numberOfDayInUserDefaults > 0 ? numberOfDayInUserDefaults : 30
+            return numberOfDayInUserDefaults > 0 ? numberOfDayInUserDefaults : 3
         }
         set { UserDefaults.standard.set(newValue, forKey: Key.numberOfDay.rawValue) }
     }
