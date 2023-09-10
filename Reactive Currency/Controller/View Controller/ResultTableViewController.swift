@@ -1,11 +1,3 @@
-//
-//  ResultTableViewController.swift
-//  CombineCurrency
-//
-//  Created by Pang-yen Chen on 2020/9/2.
-//  Copyright © 2020 Pang-yen Chen. All rights reserved.
-//
-
 import UIKit
 import Combine
 
@@ -101,14 +93,14 @@ class ResultTableViewController: BaseResultTableViewController {
                 .map(Date.init(timeIntervalSince1970:))
                 .map { $0.formatted(.relative(presentation: .named)) }
                 .prepend("-")
-                .map { R.string.localizable.latestUpdateTime($0) }
+                .map { R.string.resultScene.latestUpdateTime($0) }
             
             let updateSuccessTimeString = latestUpdateTimeString
             
             Publishers
                 .CombineLatest(isUpdating, latestUpdateTimeString)
                 .sink { [unowned self] isUpdating, latestUpdateTimeString in
-                    updatingStatusItem.title = isUpdating ? R.string.localizable.updating() : latestUpdateTimeString
+                    updatingStatusItem.title = isUpdating ? R.string.resultScene.updating() : latestUpdateTimeString
                 }
                 .store(in: &anyCancellableSet)
             

@@ -1,11 +1,3 @@
-//
-//  CurrencyTableViewController.swift
-//  RookieCurrency
-//
-//  Created by 陳邦彥 on 2023/2/12.
-//  Copyright © 2023 Pang-yen Chen. All rights reserved.
-//
-
 import UIKit
 
 class CurrencyTableViewController: BaseCurrencyTableViewController {
@@ -43,7 +35,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     }
     
     override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
-        sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
+        sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
         
         self.sortingMethod = sortingMethod
         self.sortingOrder = sortingOrder
@@ -122,7 +114,7 @@ extension CurrencyTableViewController {
         private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
         
         init(baseCurrencyCode: String, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
-            title = R.string.localizable.baseCurrency()
+            title = R.string.share.baseCurrency()
             self.baseCurrencyCode = baseCurrencyCode
             allowsMultipleSelection = false
             self.completionHandler = completionHandler
@@ -153,7 +145,7 @@ extension CurrencyTableViewController {
         
         init(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
              completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
-            title = R.string.localizable.currencyOfInterest()
+            title = R.string.share.currencyOfInterest()
             self.currencyOfInterest = currencyOfInterest
             allowsMultipleSelection = true
             self.completionHandler = completionHandler

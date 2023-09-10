@@ -1,11 +1,3 @@
-//
-//  ResultTableViewController.swift
-//  RookieCurrency
-//
-//  Created by 陳邦彥 on 2023/2/5.
-//  Copyright © 2023 Pang-yen Chen. All rights reserved.
-//
-
 import UIKit
 
 class ResultTableViewController: BaseResultTableViewController {
@@ -42,7 +34,7 @@ class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        updatingStatusItem.title = R.string.localizable.latestUpdateTime("-")
+        updatingStatusItem.title = R.string.resultScene.latestUpdateTime("-")
         
         refreshDataAndPopulateTableView()
     }
@@ -119,7 +111,7 @@ private extension ResultTableViewController {
             refreshControl?.beginRefreshing()
         }
         
-        updatingStatusItem.title = R.string.localizable.updating()
+        updatingStatusItem.title = R.string.resultScene.updating()
         
         RateController.shared.getRateFor(numberOfDays: numberOfDay, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
@@ -169,7 +161,7 @@ private extension ResultTableViewController {
             
             do { // update updatingStatusItem
                 let dateString = latestUpdateTime?.formatted(.relative(presentation: .named)) ?? "-"
-                updatingStatusItem.title = R.string.localizable.latestUpdateTime(dateString)
+                updatingStatusItem.title = R.string.resultScene.latestUpdateTime(dateString)
             }
             
             refreshControl?.endRefreshing()

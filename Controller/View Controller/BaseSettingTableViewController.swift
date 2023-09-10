@@ -1,11 +1,3 @@
-//
-//  BaseSettingTableViewController.swift
-//  RookieCurrency
-//
-//  Created by 陳邦彥 on 2023/2/18.
-//  Copyright © 2023 Pang-yen Chen. All rights reserved.
-//
-
 import UIKit
 
 class BaseSettingTableViewController: UITableViewController, AlertPresenter {
@@ -40,7 +32,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
             stepper.addAction(handler, for: .primaryActionTriggered)
         }
         
-        title = R.string.localizable.setting()
+        title = R.string.settingScene.setting()
     }
     
     override func viewDidLoad() {
@@ -51,7 +43,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
             versionLabel.textColor = UIColor.secondaryLabel
             versionLabel.adjustsFontForContentSizeCategory = true
             let appVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-            versionLabel.text = R.string.localizable.version(appVersionString ?? "", AppUtility.gitHash)
+            versionLabel.text = R.string.settingScene.version(appVersionString ?? "", AppUtility.gitHash)
         }
         
         do {
@@ -61,7 +53,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
             let commitDate = Date(timeIntervalSince1970: Double(AppUtility.commitTimestamp))
             let dateString = commitDate.formatted(date: .numeric, time: .complete)
             
-            dateLabel.text = R.string.localizable.versionDate(dateString)
+            dateLabel.text = R.string.settingScene.versionDate(dateString)
         }
     }
     
@@ -92,7 +84,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         
         // 儲存的 action，只有在下拉的時候加上這個 action。
         if showingSave {
-            let title = R.string.localizable.cancelAlertSavingTitle()
+            let title = R.string.settingScene.cancelAlertSavingTitle()
             let saveAction = UIAlertAction(title: title,
                                            style: .default) { [unowned self] _ in save() }
             alertController.addAction(saveAction)
@@ -100,7 +92,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         
         // 捨棄變更的 action
         do {
-            let title = R.string.localizable.cancelAlertDiscardTitle()
+            let title = R.string.settingScene.cancelAlertDiscardTitle()
             let discardChangeAction = UIAlertAction(title: title,
                                                     style: .default) { [unowned self] _ in cancel() }
             
@@ -109,7 +101,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         
         // 繼續編輯的 action
         do {
-            let title = R.string.localizable.cancelAlertContinueTitle()
+            let title = R.string.settingScene.cancelAlertContinueTitle()
             let continueSettingAction = UIAlertAction(title: title, style: .cancel)
             
             alertController.addAction(continueSettingAction)
@@ -156,35 +148,35 @@ extension BaseSettingTableViewController {
             let row = Row(rawValue: indexPath.row)
             switch row {
             case .numberOfDay:
-                contentConfiguration.text = R.string.localizable.numberOfConsideredDay()
+                contentConfiguration.text = R.string.settingScene.numberOfConsideredDay()
                 contentConfiguration.secondaryText = editedNumberOfDayString
                 contentConfiguration.image = UIImage(systemName: "calendar")
                 cell.accessoryView = stepper
             case .baseCurrency:
-                contentConfiguration.text = R.string.localizable.baseCurrency()
+                contentConfiguration.text = R.string.share.baseCurrency()
                 contentConfiguration.secondaryText = editedBaseCurrencyString
                 contentConfiguration.image = UIImage(systemName: "dollarsign.circle")
                 cell.accessoryType = .disclosureIndicator
             case .currencyOfInterest:
-                contentConfiguration.text = R.string.localizable.currencyOfInterest()
+                contentConfiguration.text = R.string.share.currencyOfInterest()
                 contentConfiguration.secondaryText = editedCurrencyOfInterestString
                 contentConfiguration.image = UIImage(systemName: "checklist")
                 cell.accessoryType = .disclosureIndicator
             case .language:
-                contentConfiguration.text = R.string.localizable.language()
+                contentConfiguration.text = R.string.settingScene.language()
                 if let languageCode = Bundle.main.preferredLocalizations.first {
                     contentConfiguration.secondaryText = Locale.autoupdatingCurrent.localizedString(forLanguageCode: languageCode)
                 }
                 contentConfiguration.image = UIImage(systemName: "character")
                 cell.accessoryType = .disclosureIndicator
             case .removeFile:
-                contentConfiguration.text = R.string.localizable.removeFiles()
-                contentConfiguration.secondaryText = R.string.localizable.removeFilesDescription()
+                contentConfiguration.text = R.string.settingScene.removeFiles()
+                contentConfiguration.secondaryText = R.string.settingScene.removeFilesDescription()
                 contentConfiguration.image = UIImage(systemName: "folder.badge.minus")
                 cell.accessoryType = .none
 #if DEBUG
             case .debugInfo:
-                contentConfiguration.text = R.string.localizable.debugInfo()
+                contentConfiguration.text = R.string.settingScene.debugInfo()
                 contentConfiguration.secondaryText = nil
                 contentConfiguration.image = UIImage(systemName: "ladybug")
                 cell.accessoryType = .disclosureIndicator
@@ -239,7 +231,7 @@ extension BaseSettingTableViewController {
             
         case .removeFile:
             RateController.shared.removeCachedAndStoredData()
-            presentAlert(message: R.string.localizable.dataHaveBeenRemoved())
+            presentAlert(message: R.string.settingScene.dataHaveBeenRemoved())
             tableView.deselectRow(at: indexPath, animated: true)
 #if DEBUG
         case .debugInfo:

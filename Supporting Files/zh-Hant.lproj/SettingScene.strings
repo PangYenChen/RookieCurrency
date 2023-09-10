@@ -1,0 +1,12 @@
+"numberOfConsideredDay" = "考慮過去天數";
+"language" = "語言";
+"cancelAlertSavingTitle" = "儲存變更";
+"cancelAlertDiscardTitle" = "捨棄變更";
+"cancelAlertContinueTitle" = "繼續編輯";
+"setting" = "設定";
+"version" = "版本號：%1$@(%2$@)";
+"versionDate" = "版本日期：%@";
+"debugInfo" = "偵錯資訊";
+"removeFiles" = "移除先前下載的資料";
+"removeFilesDescription" = "可以刪除不想使用的過舊資料";
+"dataHaveBeenRemoved" = "資料已經刪除";

@@ -1,11 +1,3 @@
-//
-//  CurrencyTableViewController.swift
-//  CombineCurrency
-//
-//  Created by 陳邦彥 on 2023/2/17.
-//  Copyright © 2023 Pang-yen Chen. All rights reserved.
-//
-
 import UIKit
 import Combine
 
@@ -48,7 +40,7 @@ final class CurrencyTableViewController: BaseCurrencyTableViewController {
         do {
             sortingMethodAndOrder
                 .sink { [unowned self] (sortingMethod, sortingOrder) in
-                    sortBarButtonItem.menu?.children.first?.subtitle = R.string.localizable.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
+                    sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
                 }
                 .store(in: &anyCancellableSet)
             
@@ -128,7 +120,7 @@ extension CurrencyTableViewController {
         init(baseCurrencyCode: String,
              selectedBaseCurrencyCode: AnySubscriber<ResponseDataModel.CurrencyCode, Never>) {
             
-            title = R.string.localizable.baseCurrency()
+            title = R.string.share.baseCurrency()
             self.baseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(baseCurrencyCode)
             allowsMultipleSelection = false
             // initialization completes
@@ -160,7 +152,7 @@ extension CurrencyTableViewController {
         init(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
              selectedCurrencyOfInterest: AnySubscriber<Set<ResponseDataModel.CurrencyCode>, Never>) {
             
-            title = R.string.localizable.currencyOfInterest()
+            title = R.string.share.currencyOfInterest()
             self.currencyOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyOfInterest)
             allowsMultipleSelection = true
             // initialization completes

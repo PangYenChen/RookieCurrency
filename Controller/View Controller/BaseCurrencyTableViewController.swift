@@ -1,11 +1,3 @@
-//
-//  BaseCurrencyTableViewController.swift
-//  RookieCurrency
-//
-//  Created by 陳邦彥 on 2023/2/18.
-//  Copyright © 2023 Pang-yen Chen. All rights reserved.
-//
-
 import UIKit
 
 /// 這裡的 base 是 base class 的意思，不是基準貨幣
@@ -157,7 +149,7 @@ class BaseCurrencyTableViewController: UITableViewController {
                 children.append(currencyZhuyinMenu)
             }
             
-            let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
+            let sortMenu = UIMenu(title: R.string.share.sortedBy(),
                                   image: UIImage(systemName: "arrow.up.arrow.down"),
                                   options: .singleSelection,
                                   children: children)
@@ -331,9 +323,9 @@ extension BaseCurrencyTableViewController {
         
         var localizedName: String {
             switch self {
-            case .currencyName: return R.string.localizable.currencyName()
-            case .currencyCode: return R.string.localizable.currencyCode()
-            case .currencyNameZhuyin: return R.string.localizable.currencyZhuyin()
+            case .currencyName: return R.string.currencyScene.currencyName()
+            case .currencyCode: return R.string.currencyScene.currencyCode()
+            case .currencyNameZhuyin: return R.string.currencyScene.currencyZhuyin()
             }
         }
     }
@@ -344,8 +336,8 @@ extension BaseCurrencyTableViewController {
         
         var localizedName: String {
             switch self {
-            case .ascending: return R.string.localizable.ascending()
-            case .descending: return R.string.localizable.descending()
+            case .ascending: return R.string.currencyScene.ascending()
+            case .descending: return R.string.currencyScene.descending()
             }
         }
     }

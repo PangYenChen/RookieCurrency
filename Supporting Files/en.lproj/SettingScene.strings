@@ -1,0 +1,12 @@
+"numberOfConsideredDay" = "Number of considered day";
+"language" = "Language";
+"cancelAlertSavingTitle" = "Save changes";
+"cancelAlertDiscardTitle" = "Discard changes";
+"cancelAlertContinueTitle" = "Continue editing";
+"setting" = "Setting";
+"version" = "version：%1$@(%2$@)";
+"versionDate" = "version date：%@";
+"debugInfo" = "debug info";
+"removeFiles" = "remove downloaded data";
+"removeFilesDescription" = "this would remove data which may be unused";
+"dataHaveBeenRemoved" = "data have been remove";

@@ -1,11 +1,3 @@
-//
-//  Archiver.swift
-//  RookieCurrency
-//
-//  Created by Pang-yen Chen on 2020/6/5.
-//  Copyright © 2020 Pang-yen Chen. All rights reserved.
-//
-
 import Foundation
 
 /// 讀寫 Historical Rate 的類別

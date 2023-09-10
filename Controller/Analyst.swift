@@ -1,11 +1,3 @@
-//
-//  Analyst.swift
-//  RookieCurrency
-//
-//  Created by Pang-yen Chen on 2020/6/1.
-//  Copyright © 2020 Pang-yen Chen. All rights reserved.
-//
-
 import Foundation
 
 /// 從數據中分析出貨幣的升貶值的物件

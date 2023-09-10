@@ -1,11 +1,3 @@
-//
-//  BaseResultTableViewController.swift
-//  RookieCurrency
-//
-//  Created by 陳邦彥 on 2023/2/20.
-//  Copyright © 2023 Pang-yen Chen. All rights reserved.
-//
-
 import UIKit
 
 class BaseResultTableViewController: UITableViewController {
@@ -48,7 +40,7 @@ class BaseResultTableViewController: UITableViewController {
         
         // title
         do {
-            title = R.string.localizable.analyzedResult()
+            title = R.string.resultScene.analyzedResult()
             navigationItem.largeTitleDisplayMode = .automatic
         }
     }
@@ -84,7 +76,7 @@ class BaseResultTableViewController: UITableViewController {
                 // text
                 do {
                     let deviationString = data.deviation.formatted()
-                    let fluctuationString = R.string.localizable.fluctuation(deviationString)
+                    let fluctuationString = R.string.resultScene.fluctuation(deviationString)
 
                     contentConfiguration.text = [currencyCode,
                                                  Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode),
@@ -102,7 +94,7 @@ class BaseResultTableViewController: UITableViewController {
                     let meanString = data.mean.formatted()
                     let latestString = data.latest.formatted()
                     
-                    contentConfiguration.secondaryText = R.string.localizable.currencyCellDetail(meanString, latestString)
+                    contentConfiguration.secondaryText = R.string.resultScene.currencyCellDetail(meanString, latestString)
                     contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
                     contentConfiguration.secondaryTextProperties.font = UIFont.preferredFont(forTextStyle: .subheadline)
                 }
@@ -131,7 +123,7 @@ class BaseResultTableViewController: UITableViewController {
                 decreasingAction.state = .on
             }
             
-            let sortMenu = UIMenu(title: R.string.localizable.sortedBy(),
+            let sortMenu = UIMenu(title: R.string.share.sortedBy(),
                                   image: UIImage(systemName: "arrow.up.arrow.down"),
                                   options: .singleSelection,
                                   children: [increasingAction, decreasingAction])
@@ -210,8 +202,8 @@ extension BaseResultTableViewController {
         
         var localizedName: String {
             switch self {
-            case .increasing: return R.string.localizable.increasing()
-            case .decreasing: return R.string.localizable.decreasing()
+            case .increasing: return R.string.resultScene.increasing()
+            case .decreasing: return R.string.resultScene.decreasing()
             }
         }
     }

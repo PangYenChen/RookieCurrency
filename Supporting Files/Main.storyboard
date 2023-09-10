@@ -12,7 +12,7 @@
         <!--##分析結果-->
         <scene sceneID="gOw-Sv-fsH">
             <objects>
-                <tableViewController id="VOV-BZ-lbE" customClass="ResultTableViewController" customModule="CombineCurrency" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="VOV-BZ-lbE" customClass="ResultTableViewController" customModule="ImperativeCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="eOa-7D-C5F">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -58,7 +58,7 @@
                         <barButtonItem title="Item" style="plain" id="mZf-7V-PJM">
                             <imageReference key="image" image="gear" catalog="system" variableValue="0.0"/>
                             <connections>
-                                <segue destination="X98-8g-3Jf" kind="custom" destinationCreationSelector="showSetting:" customClass="PresentWithNavigationController" customModule="CombineCurrency" customModuleProvider="target" id="nvw-q8-nW6"/>
+                                <segue destination="X98-8g-3Jf" kind="custom" destinationCreationSelector="showSetting:" customClass="PresentWithNavigationController" customModule="ImperativeCurrency" customModuleProvider="target" id="nvw-q8-nW6"/>
                             </connections>
                         </barButtonItem>
                     </toolbarItems>
@@ -76,7 +76,7 @@
         <!--## 設定-->
         <scene sceneID="mff-eq-GXT">
             <objects>
-                <tableViewController id="X98-8g-3Jf" customClass="SettingTableViewController" customModule="CombineCurrency" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="X98-8g-3Jf" customClass="SettingTableViewController" customModule="ImperativeCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="insetGrouped" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="18" estimatedSectionHeaderHeight="-1" sectionFooterHeight="18" estimatedSectionFooterHeight="-1" id="1PJ-PB-47T">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -171,7 +171,7 @@
         <!--## 基準貨幣 或者 感興趣的貨幣-->
         <scene sceneID="Wzb-4c-N6y">
             <objects>
-                <tableViewController id="I3t-1P-vym" customClass="CurrencyTableViewController" customModule="CombineCurrency" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="I3t-1P-vym" customClass="CurrencyTableViewController" customModule="ImperativeCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="ran-0e-Rf3">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -222,7 +222,7 @@
         <!--Debug Info View Controller-->
         <scene sceneID="oy6-N3-Kvm">
             <objects>
-                <viewController id="eIy-JG-5zx" customClass="DebugInfoViewController" customModule="CombineCurrency" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="eIy-JG-5zx" customClass="DebugInfoViewController" customModule="ImperativeCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="zPF-FK-lT6"/>
                         <viewControllerLayoutGuide type="bottom" id="tze-qN-3dm"/>
@@ -308,7 +308,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="GlB-SH-qZ6"/>
+        <segue reference="Np9-zw-Nph"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="arrow.up.arrow.down" catalog="system" width="128" height="97"/>

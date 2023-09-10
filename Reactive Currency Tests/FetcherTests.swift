@@ -1,11 +1,3 @@
-//
-//  FetcherTests.swift
-//  CombineCurrencyTests
-//
-//  Created by Pang-yen Chen on 2020/8/31.
-//  Copyright © 2020 Pang-yen Chen. All rights reserved.
-//
-
 import XCTest
 @testable import ReactiveCurrency
 import Combine

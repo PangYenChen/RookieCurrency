@@ -1,11 +1,3 @@
-//
-//  AnalystTest.swift
-//  RookieCurrencyTests
-//
-//  Created by 陳邦彥 on 2023/6/25.
-//  Copyright © 2023 Pang-yen Chen. All rights reserved.
-//
-
 import XCTest
 #if IMPERATIVE_CURRENCY_TESTS
 @testable import ImperativeCurrency

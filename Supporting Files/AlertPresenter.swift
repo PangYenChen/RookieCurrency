@@ -1,11 +1,3 @@
-//
-//  AlertPresenter.swift
-//  RookieCurrency
-//
-//  Created by 陳邦彥 on 2023/4/22.
-//  Copyright © 2023 Pang-yen Chen. All rights reserved.
-//
-
 import UIKit
 
 protocol AlertPresenter {
@@ -20,7 +12,7 @@ extension AlertPresenter where Self: UIViewController {
         
         // alert controller
         do {
-            let alertTitle = R.string.localizable.alertTitle()
+            let alertTitle = R.string.share.alertTitle()
             alertController = UIAlertController(title: alertTitle,
                                                 message: message,
                                                 preferredStyle: .alert)
@@ -28,7 +20,7 @@ extension AlertPresenter where Self: UIViewController {
         
         // alert action
         do {
-            let alertActionTitle = R.string.localizable.alertActionTitle()
+            let alertActionTitle = R.string.share.alertActionTitle()
             let alertAction = UIAlertAction(title: alertActionTitle, style: .cancel, handler: handler)
             alertController.addAction(alertAction)
         }

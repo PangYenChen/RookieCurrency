@@ -1,10 +1,3 @@
-//
-//  RateControllerTests.swift
-//
-//  Created by 陳邦彥 on 2023/4/2.
-//  Copyright © 2023 Pang-yen Chen. All rights reserved.
-//
-
 import XCTest
 
 #if IMPERATIVE_CURRENCY_TESTS

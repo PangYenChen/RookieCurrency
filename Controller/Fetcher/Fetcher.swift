@@ -1,11 +1,3 @@
-//
-//  Fetcher.swift
-//  RookieCurrency
-//
-//  Created by Pang-yen Chen on 2020/6/1.
-//  Copyright © 2020 Pang-yen Chen. All rights reserved.
-//
-
 import Foundation
 
 /// 跟伺服器拿資料的物件

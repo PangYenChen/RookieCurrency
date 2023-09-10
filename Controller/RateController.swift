@@ -1,11 +1,3 @@
-//
-//  RateController.swift
-//  RookieCurrency
-//
-//  Created by Pang-yen Chen on 2020/6/1.
-//  Copyright © 2020 Pang-yen Chen. All rights reserved.
-//
-
 import Foundation
 
 /// 用來獲得各貨幣匯率資料的類別
