@@ -1,5 +1,10 @@
 "baseCurrency" = "Base currency";
 "alertTitle" = "Notice";
+"alertTitleForError" = "Oops";
 "alertActionTitle" = "ok";
 "sortedBy" = "Sort by";
 "currencyOfInterest" = "Currency of Interest";
+"noDataNoError" = "Unknown error occurs. (no data and error instance data task completion handler)";
+"tooManyRequest" = "You have exceeded your daily/monthly API rate limit.";
+"invalidAPIKey" = "Invalid authentication credentials";
+"serverDateStringError" = "the date string return by server is invalid:%1$@";

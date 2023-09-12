@@ -112,11 +112,11 @@ extension Fetcher {
         var localizedDescription: String {
             switch self {
             case .unknownError:
-                return "Something goes wrong (no data and error instance data task completion handler)"
+                return R.string.share.noDataNoError()
             case .tooManyRequest:
-                return "You have exceeded your daily/monthly API rate limit."
+                return R.string.share.tooManyRequest()
             case .invalidAPIKey:
-                return "Invalid authentication credentials"
+                return R.string.share.invalidAPIKey()
             }
         }
         

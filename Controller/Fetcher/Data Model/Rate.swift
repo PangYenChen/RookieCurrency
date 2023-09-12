@@ -36,13 +36,13 @@ extension ResponseDataModel {
             case date, timestamp, rates
         }
         
-//        private init(dateString: String, timestamp: Int, rates: [String : Double]) {
-//            self.dateString = dateString
-//            self.timestamp = timestamp
-//            self.rates = rates
-//            
-//            assertionFailure("###, \(#function), \(self), 刻意阻擋這個預設的 initializer")
-//        }
+        private init(dateString: String, timestamp: Int, rates: [String : Decimal]) {
+            self.dateString = dateString
+            self.timestamp = timestamp
+            self.rates = rates
+            
+            assertionFailure("###, \(#function), \(self), 刻意阻擋這個預設的 initializer")
+        }
     }
 }
 
@@ -59,13 +59,13 @@ extension ResponseDataModel {
 extension ResponseDataModel.Rate: Decodable {
     /// 表示伺服器回傳的日期字串無效的錯誤
     enum ServerDateError: LocalizedError {
-        /// 伺服器給的日期字串無效，date 為該字串
+        /// 伺服器給的日期字串無效，dateString 為該字串
         case serverDateInvalid(dateString: String)
         
         var localizedDescription: String {
             switch self {
-            case .serverDateInvalid(let string):
-                return "伺服器回傳的日期字串是 \(string)"
+            case .serverDateInvalid(let dateString):
+                return R.string.share.serverDateStringError(dateString)
             }
         }
         

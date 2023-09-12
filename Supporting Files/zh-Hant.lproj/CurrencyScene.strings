@@ -4,3 +4,4 @@
 "ascending" = "升冪排列";
 "descending" = "降冪排列";
 "sortingWay" = "%1$@%2$@";
+"currencyNotSupported" = "服務商已不支援先前所選的貨幣，請重新選取。";

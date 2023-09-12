@@ -269,7 +269,7 @@ class BaseCurrencyTableViewController: UITableViewController {
                         tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
                     }
                     else {
-                        presentAlert(message: "### 服務商已不支援先前所選的貨幣，請重新選取。")
+                        presentAlert(message: R.string.currencyScene.currencyNotSupported())
                     }
                 }
             }

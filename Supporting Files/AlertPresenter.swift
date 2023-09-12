@@ -1,19 +1,20 @@
 import UIKit
 
 protocol AlertPresenter {
-    func presentAlert(error: Error, handler: ((UIAlertAction) -> Void)?)
-    func presentAlert(message: String, handler: ((UIAlertAction) -> Void)?)
+    func presentAlert(title: String, error: Error, handler: ((UIAlertAction) -> Void)?)
+    func presentAlert(title: String, message: String, handler: ((UIAlertAction) -> Void)?)
 }
 
 extension AlertPresenter where Self: UIViewController {
     
-    func presentAlert(message: String, handler: ((UIAlertAction) -> Void)? = nil) {
+    func presentAlert(title: String = R.string.share.alertTitle(),
+                      message: String,
+                      handler: ((UIAlertAction) -> Void)? = nil) {
         let alertController: UIAlertController
         
         // alert controller
         do {
-            let alertTitle = R.string.share.alertTitle()
-            alertController = UIAlertController(title: alertTitle,
+            alertController = UIAlertController(title: title,
                                                 message: message,
                                                 preferredStyle: .alert)
         }
@@ -28,7 +29,9 @@ extension AlertPresenter where Self: UIViewController {
         present(alertController, animated: true)
     }
     
-    func presentAlert(error: Error, handler: ((UIAlertAction) -> Void)? = nil) {
-        presentAlert(message: error.localizedDescription, handler: handler)
+    func presentAlert(title: String = R.string.share.alertTitleForError(),
+                      error: Error,
+                      handler: ((UIAlertAction) -> Void)? = nil) {
+        presentAlert(title: title, message: error.localizedDescription, handler: handler)
     }
 }

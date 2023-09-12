@@ -1,5 +1,10 @@
 "baseCurrency" = "基準貨幣";
 "alertTitle" = "請注意";
+"alertTitleForError" = "哎呀";
 "alertActionTitle" = "喔，是喔。";
 "sortedBy" = "排序方式";
 "currencyOfInterest" = "感興趣的貨幣";
+"noDataNoError" = "發生不明錯誤 (data task completion handler 裡的 data 跟 error 都是 nil)";
+"tooManyRequest" = "查詢資料的額度已用罄";
+"invalidAPIKey" = "權限不足";
+"serverDateStringError" = "伺服器回傳的日期字串無效：%1$@";
