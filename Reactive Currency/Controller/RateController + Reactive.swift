@@ -25,10 +25,10 @@ extension RateController {
                         .eraseToAnyPublisher()
                 } else if archiver.hasFileInDisk(historicalRateDateString: dateString) {
                     return Future<ResponseDataModel.HistoricalRate, Error> { [unowned self] promise in
-                        concurrentQueue.async { [unowned self] in
+                        concurrentQueue.async(qos: .userInitiated) { [unowned self] in
                             do {
                                 let unarchivedHistoricalRate = try archiver.unarchive(historicalRateDateString: dateString)
-                                concurrentQueue.async(flags: .barrier) { [unowned self] in
+                                concurrentQueue.async(qos: .userInitiated, flags: .barrier) { [unowned self] in
                                     historicalRateDictionary[unarchivedHistoricalRate.dateString] = unarchivedHistoricalRate
                                 }
                                 promise(.success(unarchivedHistoricalRate))
@@ -41,7 +41,7 @@ extension RateController {
                         fetcher.publisher(for: Endpoints.Historical(dateString: dateString))
                             .handleEvents(
                                 receiveOutput: { [unowned self] historicalRate in
-                                    concurrentQueue.async(flags: .barrier) { [unowned self] in
+                                    concurrentQueue.async(qos: .background, flags: .barrier) { [unowned self] in
                                         try? archiver.archive(historicalRate: historicalRate)
                                         historicalRateDictionary[historicalRate.dateString] = historicalRate
                                     }
@@ -53,7 +53,7 @@ extension RateController {
                     return fetcher.publisher(for: Endpoints.Historical(dateString: dateString))
                         .handleEvents(
                             receiveOutput: { [unowned self] historicalRate in
-                                concurrentQueue.async(flags: .barrier) { [unowned self] in
+                                concurrentQueue.async(qos: .background, flags: .barrier) { [unowned self] in
                                     try? archiver.archive(historicalRate: historicalRate)
                                     historicalRateDictionary[historicalRate.dateString] = historicalRate
                                 }

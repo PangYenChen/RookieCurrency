@@ -54,11 +54,11 @@ extension RateController {
                 fetcher.fetch(Endpoints.Historical(dateString: historicalRateDateString)) { [unowned self] result in
                     switch result {
                     case .success(let fetchedHistoricalRate):
-                        concurrentQueue.async { [unowned self] in
+                        concurrentQueue.async(qos: .background) { [unowned self] in
                             try? archiver.archive(historicalRate: fetchedHistoricalRate)
                         }
                         
-                        concurrentQueue.async(flags: .barrier) { [unowned self] in
+                        concurrentQueue.async(qos: .userInitiated, flags: .barrier) { [unowned self] in
                             historicalRateSetResult = historicalRateSetResult
                                 .map { historicalRateSet in historicalRateSet.union([fetchedHistoricalRate]) }
                             historicalRateDictionary[fetchedHistoricalRate.dateString] = fetchedHistoricalRate
@@ -66,7 +66,7 @@ extension RateController {
                         }
                         
                     case .failure(let failure):
-                        concurrentQueue.async(flags: .barrier) {
+                        concurrentQueue.async(qos: .userInitiated, flags: .barrier) {
                             historicalRateSetResult = .failure(failure)
                             dispatchGroup.leave()
                         }
@@ -79,10 +79,10 @@ extension RateController {
             .forEach { historicalRateDateString in
                 dispatchGroup.enter()
                 
-                concurrentQueue.async { [unowned self] in
+                concurrentQueue.async(qos: .userInitiated) { [unowned self] in
                     do {
                         let unarchivedHistoricalRate = try archiver.unarchive(historicalRateDateString: historicalRateDateString)
-                        concurrentQueue.async(flags: .barrier) { [unowned self] in
+                        concurrentQueue.async(qos: .userInitiated, flags: .barrier) { [unowned self] in
                             historicalRateSetResult = historicalRateSetResult
                                 .map { historicalRateSet in historicalRateSet.union([unarchivedHistoricalRate]) }
                             historicalRateDictionary[historicalRateDateString] = unarchivedHistoricalRate
@@ -94,18 +94,18 @@ extension RateController {
                         fetcher.fetch(Endpoints.Historical(dateString: historicalRateDateString)) { [unowned self] result in
                             switch result {
                             case .success(let fetchedHistoricalRate):
-                                concurrentQueue.async { [unowned self] in
+                                concurrentQueue.async(qos: .background) { [unowned self] in
                                     try? archiver.archive(historicalRate: fetchedHistoricalRate)
                                 }
                                 
-                                concurrentQueue.async(flags: .barrier) { [unowned self] in
+                                concurrentQueue.async(qos: .userInitiated, flags: .barrier) { [unowned self] in
                                     historicalRateSetResult = historicalRateSetResult
                                         .map { historicalRateSet in historicalRateSet.union([fetchedHistoricalRate]) }
                                     historicalRateDictionary[historicalRateDateString] = fetchedHistoricalRate
                                     dispatchGroup.leave()
                                 }
                             case .failure(let failure):
-                                concurrentQueue.async(flags: .barrier) {
+                                concurrentQueue.async(qos: .userInitiated, flags: .barrier) {
                                     historicalRateSetResult = .failure(failure)
                                     dispatchGroup.leave()
                                 }
