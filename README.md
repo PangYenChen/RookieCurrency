@@ -6,7 +6,7 @@ The App calculates the appreciation or depreciation of the current exchange rate
 
 Users can input the number of days of historical data they want to refer to, get the historical data through the network, and then store it locally for future use.
 
-There are two targets in this project file that implement the same logic, ImperativeCurrency is written in an imperative way and ReactiveCurrency is written in a reactive(Combine) way.
+There are two targets in this project file that implement the same logic. ImperativeCurrency is written in an imperative way and ReactiveCurrency is written in a reactive(Combine) way.
 
 這個 App 計算當下的匯率對於過去一段期間的平均匯率的升值或者貶值。
 
@@ -18,7 +18,7 @@ There are two targets in this project file that implement the same logic, Impera
 
 ![Simulator Screen Recording - iPhone 14 Pro Max - 2023-09-06 at 19 49 59-min](https://github.com/PangYenChen/RookieCurrency/assets/50511308/67e21ce3-921d-46cb-a877-c50955016ef9)
 
-- Updates data every 10 seconds on the Home screen.
+- Update data every 10 seconds on the Home screen.
     
     - Indicates to the user that an update is in progress, or how old the data is (the server updates about once a minute.)
     
@@ -36,7 +36,7 @@ There are two targets in this project file that implement the same logic, Impera
     
     - If there are no changes to the settings, scroll down to dismiss.
     
-    - If there is a change to the setting, ask the user if they want to dismiss the change or save it when user scroll down.
+    - If there is a change to the setting, ask the user if they want to dismiss the change or save it when the user scrolls down.
 
 - After changing the number of days under consideration, return to the main screen to recalculate the fluctuation. 
 
@@ -56,11 +56,11 @@ There are two targets in this project file that implement the same logic, Impera
 
 - Troubleshooting information page:
     
-    - The current api key quota usage.
+    - The current API key quota usage.
     
     - Where the exchange rate data is stored.
 
-- App version number, commit hash, commit time are displayed.
+- App version number, commit hash, and commit time are displayed.
 
 - After reopening the App, the previously changed settings will be retained.
 
@@ -103,7 +103,7 @@ There are two targets in this project file that implement the same logic, Impera
 
 - 除錯資訊頁面顯示：
     
-    - 目前 api key 的額度的用量
+    - 目前 API key 的額度的用量
     
     - 匯率資料儲存的位置
 
@@ -135,7 +135,7 @@ There are two targets in this project file that implement the same logic, Impera
 
 - Use Generic type for objects that handle network calls.
 
-- Change the api key and make an api call again when the vender returns status code 429 (too many requests).
+- Change the API key and make an API call again when the vendor returns status code 429 (too many requests).
  
 - Unit Tests
 
@@ -162,7 +162,7 @@ There are two targets in this project file that implement the same logic, Impera
 
 - 處理網路呼叫的物件使用 Generic type。
 
-- 在服務商回傳 status code 429(too many request) 時，更換 api key 重打。
+- 在服務商回傳 status code 429(too many request) 時，更換 API key 重打。
  
 - 編寫單元測試
 
