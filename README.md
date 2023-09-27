@@ -1,6 +1,6 @@
 #  Rookie Currency
 
-> Language Switch: [中文](https://github.com/PangYenChen/RookieCurrency/blob/main/README_CN.md).
+> Language Switch: [繁體中文](https://github.com/PangYenChen/RookieCurrency/blob/main/README_CN.md).
 
 ## Overview
 
