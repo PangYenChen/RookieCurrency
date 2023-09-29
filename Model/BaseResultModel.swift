@@ -9,9 +9,25 @@
 import Foundation
 
 class BaseResultModel {
+     var numberOfDay: Int
+    
+     var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+    
+     var baseCurrency: ResponseDataModel.CurrencyCode
+    
+     var order: BaseResultModel.Order
+    
+     var searchText: String
+    
+     var latestUpdateTime: Date?
     
     init() {
-        
+        numberOfDay = AppUtility.numberOfDay
+        baseCurrency = AppUtility.baseCurrency
+        currencyOfInterest = Set(AppUtility.currencyOfInterest)
+        order = AppUtility.order
+        searchText = String()
+        latestUpdateTime =  nil
     }
     
     

@@ -3,29 +3,13 @@ import UIKit
 class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - stored properties
-    private var numberOfDay: Int
-    
-    private var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
-    
-    private var baseCurrency: ResponseDataModel.CurrencyCode
-    
-    private var order: BaseResultModel.Order
-    
-    private var searchText: String
-    
-    private var latestUpdateTime: Date?
     
     private var timer: Timer?
     
     // MARK: - life cycle
     required init?(coder: NSCoder) {
         
-        numberOfDay = AppUtility.numberOfDay
-        baseCurrency = AppUtility.baseCurrency
-        currencyOfInterest = Set(AppUtility.currencyOfInterest)
-        order = AppUtility.order
-        searchText = String()
-        latestUpdateTime =  nil
+        
         timer = nil
         
         super.init(coder: coder)
@@ -41,18 +25,18 @@ class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - Hook methods
     override func setOrder(_ order: BaseResultModel.Order) {
-        guard self.order != order else {
+        guard model.order != order else {
             return
         }
-        self.order = order
+        model.order = order
         AppUtility.order = order
         sortItem.menu?.children.first?.subtitle = order.localizedName
         populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
-                          order: self.order,
-                          searchText: self.searchText)
+                          order: model.order,
+                          searchText: model.searchText)
     }
     
-    override func getOrder() -> BaseResultModel.Order { order }
+    override func getOrder() -> BaseResultModel.Order { model.order }
     
     override func refreshControlTriggered() {
         refreshDataAndPopulateTableView()
@@ -62,25 +46,25 @@ class ResultTableViewController: BaseResultTableViewController {
         tearDownTimer()
         
         return SettingTableViewController(coder: coder,
-                                          numberOfDay: numberOfDay,
-                                          baseCurrency: baseCurrency,
-                                          currencyOfInterest: currencyOfInterest) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
+                                          numberOfDay: model.numberOfDay,
+                                          baseCurrency: model.baseCurrency,
+                                          currencyOfInterest: model.currencyOfInterest) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
             // base currency
             do {
-                baseCurrency = editedBaseCurrency
-                AppUtility.baseCurrency = baseCurrency
+                model.baseCurrency = editedBaseCurrency
+                AppUtility.baseCurrency = model.baseCurrency
             }
             
             // number Of Day
             do {
-                numberOfDay = editedNumberOfDay
-                AppUtility.numberOfDay = numberOfDay
+                model.numberOfDay = editedNumberOfDay
+                AppUtility.numberOfDay = model.numberOfDay
             }
             
             // currency of interest
             do {
-                currencyOfInterest = editedCurrencyOfInterest
-                AppUtility.currencyOfInterest = currencyOfInterest
+                model.currencyOfInterest = editedCurrencyOfInterest
+                AppUtility.currencyOfInterest = model.currencyOfInterest
             }
             
             refreshDataAndPopulateTableView()
@@ -113,23 +97,23 @@ private extension ResultTableViewController {
         
         updatingStatusItem.title = R.string.resultScene.updating()
         
-        model.updateData(numberOfDays: numberOfDay) { [unowned self] result in
+        model.updateData(numberOfDays: model.numberOfDay) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 
                 // update latestUpdateTime
                 do {
                     let timestamp = Double(latestRate.timestamp)
-                    latestUpdateTime = Date(timeIntervalSince1970: timestamp)
+                    model.latestUpdateTime = Date(timeIntervalSince1970: timestamp)
                 }
                 
                 // update table view
                 do {
                     let analyzedResult = Analyst
-                        .analyze(currencyOfInterest: currencyOfInterest,
+                        .analyze(currencyOfInterest: model.currencyOfInterest,
                                  latestRate: latestRate,
                                  historicalRateSet: historicalRateSet,
-                                 baseCurrency: baseCurrency)
+                                 baseCurrency: model.baseCurrency)
                     
                     let analyzedErrors = analyzedResult
                         .filter { _, result in
@@ -144,8 +128,8 @@ private extension ResultTableViewController {
                             .compactMapValues { result in try? result.get() }
                         
                         populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
-                                          order: self.order,
-                                          searchText: self.searchText)
+                                          order: model.order,
+                                          searchText: model.searchText)
                         setUpTimer()
                     } else {
                         analyzedErrors.keys
@@ -160,7 +144,7 @@ private extension ResultTableViewController {
             }
             
             do { // update updatingStatusItem
-                let dateString = latestUpdateTime?.formatted(.relative(presentation: .named)) ?? "-"
+                let dateString = model.latestUpdateTime?.formatted(.relative(presentation: .named)) ?? "-"
                 updatingStatusItem.title = R.string.resultScene.latestUpdateTime(dateString)
             }
             
@@ -172,20 +156,20 @@ private extension ResultTableViewController {
 // MARK: - Search Bar Delegate
 extension ResultTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard self.searchText != searchText else {
+        guard model.searchText != searchText else {
             return
         }
-        self.searchText = searchText
+        model.searchText = searchText
         populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
-                          order: self.order,
-                          searchText: self.searchText)
+                          order: model.order,
+                          searchText: model.searchText)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchText = ""
+        model.searchText = ""
         populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
-                          order: self.order,
-                          searchText: self.searchText)
+                          order: model.order,
+                          searchText: model.searchText)
     }
 }
 
