@@ -12,6 +12,8 @@ class BaseResultTableViewController: UITableViewController {
     
     private var dataSource: DataSource!
     
+    let model: BaseResultModel
+    
     let autoRefreshTimeInterval: TimeInterval
     
     // MARK: - life cycle
@@ -20,6 +22,8 @@ class BaseResultTableViewController: UITableViewController {
         analyzedDataDictionary = [:]
         
         autoRefreshTimeInterval = 10
+        
+        model = BaseResultModel()
         
         super.init(coder: coder)
         
@@ -109,10 +113,10 @@ class BaseResultTableViewController: UITableViewController {
         
         // sort Item
         do {
-            let increasingAction = UIAction(title: Order.increasing.localizedName,
+            let increasingAction = UIAction(title: BaseResultModel.Order.increasing.localizedName,
                                             image: UIImage(systemName: "arrow.up.right"),
                                             handler: { [unowned self] _ in setOrder(.increasing) })
-            let decreasingAction = UIAction(title: Order.decreasing.localizedName,
+            let decreasingAction = UIAction(title: BaseResultModel.Order.decreasing.localizedName,
                                             image: UIImage(systemName: "arrow.down.right"),
                                             handler: { [unowned self] _ in setOrder(.decreasing) })
             
@@ -138,7 +142,7 @@ class BaseResultTableViewController: UITableViewController {
     
     /// 更新 table view，純粹把資料填入 table view，不動資料。
     final func populateTableView(analyzedDataDictionary: [ResponseDataModel.CurrencyCode: Analyst.AnalyzedData],
-                                 order: Order,
+                                 order: BaseResultModel.Order,
                                  searchText: String) {
         var sortedTuple = analyzedDataDictionary
             .sorted { lhs, rhs in
@@ -169,11 +173,11 @@ class BaseResultTableViewController: UITableViewController {
     }
     
     // MARK: - Hook methods
-    func setOrder(_ order: Order) {
+    func setOrder(_ order: BaseResultModel.Order) {
         fatalError("select(order:) has not been implemented")
     }
     
-    func getOrder() -> Order {
+    func getOrder() -> BaseResultModel.Order {
         fatalError("getOrder() has not been implemented")
     }
     
@@ -192,24 +196,7 @@ extension BaseResultTableViewController: AlertPresenter {}
 // MARK: - Search Bar Delegate
 extension BaseResultTableViewController: UISearchBarDelegate {}
 
-// MARK: - name space
-extension BaseResultTableViewController {
-    /// 資料的排序方式。
-    /// 因為要儲存在 UserDefaults，所以 access control 不能是 private。
-    enum Order: String {
-        case increasing
-        case decreasing
-        
-        var localizedName: String {
-            switch self {
-            case .increasing: return R.string.resultScene.increasing()
-            case .decreasing: return R.string.resultScene.decreasing()
-            }
-        }
-    }
-    
-    typealias UserSetting = (numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
-}
+
 
 // MARK: - private name space
 private extension BaseResultTableViewController {

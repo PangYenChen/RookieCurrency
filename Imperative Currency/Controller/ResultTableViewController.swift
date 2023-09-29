@@ -9,7 +9,7 @@ class ResultTableViewController: BaseResultTableViewController {
     
     private var baseCurrency: ResponseDataModel.CurrencyCode
     
-    private var order: Order
+    private var order: BaseResultModel.Order
     
     private var searchText: String
     
@@ -40,7 +40,7 @@ class ResultTableViewController: BaseResultTableViewController {
     }
     
     // MARK: - Hook methods
-    override func setOrder(_ order: BaseResultTableViewController.Order) {
+    override func setOrder(_ order: BaseResultModel.Order) {
         guard self.order != order else {
             return
         }
@@ -52,7 +52,7 @@ class ResultTableViewController: BaseResultTableViewController {
                           searchText: self.searchText)
     }
     
-    override func getOrder() -> BaseResultTableViewController.Order { order }
+    override func getOrder() -> BaseResultModel.Order { order }
     
     override func refreshControlTriggered() {
         refreshDataAndPopulateTableView()
@@ -113,7 +113,7 @@ private extension ResultTableViewController {
         
         updatingStatusItem.title = R.string.resultScene.updating()
         
-        RateController.shared.getRateFor(numberOfDays: numberOfDay, completionHandlerQueue: .main) { [unowned self] result in
+        model.updateData(numberOfDays: numberOfDay) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 

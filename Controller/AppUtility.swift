@@ -33,10 +33,10 @@ extension AppUtility {
         }
     }
     
-    static var order: ResultTableViewController.Order {
+    static var order: BaseResultModel.Order {
         get {
             if let orderString = UserDefaults.standard.string(forKey: Key.order.rawValue),
-               let order = ResultTableViewController.Order(rawValue: orderString) {
+               let order = BaseResultModel.Order(rawValue: orderString) {
                 return order
             } else {
                 return .increasing
