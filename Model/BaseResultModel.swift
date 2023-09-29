@@ -1,25 +1,17 @@
-//
-//  BaseResultModel.swift
-//  RookieCurrency
-//
-//  Created by 陳邦彥 on 2023/9/29.
-//  Copyright © 2023 Pang-yen Chen. All rights reserved.
-//
-
 import Foundation
 
 class BaseResultModel {
-     var numberOfDay: Int
+    var numberOfDay: Int
     
-     var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+    var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
     
-     var baseCurrency: ResponseDataModel.CurrencyCode
+    var baseCurrency: ResponseDataModel.CurrencyCode
     
-     var order: BaseResultModel.Order
+    var order: BaseResultModel.Order
     
-     var searchText: String
+    var searchText: String
     
-     var latestUpdateTime: Date?
+    var latestUpdateTime: Date?
     
     init() {
         numberOfDay = AppUtility.numberOfDay
@@ -34,16 +26,55 @@ class BaseResultModel {
     func updateData(numberOfDays: Int,
                     from start: Date = .now,
                     completionHandlerQueue: DispatchQueue = .main,
-                    completionHandler: @escaping (Result<(latestRate: ResponseDataModel.LatestRate,
-                                                          historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
-                                                  Error>) -> ()) {
+                    completionHandler: @escaping (BaseResultModel.State) -> Void) {
         
+        completionHandler(.updating)
         
         RateController.shared.getRateFor(numberOfDays: numberOfDays,
                                          from: start,
-                                         completionHandlerQueue: .main,
-                                         completionHandler: completionHandler)
-        
+                                         completionHandlerQueue: .main) { [unowned self] result in
+            switch result {
+            case .success(let (latestRate, historicalRateSet)):
+                
+                do {
+                    let analyzedResult = Analyst
+                        .analyze(currencyOfInterest: currencyOfInterest,
+                                 latestRate: latestRate,
+                                 historicalRateSet: historicalRateSet,
+                                 baseCurrency: baseCurrency)
+                    
+                    var analyzedDataArray = analyzedResult
+                        .compactMapValues { result in try? result.get() }
+                        .sorted { lhs, rhs in
+                            switch order {
+                            case .increasing:
+                                return lhs.value.deviation < rhs.value.deviation
+                            case .decreasing:
+                                return lhs.value.deviation > rhs.value.deviation
+                            }
+                        }
+                        .map { tuple in
+                            AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
+                        }
+                    
+                    if !searchText.isEmpty { // filtering if needed
+                        analyzedDataArray = analyzedDataArray
+                            .filter { analyzedData in
+                                [analyzedData.currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: analyzedData.currencyCode)]
+                                    .compactMap { $0 }
+                                    .contains { text in text.localizedStandardContains(searchText) }
+                            }
+                    }
+                    
+                    completionHandler(.updated(time: latestRate.timestamp, analyzedDataArray: analyzedDataArray))
+                    
+             
+                }
+                
+            case .failure(let error):
+                3
+            }
+        }
     }
 }
 
@@ -64,4 +95,19 @@ extension BaseResultModel {
     }
     
     typealias UserSetting = (numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
+}
+
+
+extension BaseResultModel {
+    enum State {
+        case updating
+        case updated(time: Int, analyzedDataArray: [AnalyzedData])
+    }
+    
+    struct AnalyzedData: Hashable {
+        let currencyCode: ResponseDataModel.CurrencyCode
+        let latest: Decimal
+        let mean: Decimal
+        let deviation: Decimal
+    }
 }

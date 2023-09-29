@@ -3,25 +3,19 @@ import UIKit
 class BaseResultTableViewController: UITableViewController {
     
     // MARK: - IBOutlet
-    @IBOutlet weak var updatingStatusItem: UIBarButtonItem!
+    @IBOutlet weak var updatingStatusBarButtonItem: UIBarButtonItem!
     
-    @IBOutlet weak var sortItem: UIBarButtonItem!
+    @IBOutlet weak var sortingBarButtonItem: UIBarButtonItem!
     
-    /// 分析過的匯率資料
-    var analyzedDataDictionary: [ResponseDataModel.CurrencyCode: Analyst.AnalyzedData]
-    
+    // MARK: - store properties
     private var dataSource: DataSource!
     
     let model: BaseResultModel
     
-    let autoRefreshTimeInterval: TimeInterval
+//    let autoRefreshTimeInterval: TimeInterval
     
     // MARK: - life cycle
     required init?(coder: NSCoder) {
-        
-        analyzedDataDictionary = [:]
-        
-        autoRefreshTimeInterval = 10
         
         model = BaseResultModel()
         
@@ -61,17 +55,15 @@ class BaseResultTableViewController: UITableViewController {
         
         // updatingStatusItem
         do {
-            updatingStatusItem.isEnabled = false
-            updatingStatusItem.setTitleTextAttributes([.foregroundColor: UIColor.label], for: .disabled)
+            updatingStatusBarButtonItem.isEnabled = false
+            updatingStatusBarButtonItem.setTitleTextAttributes([.foregroundColor: UIColor.label], for: .disabled)
         }
         
         // table view data source
         do {
-            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
+            dataSource = DataSource(tableView: tableView) { tableView, indexPath, analyzedData in
                 let reusedIdentifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
-                
-                guard let data = analyzedDataDictionary[currencyCode] else { return cell }
                 
                 var contentConfiguration = cell.defaultContentConfiguration()
                 contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
@@ -79,24 +71,24 @@ class BaseResultTableViewController: UITableViewController {
                 
                 // text
                 do {
-                    let deviationString = data.deviation.formatted()
+                    let deviationString = analyzedData.deviation.formatted()
                     let fluctuationString = R.string.resultScene.fluctuation(deviationString)
 
-                    contentConfiguration.text = [currencyCode,
-                                                 Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode),
+                    contentConfiguration.text = [analyzedData.currencyCode,
+                                                 Locale.autoupdatingCurrent.localizedString(forCurrencyCode: analyzedData.currencyCode),
                                                  fluctuationString]
                         .compactMap { $0 }
                         .joined(separator: ", ")
                     
                     contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
                     contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
-                    contentConfiguration.textProperties.color = data.deviation < 0 ? .systemGreen : .systemRed
+                    contentConfiguration.textProperties.color = analyzedData.deviation < 0 ? .systemGreen : .systemRed
                 }
                 
                 // secondary text
                 do {
-                    let meanString = data.mean.formatted()
-                    let latestString = data.latest.formatted()
+                    let meanString = analyzedData.mean.formatted()
+                    let latestString = analyzedData.latest.formatted()
                     
                     contentConfiguration.secondaryText = R.string.resultScene.currencyCellDetail(meanString, latestString)
                     contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
@@ -120,7 +112,7 @@ class BaseResultTableViewController: UITableViewController {
                                             image: UIImage(systemName: "arrow.down.right"),
                                             handler: { [unowned self] _ in setOrder(.decreasing) })
             
-            switch getOrder() {
+            switch model.order {
             case .increasing:
                 increasingAction.state = .on
             case .decreasing:
@@ -132,53 +124,15 @@ class BaseResultTableViewController: UITableViewController {
                                   options: .singleSelection,
                                   children: [increasingAction, decreasingAction])
             
-            sortItem.menu = UIMenu(title: "",
+            sortingBarButtonItem.menu = UIMenu(title: "",
                                    options: .singleSelection,
                                    children: [sortMenu])
         }
     }
     
-    // MARK: - method
-    
-    /// 更新 table view，純粹把資料填入 table view，不動資料。
-    final func populateTableView(analyzedDataDictionary: [ResponseDataModel.CurrencyCode: Analyst.AnalyzedData],
-                                 order: BaseResultModel.Order,
-                                 searchText: String) {
-        var sortedTuple = analyzedDataDictionary
-            .sorted { lhs, rhs in
-                switch order {
-                case .increasing:
-                    return lhs.value.deviation < rhs.value.deviation
-                case .decreasing:
-                    return lhs.value.deviation > rhs.value.deviation
-                }
-            }
-        
-        if !searchText.isEmpty { // filtering if needed
-            sortedTuple = sortedTuple
-                .filter { (currencyCode,_) in
-                    [currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)]
-                        .compactMap { $0 }
-                        .contains { text in text.localizedStandardContains(searchText) }
-                }
-        }
-        
-        let sortedCurrencies = sortedTuple.map { $0.key }
-        var snapshot = Snapshot()
-        snapshot.appendSections([.main])
-        snapshot.appendItems(sortedCurrencies)
-        snapshot.reloadSections([.main])
-        
-        dataSource.apply(snapshot)
-    }
-    
     // MARK: - Hook methods
     func setOrder(_ order: BaseResultModel.Order) {
         fatalError("select(order:) has not been implemented")
-    }
-    
-    func getOrder() -> BaseResultModel.Order {
-        fatalError("getOrder() has not been implemented")
     }
     
     func refreshControlTriggered() {
@@ -190,13 +144,24 @@ class BaseResultTableViewController: UITableViewController {
     }
 }
 
+// MARK: - helper methods
+extension BaseResultTableViewController {
+    final func populateTableViewWith(analyzedDataArray: [BaseResultModel.AnalyzedData]) {
+        var snapshot = Snapshot()
+        snapshot.appendSections([.main])
+        snapshot.appendItems(analyzedDataArray)
+        snapshot.reloadSections([.main])
+        
+        dataSource.apply(snapshot)
+    }
+}
+
+
 // MARK: - Alert Presenter
 extension BaseResultTableViewController: AlertPresenter {}
 
 // MARK: - Search Bar Delegate
 extension BaseResultTableViewController: UISearchBarDelegate {}
-
-
 
 // MARK: - private name space
 private extension BaseResultTableViewController {
@@ -204,7 +169,6 @@ private extension BaseResultTableViewController {
         case main
     }
     
-    typealias DataSource = UITableViewDiffableDataSource<Section, ResponseDataModel.CurrencyCode>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ResponseDataModel.CurrencyCode>
-    
+    typealias DataSource = UITableViewDiffableDataSource<Section, BaseResultModel.AnalyzedData>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, BaseResultModel.AnalyzedData>
 }
