@@ -1,17 +1,8 @@
 import UIKit
 
 class ResultTableViewController: BaseResultTableViewController {
-    
-    // MARK: - stored properties
-    
-//    private var timer: Timer?
-    
     // MARK: - life cycle
     required init?(coder: NSCoder) {
-        
-        
-//        timer = nil
-        
         super.init(coder: coder)
     }
     
@@ -111,6 +102,8 @@ private extension ResultTableViewController {
                     #warning("第一次更新失敗沒有處理")
                     populateTableViewWith(analyzedDataArray: analyzedDataArray)
                 }
+            case .failure(let error):
+                presentAlert(error: error)
             }
 //            switch result {
 //            case .success(let (latestRate, historicalRateSet)):

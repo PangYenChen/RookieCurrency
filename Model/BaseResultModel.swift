@@ -13,6 +13,8 @@ class BaseResultModel {
     
     var latestUpdateTime: Date?
     
+    #warning("還沒做自動更新")
+    
     init() {
         numberOfDay = AppUtility.numberOfDay
         baseCurrency = AppUtility.baseCurrency
@@ -43,6 +45,19 @@ class BaseResultModel {
                                  historicalRateSet: historicalRateSet,
                                  baseCurrency: baseCurrency)
                     
+                    let analyzedFailure = analyzedResult
+                        .filter { _, result in
+                            switch result {
+                            case .failure: return true
+                            case .success: return false
+                            }
+                        }
+                    
+                    guard analyzedFailure.isEmpty else {
+                        completionHandler(.failure(MyError.foo))
+                        return
+                    }
+                    
                     var analyzedDataArray = analyzedResult
                         .compactMapValues { result in try? result.get() }
                         .sorted { lhs, rhs in
@@ -67,12 +82,10 @@ class BaseResultModel {
                     }
                     
                     completionHandler(.updated(time: latestRate.timestamp, analyzedDataArray: analyzedDataArray))
-                    
-             
                 }
                 
             case .failure(let error):
-                3
+                completionHandler(.failure(error))
             }
         }
     }
@@ -97,11 +110,12 @@ extension BaseResultModel {
     typealias UserSetting = (numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
 }
 
-
+// MARK: - name space
 extension BaseResultModel {
     enum State {
         case updating
         case updated(time: Int, analyzedDataArray: [AnalyzedData])
+        case failure(Error)
     }
     
     struct AnalyzedData: Hashable {
@@ -109,5 +123,12 @@ extension BaseResultModel {
         let latest: Decimal
         let mean: Decimal
         let deviation: Decimal
+    }
+    
+    enum MyError: Swift.Error, LocalizedError {
+        case foo
+        #warning("暫時用的error")
+        var localizedDescription: String { "暫時用的error" }
+        var errorDescription: String? { "暫時用的error" }
     }
 }

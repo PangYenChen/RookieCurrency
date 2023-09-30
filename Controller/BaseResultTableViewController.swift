@@ -1,7 +1,6 @@
 import UIKit
 
 class BaseResultTableViewController: UITableViewController {
-    
     // MARK: - IBOutlet
     @IBOutlet weak var updatingStatusBarButtonItem: UIBarButtonItem!
     
@@ -12,11 +11,8 @@ class BaseResultTableViewController: UITableViewController {
     
     let model: BaseResultModel
     
-//    let autoRefreshTimeInterval: TimeInterval
-    
     // MARK: - life cycle
     required init?(coder: NSCoder) {
-        
         model = BaseResultModel()
         
         super.init(coder: coder)
