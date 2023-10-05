@@ -1,6 +1,7 @@
 import Foundation
 
 class BaseResultModel {
+    #warning("這些屬性之後要擋起來 或者刪掉")
     var numberOfDay: Int
     
     var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
@@ -13,6 +14,8 @@ class BaseResultModel {
     
     var latestUpdateTime: Date?
     
+    private var state: State
+    
     #warning("還沒做自動更新")
     
     init() {
@@ -22,6 +25,8 @@ class BaseResultModel {
         order = AppUtility.order
         searchText = String()
         latestUpdateTime =  nil
+        
+        state = .initialized
     }
     
     
@@ -29,12 +34,12 @@ class BaseResultModel {
                     from start: Date = .now,
                     completionHandlerQueue: DispatchQueue = .main,
                     completionHandler: @escaping (BaseResultModel.State) -> Void) {
-        
-        completionHandler(.updating)
+        state = .updating
+        completionHandler(state)
         
         RateController.shared.getRateFor(numberOfDays: numberOfDays,
                                          from: start,
-                                         completionHandlerQueue: .main) { [unowned self] result in
+                                         completionHandlerQueue: completionHandlerQueue) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 
@@ -54,22 +59,23 @@ class BaseResultModel {
                         }
                     
                     guard analyzedFailure.isEmpty else {
-                        completionHandler(.failure(MyError.foo))
+                        state = .failure(MyError.foo)
+                        completionHandler(state)
                         return
                     }
                     
                     var analyzedDataArray = analyzedResult
                         .compactMapValues { result in try? result.get() }
+                        .map { tuple in
+                            AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
+                        }
                         .sorted { lhs, rhs in
                             switch order {
                             case .increasing:
-                                return lhs.value.deviation < rhs.value.deviation
+                                return lhs.deviation < rhs.deviation
                             case .decreasing:
-                                return lhs.value.deviation > rhs.value.deviation
+                                return lhs.deviation > rhs.deviation
                             }
-                        }
-                        .map { tuple in
-                            AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                         }
                     
                     if !searchText.isEmpty { // filtering if needed
@@ -80,13 +86,45 @@ class BaseResultModel {
                                     .contains { text in text.localizedStandardContains(searchText) }
                             }
                     }
-                    
-                    completionHandler(.updated(time: latestRate.timestamp, analyzedDataArray: analyzedDataArray))
+                    state = .updated(time: latestRate.timestamp, analyzedDataArray: analyzedDataArray)
+                    completionHandler(state)
                 }
                 
             case .failure(let error):
-                completionHandler(.failure(error))
+                state = .failure(error)
+                completionHandler(state)
             }
+        }
+    }
+    
+    func updateDataFor(order: Order, completionHandler: @escaping (State) -> Void) {
+        guard self.order != order else { return }
+        
+        self.order = order
+        
+        switch self.state {
+        case .initialized:
+            2
+            #warning("還沒處理")
+        case .updating:
+            2
+#warning("還沒處理")
+        case .updated(let time, let analyzedDataArray):
+            var analyzedDataArray = analyzedDataArray
+                .sorted { lhs, rhs in
+                    switch order {
+                    case .increasing:
+                        return lhs.deviation < rhs.deviation
+                    case .decreasing:
+                        return lhs.deviation > rhs.deviation
+                    }
+                }
+            
+            completionHandler(.updated(time: time, analyzedDataArray: analyzedDataArray))
+            
+        case .failure(let error):
+            2
+#warning("還沒處理")
         }
     }
 }
@@ -113,6 +151,7 @@ extension BaseResultModel {
 // MARK: - name space
 extension BaseResultModel {
     enum State {
+        case initialized
         case updating
         case updated(time: Int, analyzedDataArray: [AnalyzedData])
         case failure(Error)

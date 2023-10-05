@@ -16,19 +16,26 @@ class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - Hook methods
     override func setOrder(_ order: BaseResultModel.Order) {
-        guard model.order != order else {
-            return
+        model.updateDataFor(order: order) { [unowned self] state in
+            switch state {
+            case .initialized:
+                break
+            case .updating:
+                updatingStatusBarButtonItem.title = R.string.resultScene.updating()
+            case .updated(let time, let analyzedDataArray):
+                do {
+                    let timestamp = Double(time)
+                    let latestUpdateDate = Date(timeIntervalSince1970: timestamp)
+                    let dateString = latestUpdateDate.formatted(.relative(presentation: .named))
+                    updatingStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(dateString)
+#warning("第一次更新失敗沒有處理")
+                    populateTableViewWith(analyzedDataArray: analyzedDataArray)
+                }
+            case .failure(let error):
+                presentAlert(error: error)
+            }
         }
-        model.order = order
-        AppUtility.order = order
-        sortingBarButtonItem.menu?.children.first?.subtitle = order.localizedName
-//        populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
-//                          order: model.order,
-//                          searchText: model.searchText)
-#warning("還沒處理")
     }
-    
-//    override func getOrder() -> BaseResultModel.Order { model.order }
     
     override func refreshControlTriggered() {
         refreshDataAndPopulateTableView()
@@ -91,6 +98,8 @@ private extension ResultTableViewController {
         
         model.updateData(numberOfDays: model.numberOfDay) { [unowned self] result in
             switch result {
+            case .initialized:
+                break
             case .updating:
                 updatingStatusBarButtonItem.title = R.string.resultScene.updating()
             case .updated(let time, let analyzedDataArray):
