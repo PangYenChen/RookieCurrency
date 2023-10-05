@@ -3,4 +3,259 @@
    uuid = "D2E95399-8D82-44D7-B9EA-708215843EFB"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "27247587-06D2-4CCC-AD76-B86C2FCDB342"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Imperative Currency/Controller/ResultTableViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "100"
+            endingLineNumber = "100"
+            landmarkName = "refreshDataAndPopulateTableView()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9FD3DE54-259C-44DE-A57F-B342022E7084"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Model/BaseResultModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "171"
+            endingLineNumber = "171"
+            landmarkName = "sort(analyzedDataArray:by:andFilteredIfNeededBy:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "9FD3DE54-259C-44DE-A57F-B342022E7084 - b6b97e4457728069"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (ImperativeCurrency.BaseResultModel.AnalyzedData) -&gt; Swift.Bool in ImperativeCurrency.BaseResultModel.sort(analyzedDataArray: Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;, by: ImperativeCurrency.BaseResultModel.Order, andFilteredIfNeededBy: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Model/BaseResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "171"
+                  endingLineNumber = "171"
+                  offsetFromSymbolStart = "808">
+               </Location>
+               <Location
+                  uuid = "9FD3DE54-259C-44DE-A57F-B342022E7084 - b6b97e4457728069"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (ImperativeCurrency.BaseResultModel.AnalyzedData) -&gt; Swift.Bool in ImperativeCurrency.BaseResultModel.sort(analyzedDataArray: Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;, by: ImperativeCurrency.BaseResultModel.Order, andFilteredIfNeededBy: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Model/BaseResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "171"
+                  endingLineNumber = "171"
+                  offsetFromSymbolStart = "596">
+               </Location>
+               <Location
+                  uuid = "9FD3DE54-259C-44DE-A57F-B342022E7084 - 79e6e04c1dd88aa"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (Swift.String) -&gt; Swift.Bool in closure #2 (ImperativeCurrency.BaseResultModel.AnalyzedData) -&gt; Swift.Bool in ImperativeCurrency.BaseResultModel.sort(analyzedDataArray: Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;, by: ImperativeCurrency.BaseResultModel.Order, andFilteredIfNeededBy: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Model/BaseResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "171"
+                  endingLineNumber = "171"
+                  offsetFromSymbolStart = "68">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "9791E252-F73D-4632-A1C9-915CB4106B3B"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Imperative Currency/Controller/ResultTableViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "175"
+            endingLineNumber = "175"
+            landmarkName = "searchBar(_:textDidChange:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "9791E252-F73D-4632-A1C9-915CB4106B3B - 90137bf5c8088e45"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.ResultTableViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Imperative%20Currency/Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "175"
+                  endingLineNumber = "175"
+                  offsetFromSymbolStart = "80">
+               </Location>
+               <Location
+                  uuid = "9791E252-F73D-4632-A1C9-915CB4106B3B - 8d318ebd2b03c9"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (ImperativeCurrency.BaseResultModel.State) -&gt; () in ImperativeCurrency.ResultTableViewController.searchBar(_: __C.UISearchBar, textDidChange: Swift.String) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Imperative%20Currency/Controller/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "175"
+                  endingLineNumber = "175"
+                  offsetFromSymbolStart = "748">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "154827E5-BF33-4E26-AEE1-BC85C51B0320"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Model/BaseResultModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "157"
+            endingLineNumber = "157"
+            landmarkName = "sort(analyzedDataArray:by:andFilteredIfNeededBy:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "154827E5-BF33-4E26-AEE1-BC85C51B0320 - ddf5563f2d13c471"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.BaseResultModel.sort(analyzedDataArray: Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;, by: ImperativeCurrency.BaseResultModel.Order, andFilteredIfNeededBy: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Model/BaseResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "157"
+                  endingLineNumber = "157"
+                  offsetFromSymbolStart = "120">
+               </Location>
+               <Location
+                  uuid = "154827E5-BF33-4E26-AEE1-BC85C51B0320 - 54725adebae3c512"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (ImperativeCurrency.BaseResultModel.AnalyzedData, ImperativeCurrency.BaseResultModel.AnalyzedData) -&gt; Swift.Bool in ImperativeCurrency.BaseResultModel.sort(analyzedDataArray: Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;, by: ImperativeCurrency.BaseResultModel.Order, andFilteredIfNeededBy: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Model/BaseResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "160"
+                  endingLineNumber = "160"
+                  offsetFromSymbolStart = "284">
+               </Location>
+               <Location
+                  uuid = "154827E5-BF33-4E26-AEE1-BC85C51B0320 - ddf5563f2d13c471"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.BaseResultModel.sort(analyzedDataArray: Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;, by: ImperativeCurrency.BaseResultModel.Order, andFilteredIfNeededBy: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Model/BaseResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "157"
+                  endingLineNumber = "157"
+                  offsetFromSymbolStart = "92">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D807A438-CC35-4EFC-A0DA-0DE12424F364"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Model/BaseResultModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "167"
+            endingLineNumber = "167"
+            landmarkName = "sort(analyzedDataArray:by:andFilteredIfNeededBy:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "D807A438-CC35-4EFC-A0DA-0DE12424F364 - b6b97e44577283d4"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (ImperativeCurrency.BaseResultModel.AnalyzedData) -&gt; Swift.Bool in ImperativeCurrency.BaseResultModel.sort(analyzedDataArray: Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;, by: ImperativeCurrency.BaseResultModel.Order, andFilteredIfNeededBy: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Model/BaseResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "168"
+                  endingLineNumber = "168"
+                  offsetFromSymbolStart = "244">
+               </Location>
+               <Location
+                  uuid = "D807A438-CC35-4EFC-A0DA-0DE12424F364 - b6b97e44577283f5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (ImperativeCurrency.BaseResultModel.AnalyzedData) -&gt; Swift.Bool in ImperativeCurrency.BaseResultModel.sort(analyzedDataArray: Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;, by: ImperativeCurrency.BaseResultModel.Order, andFilteredIfNeededBy: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Model/BaseResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "167"
+                  endingLineNumber = "167"
+                  offsetFromSymbolStart = "156">
+               </Location>
+               <Location
+                  uuid = "D807A438-CC35-4EFC-A0DA-0DE12424F364 - b6b97e44577283f5"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #2 (ImperativeCurrency.BaseResultModel.AnalyzedData) -&gt; Swift.Bool in ImperativeCurrency.BaseResultModel.sort(analyzedDataArray: Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;, by: ImperativeCurrency.BaseResultModel.Order, andFilteredIfNeededBy: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Array&lt;ImperativeCurrency.BaseResultModel.AnalyzedData&gt;"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Model/BaseResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "167"
+                  endingLineNumber = "167"
+                  offsetFromSymbolStart = "220">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>

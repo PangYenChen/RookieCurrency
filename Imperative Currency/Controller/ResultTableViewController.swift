@@ -172,22 +172,33 @@ private extension ResultTableViewController {
 // MARK: - Search Bar Delegate
 extension ResultTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        guard model.searchText != searchText else {
-            return
-        }
-        model.searchText = searchText
-//        populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
-//                          order: model.order,
-//                          searchText: model.searchText)
-        #warning("還沒處理")
+        model.updateDataFor(searchText: searchText, completionHandler: updateUIWithSearchTextFor(state:))
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        model.searchText = ""
-//        populateTableView(analyzedDataDictionary: self.analyzedDataDictionary,
-//                          order: model.order,
-//                          searchText: model.searchText)
-#warning("還沒處理")
+        model.updateDataFor(searchText: nil, completionHandler: updateUIWithSearchTextFor(state:))
+    }
+}
+
+private extension ResultTableViewController {
+    func updateUIWithSearchTextFor(state: BaseResultModel.State) {
+        switch state {
+        case .initialized:
+            break
+        case .updating:
+            updatingStatusBarButtonItem.title = R.string.resultScene.updating()
+        case .updated(let time, let analyzedDataArray):
+            do {
+                let timestamp = Double(time)
+                let latestUpdateDate = Date(timeIntervalSince1970: timestamp)
+                let dateString = latestUpdateDate.formatted(.relative(presentation: .named))
+                updatingStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(dateString)
+#warning("第一次更新失敗沒有處理")
+                populateTableViewWith(analyzedDataArray: analyzedDataArray)
+            }
+        case .failure(let error):
+            presentAlert(error: error)
+        }
     }
 }
 

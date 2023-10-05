@@ -10,11 +10,13 @@ class BaseResultModel {
     
     var order: BaseResultModel.Order
     
-    var searchText: String
+    var searchText: String?
     
     var latestUpdateTime: Date?
     
     private var state: State
+    
+    private var analyzedDataArray: [AnalyzedData] = []
     
     #warning("還沒做自動更新")
     
@@ -64,28 +66,32 @@ class BaseResultModel {
                         return
                     }
                     
-                    var analyzedDataArray = analyzedResult
+                    analyzedDataArray = analyzedResult
                         .compactMapValues { result in try? result.get() }
                         .map { tuple in
                             AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                         }
-                        .sorted { lhs, rhs in
-                            switch order {
-                            case .increasing:
-                                return lhs.deviation < rhs.deviation
-                            case .decreasing:
-                                return lhs.deviation > rhs.deviation
-                            }
-                        }
                     
-                    if !searchText.isEmpty { // filtering if needed
-                        analyzedDataArray = analyzedDataArray
-                            .filter { analyzedData in
-                                [analyzedData.currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: analyzedData.currencyCode)]
-                                    .compactMap { $0 }
-                                    .contains { text in text.localizedStandardContains(searchText) }
-                            }
-                    }
+                    let analyzedDataArray = self.sort(analyzedDataArray: analyzedDataArray,
+                                                      by: self.order,
+                                                      andFilteredIfNeededBy: self.searchText)
+//                        .sorted { lhs, rhs in
+//                            switch order {
+//                            case .increasing:
+//                                return lhs.deviation < rhs.deviation
+//                            case .decreasing:
+//                                return lhs.deviation > rhs.deviation
+//                            }
+//                        }
+//                    
+//                    if !searchText.isEmpty { // filtering if needed
+//                        analyzedDataArray = analyzedDataArray
+//                            .filter { analyzedData in
+//                                [analyzedData.currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: analyzedData.currencyCode)]
+//                                    .compactMap { $0 }
+//                                    .contains { text in text.localizedStandardContains(searchText) }
+//                            }
+//                    }
                     state = .updated(time: latestRate.timestamp, analyzedDataArray: analyzedDataArray)
                     completionHandler(state)
                 }
@@ -110,15 +116,9 @@ class BaseResultModel {
             2
 #warning("還沒處理")
         case .updated(let time, let analyzedDataArray):
-            var analyzedDataArray = analyzedDataArray
-                .sorted { lhs, rhs in
-                    switch order {
-                    case .increasing:
-                        return lhs.deviation < rhs.deviation
-                    case .decreasing:
-                        return lhs.deviation > rhs.deviation
-                    }
-                }
+            let analyzedDataArray = self.sort(analyzedDataArray: analyzedDataArray,
+                                              by: self.order,
+                                              andFilteredIfNeededBy: self.searchText)
             
             completionHandler(.updated(time: time, analyzedDataArray: analyzedDataArray))
             
@@ -126,6 +126,50 @@ class BaseResultModel {
             2
 #warning("還沒處理")
         }
+    }
+    
+    func updateDataFor(searchText: String?, completionHandler: @escaping (State) -> Void) {
+        guard self.searchText != searchText else { return }
+        self.searchText = searchText
+        switch self.state  {
+        case .initialized:
+            2
+#warning("還沒處理")
+        case .updating:
+            2
+#warning("還沒處理")
+        case .updated(let time, let analyzedDataArray):
+            let analyzedDataArray = self.sort(analyzedDataArray: analyzedDataArray,
+                                              by: self.order,
+                                              andFilteredIfNeededBy: self.searchText)
+            
+            completionHandler(.updated(time: time, analyzedDataArray: analyzedDataArray))
+            
+        case .failure(let error):
+            2
+#warning("還沒處理")
+        }
+    }
+}
+
+private extension BaseResultModel {
+    func sort(analyzedDataArray: [AnalyzedData], by order: Order, andFilteredIfNeededBy searchText: String?) -> [AnalyzedData] {
+        analyzedDataArray
+            .sorted { lhs, rhs in
+                switch order {
+                case .increasing:
+                    return lhs.deviation < rhs.deviation
+                case .decreasing:
+                    return lhs.deviation > rhs.deviation
+                }
+            }
+            .filter { analyzedData in
+                guard let searchText, !searchText.isEmpty else { return true }
+                
+                return [analyzedData.currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: analyzedData.currencyCode)]
+                    .compactMap { $0 }
+                    .contains { text in text.localizedStandardContains(searchText) }
+            }
     }
 }
 
