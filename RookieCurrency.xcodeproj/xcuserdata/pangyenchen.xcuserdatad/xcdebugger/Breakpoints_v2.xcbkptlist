@@ -14,8 +14,8 @@
             filePath = "Imperative Currency/Controller/ResultTableViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "100"
-            endingLineNumber = "100"
+            startingLineNumber = "87"
+            endingLineNumber = "87"
             landmarkName = "refreshDataAndPopulateTableView()"
             landmarkType = "7">
          </BreakpointContent>
@@ -30,8 +30,8 @@
             filePath = "Model/BaseResultModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "171"
-            endingLineNumber = "171"
+            startingLineNumber = "166"
+            endingLineNumber = "166"
             landmarkName = "sort(analyzedDataArray:by:andFilteredIfNeededBy:)"
             landmarkType = "7">
             <Locations>
@@ -93,8 +93,8 @@
             filePath = "Imperative Currency/Controller/ResultTableViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "175"
-            endingLineNumber = "175"
+            startingLineNumber = "111"
+            endingLineNumber = "111"
             landmarkName = "searchBar(_:textDidChange:)"
             landmarkType = "7">
             <Locations>
@@ -141,8 +141,8 @@
             filePath = "Model/BaseResultModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "157"
-            endingLineNumber = "157"
+            startingLineNumber = "152"
+            endingLineNumber = "152"
             landmarkName = "sort(analyzedDataArray:by:andFilteredIfNeededBy:)"
             landmarkType = "7">
             <Locations>
@@ -204,8 +204,8 @@
             filePath = "Model/BaseResultModel.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "167"
-            endingLineNumber = "167"
+            startingLineNumber = "162"
+            endingLineNumber = "162"
             landmarkName = "sort(analyzedDataArray:by:andFilteredIfNeededBy:)"
             landmarkType = "7">
             <Locations>

@@ -10,9 +10,9 @@ class BaseResultModel {
     
     var order: BaseResultModel.Order
     
-    var searchText: String?
+    private var searchText: String?
     
-    var latestUpdateTime: Date?
+    private var latestUpdateTime: Date?
     
     private var state: State
     
@@ -63,6 +63,7 @@ class BaseResultModel {
                     guard analyzedFailure.isEmpty else {
                         state = .failure(MyError.foo)
                         completionHandler(state)
+                        #warning("還沒處理錯誤")
                         return
                     }
                     
@@ -75,23 +76,7 @@ class BaseResultModel {
                     let analyzedDataArray = self.sort(analyzedDataArray: analyzedDataArray,
                                                       by: self.order,
                                                       andFilteredIfNeededBy: self.searchText)
-//                        .sorted { lhs, rhs in
-//                            switch order {
-//                            case .increasing:
-//                                return lhs.deviation < rhs.deviation
-//                            case .decreasing:
-//                                return lhs.deviation > rhs.deviation
-//                            }
-//                        }
-//                    
-//                    if !searchText.isEmpty { // filtering if needed
-//                        analyzedDataArray = analyzedDataArray
-//                            .filter { analyzedData in
-//                                [analyzedData.currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: analyzedData.currencyCode)]
-//                                    .compactMap { $0 }
-//                                    .contains { text in text.localizedStandardContains(searchText) }
-//                            }
-//                    }
+                    
                     state = .updated(time: latestRate.timestamp, analyzedDataArray: analyzedDataArray)
                     completionHandler(state)
                 }
@@ -149,6 +134,16 @@ class BaseResultModel {
             2
 #warning("還沒處理")
         }
+    }
+    
+    func updateDataFor(numberOfDays: Int,
+                       baseCurrencyCode: ResponseDataModel.CurrencyCode,
+                       currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
+                       completionHandler: @escaping (State) -> Void) {
+        self.numberOfDay = numberOfDays
+        self.baseCurrency = baseCurrencyCode
+        self.currencyOfInterest = currencyOfInterest
+        updateData(numberOfDays: self.numberOfDay, completionHandler: completionHandler)
     }
 }
 
