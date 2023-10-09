@@ -69,7 +69,7 @@ class BaseResultTableViewController: UITableViewController {
                 do {
                     let deviationString = analyzedData.deviation.formatted()
                     let fluctuationString = R.string.resultScene.fluctuation(deviationString)
-
+                    
                     contentConfiguration.text = [analyzedData.currencyCode,
                                                  Locale.autoupdatingCurrent.localizedString(forCurrencyCode: analyzedData.currencyCode),
                                                  fluctuationString]
@@ -108,7 +108,7 @@ class BaseResultTableViewController: UITableViewController {
                                             image: UIImage(systemName: "arrow.down.right"),
                                             handler: { [unowned self] _ in setOrder(.decreasing) })
             
-            switch model.order {
+            switch model.initialOrder {
             case .increasing:
                 increasingAction.state = .on
             case .decreasing:
@@ -121,8 +121,10 @@ class BaseResultTableViewController: UITableViewController {
                                   children: [increasingAction, decreasingAction])
             
             sortingBarButtonItem.menu = UIMenu(title: "",
-                                   options: .singleSelection,
-                                   children: [sortMenu])
+                                               options: .singleSelection,
+                                               children: [sortMenu])
+            
+            sortingBarButtonItem.menu?.children.first?.subtitle = model.initialOrder.localizedName
         }
     }
     

@@ -1,14 +1,16 @@
 import Foundation
 
 class BaseResultModel {
-    #warning("這些屬性之後要擋起來 或者刪掉")
-    var numberOfDay: Int
+#warning("這些屬性之後要擋起來 或者刪掉")
+    var numberOfDays: Int
     
-    var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+    var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
-    var baseCurrency: ResponseDataModel.CurrencyCode
+    var baseCurrencyCode: ResponseDataModel.CurrencyCode
     
-    var order: BaseResultModel.Order
+    let initialOrder: Order
+    
+    private var order: Order
     
     private var searchText: String?
     
@@ -18,39 +20,66 @@ class BaseResultModel {
     
     private var analyzedDataArray: [AnalyzedData] = []
     
-    #warning("還沒做自動更新")
+#warning("還沒做自動更新")
     
     init() {
-        numberOfDay = AppUtility.numberOfDay
-        baseCurrency = AppUtility.baseCurrency
-        currencyOfInterest = Set(AppUtility.currencyOfInterest)
-        order = AppUtility.order
+        numberOfDays = AppUtility.numberOfDay
+        baseCurrencyCode = AppUtility.baseCurrency
+        currencyCodeOfInterest = Set(AppUtility.currencyOfInterest)
+        initialOrder = AppUtility.order
+        order = initialOrder
         searchText = String()
         latestUpdateTime =  nil
         
         state = .initialized
     }
     
+    func updateState(completionHandler: @escaping (BaseResultModel.State) -> Void) {
+        updateStateFor(numberOfDays: self.numberOfDays, completionHandler: completionHandler)
+    }
     
-    func updateData(numberOfDays: Int,
-                    from start: Date = .now,
-                    completionHandlerQueue: DispatchQueue = .main,
-                    completionHandler: @escaping (BaseResultModel.State) -> Void) {
+    func setOrderAndSortAnalyzedDataArray(order: Order) -> [AnalyzedData] {
+        self.order = order
+        return self.sort(self.analyzedDataArray,
+                         by: self.order,
+                         filteredIfNeededBy: self.searchText)
+    }
+    
+    func setSearchTextAndFilterAnalyzedDataArray(searchText: String?) -> [AnalyzedData] {
+        self.searchText = searchText
+        return self.sort(self.analyzedDataArray,
+                         by: self.order,
+                         filteredIfNeededBy: self.searchText)
+    }
+    
+    func updateStateFor(numberOfDays: Int,
+                        baseCurrencyCode: ResponseDataModel.CurrencyCode,
+                        currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
+                        completionHandler: @escaping (State) -> Void) {
+        self.numberOfDays = numberOfDays
+        self.baseCurrencyCode = baseCurrencyCode
+        self.currencyCodeOfInterest = currencyOfInterest
+        updateStateFor(numberOfDays: self.numberOfDays, completionHandler: completionHandler)
+    }
+}
+
+// MARK: - private method
+private extension BaseResultModel {
+    func updateStateFor(numberOfDays: Int,
+                        completionHandler: @escaping (BaseResultModel.State) -> Void) {
         state = .updating
         completionHandler(state)
         
-        RateController.shared.getRateFor(numberOfDays: numberOfDays,
-                                         from: start,
-                                         completionHandlerQueue: completionHandlerQueue) { [unowned self] result in
+        RateController.shared.getRateFor(numberOfDays: numberOfDays) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 
                 do {
                     let analyzedResult = Analyst
-                        .analyze(currencyOfInterest: currencyOfInterest,
+                        .analyze(currencyOfInterest: currencyCodeOfInterest,
                                  latestRate: latestRate,
                                  historicalRateSet: historicalRateSet,
-                                 baseCurrency: baseCurrency)
+                                 baseCurrency: baseCurrencyCode)
                     
                     let analyzedFailure = analyzedResult
                         .filter { _, result in
@@ -63,7 +92,7 @@ class BaseResultModel {
                     guard analyzedFailure.isEmpty else {
                         state = .failure(MyError.foo)
                         completionHandler(state)
-                        #warning("還沒處理錯誤")
+#warning("還沒處理錯誤")
                         return
                     }
                     
@@ -73,9 +102,9 @@ class BaseResultModel {
                             AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                         }
                     
-                    let analyzedDataArray = self.sort(analyzedDataArray: analyzedDataArray,
+                    let analyzedDataArray = self.sort(analyzedDataArray,
                                                       by: self.order,
-                                                      andFilteredIfNeededBy: self.searchText)
+                                                      filteredIfNeededBy: self.searchText)
                     
                     state = .updated(time: latestRate.timestamp, analyzedDataArray: analyzedDataArray)
                     completionHandler(state)
@@ -88,67 +117,7 @@ class BaseResultModel {
         }
     }
     
-    func updateDataFor(order: Order, completionHandler: @escaping (State) -> Void) {
-        guard self.order != order else { return }
-        
-        self.order = order
-        
-        switch self.state {
-        case .initialized:
-            2
-            #warning("還沒處理")
-        case .updating:
-            2
-#warning("還沒處理")
-        case .updated(let time, let analyzedDataArray):
-            let analyzedDataArray = self.sort(analyzedDataArray: analyzedDataArray,
-                                              by: self.order,
-                                              andFilteredIfNeededBy: self.searchText)
-            
-            completionHandler(.updated(time: time, analyzedDataArray: analyzedDataArray))
-            
-        case .failure(let error):
-            2
-#warning("還沒處理")
-        }
-    }
-    
-    func updateDataFor(searchText: String?, completionHandler: @escaping (State) -> Void) {
-        guard self.searchText != searchText else { return }
-        self.searchText = searchText
-        switch self.state  {
-        case .initialized:
-            2
-#warning("還沒處理")
-        case .updating:
-            2
-#warning("還沒處理")
-        case .updated(let time, let analyzedDataArray):
-            let analyzedDataArray = self.sort(analyzedDataArray: analyzedDataArray,
-                                              by: self.order,
-                                              andFilteredIfNeededBy: self.searchText)
-            
-            completionHandler(.updated(time: time, analyzedDataArray: analyzedDataArray))
-            
-        case .failure(let error):
-            2
-#warning("還沒處理")
-        }
-    }
-    
-    func updateDataFor(numberOfDays: Int,
-                       baseCurrencyCode: ResponseDataModel.CurrencyCode,
-                       currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
-                       completionHandler: @escaping (State) -> Void) {
-        self.numberOfDay = numberOfDays
-        self.baseCurrency = baseCurrencyCode
-        self.currencyOfInterest = currencyOfInterest
-        updateData(numberOfDays: self.numberOfDay, completionHandler: completionHandler)
-    }
-}
-
-private extension BaseResultModel {
-    func sort(analyzedDataArray: [AnalyzedData], by order: Order, andFilteredIfNeededBy searchText: String?) -> [AnalyzedData] {
+    func sort(_ analyzedDataArray: [AnalyzedData], by order: Order, filteredIfNeededBy searchText: String?) -> [AnalyzedData] {
         analyzedDataArray
             .sorted { lhs, rhs in
                 switch order {
@@ -205,7 +174,7 @@ extension BaseResultModel {
     
     enum MyError: Swift.Error, LocalizedError {
         case foo
-        #warning("暫時用的error")
+#warning("暫時用的error")
         var localizedDescription: String { "暫時用的error" }
         var errorDescription: String? { "暫時用的error" }
     }
