@@ -9,11 +9,11 @@ class BaseResultTableViewController: UITableViewController {
     // MARK: - store properties
     private var dataSource: DataSource!
     
-    let model: BaseResultModel
+    private let initialOrder: BaseResultModel.Order
     
     // MARK: - life cycle
-    required init?(coder: NSCoder) {
-        model = BaseResultModel()
+    required init?(coder: NSCoder, initialOrder: BaseResultModel.Order) {
+        self.initialOrder = initialOrder
         
         super.init(coder: coder)
         
@@ -39,13 +39,17 @@ class BaseResultTableViewController: UITableViewController {
         }
     }
     
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
         // refresh control
         do {
             refreshControl = UIRefreshControl()
-            let handler = UIAction { [unowned self] _ in refreshControlTriggered() }
+            let handler = UIAction { [unowned self] _ in requestDataFromModel() }
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
         }
         
@@ -108,7 +112,7 @@ class BaseResultTableViewController: UITableViewController {
                                             image: UIImage(systemName: "arrow.down.right"),
                                             handler: { [unowned self] _ in setOrder(.decreasing) })
             
-            switch model.initialOrder {
+            switch initialOrder {
             case .increasing:
                 increasingAction.state = .on
             case .decreasing:
@@ -124,7 +128,7 @@ class BaseResultTableViewController: UITableViewController {
                                                options: .singleSelection,
                                                children: [sortMenu])
             
-            sortingBarButtonItem.menu?.children.first?.subtitle = model.initialOrder.localizedName
+            sortingBarButtonItem.menu?.children.first?.subtitle = initialOrder.localizedName
         }
     }
     
@@ -133,7 +137,7 @@ class BaseResultTableViewController: UITableViewController {
         fatalError("select(order:) has not been implemented")
     }
     
-    func refreshControlTriggered() {
+    func requestDataFromModel() {
         fatalError("refreshControlTriggered()")
     }
     
@@ -144,7 +148,7 @@ class BaseResultTableViewController: UITableViewController {
 
 // MARK: - helper methods
 extension BaseResultTableViewController {
-    final func populateTableViewWith(analyzedDataArray: [BaseResultModel.AnalyzedData]) {
+    final func populateTableViewWith(_ analyzedDataArray: [BaseResultModel.AnalyzedData]) {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(analyzedDataArray)
@@ -153,7 +157,6 @@ extension BaseResultTableViewController {
         dataSource.apply(snapshot)
     }
 }
-
 
 // MARK: - Alert Presenter
 extension BaseResultTableViewController: AlertPresenter {}
