@@ -62,7 +62,7 @@ class ResultTableViewController: BaseResultTableViewController {
                                    currencyOfInterest: model.currencyCodeOfInterest) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
             model.updateStateFor(numberOfDays: editedNumberOfDay,
                                  baseCurrencyCode: editedBaseCurrency,
-                                 currencyOfInterest: editedCurrencyOfInterest) { [unowned self] result in
+                                 currencyCodeOfInterest: editedCurrencyOfInterest) { [unowned self] result in
                 switch result {
                 case .updating:
                     updatingStatusBarButtonItem.title = R.string.resultScene.updating()

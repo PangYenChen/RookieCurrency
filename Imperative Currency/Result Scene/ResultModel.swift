@@ -1,7 +1,7 @@
 import Foundation
 
 class ResultModel: BaseResultModel {
-#warning("這些屬性之後要擋起來 或者刪掉")
+#warning("這些屬性在 setting scene 改成 mvc 之後要擋起來 或者刪掉")
     var numberOfDays: Int
     
     var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
@@ -12,19 +12,16 @@ class ResultModel: BaseResultModel {
     
     private var searchText: String?
     
-    private var latestUpdateTime: Date?
-    
     private var analyzedDataArray: [AnalyzedData]
     
 #warning("還沒做自動更新")
     
     override init() {
-        numberOfDays = AppUtility.numberOfDay
-        baseCurrencyCode = AppUtility.baseCurrency
-        currencyCodeOfInterest = Set(AppUtility.currencyOfInterest)
+        numberOfDays = AppUtility.numberOfDays
+        baseCurrencyCode = AppUtility.baseCurrencyCode
+        currencyCodeOfInterest = AppUtility.currencyCodeOfInterest
         order = AppUtility.order
         searchText = nil
-        latestUpdateTime =  nil
         analyzedDataArray = []
         
         super.init()
@@ -38,7 +35,9 @@ extension ResultModel {
     }
     
     func setOrderAndSortAnalyzedDataArray(order: Order) -> [AnalyzedData] {
+        AppUtility.order = order
         self.order = order
+        
         return self.sort(self.analyzedDataArray,
                          by: self.order,
                          filteredIfNeededBy: self.searchText)
@@ -53,11 +52,17 @@ extension ResultModel {
     
     func updateStateFor(numberOfDays: Int,
                         baseCurrencyCode: ResponseDataModel.CurrencyCode,
-                        currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
+                        currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
                         completionHandler: @escaping (State) -> Void) {
+        AppUtility.numberOfDays = numberOfDays
         self.numberOfDays = numberOfDays
+        
+        AppUtility.baseCurrencyCode = baseCurrencyCode
         self.baseCurrencyCode = baseCurrencyCode
-        self.currencyCodeOfInterest = currencyOfInterest
+        
+        AppUtility.currencyCodeOfInterest = currencyCodeOfInterest
+        self.currencyCodeOfInterest = currencyCodeOfInterest
+        
         updateStateFor(numberOfDays: self.numberOfDays, completionHandler: completionHandler)
     }
 }

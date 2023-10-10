@@ -3,33 +3,33 @@ import Foundation
 /// 整個 App 通用的東西。
 enum AppUtility {}
 
-// MARK: - user setting storage, including so fallback logic
+// MARK: - user setting storage, including some specific fallback logic
 extension AppUtility {
     private enum Key: String {
-        case numberOfDay
-        case baseCurrency
+        case numberOfDays
+        case baseCurrencyCode
         case order
-        case currencyOfInterest
+        case currencyCodeOfInterest
     }
     
-    static var numberOfDay: Int {
+    static var numberOfDays: Int {
         get {
-            let numberOfDayInUserDefaults = UserDefaults.standard.integer(forKey: Key.numberOfDay.rawValue)
-            return numberOfDayInUserDefaults > 0 ? numberOfDayInUserDefaults : 3
+            let numberOfDaysInUserDefaults = UserDefaults.standard.integer(forKey: Key.numberOfDays.rawValue)
+            return numberOfDaysInUserDefaults > 0 ? numberOfDaysInUserDefaults : 3
         }
-        set { UserDefaults.standard.set(newValue, forKey: Key.numberOfDay.rawValue) }
+        set { UserDefaults.standard.set(newValue, forKey: Key.numberOfDays.rawValue) }
     }
     
-    static var baseCurrency: ResponseDataModel.CurrencyCode {
+    static var baseCurrencyCode: ResponseDataModel.CurrencyCode {
         get {
-            if let baseCurrencyCode = UserDefaults.standard.string(forKey: Key.baseCurrency.rawValue) {
+            if let baseCurrencyCode = UserDefaults.standard.string(forKey: Key.baseCurrencyCode.rawValue) {
                 return baseCurrencyCode
             } else {
                 return "TWD"
             }
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: Key.baseCurrency.rawValue)
+            UserDefaults.standard.set(newValue, forKey: Key.baseCurrencyCode.rawValue)
         }
     }
     
@@ -47,17 +47,17 @@ extension AppUtility {
         }
     }
     
-    static var currencyOfInterest: Set<ResponseDataModel.CurrencyCode> {
+    static var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
         get {
-            if let currencyOfInterest = UserDefaults.standard.stringArray(forKey: Key.currencyOfInterest.rawValue) {
-                return Set(currencyOfInterest)
+            if let currencyCodeOfInterest = UserDefaults.standard.stringArray(forKey: Key.currencyCodeOfInterest.rawValue) {
+                return Set(currencyCodeOfInterest)
             } else {
                 // 預設值為強勢貨幣(Hard Currency)
                 return ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
             }
         }
         set {
-            UserDefaults.standard.setValue(newValue.sorted(), forKey: Key.currencyOfInterest.rawValue)
+            UserDefaults.standard.setValue(newValue.sorted(), forKey: Key.currencyCodeOfInterest.rawValue)
         }
     }
     
