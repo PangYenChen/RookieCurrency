@@ -6,13 +6,10 @@ class ResultTableViewController: BaseResultTableViewController {
     
     private var latestUpdateTime: Int?
     
-    private var hasAppeared: Bool
-    
     // MARK: - life cycle
     required init?(coder: NSCoder) {
         model = ResultModel()
         latestUpdateTime = nil
-        hasAppeared = false
         
         super.init(coder: coder, initialOrder: model.initialOrder)
     }
@@ -24,15 +21,7 @@ class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        requestDataFromModel()
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        if !self.hasAppeared {
-            model.resumeAutoUpdateState(completionHandler: updateUIFor(_:))
-        }
+        model.resumeAutoUpdatingState(completionHandler: updateUIFor(_:))
     }
     
     // MARK: - Hook methods
@@ -46,7 +35,7 @@ class ResultTableViewController: BaseResultTableViewController {
     }
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        model.suspendAuto()
+        model.suspendAutoUpdatingState()
         
         return SettingTableViewController(
             coder: coder,
@@ -54,14 +43,12 @@ class ResultTableViewController: BaseResultTableViewController {
             baseCurrency: model.baseCurrencyCode,
             currencyOfInterest: model.currencyCodeOfInterest
         ) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
-            model.updateStateFor(numberOfDays: editedNumberOfDay,
-                                 baseCurrencyCode: editedBaseCurrency,
-                                 currencyCodeOfInterest: editedCurrencyOfInterest,
-                                 completionHandler: updateUIFor(_:))
-            model.resumeAutoUpdateState(completionHandler: updateUIFor(_:))
-            
+            model.resumeAutoUpdatingStateFor(numberOfDays: editedNumberOfDay,
+                                             baseCurrencyCode: editedBaseCurrency,
+                                             currencyCodeOfInterest: editedCurrencyOfInterest,
+                                             completionHandler: updateUIFor(_:))
         } cancelCompletionHandler: { [unowned self] in
-            model.resumeAutoUpdateState(completionHandler: updateUIFor(_:))
+            model.resumeAutoUpdatingState(completionHandler: updateUIFor(_:))
         }
     }
 }

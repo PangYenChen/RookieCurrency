@@ -16,15 +16,19 @@ class ResultModel: BaseResultModel {
     
     private var timer: Timer?
     
-#warning("還沒做自動更新")
+    private let autoUpdateTimeInterval: TimeInterval
     
     override init() {
         numberOfDays = AppUtility.numberOfDays
         baseCurrencyCode = AppUtility.baseCurrencyCode
         currencyCodeOfInterest = AppUtility.currencyCodeOfInterest
         order = AppUtility.order
+        
         searchText = nil
         analyzedDataArray = []
+        
+        timer = nil
+        autoUpdateTimeInterval = 5
         
         super.init()
     }
@@ -74,12 +78,35 @@ extension ResultModel {
                              completionHandler: completionHandler)
     }
     
-    func resumeAutoUpdateState(completionHandler: @escaping (State) -> Void) {
-//        timer = time
+    func resumeAutoUpdatingState(completionHandler: @escaping (State) -> Void) {
+        timer = Timer.scheduledTimer(withTimeInterval: autoUpdateTimeInterval, repeats: true) { [unowned self] _ in
+            getRateAndAnalyzeFor(numberOfDays: self.numberOfDays,
+                                 baseCurrencyCode: self.baseCurrencyCode,
+                                 currencyCodeOfInterest: self.currencyCodeOfInterest,
+                                 completionHandler: completionHandler)
+        }
+        timer?.fire()
     }
     
-    func suspendAuto() {
-        print("###, \(self), \(#function)")
+    func resumeAutoUpdatingStateFor(numberOfDays: Int,
+                                    baseCurrencyCode: ResponseDataModel.CurrencyCode,
+                                    currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
+                                    completionHandler: @escaping (State) -> Void) {
+        AppUtility.numberOfDays = numberOfDays
+        self.numberOfDays = numberOfDays
+        
+        AppUtility.baseCurrencyCode = baseCurrencyCode
+        self.baseCurrencyCode = baseCurrencyCode
+        
+        AppUtility.currencyCodeOfInterest = currencyCodeOfInterest
+        self.currencyCodeOfInterest = currencyCodeOfInterest
+        
+        resumeAutoUpdatingState(completionHandler: completionHandler)
+    }
+    
+    func suspendAutoUpdatingState() {
+        timer?.invalidate()
+        timer = nil
     }
 }
 

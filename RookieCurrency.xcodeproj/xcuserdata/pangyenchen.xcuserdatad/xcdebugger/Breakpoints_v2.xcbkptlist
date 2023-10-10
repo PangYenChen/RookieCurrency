@@ -3,4 +3,101 @@
    uuid = "D2E95399-8D82-44D7-B9EA-708215843EFB"
    type = "1"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B25AAE40-2258-4ED5-8316-144E1F6F3597"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Imperative Currency/Result Scene/ResultTableViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "61"
+            endingLineNumber = "61"
+            landmarkName = "updateUIFor(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6AAACEEC-6425-4608-AB95-1609CA8C5A1E"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Imperative Currency/Result Scene/ResultTableViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "63"
+            endingLineNumber = "63"
+            landmarkName = "updateUIFor(_:)"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "B39B069B-14AE-40F7-9563-261C51D841BB"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Imperative Currency/Result Scene/ResultModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "82"
+            endingLineNumber = "82"
+            landmarkName = "resumeAutoUpdatingState(completionHandler:)"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "B39B069B-14AE-40F7-9563-261C51D841BB - eaeb4b44bf951d48"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable (__C.NSTimer) -&gt; () in ImperativeCurrency.ResultModel.resumeAutoUpdatingState(completionHandler: (ImperativeCurrency.BaseResultModel.State) -&gt; ()) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Imperative%20Currency/Result%20Scene/ResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "85"
+                  endingLineNumber = "85"
+                  offsetFromSymbolStart = "76">
+               </Location>
+               <Location
+                  uuid = "B39B069B-14AE-40F7-9563-261C51D841BB - 47b4977148259026"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.ResultModel.resumeAutoUpdatingState(completionHandler: (ImperativeCurrency.BaseResultModel.State) -&gt; ()) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Imperative%20Currency/Result%20Scene/ResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "85"
+                  endingLineNumber = "85"
+                  offsetFromSymbolStart = "936">
+               </Location>
+               <Location
+                  uuid = "B39B069B-14AE-40F7-9563-261C51D841BB - eaeb4b44bf951d69"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable (__C.NSTimer) -&gt; () in ImperativeCurrency.ResultModel.resumeAutoUpdatingState(completionHandler: (ImperativeCurrency.BaseResultModel.State) -&gt; ()) -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Imperative%20Currency/Result%20Scene/ResultModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "86"
+                  endingLineNumber = "86"
+                  offsetFromSymbolStart = "76">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
