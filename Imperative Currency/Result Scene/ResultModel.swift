@@ -31,7 +31,10 @@ class ResultModel: BaseResultModel {
 // MARK: - internal methods
 extension ResultModel {
     func updateState(completionHandler: @escaping (BaseResultModel.State) -> Void) {
-        updateStateFor(numberOfDays: self.numberOfDays, completionHandler: completionHandler)
+        getRateAndAnalyzeFor(numberOfDays: self.numberOfDays,
+                             baseCurrencyCode: self.baseCurrencyCode,
+                             currencyCodeOfInterest: self.currencyCodeOfInterest,
+                             completionHandler: completionHandler)
     }
     
     func setOrderAndSortAnalyzedDataArray(order: Order) -> [AnalyzedData] {
@@ -63,14 +66,19 @@ extension ResultModel {
         AppUtility.currencyCodeOfInterest = currencyCodeOfInterest
         self.currencyCodeOfInterest = currencyCodeOfInterest
         
-        updateStateFor(numberOfDays: self.numberOfDays, completionHandler: completionHandler)
+        getRateAndAnalyzeFor(numberOfDays: self.numberOfDays,
+                             baseCurrencyCode: self.baseCurrencyCode,
+                             currencyCodeOfInterest: self.currencyCodeOfInterest,
+                             completionHandler: completionHandler)
     }
 }
 
 // MARK: - private method
 private extension ResultModel {
-    func updateStateFor(numberOfDays: Int,
-                        completionHandler: @escaping (BaseResultModel.State) -> Void) {
+    func getRateAndAnalyzeFor(numberOfDays: Int,
+                              baseCurrencyCode: ResponseDataModel.CurrencyCode,
+                              currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
+                              completionHandler: @escaping (BaseResultModel.State) -> Void) {
         completionHandler(.updating)
         
         RateController.shared.getRateFor(numberOfDays: numberOfDays) { [unowned self] result in
@@ -104,7 +112,7 @@ private extension ResultModel {
                             AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                         }
                     
-                    let analyzedDataArray = self.sort(analyzedDataArray,
+                    let analyzedDataArray = self.sort(self.analyzedDataArray,
                                                       by: self.order,
                                                       filteredIfNeededBy: self.searchText)
                     
