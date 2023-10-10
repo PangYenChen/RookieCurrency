@@ -156,6 +156,13 @@ extension BaseResultTableViewController {
         
         dataSource.apply(snapshot)
     }
+    
+    final func populateUpdatingStatusBarButtonItemWith(_ timestamp: Int?) {
+        let relativeDateString = timestamp.map(Double.init)
+            .map(Date.init(timeIntervalSince1970:))?
+            .formatted(.relative(presentation: .named)) ?? "-"
+        updatingStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(relativeDateString)
+    }
 }
 
 // MARK: - Alert Presenter

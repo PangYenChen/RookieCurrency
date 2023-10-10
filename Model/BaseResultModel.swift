@@ -55,9 +55,8 @@ extension BaseResultModel {
 // MARK: - name space
 extension BaseResultModel {
     enum State {
-        case initialized
         case updating
-        case updated(time: Int, analyzedDataArray: [AnalyzedData])
+        case updated(timestamp: Int, analyzedDataArray: [AnalyzedData])
         case failure(Error)
     }
     

@@ -4,9 +4,12 @@ class ResultTableViewController: BaseResultTableViewController {
     // MARK: - stored property
     private let model: ResultModel
     
+    private var latestUpdateTime: Int?
+    
     // MARK: - life cycle
     required init?(coder: NSCoder) {
         model = ResultModel()
+        latestUpdateTime = nil
         
         super.init(coder: coder, initialOrder: model.initialOrder)
     }
@@ -30,52 +33,47 @@ class ResultTableViewController: BaseResultTableViewController {
     override func requestDataFromModel() {
         model.updateState() { [unowned self] result in
             switch result {
-            case .initialized:
-                break
             case .updating:
                 updatingStatusBarButtonItem.title = R.string.resultScene.updating()
-            case .updated(let time, let analyzedDataArray):
-                do {
-                    let timestamp = Double(time)
-                    let latestUpdateDate = Date(timeIntervalSince1970: timestamp)
-                    let dateString = latestUpdateDate.formatted(.relative(presentation: .named))
-                    updatingStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(dateString)
-#warning("第一次更新失敗沒有處理")
-                    populateTableViewWith(analyzedDataArray)
-                    
-                    if tableView.refreshControl?.isRefreshing == true {
-                        tableView.refreshControl?.endRefreshing()
-                    }
+            case .updated(let timestamp, let analyzedDataArray):
+                self.latestUpdateTime = timestamp
+                populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+                populateTableViewWith(analyzedDataArray)
+                
+                if tableView.refreshControl?.isRefreshing == true {
+                    tableView.refreshControl?.endRefreshing()
                 }
+                
             case .failure(let error):
+                populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
                 presentAlert(error: error)
+                
+                if tableView.refreshControl?.isRefreshing == true {
+                    tableView.refreshControl?.endRefreshing()
+                }
             }
         }
     }
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        return SettingTableViewController(coder: coder,
-                                          numberOfDay: model.numberOfDays,
-                                          baseCurrency: model.baseCurrencyCode,
-                                          currencyOfInterest: model.currencyCodeOfInterest) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
+        SettingTableViewController(coder: coder,
+                                   numberOfDay: model.numberOfDays,
+                                   baseCurrency: model.baseCurrencyCode,
+                                   currencyOfInterest: model.currencyCodeOfInterest) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
             model.updateStateFor(numberOfDays: editedNumberOfDay,
                                  baseCurrencyCode: editedBaseCurrency,
                                  currencyOfInterest: editedCurrencyOfInterest) { [unowned self] result in
                 switch result {
-                case .initialized:
-                    break
                 case .updating:
                     updatingStatusBarButtonItem.title = R.string.resultScene.updating()
-                case .updated(let time, let analyzedDataArray):
-                    do {
-                        let timestamp = Double(time)
-                        let latestUpdateDate = Date(timeIntervalSince1970: timestamp)
-                        let dateString = latestUpdateDate.formatted(.relative(presentation: .named))
-                        updatingStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(dateString)
-#warning("第一次更新失敗沒有處理")
-                        populateTableViewWith(analyzedDataArray)
-                    }
+                    
+                case .updated(let timestamp, let analyzedDataArray):
+                    self.latestUpdateTime = timestamp
+                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+                    populateTableViewWith(analyzedDataArray)
+                    
                 case .failure(let error):
+                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
                     presentAlert(error: error)
                 }
             }

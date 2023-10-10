@@ -14,8 +14,6 @@ class ResultModel: BaseResultModel {
     
     private var latestUpdateTime: Date?
     
-    private var state: State
-    
     private var analyzedDataArray: [AnalyzedData]
     
 #warning("還沒做自動更新")
@@ -27,7 +25,6 @@ class ResultModel: BaseResultModel {
         order = AppUtility.order
         searchText = nil
         latestUpdateTime =  nil
-        state = .initialized
         analyzedDataArray = []
         
         super.init()
@@ -69,8 +66,7 @@ extension ResultModel {
 private extension ResultModel {
     func updateStateFor(numberOfDays: Int,
                         completionHandler: @escaping (BaseResultModel.State) -> Void) {
-        state = .updating
-        completionHandler(state)
+        completionHandler(.updating)
         
         RateController.shared.getRateFor(numberOfDays: numberOfDays) { [unowned self] result in
             switch result {
@@ -92,8 +88,7 @@ private extension ResultModel {
                         }
                     
                     guard analyzedFailure.isEmpty else {
-                        state = .failure(MyError.foo)
-                        completionHandler(state)
+                        completionHandler(.failure(MyError.foo))
 #warning("還沒處理錯誤")
                         return
                     }
@@ -108,13 +103,11 @@ private extension ResultModel {
                                                       by: self.order,
                                                       filteredIfNeededBy: self.searchText)
                     
-                    state = .updated(time: latestRate.timestamp, analyzedDataArray: analyzedDataArray)
-                    completionHandler(state)
+                    completionHandler(.updated(timestamp: latestRate.timestamp, analyzedDataArray: analyzedDataArray))
                 }
                 
             case .failure(let error):
-                state = .failure(error)
-                completionHandler(state)
+                completionHandler(.failure(error))
             }
         }
     }
