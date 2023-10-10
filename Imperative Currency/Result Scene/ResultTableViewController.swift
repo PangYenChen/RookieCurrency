@@ -42,10 +42,10 @@ class ResultTableViewController: BaseResultTableViewController {
             numberOfDay: model.numberOfDays,
             baseCurrency: model.baseCurrencyCode,
             currencyOfInterest: model.currencyCodeOfInterest
-        ) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
-            model.resumeAutoUpdatingStateFor(numberOfDays: editedNumberOfDay,
-                                             baseCurrencyCode: editedBaseCurrency,
-                                             currencyCodeOfInterest: editedCurrencyOfInterest,
+        ) { [unowned self] editedNumberOfDays, editedBaseCurrencyCode, editedCurrencyCodeOfInterest in
+            model.resumeAutoUpdatingStateFor(numberOfDays: editedNumberOfDays,
+                                             baseCurrencyCode: editedBaseCurrencyCode,
+                                             currencyCodeOfInterest: editedCurrencyCodeOfInterest,
                                              completionHandler: updateUIFor(_:))
         } cancelCompletionHandler: { [unowned self] in
             model.resumeAutoUpdatingState(completionHandler: updateUIFor(_:))

@@ -4,6 +4,9 @@ import Combine
 class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - stored properties
+    
+    private let model: ResultModel
+    
     private let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
     
     private let order: CurrentValueSubject<BaseResultModel.Order, Never>
@@ -20,6 +23,9 @@ class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - Methods
     required init?(coder: NSCoder) {
+        
+        model = ResultModel()
+        
         userSetting = CurrentValueSubject((AppUtility.numberOfDays, AppUtility.baseCurrencyCode, AppUtility.currencyCodeOfInterest))
         order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
         searchText = PassthroughSubject<String, Never>()
@@ -27,7 +33,7 @@ class ResultTableViewController: BaseResultTableViewController {
         anyCancellableSet = Set<AnyCancellable>()
         timerCancellable = nil
         
-        super.init(coder: coder)
+        super.init(coder: coder, initialOrder: model.initialOrder)
     }
     
     required init?(coder: NSCoder, initialOrder: BaseResultModel.Order) {
