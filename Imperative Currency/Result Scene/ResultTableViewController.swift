@@ -6,10 +6,13 @@ class ResultTableViewController: BaseResultTableViewController {
     
     private var latestUpdateTime: Int?
     
+    private var hasAppeared: Bool
+    
     // MARK: - life cycle
     required init?(coder: NSCoder) {
         model = ResultModel()
         latestUpdateTime = nil
+        hasAppeared = false
         
         super.init(coder: coder, initialOrder: model.initialOrder)
     }
@@ -24,6 +27,14 @@ class ResultTableViewController: BaseResultTableViewController {
         requestDataFromModel()
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        if !self.hasAppeared {
+            model.resumeAutoUpdateState(completionHandler: updateUIFor(_:))
+        }
+    }
+    
     // MARK: - Hook methods
     override func setOrder(_ order: BaseResultModel.Order) {
         sortingBarButtonItem.menu?.children.first?.subtitle = order.localizedName
@@ -31,54 +42,52 @@ class ResultTableViewController: BaseResultTableViewController {
     }
     
     override func requestDataFromModel() {
-        model.updateState() { [unowned self] result in
-            switch result {
-            case .updating:
-                updatingStatusBarButtonItem.title = R.string.resultScene.updating()
-            case .updated(let timestamp, let analyzedDataArray):
-                self.latestUpdateTime = timestamp
-                populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
-                populateTableViewWith(analyzedDataArray)
-                
-                if tableView.refreshControl?.isRefreshing == true {
-                    tableView.refreshControl?.endRefreshing()
-                }
-                
-            case .failure(let error):
-                populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
-                presentAlert(error: error)
-                
-                if tableView.refreshControl?.isRefreshing == true {
-                    tableView.refreshControl?.endRefreshing()
-                }
-            }
-        }
+        model.updateState(completionHandler: updateUIFor(_:))
     }
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        SettingTableViewController(coder: coder,
-                                   numberOfDay: model.numberOfDays,
-                                   baseCurrency: model.baseCurrencyCode,
-                                   currencyOfInterest: model.currencyCodeOfInterest) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
+        model.suspendAuto()
+        
+        return SettingTableViewController(
+            coder: coder,
+            numberOfDay: model.numberOfDays,
+            baseCurrency: model.baseCurrencyCode,
+            currencyOfInterest: model.currencyCodeOfInterest
+        ) { [unowned self] editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest in
             model.updateStateFor(numberOfDays: editedNumberOfDay,
                                  baseCurrencyCode: editedBaseCurrency,
-                                 currencyCodeOfInterest: editedCurrencyOfInterest) { [unowned self] result in
-                switch result {
-                case .updating:
-                    updatingStatusBarButtonItem.title = R.string.resultScene.updating()
-                    
-                case .updated(let timestamp, let analyzedDataArray):
-                    self.latestUpdateTime = timestamp
-                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
-                    populateTableViewWith(analyzedDataArray)
-                    
-                case .failure(let error):
-                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
-                    presentAlert(error: error)
-                }
-            }
+                                 currencyCodeOfInterest: editedCurrencyOfInterest,
+                                 completionHandler: updateUIFor(_:))
+            model.resumeAutoUpdateState(completionHandler: updateUIFor(_:))
+            
         } cancelCompletionHandler: { [unowned self] in
-            //            setUpTimer()
+            model.resumeAutoUpdateState(completionHandler: updateUIFor(_:))
+        }
+    }
+}
+
+// MARK: - private method
+private extension ResultTableViewController {
+    func updateUIFor(_ state: BaseResultModel.State) {
+        switch state {
+        case .updating:
+            updatingStatusBarButtonItem.title = R.string.resultScene.updating()
+        case .updated(let timestamp, let analyzedDataArray):
+            self.latestUpdateTime = timestamp
+            populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+            populateTableViewWith(analyzedDataArray)
+            
+            if tableView.refreshControl?.isRefreshing == true {
+                tableView.refreshControl?.endRefreshing()
+            }
+            
+        case .failure(let error):
+            populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+            presentAlert(error: error)
+            
+            if tableView.refreshControl?.isRefreshing == true {
+                tableView.refreshControl?.endRefreshing()
+            }
         }
     }
 }

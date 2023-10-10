@@ -14,6 +14,8 @@ class ResultModel: BaseResultModel {
     
     private var analyzedDataArray: [AnalyzedData]
     
+    private var timer: Timer?
+    
 #warning("還沒做自動更新")
     
     override init() {
@@ -70,6 +72,14 @@ extension ResultModel {
                              baseCurrencyCode: self.baseCurrencyCode,
                              currencyCodeOfInterest: self.currencyCodeOfInterest,
                              completionHandler: completionHandler)
+    }
+    
+    func resumeAutoUpdateState(completionHandler: @escaping (State) -> Void) {
+//        timer = time
+    }
+    
+    func suspendAuto() {
+        print("###, \(self), \(#function)")
     }
 }
 
