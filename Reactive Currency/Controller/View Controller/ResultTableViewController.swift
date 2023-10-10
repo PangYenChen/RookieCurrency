@@ -4,9 +4,9 @@ import Combine
 class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - stored properties
-    private let userSetting: CurrentValueSubject<UserSetting, Never>
+    private let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
     
-    private let order: CurrentValueSubject<Order, Never>
+    private let order: CurrentValueSubject<BaseResultModel.Order, Never>
     
     private let searchText: PassthroughSubject<String, Never>
     
@@ -20,14 +20,18 @@ class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - Methods
     required init?(coder: NSCoder) {
-        userSetting = CurrentValueSubject((AppUtility.numberOfDay, AppUtility.baseCurrency, AppUtility.currencyOfInterest))
-        order = CurrentValueSubject<Order, Never>(AppUtility.order)
+        userSetting = CurrentValueSubject((AppUtility.numberOfDays, AppUtility.baseCurrencyCode, AppUtility.currencyCodeOfInterest))
+        order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
         searchText = PassthroughSubject<String, Never>()
         refresh = PassthroughSubject<Void, Never>()
         anyCancellableSet = Set<AnyCancellable>()
         timerCancellable = nil
         
         super.init(coder: coder)
+    }
+    
+    required init?(coder: NSCoder, initialOrder: BaseResultModel.Order) {
+        fatalError("init(coder:initialOrder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -40,16 +44,16 @@ class ResultTableViewController: BaseResultTableViewController {
                 .removeDuplicates()
                 .sink { [unowned self] order in
                     AppUtility.order = order
-                    sortItem.menu?.children.first?.subtitle = order.localizedName
+                    sortingBarButtonItem.menu?.children.first?.subtitle = order.localizedName
                 }
                 .store(in: &anyCancellableSet)
             
             userSetting
                 .dropFirst()
                 .sink { numberOfDay, baseCurrency, currencyOfInterest in
-                    AppUtility.numberOfDay = numberOfDay
-                    AppUtility.baseCurrency = baseCurrency
-                    AppUtility.currencyOfInterest = currencyOfInterest
+                    AppUtility.numberOfDays = numberOfDay
+                    AppUtility.baseCurrencyCode = baseCurrency
+                    AppUtility.currencyCodeOfInterest = currencyOfInterest
                 }
                 .store(in: &anyCancellableSet)
             
@@ -100,7 +104,7 @@ class ResultTableViewController: BaseResultTableViewController {
             Publishers
                 .CombineLatest(isUpdating, latestUpdateTimeString)
                 .sink { [unowned self] isUpdating, latestUpdateTimeString in
-                    updatingStatusItem.title = isUpdating ? R.string.resultScene.updating() : latestUpdateTimeString
+                    updatingStatusBarButtonItem.title = isUpdating ? R.string.resultScene.updating() : latestUpdateTimeString
                 }
                 .store(in: &anyCancellableSet)
             
@@ -122,10 +126,10 @@ class ResultTableViewController: BaseResultTableViewController {
             
             shouldPopulateTableView
                 .sink { [unowned self] analyzedDataDictionary, order, searchText  in
-                    self.analyzedDataDictionary = analyzedDataDictionary
-                    populateTableView(analyzedDataDictionary: analyzedDataDictionary,
-                                      order: order,
-                                      searchText: searchText)
+//                    self.analyzedDataDictionary = analyzedDataDictionary
+//                    populateTableView(analyzedDataDictionary: analyzedDataDictionary,
+//                                      order: order,
+//                                      searchText: searchText)
                     setUpTimer()
                 }
                 .store(in: &anyCancellableSet)
@@ -146,17 +150,17 @@ class ResultTableViewController: BaseResultTableViewController {
         }
     }
     
-    override func setOrder(_ order: BaseResultTableViewController.Order) {
+    override func setOrder(_ order: BaseResultModel.Order) {
         self.order.send(order)
     }
     
-    override func getOrder() -> BaseResultTableViewController.Order {
-        order.value
-    }
+//    override func getOrder() -> BaseResultModel.Order {
+//        order.value
+//    }
     
-    override func refreshControlTriggered() {
-        refresh.send()
-    }
+//    override func refreshControlTriggered() {
+//        refresh.send()
+//    }
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
         tearDownTimer()
@@ -174,9 +178,9 @@ class ResultTableViewController: BaseResultTableViewController {
 // MARK: - private methods
 private extension ResultTableViewController {
     func setUpTimer() {
-        timerCancellable = Timer.publish(every: autoRefreshTimeInterval, on: .main, in: .default)
-            .autoconnect()
-            .sink { [unowned self] _ in refresh.send() }
+//        timerCancellable = Timer.publish(every: autoRefreshTimeInterval, on: .main, in: .default)
+//            .autoconnect()
+//            .sink { [unowned self] _ in refresh.send() }
     }
     
     func tearDownTimer() {

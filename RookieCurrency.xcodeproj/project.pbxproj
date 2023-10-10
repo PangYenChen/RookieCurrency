@@ -252,6 +252,11 @@
 			isa = PBXGroup;
 			children = (
 				511E4B302AC6938A007EA1DE /* BaseResultModel.swift */,
+				51E1B4BF29AE3CB000D75669 /* Fetcher */,
+				E1CE96AB248555C30029ED73 /* Analyst.swift */,
+				514F72FD29AB682D0080DD8B /* AppUtility.swift */,
+				E1CE96AD248555E10029ED73 /* RateController.swift */,
+				E1133334248A924D00B8E67F /* Archiver.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -520,11 +525,6 @@
 			children = (
 				514C4D0C29A3416A0049E192 /* BaseResultTableViewController.swift */,
 				5120879F29A9EE2F005ED87A /* View Controller */,
-				51E1B4BF29AE3CB000D75669 /* Fetcher */,
-				E1CE96AB248555C30029ED73 /* Analyst.swift */,
-				514F72FD29AB682D0080DD8B /* AppUtility.swift */,
-				E1CE96AD248555E10029ED73 /* RateController.swift */,
-				E1133334248A924D00B8E67F /* Archiver.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
