@@ -47,14 +47,14 @@ extension ResultModel {
         AppUtility.order = order
         self.order = order
         
-        return self.sort(self.analyzedDataArray,
+        return Self.sort(self.analyzedDataArray,
                          by: self.order,
                          filteredIfNeededBy: self.searchText)
     }
     
     func setSearchTextAndFilterAnalyzedDataArray(searchText: String?) -> [AnalyzedData] {
         self.searchText = searchText
-        return self.sort(self.analyzedDataArray,
+        return Self.sort(self.analyzedDataArray,
                          by: self.order,
                          filteredIfNeededBy: self.searchText)
     }
@@ -149,7 +149,7 @@ private extension ResultModel {
                             AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                         }
                     
-                    let analyzedDataArray = self.sort(self.analyzedDataArray,
+                    let analyzedDataArray = Self.sort(self.analyzedDataArray,
                                                       by: self.order,
                                                       filteredIfNeededBy: self.searchText)
                     

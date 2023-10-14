@@ -2,18 +2,8 @@ import UIKit
 import Combine
 
 class ResultTableViewController: BaseResultTableViewController {
-    
     // MARK: - stored properties
-    
     private let model: ResultModel
-    
-    private let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
-    
-    private let order: CurrentValueSubject<BaseResultModel.Order, Never>
-    
-    private let searchText: PassthroughSubject<String, Never>
-    
-    private let refresh: PassthroughSubject<Void, Never>
     
     private var anyCancellableSet: Set<AnyCancellable>
     
@@ -25,11 +15,7 @@ class ResultTableViewController: BaseResultTableViewController {
     required init?(coder: NSCoder) {
         
         model = ResultModel()
-        
-        userSetting = CurrentValueSubject((AppUtility.numberOfDays, AppUtility.baseCurrencyCode, AppUtility.currencyCodeOfInterest))
-        order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
-        searchText = PassthroughSubject<String, Never>()
-        refresh = PassthroughSubject<Void, Never>()
+    
         anyCancellableSet = Set<AnyCancellable>()
         timerCancellable = nil
         
@@ -43,130 +29,46 @@ class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // subscribe
-        do {
-            order
-                .dropFirst()
-                .removeDuplicates()
-                .sink { [unowned self] order in
-                    AppUtility.order = order
-                    sortingBarButtonItem.menu?.children.first?.subtitle = order.localizedName
+        model.state
+            .sink { [unowned self] state in
+                switch state {
+                case .updating:
+                    updatingStatusBarButtonItem.title = R.string.resultScene.updating()
+                case .updated(let timestamp, let analyzedDataArray):
+//                    self.latestUpdateTime = timestamp
+//                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+                    populateTableViewWith(analyzedDataArray)
+                    
+                    if tableView.refreshControl?.isRefreshing == true {
+                        tableView.refreshControl?.endRefreshing()
+                    }
+                    
+                case .failure(let error):
+//                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+                    presentAlert(error: error)
+                    
+                    if tableView.refreshControl?.isRefreshing == true {
+                        tableView.refreshControl?.endRefreshing()
+                    }
                 }
-                .store(in: &anyCancellableSet)
-            
-            userSetting
-                .dropFirst()
-                .sink { numberOfDay, baseCurrency, currencyOfInterest in
-                    AppUtility.numberOfDays = numberOfDay
-                    AppUtility.baseCurrencyCode = baseCurrency
-                    AppUtility.currencyCodeOfInterest = currencyOfInterest
-                }
-                .store(in: &anyCancellableSet)
-            
-            userSetting
-                .sink { [unowned self] _ in
-                    refreshControl?.beginRefreshing()
-                    tearDownTimer()
-                }
-                .store(in: &anyCancellableSet)
-            
-            let updating = Publishers.CombineLatest(refresh, userSetting).share()
-            
-            let rateSetResult = updating
-                .handleEvents(receiveOutput: { [unowned self] _ in tearDownTimer() })
-                .flatMap { _, numberOfDayAndBaseCurrency in
-                    RateController.shared
-                        .ratePublisher(numberOfDay: numberOfDayAndBaseCurrency.numberOfDay)
-                        .convertOutputToResult()
-                        .receive(on: DispatchQueue.main)
-                }
-                .share()
-            
-            let isUpdating = Publishers.Merge(updating.map { _ in true },
-                                              rateSetResult.map { _ in false } )
-            
-            let rateSetFailure = rateSetResult
-                .resultFailure()
-                .share()
-            
-            rateSetFailure
-                .sink { [unowned self] failure in presentAlert(error: failure, handler: { [unowned self] _ in setUpTimer() }) }
-                .store(in: &anyCancellableSet)
-            
-            let rateSetSuccess = rateSetResult
-                .resultSuccess()
-                .share()
-            
-            let latestUpdateTimeString = rateSetSuccess
-                .map { rateSet in rateSet.latestRate.timestamp }
-                .map(Double.init)
-                .map(Date.init(timeIntervalSince1970:))
-                .map { $0.formatted(.relative(presentation: .named)) }
-                .prepend("-")
-                .map { R.string.resultScene.latestUpdateTime($0) }
-            
-            let updateSuccessTimeString = latestUpdateTimeString
-            
-            Publishers
-                .CombineLatest(isUpdating, latestUpdateTimeString)
-                .sink { [unowned self] isUpdating, latestUpdateTimeString in
-                    updatingStatusBarButtonItem.title = isUpdating ? R.string.resultScene.updating() : latestUpdateTimeString
-                }
-                .store(in: &anyCancellableSet)
-            
-            let analyzedDataDictionary = rateSetSuccess
-                .withLatestFrom(userSetting)
-                .map { rateSet, userSetting in
-                    return Analyst.analyze(currencyOfInterest: userSetting.currencyOfInterest,
-                                           latestRate: rateSet.latestRate,
-                                           historicalRateSet: rateSet.historicalRateSet,
-                                           baseCurrency: userSetting.baseCurrency)
-                    .compactMapValues { result in try? result.get() }
-#warning("還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿")
-                }
-            
-            let shouldPopulateTableView = Publishers.CombineLatest3(analyzedDataDictionary,
-                                                                    order.removeDuplicates(),
-                                                                    searchText.removeDuplicates())
-                .share()
-            
-            shouldPopulateTableView
-                .sink { [unowned self] analyzedDataDictionary, order, searchText  in
-//                    self.analyzedDataDictionary = analyzedDataDictionary
-//                    populateTableView(analyzedDataDictionary: analyzedDataDictionary,
-//                                      order: order,
-//                                      searchText: searchText)
-                    setUpTimer()
-                }
-                .store(in: &anyCancellableSet)
-            
-            let shouldEndRefreshingControl = Publishers.Merge(rateSetFailure.map { _ in () },
-                                                              shouldPopulateTableView.map { _ in () })
-            
-            shouldEndRefreshingControl
-                .sink { [unowned self] _ in refreshControl?.endRefreshing() }
-                .store(in: &anyCancellableSet)
-        }
-        
+            }
+            .store(in: &anyCancellableSet)
         // send initial value
         do {
             
-            searchText.send("")
-            refresh.send()
+//            model.searchText.send("")
+            model.refresh.send()
         }
     }
     
     override func setOrder(_ order: BaseResultModel.Order) {
-        self.order.send(order)
+        model.order.send(order)
     }
     
-//    override func getOrder() -> BaseResultModel.Order {
-//        order.value
-//    }
-    
-//    override func refreshControlTriggered() {
-//        refresh.send()
-//    }
+    override func requestDataFromModel() {
+        #warning("還沒實作")
+        super.requestDataFromModel()
+    }
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
         tearDownTimer()
@@ -175,8 +77,8 @@ class ResultTableViewController: BaseResultTableViewController {
         timerCancellable = timerTearDownSubject.sink { [unowned self] _ in setUpTimer() }
         
         return SettingTableViewController(coder: coder,
-                                          userSetting: userSetting.value,
-                                          settingSubscriber: AnySubscriber(userSetting),
+                                          userSetting: model.userSetting.value,
+                                          settingSubscriber: AnySubscriber(model.userSetting),
                                           cancelSubscriber: AnySubscriber(timerTearDownSubject))
     }
 }
@@ -198,10 +100,10 @@ private extension ResultTableViewController {
 // MARK: - Search Bar Delegate
 extension ResultTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.searchText.send(searchText)
+        model.searchText.send(searchText)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchText.send("")
+        model.searchText.send("")
     }
 }

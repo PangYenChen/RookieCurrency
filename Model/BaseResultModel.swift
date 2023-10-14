@@ -10,7 +10,7 @@ class BaseResultModel {
 
 // MARK: - helper method
 extension BaseResultModel {
-    final func sort(_ analyzedDataArray: [AnalyzedData],
+    static func sort(_ analyzedDataArray: [AnalyzedData],
                     by order: Order,
                     filteredIfNeededBy searchText: String?) -> [AnalyzedData] {
         analyzedDataArray
