@@ -5,12 +5,27 @@ class ResultTableViewController: BaseResultTableViewController {
     // MARK: - stored properties
     private let model: ResultModel
     
+    private let order: PassthroughSubject<ResultModel.Order, Never>
+    private let searchText: PassthroughSubject<String?, Never>
+    private let updateModelState: PassthroughSubject<Void, Never>
+    
     private var anyCancellableSet: Set<AnyCancellable>
+    
+    private var latestUpdateTime: Int?
     
     // MARK: - Methods
     required init?(coder: NSCoder) {
         
         model = ResultModel()
+        
+        order = PassthroughSubject<ResultModel.Order, Never>()
+        order.receive(subscriber: model.order)
+        
+        searchText = PassthroughSubject<String?, Never>()
+        searchText.receive(subscriber: model.searchText)
+        
+        updateModelState = PassthroughSubject<Void, Never>()
+        updateModelState.receive(subscriber: model.updateState)
         
         anyCancellableSet = Set<AnyCancellable>()
         
@@ -25,13 +40,14 @@ class ResultTableViewController: BaseResultTableViewController {
         super.viewDidLoad()
         
         model.state
+            .receive(on: DispatchQueue.main)
             .sink { [unowned self] state in
                 switch state {
                 case .updating:
                     updatingStatusBarButtonItem.title = R.string.resultScene.updating()
                 case .updated(let timestamp, let analyzedDataArray):
-                    //                    self.latestUpdateTime = timestamp
-                    //                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+                    self.latestUpdateTime = timestamp
+                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
                     populateTableViewWith(analyzedDataArray)
                     
                     if tableView.refreshControl?.isRefreshing == true {
@@ -39,7 +55,7 @@ class ResultTableViewController: BaseResultTableViewController {
                     }
                     
                 case .failure(let error):
-                    //                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
                     presentAlert(error: error)
                     
                     if tableView.refreshControl?.isRefreshing == true {
@@ -52,11 +68,11 @@ class ResultTableViewController: BaseResultTableViewController {
     }
     
     override func setOrder(_ order: BaseResultModel.Order) {
-        _ = model.order.receive(order)
+        self.order.send(order)
     }
     
     override func updateState() {
-        _ = model.updateState.receive()
+        self.updateModelState.send()
     }
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
@@ -75,10 +91,10 @@ class ResultTableViewController: BaseResultTableViewController {
 // MARK: - Search Bar Delegate
 extension ResultTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        _ = model.searchText.receive(searchText)
+        self.searchText.send(searchText)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        _ = model.searchText.receive(nil)
+        self.searchText.send(nil)
     }
 }

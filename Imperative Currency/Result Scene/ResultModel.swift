@@ -37,10 +37,10 @@ class ResultModel: BaseResultModel {
 // MARK: - internal methods
 extension ResultModel {
     func updateState(completionHandler: @escaping (BaseResultModel.State) -> Void) {
-        getRateAndAnalyzeFor(numberOfDays: self.numberOfDays,
-                             baseCurrencyCode: self.baseCurrencyCode,
-                             currencyCodeOfInterest: self.currencyCodeOfInterest,
-                             completionHandler: completionHandler)
+        analyzedDataFor(numberOfDays: self.numberOfDays,
+                        baseCurrencyCode: self.baseCurrencyCode,
+                        currencyCodeOfInterest: self.currencyCodeOfInterest,
+                        completionHandler: completionHandler)
     }
     
     func setOrderAndSortAnalyzedDataArray(order: Order) -> [AnalyzedData] {
@@ -72,18 +72,18 @@ extension ResultModel {
         AppUtility.currencyCodeOfInterest = currencyCodeOfInterest
         self.currencyCodeOfInterest = currencyCodeOfInterest
         
-        getRateAndAnalyzeFor(numberOfDays: self.numberOfDays,
-                             baseCurrencyCode: self.baseCurrencyCode,
-                             currencyCodeOfInterest: self.currencyCodeOfInterest,
-                             completionHandler: completionHandler)
+        analyzedDataFor(numberOfDays: self.numberOfDays,
+                        baseCurrencyCode: self.baseCurrencyCode,
+                        currencyCodeOfInterest: self.currencyCodeOfInterest,
+                        completionHandler: completionHandler)
     }
     
     func resumeAutoUpdatingState(completionHandler: @escaping (State) -> Void) {
         timer = Timer.scheduledTimer(withTimeInterval: autoUpdateTimeInterval, repeats: true) { [unowned self] _ in
-            getRateAndAnalyzeFor(numberOfDays: self.numberOfDays,
-                                 baseCurrencyCode: self.baseCurrencyCode,
-                                 currencyCodeOfInterest: self.currencyCodeOfInterest,
-                                 completionHandler: completionHandler)
+            analyzedDataFor(numberOfDays: self.numberOfDays,
+                            baseCurrencyCode: self.baseCurrencyCode,
+                            currencyCodeOfInterest: self.currencyCodeOfInterest,
+                            completionHandler: completionHandler)
         }
         timer?.fire()
     }
@@ -112,10 +112,10 @@ extension ResultModel {
 
 // MARK: - private method
 private extension ResultModel {
-    func getRateAndAnalyzeFor(numberOfDays: Int,
-                              baseCurrencyCode: ResponseDataModel.CurrencyCode,
-                              currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
-                              completionHandler: @escaping (BaseResultModel.State) -> Void) {
+    func analyzedDataFor(numberOfDays: Int,
+                         baseCurrencyCode: ResponseDataModel.CurrencyCode,
+                         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
+                         completionHandler: @escaping (BaseResultModel.State) -> Void) {
         completionHandler(.updating)
         
         RateController.shared.getRateFor(numberOfDays: numberOfDays) { [unowned self] result in
