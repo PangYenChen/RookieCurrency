@@ -30,7 +30,7 @@ class ResultTableViewController: BaseResultTableViewController {
         populateTableViewWith(model.setOrderAndSortAnalyzedDataArray(order: order))
     }
     
-    override func requestDataFromModel() {
+    override func updateState() {
         model.updateState(completionHandler: updateUIFor(_:))
     }
     

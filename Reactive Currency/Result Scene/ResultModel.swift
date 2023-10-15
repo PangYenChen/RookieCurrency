@@ -2,26 +2,34 @@ import Foundation
 import Combine
 
 class ResultModel: BaseResultModel {
-    #warning("要修改 access control")
+#warning("要修改 access control")
     // MARK: - input
-     let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
+    let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
     
-     let order: CurrentValueSubject<BaseResultModel.Order, Never>
+    let order: AnySubscriber<Order, Never>
     
-     let searchText: CurrentValueSubject<String?, Never>
+    let searchText: AnySubscriber<String?, Never>
     
-     let refresh: PassthroughSubject<Void, Never>
+    let updateState: AnySubscriber<Void, Never>
     
     // MARK: - output
     
     let state: AnyPublisher<State, Never>
+    
+    
     #warning("還沒實作自動更新")
     
     override init() {
         userSetting = CurrentValueSubject((AppUtility.numberOfDays, AppUtility.baseCurrencyCode, AppUtility.currencyCodeOfInterest))
-        order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
-        searchText = CurrentValueSubject<String?, Never>(nil)
-        refresh = PassthroughSubject<Void, Never>()
+        
+        let orderPublisher = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
+        order = AnySubscriber(orderPublisher)
+        
+        let searchTextPublisher = CurrentValueSubject<String?, Never>(nil)
+        searchText = AnySubscriber(searchTextPublisher)
+        
+        let updateStatePublisher = CurrentValueSubject<Void, Never>(())
+        updateState = AnySubscriber(updateStatePublisher)
         
         //
         
@@ -34,7 +42,7 @@ class ResultModel: BaseResultModel {
 //                }
 //                .store(in: &anyCancellableSet)
             
-            let updating = Publishers.CombineLatest(refresh, userSetting).share()
+            let updating = Publishers.CombineLatest(updateStatePublisher, userSetting).share()
             
             let rateSetResult = updating
 //                .handleEvents(receiveOutput: { [unowned self] _ in tearDownTimer() })
@@ -42,7 +50,7 @@ class ResultModel: BaseResultModel {
                     RateController.shared
                         .ratePublisher(numberOfDay: numberOfDayAndBaseCurrency.numberOfDay)
                         .convertOutputToResult()
-                        .receive(on: DispatchQueue.main) // 要想一下這行要放哪
+                        .receive(on: DispatchQueue.main) // 要想一下這行要放哪 應該是 view controller，因為model只有業務邏輯，沒有UI的概念
                 }
                 .share()
             
@@ -90,8 +98,8 @@ class ResultModel: BaseResultModel {
                 }
             
             let shouldPopulateTableView = Publishers.CombineLatest3(analyzedDataDictionary,
-                                                                    order.removeDuplicates(),
-                                                                    searchText.removeDuplicates())
+                                                                    orderPublisher.removeDuplicates(),
+                                                                    searchTextPublisher.removeDuplicates())
                 .share()
             
             state = shouldPopulateTableView

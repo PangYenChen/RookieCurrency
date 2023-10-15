@@ -49,7 +49,7 @@ class BaseResultTableViewController: UITableViewController {
         // refresh control
         do {
             refreshControl = UIRefreshControl()
-            let handler = UIAction { [unowned self] _ in requestDataFromModel() }
+            let handler = UIAction { [unowned self] _ in updateState() }
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
         }
         
@@ -137,7 +137,7 @@ class BaseResultTableViewController: UITableViewController {
         fatalError("select(order:) has not been implemented")
     }
     
-    func requestDataFromModel() {
+    func updateState() {
         fatalError("refreshControlTriggered()")
     }
     
