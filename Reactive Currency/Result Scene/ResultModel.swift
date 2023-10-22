@@ -2,8 +2,8 @@ import Foundation
 import Combine
 
 class ResultModel: BaseResultModel {
-#warning("要修改 access control")
-    // MARK: - input
+    // MARK: - internal properties
+    // input
     let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
     
     let order: AnySubscriber<Order, Never>
@@ -12,14 +12,16 @@ class ResultModel: BaseResultModel {
     
     let updateState: AnySubscriber<Void, Never>
     
-    // MARK: - output
-    
+    // output
     let state: AnyPublisher<State, Never>
     
+    // MARK: - private property
+    private var anyCancellableSet: Set<AnyCancellable>
     
 #warning("還沒實作自動更新")
     
     override init() {
+        // input
         userSetting = CurrentValueSubject((AppUtility.numberOfDays, AppUtility.baseCurrencyCode, AppUtility.currencyCodeOfInterest))
         
         let orderPublisher = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
@@ -31,12 +33,11 @@ class ResultModel: BaseResultModel {
         let updateStatePublisher = CurrentValueSubject<Void, Never>(())
         updateState = AnySubscriber(updateStatePublisher)
         
-        //
-        
+        // output
         do {
-            let fetchData = Publishers.CombineLatest(updateStatePublisher, userSetting).share()
+            let shouldUpdateRate = Publishers.CombineLatest(updateStatePublisher, userSetting)
             
-            let analyzedSuccessTuple = fetchData
+            let analyzedSuccessTuple = shouldUpdateRate
                 .flatMap { _, userSetting in
                     RateController.shared
                         .ratePublisher(numberOfDay: userSetting.numberOfDay)
@@ -54,15 +55,15 @@ class ResultModel: BaseResultModel {
                                 return (latestUpdateTime: rateTuple.latestRate.timestamp, analyzedDataArray: analyzedDataArray)
                             }
                         }
-                        
+                    
                 }
                 .resultSuccess()
 #warning("還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿")
             
-                        
-            let orderAndSearchText = Publishers.CombineLatest(orderPublisher.print("#####"), searchTextPublisher)
+            
+            let orderAndSearchText = Publishers.CombineLatest(orderPublisher, searchTextPublisher)
                 .map { (order: $0, searchText: $1) }
-                
+            
             
             state = Publishers.CombineLatest(analyzedSuccessTuple, orderAndSearchText)
                 .map { analyzedSuccessTuple, orderAndSearchText in
@@ -75,9 +76,22 @@ class ResultModel: BaseResultModel {
                 .eraseToAnyPublisher()
         }
         
+        anyCancellableSet = Set<AnyCancellable>()
+        
         super.init()
         
-#warning("要存 app utility")
+        userSetting
+            .dropFirst()
+            .sink { userSetting in
+                AppUtility.baseCurrencyCode = userSetting.baseCurrency
+                AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
+                AppUtility.numberOfDays = userSetting.numberOfDay
+            }
+            .store(in: &anyCancellableSet)
         
+        orderPublisher
+            .dropFirst()
+            .sink { order in AppUtility.order = order }
+            .store(in: &anyCancellableSet)        
     }
 }
