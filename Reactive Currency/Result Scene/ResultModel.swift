@@ -3,7 +3,7 @@ import Combine
 
 class ResultModel: BaseResultModel {
     // MARK: - internal properties
-    // input
+    // MARK: input
     let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
     
     let order: AnySubscriber<Order, Never>
@@ -12,13 +12,13 @@ class ResultModel: BaseResultModel {
     
     let updateState: AnySubscriber<Void, Never>
     
-    // output
+    let enableAutoUpdateState: AnySubscriber<Bool, Never>
+    
+    // MARK: output
     let state: AnyPublisher<State, Never>
     
     // MARK: - private property
     private var anyCancellableSet: Set<AnyCancellable>
-    
-#warning("還沒實作自動更新")
     
     override init() {
         // input
@@ -30,12 +30,32 @@ class ResultModel: BaseResultModel {
         let searchTextPublisher = CurrentValueSubject<String?, Never>(nil)
         searchText = AnySubscriber(searchTextPublisher)
         
-        let updateStatePublisher = CurrentValueSubject<Void, Never>(())
-        updateState = AnySubscriber(updateStatePublisher)
+        let userTriggeredStateUpdating = CurrentValueSubject<Void, Never>(())
+        updateState = AnySubscriber(userTriggeredStateUpdating)
+        
+        let enableAutoUpdateStatePublisher = CurrentValueSubject<Bool, Never>(true)
+        enableAutoUpdateState = AnySubscriber(enableAutoUpdateStatePublisher)
+        
         
         // output
         do {
-            let shouldUpdateRate = Publishers.CombineLatest(updateStatePublisher, userSetting)
+            let autoUpdateTimeInterval: TimeInterval = 5
+            
+            let autoUpdateState = enableAutoUpdateStatePublisher
+                .map { isEnable in
+                    isEnable ?
+                    Timer.publish(every: autoUpdateTimeInterval, on: RunLoop.main, in: .default)
+                        .autoconnect()
+                        .map { _ in return }
+                        .eraseToAnyPublisher() :
+                    Empty<Void, Never>()
+                        .eraseToAnyPublisher()
+                }
+                .switchToLatest()
+            
+            let updateState = Publishers.Merge(userTriggeredStateUpdating, autoUpdateState)
+            
+            let shouldUpdateRate = Publishers.CombineLatest(updateState, userSetting)
             
             let analyzedSuccessTuple = shouldUpdateRate
                 .flatMap { _, userSetting in
@@ -86,12 +106,14 @@ class ResultModel: BaseResultModel {
                 AppUtility.baseCurrencyCode = userSetting.baseCurrency
                 AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
                 AppUtility.numberOfDays = userSetting.numberOfDay
+                #warning("下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通")
+                enableAutoUpdateStatePublisher.send(true)
             }
             .store(in: &anyCancellableSet)
         
         orderPublisher
             .dropFirst()
             .sink { order in AppUtility.order = order }
-            .store(in: &anyCancellableSet)        
+            .store(in: &anyCancellableSet)
     }
 }

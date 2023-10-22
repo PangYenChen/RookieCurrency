@@ -8,6 +8,7 @@ class ResultTableViewController: BaseResultTableViewController {
     private let order: PassthroughSubject<ResultModel.Order, Never>
     private let searchText: PassthroughSubject<String?, Never>
     private let updateModelState: PassthroughSubject<Void, Never>
+    private let enableModelAutoUpdate: PassthroughSubject<Bool, Never>
     
     private var anyCancellableSet: Set<AnyCancellable>
     
@@ -26,6 +27,9 @@ class ResultTableViewController: BaseResultTableViewController {
         
         updateModelState = PassthroughSubject<Void, Never>()
         updateModelState.receive(subscriber: model.updateState)
+        
+        enableModelAutoUpdate = PassthroughSubject<Bool, Never>()
+        enableModelAutoUpdate.receive(subscriber: model.enableAutoUpdateState)
         
         anyCancellableSet = Set<AnyCancellable>()
         
@@ -76,7 +80,7 @@ class ResultTableViewController: BaseResultTableViewController {
     }
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        //        tearDownTimer()
+        self.enableModelAutoUpdate.send(false)
         
         let timerTearDownSubject = PassthroughSubject<Void, Never>()
         //        timerCancellable = timerTearDownSubject.sink { [unowned self] _ in setUpTimer() }
