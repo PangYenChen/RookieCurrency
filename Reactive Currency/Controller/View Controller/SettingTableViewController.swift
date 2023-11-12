@@ -42,7 +42,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - methods
     required init?(coder: NSCoder,
-                   userSetting: BaseResultTableViewController.UserSetting,
+                   userSetting: BaseResultModel.UserSetting,
                    settingSubscriber: AnySubscriber<(numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>), Never>,
                    cancelSubscriber: AnySubscriber<Void, Never>) {
         

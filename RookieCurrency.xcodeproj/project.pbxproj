@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		51119A1A2999D79C002758B3 /* PresentWithNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51119A192999D79C002758B3 /* PresentWithNavigationController.swift */; };
+		511E4B312AC6938A007EA1DE /* BaseResultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511E4B302AC6938A007EA1DE /* BaseResultModel.swift */; };
+		511E4B322AC6938A007EA1DE /* BaseResultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 511E4B302AC6938A007EA1DE /* BaseResultModel.swift */; };
 		5120879829A8DC71005ED87A /* DebugInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5120879729A8DC71005ED87A /* DebugInfoViewController.swift */; };
 		5120879929A8DC71005ED87A /* DebugInfoViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5120879729A8DC71005ED87A /* DebugInfoViewController.swift */; };
 		512087A329A9EE85005ED87A /* RateController + Imperative.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512087A229A9EE85005ED87A /* RateController + Imperative.swift */; };
@@ -67,6 +69,8 @@
 		51869FD829D9D31D00EFA13D /* RateControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* RateControllerTests.swift */; };
 		51869FD929D9D31D00EFA13D /* RateControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* RateControllerTests.swift */; };
 		5189F9D029DAD630004234D3 /* ImperativeRateControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5189F9CF29DAD630004234D3 /* ImperativeRateControllerTests.swift */; };
+		518F31072AD524D800146818 /* ResultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518F31062AD524D800146818 /* ResultModel.swift */; };
+		518F310E2AD58CFE00146818 /* ResultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518F310D2AD58CFE00146818 /* ResultModel.swift */; };
 		519A643829B4627500918B84 /* TestingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A643729B4627500918B84 /* TestingData.swift */; };
 		519A643929B462AE00918B84 /* TestingData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A643729B4627500918B84 /* TestingData.swift */; };
 		519BD8AA29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519BD8A929BD7E8F00D2CB29 /* EndpointProtocol.swift */; };
@@ -128,6 +132,7 @@
 
 /* Begin PBXFileReference section */
 		51119A192999D79C002758B3 /* PresentWithNavigationController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PresentWithNavigationController.swift; sourceTree = "<group>"; };
+		511E4B302AC6938A007EA1DE /* BaseResultModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResultModel.swift; sourceTree = "<group>"; };
 		5120879729A8DC71005ED87A /* DebugInfoViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DebugInfoViewController.swift; sourceTree = "<group>"; };
 		512087A229A9EE85005ED87A /* RateController + Imperative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "RateController + Imperative.swift"; sourceTree = "<group>"; };
 		512087A829A9F10A005ED87A /* Fetcher + Imperative.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Fetcher + Imperative.swift"; sourceTree = "<group>"; };
@@ -170,6 +175,8 @@
 		517CD31D2A47EE3800AB1E32 /* AnalystTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalystTest.swift; sourceTree = "<group>"; };
 		51869FD729D9D31D00EFA13D /* RateControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateControllerTests.swift; sourceTree = "<group>"; };
 		5189F9CF29DAD630004234D3 /* ImperativeRateControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImperativeRateControllerTests.swift; sourceTree = "<group>"; };
+		518F31062AD524D800146818 /* ResultModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultModel.swift; sourceTree = "<group>"; };
+		518F310D2AD58CFE00146818 /* ResultModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultModel.swift; sourceTree = "<group>"; };
 		5196E45F2AC3F2D4001D1B39 /* README_CN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README_CN.md; sourceTree = "<group>"; };
 		519A642F29B0D5D000918B84 /* ArchiverTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ArchiverTest.swift; sourceTree = "<group>"; };
 		519A643429B4615B00918B84 /* ResponseDataModelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResponseDataModelTest.swift; sourceTree = "<group>"; };
@@ -243,10 +250,22 @@
 			path = Segue;
 			sourceTree = "<group>";
 		};
+		511E4B2F2AC69314007EA1DE /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				511E4B302AC6938A007EA1DE /* BaseResultModel.swift */,
+				51E1B4BF29AE3CB000D75669 /* Fetcher */,
+				E1CE96AB248555C30029ED73 /* Analyst.swift */,
+				514F72FD29AB682D0080DD8B /* AppUtility.swift */,
+				E1CE96AD248555E10029ED73 /* RateController.swift */,
+				E1133334248A924D00B8E67F /* Archiver.swift */,
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
 		5120879F29A9EE2F005ED87A /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
-				514C4D0C29A3416A0049E192 /* BaseResultTableViewController.swift */,
 				514C4D0929A0D9FA0049E192 /* BaseSettingTableViewController.swift */,
 				514C4D0429A0D6570049E192 /* BaseCurrencyTableViewController.swift */,
 				5120879729A8DC71005ED87A /* DebugInfoViewController.swift */,
@@ -335,6 +354,24 @@
 			path = Fetcher;
 			sourceTree = "<group>";
 		};
+		518F31042AD524B600146818 /* Result Scene */ = {
+			isa = PBXGroup;
+			children = (
+				5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */,
+				518F31062AD524D800146818 /* ResultModel.swift */,
+			);
+			path = "Result Scene";
+			sourceTree = "<group>";
+		};
+		518F310B2AD58CCF00146818 /* Result Scene */ = {
+			isa = PBXGroup;
+			children = (
+				E1FB993E24FF554C0096FE2C /* ResultTableViewController.swift */,
+				518F310D2AD58CFE00146818 /* ResultModel.swift */,
+			);
+			path = "Result Scene";
+			sourceTree = "<group>";
+		};
 		51D67ED029758F07008B8928 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
@@ -410,6 +447,7 @@
 				516916B92983D4C800547B60 /* README.md */,
 				5196E45F2AC3F2D4001D1B39 /* README_CN.md */,
 				51D67ED2297591BC008B8928 /* Supporting Files */,
+				511E4B2F2AC69314007EA1DE /* Model */,
 				E1CE96A8248555530029ED73 /* Controller */,
 				E13B274424758ACB00E0A07D /* Imperative Currency */,
 				E15BA6AC24FCA66600CA5B1B /* Reactive Currency */,
@@ -439,6 +477,7 @@
 		E13B274424758ACB00E0A07D /* Imperative Currency */ = {
 			isa = PBXGroup;
 			children = (
+				518F31042AD524B600146818 /* Result Scene */,
 				512087A129A9EE5B005ED87A /* Controller */,
 				51D67ED029758F07008B8928 /* Supporting Files */,
 			);
@@ -458,6 +497,7 @@
 		E15BA6AC24FCA66600CA5B1B /* Reactive Currency */ = {
 			isa = PBXGroup;
 			children = (
+				518F310B2AD58CCF00146818 /* Result Scene */,
 				512087AB29A9F482005ED87A /* Controller */,
 				51D67ED1297590B0008B8928 /* Supporting Files */,
 			);
@@ -495,12 +535,8 @@
 		E1CE96A8248555530029ED73 /* Controller */ = {
 			isa = PBXGroup;
 			children = (
+				514C4D0C29A3416A0049E192 /* BaseResultTableViewController.swift */,
 				5120879F29A9EE2F005ED87A /* View Controller */,
-				51E1B4BF29AE3CB000D75669 /* Fetcher */,
-				E1CE96AB248555C30029ED73 /* Analyst.swift */,
-				514F72FD29AB682D0080DD8B /* AppUtility.swift */,
-				E1CE96AD248555E10029ED73 /* RateController.swift */,
-				E1133334248A924D00B8E67F /* Archiver.swift */,
 			);
 			path = Controller;
 			sourceTree = "<group>";
@@ -508,7 +544,6 @@
 		E1FB994024FF9A030096FE2C /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
-				5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */,
 				513803212998746A00D54E46 /* SettingTableViewController.swift */,
 				5138032729988BC300D54E46 /* CurrencyTableViewController.swift */,
 			);
@@ -518,7 +553,6 @@
 		E1FB994224FF9E340096FE2C /* View Controller */ = {
 			isa = PBXGroup;
 			children = (
-				E1FB993E24FF554C0096FE2C /* ResultTableViewController.swift */,
 				51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */,
 				51DF9169299FD0C100CEA5A6 /* CurrencyTableViewController.swift */,
 			);
@@ -756,6 +790,7 @@
 				514C4CFE29A07A7B0049E192 /* Publisher + Helper.swift in Sources */,
 				51119A1A2999D79C002758B3 /* PresentWithNavigationController.swift in Sources */,
 				514D69412A7003B40030138A /* AppUtility + Imperative.swift in Sources */,
+				518F31072AD524D800146818 /* ResultModel.swift in Sources */,
 				513803222998746A00D54E46 /* SettingTableViewController.swift in Sources */,
 				514F72FE29AB682D0080DD8B /* AppUtility.swift in Sources */,
 				E1133335248A924D00B8E67F /* Archiver.swift in Sources */,
@@ -779,6 +814,7 @@
 				51E1B4C429AE3DE300D75669 /* Rate.swift in Sources */,
 				E13B274824758ACB00E0A07D /* SceneDelegate.swift in Sources */,
 				5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */,
+				511E4B312AC6938A007EA1DE /* BaseResultModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -812,6 +848,7 @@
 				51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */,
 				E1FB993F24FF554C0096FE2C /* ResultTableViewController.swift in Sources */,
 				E1FB9944250084760096FE2C /* RateController.swift in Sources */,
+				518F310E2AD58CFE00146818 /* ResultModel.swift in Sources */,
 				E1FB993524FCDC270096FE2C /* Response Data Model.swift in Sources */,
 				51E0DEB5299FD4980046652B /* PresentWithNavigationController.swift in Sources */,
 				514F72FF29AB682D0080DD8B /* AppUtility.swift in Sources */,
@@ -835,6 +872,7 @@
 				51E1B4C529AE3DE300D75669 /* Rate.swift in Sources */,
 				E1FB9943250083BE0096FE2C /* Archiver.swift in Sources */,
 				512087B029A9F858005ED87A /* RateController + Reactive.swift in Sources */,
+				511E4B322AC6938A007EA1DE /* BaseResultModel.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
