@@ -110,7 +110,7 @@ final class StubFetcher: FetcherProtocol {
     
     private(set) var dateStringOfHistoricalEndpointCall: Set<String> = []
     
-    func publisher<Endpoint>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> where Endpoint : EndpointProtocol {
+    func publisher<Endpoint>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> where Endpoint: EndpointProtocol {
         if endpoint.url.path.contains("latest") {
             do {
                 let latestRate = try XCTUnwrap(TestingData.Instance.latestRate() as? Endpoint.ResponseType)
@@ -120,11 +120,13 @@ final class StubFetcher: FetcherProtocol {
                     .setFailureType(to: Error.self)
                     .eraseToAnyPublisher()
                 
-            } catch {
+            }
+            catch {
                 return Fail(error: error)
                     .eraseToAnyPublisher()
             }
-        } else {
+        }
+        else {
             let dateString = endpoint.url.lastPathComponent
             do {
                 if AppUtility.requestDateFormatter.date(from: dateString) != nil,
@@ -136,7 +138,8 @@ final class StubFetcher: FetcherProtocol {
                         .setFailureType(to: Error.self)
                         .eraseToAnyPublisher()
                 }
-            } catch {
+            }
+            catch {
                 return Fail(error: error).eraseToAnyPublisher()
             }
         }
