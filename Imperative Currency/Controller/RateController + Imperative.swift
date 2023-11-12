@@ -20,9 +20,8 @@ extension RateController {
         completionHandlerQueue: DispatchQueue = .main,
         completionHandler: @escaping (Result<(latestRate: ResponseDataModel.LatestRate,
                                               historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
-                                      Error>) -> ()
-    )
-    {
+                                      Error>) -> Void
+    ) {
         var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error> = .success([])
         
         var dateStringsOfHistoricalRateInDisk: Set<String> = []
@@ -35,10 +34,12 @@ extension RateController {
                     // rate controller 本身已經有資料了
                     historicalRateSetResult = historicalRateSetResult
                         .map { historicalRateSet in historicalRateSet.union([cacheHistoricalRate]) }
-                } else if archiver.hasFileInDisk(historicalRateDateString: historicalRateDateString) {
+                }
+                else if archiver.hasFileInDisk(historicalRateDateString: historicalRateDateString) {
                     // rate controller 沒資料，但硬碟裡有，叫 archiver 讀出來
                     dateStringsOfHistoricalRateInDisk.insert(historicalRateDateString)
-                } else {
+                }
+                else {
                     // 這台裝置上沒有資料，跟伺服器拿資料
                     dateStringsOfHistoricalRateToFetch.insert(historicalRateDateString)
                 }
@@ -88,7 +89,8 @@ extension RateController {
                             historicalRateDictionary[historicalRateDateString] = unarchivedHistoricalRate
                             dispatchGroup.leave()
                         }
-                    } catch {
+                    }
+                    catch {
                         #warning("這段需要 unit test")
                         // fall back to fetch
                         fetcher.fetch(Endpoints.Historical(dateString: historicalRateDateString)) { [unowned self] result in
@@ -130,7 +132,8 @@ extension RateController {
                 let latestRate = try latestRateResult.get()
                 let historicalRateSet = try historicalRateSetResult.get()
                 completionHandler(.success((latestRate: latestRate, historicalRateSet: historicalRateSet)))
-            } catch {
+            }
+            catch {
                 completionHandler(.failure(error))
             }
         }

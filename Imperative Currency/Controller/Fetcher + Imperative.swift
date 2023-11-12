@@ -37,37 +37,44 @@ extension Fetcher {
                     if updateAPIKeySucceed(apiKeyToBeDeprecated: apiKey) {
                         // 更新成功後重新打 api
                         fetch(endpoint, completionHandler: completionHandler)
-                    } else {
+                    }
+                    else {
                         // 沒有有效的 api key
                         completionHandler(.failure(Error.invalidAPIKey))
                         print("###, \(self), \(#function), api key 無效")
                     }
-                } else if httpURLResponse.statusCode == 429 {
+                }
+                else if httpURLResponse.statusCode == 429 {
                     // status code 是 429 表示 api key 的額度已經用完，要更新 api key 後重新打
                     if updateAPIKeySucceed(apiKeyToBeDeprecated: apiKey) {
                         // 更新成功後重新打 api
                         fetch(endpoint, completionHandler: completionHandler)
-                    } else {
+                    }
+                    else {
                         // 沒有還有額度的 api key
                         completionHandler(.failure(Error.tooManyRequest))
                         print("###, \(self), \(#function), api key 的額度用罄")
                     }
-                } else {
+                }
+                else {
                     AppUtility.prettyPrint(data)
                     // 這是一切正常的情況，將 data decode
                     do {
                         let rate = try jsonDecoder.decode(Endpoint.ResponseType.self, from: data)
                         completionHandler(.success(rate))
-                    } catch {
+                    }
+                    catch {
                         completionHandler(.failure(error))
                         print("###, \(self), \(#function), decode 失敗, \(error.localizedDescription), \(error)")
                     }
                 }
-            } else if let error {
+            }
+            else if let error {
                 // 網路錯誤，例如 timeout
                 completionHandler(.failure(error))
                 print("###", self, #function, "網路錯誤", error.localizedDescription, error)
-            } else {
+            }
+            else {
                 assertionFailure("###, \(#function), \(self), response 不是 HttpURLResponse，或者既沒有(data, httpURLResponse)，也沒有 error，常理來說都不會發生。")
                 completionHandler(.failure(Error.unknownError))
             }

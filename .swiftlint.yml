@@ -1,0 +1,18 @@
+disabled_rules:
+  - large_tuple
+  - nesting
+  - cyclomatic_complexity #要查一下這個是什麼
+  - void_function_in_ternary
+
+trailing_whitespace:
+    ignores_empty_lines: true
+
+line_length:
+    warning: 160 #要想一下這個數字
+    ignores_interpolated_strings: true
+    
+statement_position:
+    statement_mode: uncuddled_else
+    
+function_body_length:
+    warning: 100 #要想一下這個數字

@@ -11,8 +11,8 @@ class BaseResultModel {
 // MARK: - helper method
 extension BaseResultModel {
     static func sort(_ analyzedDataArray: [AnalyzedData],
-                    by order: Order,
-                    filteredIfNeededBy searchText: String?) -> [AnalyzedData] {
+                     by order: Order,
+                     filteredIfNeededBy searchText: String?) -> [AnalyzedData] {
         analyzedDataArray
             .sorted { lhs, rhs in
                 switch order {
@@ -25,7 +25,7 @@ extension BaseResultModel {
             .filter { analyzedData in
                 guard let searchText, !searchText.isEmpty else { return true }
                 
-                return [analyzedData.currencyCode, 
+                return [analyzedData.currencyCode,
                         Locale.autoupdatingCurrent.localizedString(forCurrencyCode: analyzedData.currencyCode)]
                     .compactMap { $0 }
                     .contains { text in text.localizedStandardContains(searchText) }

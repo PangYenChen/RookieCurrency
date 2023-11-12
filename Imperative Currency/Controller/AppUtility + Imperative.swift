@@ -10,7 +10,8 @@ extension AppUtility {
         
         if let supportedSymbols {
             completionHandler(.success(supportedSymbols))
-        } else {
+        }
+        else {
             completionHandlers.append(completionHandler)
             
             guard !isFetching else { return }
