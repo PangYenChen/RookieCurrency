@@ -6,7 +6,6 @@ import Foundation
 @testable import ReactiveCurrency
 #endif
 
-
 extension TestDouble {
     enum SpyArchiver: ArchiverProtocol {
         
@@ -27,7 +26,6 @@ extension TestDouble {
             
             archivedFileNames.append(historicalRate.dateString)
         }
-        
         
         static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
             numberOfUnarchiveCall += 1

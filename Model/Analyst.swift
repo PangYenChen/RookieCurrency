@@ -20,7 +20,8 @@ enum Analyst {
             
             if let convertedHistoricalRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
                 mean += convertedHistoricalRateForCurrencyCode
-            } else {
+            }
+            else {
                 meanResultDictionary[currencyCode] = .failure(.dataAbsent)
                 continue outer
             }
@@ -38,8 +39,9 @@ enum Analyst {
                 
                 if let convertedLatestRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
                     let deviation = (convertedLatestRateForCurrencyCode - mean) / mean
-                    return .success((latest: convertedLatestRateForCurrencyCode , mean: mean, deviation: deviation))
-                } else {
+                    return .success((latest: convertedLatestRateForCurrencyCode, mean: mean, deviation: deviation))
+                }
+                else {
                     return .failure(.dataAbsent)
                 }
             }

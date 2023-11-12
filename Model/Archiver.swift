@@ -47,7 +47,8 @@ extension Archiver {
             
             return historicalRate
             
-        } catch {
+        }
+        catch {
             try? FileManager.default.removeItem(at: url)
             throw error
         }

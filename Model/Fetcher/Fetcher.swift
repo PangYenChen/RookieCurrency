@@ -82,13 +82,15 @@ extension Fetcher {
                 if unusedAPIKeys.isEmpty {
                     // 已經沒有 api key 可以用了。
                     return false
-                } else {
+                }
+                else {
                     // 已經換上新的 api key，需要從打一次 api
                     usedAPIKeys.insert(usingAPIKey)
                     usingAPIKey = unusedAPIKeys.removeFirst()
                     return true
                 }
-            } else {
+            }
+            else {
                 // 要被換掉的 api key 已經被其他隻 api 換掉了
                 return true
             }
@@ -98,8 +100,6 @@ extension Fetcher {
     func getUsingAPIKey() -> String {
         concurrentQueue.sync { usingAPIKey }
     }
-    
-    
 }
 
 // MARK: - name space

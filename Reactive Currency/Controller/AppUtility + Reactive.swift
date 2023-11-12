@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-extension AppUtility{
+extension AppUtility {
     
     private static var wrappedSupportedSymbols: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error>?
 #warning("這裡應該會有同時性問題，等我讀完 concurrency 之後再處理")
@@ -11,10 +11,12 @@ extension AppUtility{
             return Just(supportedSymbols)
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
-        } else {
+        }
+        else {
             if let wrappedSupportedSymbols {
                 return wrappedSupportedSymbols
-            } else {
+            }
+            else {
                 let wrappedSupportedSymbols = Fetcher.shared.publisher(for: Endpoints.SupportedSymbols())
                     .map { $0.symbols }
                     .handleEvents(

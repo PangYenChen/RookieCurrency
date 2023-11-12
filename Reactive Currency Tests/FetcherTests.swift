@@ -411,10 +411,10 @@ class FetcherTests: XCTestCase {
             let expectedCompletion = try XCTUnwrap(expectedCompletion)
             
             switch expectedCompletion {
-                case .finished:
-                    break
-                case .failure(let error):
-                    XCTFail("should not receive any error, but receive: \(error)")
+            case .finished:
+                break
+            case .failure(let error):
+                XCTFail("should not receive any error, but receive: \(error)")
             }
         }
         
@@ -456,7 +456,6 @@ class FetcherTests: XCTestCase {
             )
             .store(in: &anyCancellableSet)
 
-
         do {
             let tooManyRequestTuple = try XCTUnwrap(TestingData.SessionData.tooManyRequest())
             
@@ -467,7 +466,8 @@ class FetcherTests: XCTestCase {
             if let firstOutPutSubject = spyAPIKeySession.outputSubjects.first {
                 firstOutPutSubject.send((data, response))
                 firstOutPutSubject.send(completion: .finished)
-            } else {
+            }
+            else {
                 XCTFail("arrange 失誤，第一次 subscribe `sut.publisher(for:)` 應該會給 subscribe spy api key session，進而產生一個 subject")
             }
             // session publish 第二個 output
@@ -475,7 +475,8 @@ class FetcherTests: XCTestCase {
                 let secondOutPutSubject = spyAPIKeySession.outputSubjects[1]
                 secondOutPutSubject.send((data, response))
                 secondOutPutSubject.send(completion: .finished)
-            } else {
+            }
+            else {
                 XCTFail("arrange 失誤，第二次 subscribe `sut.publisher(for:)` 應該會給 subscribe spy api key session，進而產生第二個 subject")
             }
             
@@ -483,8 +484,7 @@ class FetcherTests: XCTestCase {
             XCTAssertNil(firstExpectedValue)
             XCTAssertNil(secondExpectedValue)
         }
-
-
+        
         do {
             let latestRateTuple = try TestingData.SessionData.latestRate()
             
@@ -496,7 +496,8 @@ class FetcherTests: XCTestCase {
                 let thirdOutPutSubject = spyAPIKeySession.outputSubjects[2]
                 thirdOutPutSubject.send((data, response))
                 thirdOutPutSubject.send(completion: .finished)
-            } else {
+            }
+            else {
                 XCTFail("arrange 失誤， spy api key session 針對 fetcher 第一次的 subscribe publish too many request 的 error，fetcher 換完 api key 後會重新 subscribe spy api key session，這時候應該要產生第三個 subject。")
             }
             
@@ -505,7 +506,8 @@ class FetcherTests: XCTestCase {
                 let fourthOutPutSubject = spyAPIKeySession.outputSubjects[3]
                 fourthOutPutSubject.send((data, response))
                 fourthOutPutSubject.send(completion: .finished)
-            } else {
+            }
+            else {
                 XCTFail("arrange 失誤， spy api key session 針對 fetcher 第二次的 subscribe publish too many request 的 error，fetcher 換完 api key 後會重新 subscribe spy api key session，這時候應該要產生第四個 subject。")
             }
         }
@@ -514,7 +516,8 @@ class FetcherTests: XCTestCase {
         if spyAPIKeySession.receivedAPIKeys.count == 4 {
             XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[0], spyAPIKeySession.receivedAPIKeys[1])
             XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[2], spyAPIKeySession.receivedAPIKeys[3])
-        } else {
+        }
+        else {
             XCTFail("spy api key session 應該要剛好收到 4 個 request")
         }
 
@@ -546,11 +549,12 @@ class FetcherTests: XCTestCase {
 
 // MARK: - private helper method
 private extension FetcherTests {
-    func sessionDataPublisher(_ tuple:(data: Data?, response: URLResponse?, error: Error?)) throws -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+    func sessionDataPublisher(_ tuple: (data: Data?, response: URLResponse?, error: Error?)) throws -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
         if let urlError = tuple.error as? URLError {
             return Fail(error: urlError)
                 .eraseToAnyPublisher()
-        } else {
+        }
+        else {
             let data = try XCTUnwrap(tuple.data)
             let response = try XCTUnwrap(tuple.response)
             
@@ -591,12 +595,12 @@ private class SpyRateSession: RateSession {
             return Empty()
                 .setFailureType(to: URLError.self)
                 .eraseToAnyPublisher()
-        } else {
+        }
+        else {
             return outputPublishers.removeFirst()
         }
     }
 }
-
 
 private final class SpyAPIKeyRateSession: RateSession {
     private(set) var receivedAPIKeys: [String]

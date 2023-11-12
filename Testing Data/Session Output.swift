@@ -7,7 +7,6 @@ extension TestingData {
             let data = TestingData.latestData
             let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
             
-            
             let response = HTTPURLResponse(url: url,
                                            statusCode: 200,
                                            httpVersion: nil,

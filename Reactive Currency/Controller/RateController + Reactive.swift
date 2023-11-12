@@ -14,16 +14,16 @@ extension Fetcher: FetcherProtocol {}
 extension RateController {
     
     func ratePublisher(numberOfDay: Int, from start: Date = .now)
-    -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error>
-    {
+    -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> {
         historicalRateDateStrings(numberOfDaysAgo: numberOfDay, from: start)
             .publisher
             .flatMap { [unowned self] dateString -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> in
-                if let cacheHistoricalRate = concurrentQueue.sync(execute: { historicalRateDictionary[dateString] })  {
+                if let cacheHistoricalRate = concurrentQueue.sync(execute: { historicalRateDictionary[dateString] }) {
                     return Just(cacheHistoricalRate)
                         .setFailureType(to: Error.self)
                         .eraseToAnyPublisher()
-                } else if archiver.hasFileInDisk(historicalRateDateString: dateString) {
+                }
+                else if archiver.hasFileInDisk(historicalRateDateString: dateString) {
                     return Future<ResponseDataModel.HistoricalRate, Error> { [unowned self] promise in
                         concurrentQueue.async(qos: .userInitiated) { [unowned self] in
                             do {
@@ -32,7 +32,8 @@ extension RateController {
                                     historicalRateDictionary[unarchivedHistoricalRate.dateString] = unarchivedHistoricalRate
                                 }
                                 promise(.success(unarchivedHistoricalRate))
-                            } catch {
+                            }
+                            catch {
                                 promise(.failure(error))
                             }
                         }
@@ -49,7 +50,8 @@ extension RateController {
                             )
                     }
                     .eraseToAnyPublisher()
-                } else {
+                }
+                else {
                     return fetcher.publisher(for: Endpoints.Historical(dateString: dateString))
                         .handleEvents(
                             receiveOutput: { [unowned self] historicalRate in

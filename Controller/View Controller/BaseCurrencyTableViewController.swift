@@ -214,7 +214,8 @@ class BaseCurrencyTableViewController: UITableViewController {
                     case .descending:
                         return lhsString.localizedStandardCompare(rhsString) == .orderedDescending
                     }
-                } else if sortingMethod == .currencyNameZhuyin {
+                }
+                else if sortingMethod == .currencyNameZhuyin {
                     let zhuyinLocale = Locale(identifier: "zh@collation=zhuyin")
                     switch sortingOrder {
                     case .ascending:
@@ -222,7 +223,8 @@ class BaseCurrencyTableViewController: UITableViewController {
                     case .descending:
                         return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedDescending
                     }
-                } else {
+                }
+                else {
                     assertionFailure("###, \(self), \(#function), 這段是 dead code")
                     return false
                 }
@@ -265,7 +267,7 @@ class BaseCurrencyTableViewController: UITableViewController {
                 // scroll to first selected index path when first time receiving data
                 if isFirstTimePopulate {
                     
-                    if let firstSelectedIndexPath = selectedIndexPath.min()  {
+                    if let firstSelectedIndexPath = selectedIndexPath.min() {
                         tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
                     }
                     else {

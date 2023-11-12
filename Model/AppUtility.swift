@@ -24,7 +24,8 @@ extension AppUtility {
         get {
             if let baseCurrencyCode = UserDefaults.standard.string(forKey: Key.baseCurrencyCode.rawValue) {
                 return baseCurrencyCode
-            } else {
+            }
+            else {
                 return "TWD"
             }
         }
@@ -38,7 +39,8 @@ extension AppUtility {
             if let orderString = UserDefaults.standard.string(forKey: Key.order.rawValue),
                let order = BaseResultModel.Order(rawValue: orderString) {
                 return order
-            } else {
+            }
+            else {
                 return .increasing
             }
         }
@@ -51,7 +53,8 @@ extension AppUtility {
         get {
             if let currencyCodeOfInterest = UserDefaults.standard.stringArray(forKey: Key.currencyCodeOfInterest.rawValue) {
                 return Set(currencyCodeOfInterest)
-            } else {
+            }
+            else {
                 // 預設值為強勢貨幣(Hard Currency)
                 return ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
             }
@@ -87,7 +90,8 @@ extension AppUtility {
            let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted) {
             let jsonString = String(decoding: jsonData, as: UTF8.self)
             print("###", self, #function, "拿到 json:\n", jsonString)
-        } else {
+        }
+        else {
             print("###", self, #function, "json 格式無效")
         }
     }

@@ -1,0 +1,25 @@
+disabled_rules:
+  - large_tuple
+  - nesting
+  - cyclomatic_complexity #要查一下這個是什麼
+  - void_function_in_ternary
+
+trailing_whitespace:
+    ignores_empty_lines: true
+
+line_length:
+    warning: 180 #要想一下這個數字
+    ignores_interpolated_strings: true
+    
+statement_position:
+    statement_mode: uncuddled_else
+    
+function_body_length:
+    warning: 200 #要想一下這個數字
+    
+type_body_length:
+    warning: 600 # test case 的檔案很長，看要不要拆開
+    
+file_length:
+    warning: 700 # test case 的檔案很長，看要不要拆開
+    

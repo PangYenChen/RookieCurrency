@@ -5,7 +5,6 @@ import XCTest
 @testable import ReactiveCurrency
 #endif
 
-
 final class AnalystTest: XCTestCase {
     
     /// 測試一切正常運作的 test method

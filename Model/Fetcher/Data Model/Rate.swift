@@ -36,7 +36,7 @@ extension ResponseDataModel {
             case date, timestamp, rates
         }
         
-        private init(dateString: String, timestamp: Int, rates: [String : Decimal]) {
+        private init(dateString: String, timestamp: Int, rates: [String: Decimal]) {
             self.dateString = dateString
             self.timestamp = timestamp
             self.rates = rates

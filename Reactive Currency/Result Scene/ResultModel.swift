@@ -36,7 +36,6 @@ class ResultModel: BaseResultModel {
         let enableAutoUpdateStatePublisher = CurrentValueSubject<Bool, Never>(true)
         enableAutoUpdateState = AnySubscriber(enableAutoUpdateStatePublisher)
         
-        
         // output
         do {
             let autoUpdateTimeInterval: TimeInterval = 5
@@ -80,10 +79,8 @@ class ResultModel: BaseResultModel {
                 .resultSuccess()
 #warning("還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿")
             
-            
             let orderAndSearchText = Publishers.CombineLatest(orderPublisher, searchTextPublisher)
                 .map { (order: $0, searchText: $1) }
-            
             
             state = Publishers.CombineLatest(analyzedSuccessTuple, orderAndSearchText)
                 .map { analyzedSuccessTuple, orderAndSearchText in
