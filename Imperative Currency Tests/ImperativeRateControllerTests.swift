@@ -1,7 +1,6 @@
 import XCTest
 @testable import ImperativeCurrency
 
-
 final class ImperativeRateControllerTests: XCTestCase {
 
     var sut: RateController!
@@ -41,7 +40,7 @@ final class ImperativeRateControllerTests: XCTestCase {
             let expectedResult = try XCTUnwrap(expectedResult)
             
             switch expectedResult {
-            case .success(let (_ , historicalRateSet)):
+            case .success(let (_, historicalRateSet)):
                 XCTAssertEqual(historicalRateSet.count, numberOfDays)
             case .failure(let failure):
                 XCTFail("should not receive any failure but receive: \(failure)")
@@ -107,18 +106,21 @@ final class StubFetcher: FetcherProtocol {
     
     private(set) var dateStringOfHistoricalEndpointCall: Set<String> = []
     
-    func fetch<Endpoint>(_ endpoint: Endpoint, completionHandler: @escaping (Result<Endpoint.ResponseType, Error>) -> Void) where Endpoint: ImperativeCurrency.EndpointProtocol {
-        
+    func fetch<Endpoint>(_ endpoint: Endpoint,
+                         completionHandler: @escaping (Result<Endpoint.ResponseType, Error>) -> Void)
+    where Endpoint: ImperativeCurrency.EndpointProtocol {
         if endpoint.url.path.contains("latest") {
             do {
                 let latestRate = try XCTUnwrap(TestingData.Instance.latestRate() as? Endpoint.ResponseType)
                 numberOfLatestEndpointCall += 1
                 
                 completionHandler(.success(latestRate))
-            } catch {
+            }
+            catch {
                 completionHandler(.failure(error))
             }
-        } else {
+        }
+        else {
             let dateString = endpoint.url.lastPathComponent
             do {
                 if AppUtility.requestDateFormatter.date(from: dateString) != nil,
@@ -127,10 +129,12 @@ final class StubFetcher: FetcherProtocol {
                     dateStringOfHistoricalEndpointCall.insert(dateString)
                     
                     completionHandler(.success(historicalRate))
-                } else {
+                }
+                else {
                     completionHandler(.failure(Fetcher.Error.unknownError))
                 }
-            } catch {
+            }
+            catch {
                 completionHandler(.failure(error))
                 
             }

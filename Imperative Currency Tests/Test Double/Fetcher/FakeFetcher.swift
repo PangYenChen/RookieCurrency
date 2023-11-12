@@ -7,7 +7,7 @@ final class FakeFetcher: FetcherProtocol {
     func fetch<Endpoint: EndpointProtocol>(
         _ endpoint: Endpoint,
         completionHandler: @escaping (Result<Endpoint.ResponseType, Swift.Error>) -> Void
-    ){
+    ) {
         // This is a fake instance, and any of it's method should not be called.
         
         numberOfMethodCall += 1

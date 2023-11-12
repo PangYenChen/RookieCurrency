@@ -596,6 +596,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				510D17C72B00CD23007D9032 /* PBXTargetDependency */,
 				E13B275A24758ACF00E0A07D /* PBXTargetDependency */,
 			);
 			name = ImperativeCurrencyTests;
@@ -901,6 +902,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		510D17C72B00CD23007D9032 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 510D17C62B00CD23007D9032 /* SwiftLintPlugin */;
+		};
 		51433D35298FD7D800F2B4E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = 51433D34298FD7D800F2B4E6 /* RswiftGenerateInternalResources */;
@@ -1631,6 +1636,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		510D17C62B00CD23007D9032 /* SwiftLintPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintPlugin";
+		};
 		51433D32298FD7BF00F2B4E6 /* RswiftLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 51433D31298FD7BF00F2B4E6 /* XCRemoteSwiftPackageReference "R" */;

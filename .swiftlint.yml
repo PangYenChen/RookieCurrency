@@ -1,3 +1,6 @@
+excluded:
+  - Testing Data
+
 disabled_rules:
   - large_tuple
   - nesting
@@ -15,4 +18,11 @@ statement_position:
     statement_mode: uncuddled_else
     
 function_body_length:
-    warning: 100 #要想一下這個數字
+    warning: 200 #要想一下這個數字
+    
+type_body_length:
+    warning: 600 # test case 的檔案很長，看要不要拆開
+    
+file_length:
+    warning: 500 # test case 的檔案很長，看要不要拆開
+    
