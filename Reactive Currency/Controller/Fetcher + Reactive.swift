@@ -35,29 +35,34 @@ extension Fetcher {
                                 // 更新完 api key 後重新打 api
                                 return dataTaskPublisherWithLimitHandling(for: endpoint)
                                     .eraseToAnyPublisher()
-                            } else {
+                            }
+                            else {
                                 // 沒有有效 api key 可用
                                 return Fail(error: Fetcher.Error.invalidAPIKey)
                                     .eraseToAnyPublisher()
                             }
-                        } else if httpURLResponse.statusCode == 429 {
+                        }
+                        else if httpURLResponse.statusCode == 429 {
                             // server 回應 status code 429，表示 api key 額度用完
                             if updateAPIKeySucceed(apiKeyToBeDeprecated: apiKey) {
                                 // 更新完 api key 後重新打 api
                                 return dataTaskPublisherWithLimitHandling(for: endpoint)
                                     .eraseToAnyPublisher()
-                            } else {
+                            }
+                            else {
                                 // 已經沒有還有額度的 api key 可以用了
                                 return Fail(error: Fetcher.Error.tooManyRequest)
                                     .eraseToAnyPublisher()
                             }
-                        } else {
+                        }
+                        else {
                             // 這是一切都正常的情況，把 data 跟 response 往下傳
                             return Just((data: data, response: response))
                                 .setFailureType(to: Swift.Error.self)
                                 .eraseToAnyPublisher()
                         }
-                    } else {
+                    }
+                    else {
                         assertionFailure("###, \(#function), \(self), response 不是 HttpURLResponse，常理來說都不會發生。")
                         return Fail(error: Error.unknownError)
                             .eraseToAnyPublisher()

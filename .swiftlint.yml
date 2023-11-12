@@ -11,7 +11,7 @@ trailing_whitespace:
     ignores_empty_lines: true
 
 line_length:
-    warning: 160 #要想一下這個數字
+    warning: 180 #要想一下這個數字
     ignores_interpolated_strings: true
     
 statement_position:

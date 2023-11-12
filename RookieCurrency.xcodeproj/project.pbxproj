@@ -616,6 +616,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				510D17CD2B00D3FC007D9032 /* PBXTargetDependency */,
 				51433D38298FD8AC00F2B4E6 /* PBXTargetDependency */,
 			);
 			name = ReactiveCurrency;
@@ -637,6 +638,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				510D17CF2B00D401007D9032 /* PBXTargetDependency */,
 				E15BA6C224FCA66900CA5B1B /* PBXTargetDependency */,
 			);
 			name = ReactiveCurrencyTests;
@@ -905,6 +907,14 @@
 		510D17C72B00CD23007D9032 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = 510D17C62B00CD23007D9032 /* SwiftLintPlugin */;
+		};
+		510D17CD2B00D3FC007D9032 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 510D17CC2B00D3FC007D9032 /* SwiftLintPlugin */;
+		};
+		510D17CF2B00D401007D9032 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 510D17CE2B00D401007D9032 /* SwiftLintPlugin */;
 		};
 		51433D35298FD7D800F2B4E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -1637,6 +1647,16 @@
 
 /* Begin XCSwiftPackageProductDependency section */
 		510D17C62B00CD23007D9032 /* SwiftLintPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintPlugin";
+		};
+		510D17CC2B00D3FC007D9032 /* SwiftLintPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintPlugin";
+		};
+		510D17CE2B00D401007D9032 /* SwiftLintPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
 			productName = "plugin:SwiftLintPlugin";
