@@ -1,8 +1,8 @@
 import UIKit
 
 class BaseSettingTableViewController: UITableViewController, AlertPresenter {
-    
     // MARK: - properties
+    // MARK: UI objects
     @IBOutlet weak var saveButton: UIBarButtonItem!
     
     @IBOutlet weak var sectionFooterView: UIView!
@@ -12,17 +12,15 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     @IBOutlet weak var versionLabel: UILabel!
     
     @IBOutlet weak var dateLabel: UILabel!
-    
-    var editedNumberOfDayString: String { fatalError("editedNumberOfDayString has not been implemented") }
-    
-    var editedBaseCurrencyString: String { fatalError("editedBaseCurrencyString has not been implemented") }
-    
-    var editedCurrencyOfInterestString: String { fatalError("editedCurrencyOfInterestString has not been implemented") }
+    // MARK: property
+    private let model: BaseSettingModel
     
     // MARK: - methods
-    required init?(coder: NSCoder) {
+    required init?(coder: NSCoder, model: BaseSettingModel) {
         
         stepper = UIStepper()
+        
+        self.model = model
         
         super.init(coder: coder)
         
@@ -33,6 +31,10 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         }
         
         title = R.string.settingScene.setting()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -149,17 +151,17 @@ extension BaseSettingTableViewController {
             switch row {
             case .numberOfDay:
                 contentConfiguration.text = R.string.settingScene.numberOfConsideredDay()
-                contentConfiguration.secondaryText = editedNumberOfDayString
+                contentConfiguration.secondaryText = model.editedNumberOfDaysString
                 contentConfiguration.image = UIImage(systemName: "calendar")
                 cell.accessoryView = stepper
             case .baseCurrency:
                 contentConfiguration.text = R.string.share.baseCurrency()
-                contentConfiguration.secondaryText = editedBaseCurrencyString
+                contentConfiguration.secondaryText = model.editedBaseCurrencyString
                 contentConfiguration.image = UIImage(systemName: "dollarsign.circle")
                 cell.accessoryType = .disclosureIndicator
             case .currencyOfInterest:
                 contentConfiguration.text = R.string.share.currencyOfInterest()
-                contentConfiguration.secondaryText = editedCurrencyOfInterestString
+                contentConfiguration.secondaryText = model.editedCurrencyOfInterestString
                 contentConfiguration.image = UIImage(systemName: "checklist")
                 cell.accessoryType = .disclosureIndicator
             case .language:
