@@ -82,13 +82,8 @@ class ResultTableViewController: BaseResultTableViewController {
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
         self.enableModelAutoUpdate.send(false)
         
-        let timerTearDownSubject = PassthroughSubject<Void, Never>()
-        //        timerCancellable = timerTearDownSubject.sink { [unowned self] _ in setUpTimer() }
-        
         return SettingTableViewController(coder: coder,
-                                          userSetting: model.userSetting.value,
-                                          settingSubscriber: AnySubscriber(model.userSetting),
-                                          cancelSubscriber: AnySubscriber(timerTearDownSubject))
+                                          model: model.settingModel())
     }
 }
 

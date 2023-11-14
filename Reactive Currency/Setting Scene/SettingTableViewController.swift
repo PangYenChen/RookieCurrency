@@ -5,53 +5,50 @@ class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - properties
     private let model: SettingModel
     
+    // MARK: override super class' computed properties
+    override var editedNumberOfDays: Int { model.editedNumberOfDays.value }
+    
+    override var editedNumberOfDaysString: String { String(editedNumberOfDays) }
+    
+    override var editedBaseCurrencyString: String {
+        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: model.editedBaseCurrency.value) ??
+        AppUtility.supportedSymbols?[model.editedBaseCurrency.value] ??
+        model.editedBaseCurrency.value
+    }
+    
+    override var editedCurrencyOfInterestString: String {
+        let editedCurrencyDisplayString = model.editedCurrencyOfInterest.value
+            .map { currencyCode in
+                Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ??
+                AppUtility.supportedSymbols?[currencyCode] ??
+                currencyCode
+            }
+            .sorted()
+        
+        return ListFormatter.localizedString(byJoining: editedCurrencyDisplayString)
+    }
+    
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - methods
     required init?(coder: NSCoder,
-                   userSetting: BaseResultModel.UserSetting,
-                   settingSubscriber: AnySubscriber<(numberOfDay: Int,
-                                                     baseCurrency: ResponseDataModel.CurrencyCode,
-                                                     currencyOfInterest: Set<ResponseDataModel.CurrencyCode>), Never>,
-                   cancelSubscriber: AnySubscriber<Void, Never>) {
-        // TODO: 要由 init 這個 class 的 client 傳入 model
-        model = SettingModel(userSetting: userSetting,
-                             settingSubscriber: settingSubscriber,
-                             cancelSubscriber: cancelSubscriber)
+                   model: SettingModel) {
+        self.model = model
         
         anyCancellableSet = Set<AnyCancellable>()
         
-        super.init(coder: coder, model: model)
-        
-        stepper.value = Double(userSetting.numberOfDay)
+        super.init(coder: coder)
+    }
+    
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
         model.didTapCancelButtonSubject
             .withLatestFrom(model.hasChanges)
             .sink { [unowned self] _, hasChanges in hasChanges ? presentCancelAlert(showingSave: false) : cancel() }
             .store(in: &anyCancellableSet)
-        
-        model.didTapSaveButtonSubject
-            .withLatestFrom(model.editedNumberOfDays)
-            .map { $1 }
-            .withLatestFrom(model.editedBaseCurrency)
-            .withLatestFrom(model.editedCurrencyOfInterest)
-            .map { (numberOfDay: $0.0, baseCurrency: $0.1, currencyOfInterest: $1) }
-            .subscribe(settingSubscriber)
-        
-        model.cancelSubject
-            .subscribe(cancelSubscriber)
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    required init?(coder: NSCoder, model: BaseSettingModel) {
-        fatalError("init(coder:model:) has not been implemented")
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
         
         model.editedNumberOfDays
             .dropFirst()
@@ -69,7 +66,7 @@ class SettingTableViewController: BaseSettingTableViewController {
                     return
                 }
                 
-                contentConfiguration.secondaryText = model.editedNumberOfDaysString
+                contentConfiguration.secondaryText = editedNumberOfDaysString
                 
                 cell.contentConfiguration = contentConfiguration
             }

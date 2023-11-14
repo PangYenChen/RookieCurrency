@@ -1,28 +1,7 @@
 import Foundation
 import Combine
 
-class SettingModel: BaseSettingModel {
-    // MARK: - override super class' computed properties
-    override var editedNumberOfDaysString: String { String(editedNumberOfDays.value) }
-    
-    override var editedBaseCurrencyString: String {
-        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: editedBaseCurrency.value) ??
-        AppUtility.supportedSymbols?[editedBaseCurrency.value] ??
-        editedBaseCurrency.value
-    }
-    
-    override var editedCurrencyOfInterestString: String {
-        let editedCurrencyDisplayString = editedCurrencyOfInterest.value
-            .map { currencyCode in
-                Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ??
-                AppUtility.supportedSymbols?[currencyCode] ??
-                currencyCode
-            }
-            .sorted()
-        
-        return ListFormatter.localizedString(byJoining: editedCurrencyDisplayString)
-    }
-    
+class SettingModel {
     let editedNumberOfDays: CurrentValueSubject<Int, Never>
     
     let editedBaseCurrency: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
@@ -64,6 +43,17 @@ class SettingModel: BaseSettingModel {
         
         didTapSaveButtonSubject = PassthroughSubject<Void, Never>()
         
+        // finish initialization
+        
+        didTapSaveButtonSubject
+            .withLatestFrom(editedNumberOfDays)
+            .map { $1 }
+            .withLatestFrom(editedBaseCurrency)
+            .withLatestFrom(editedCurrencyOfInterest)
+            .map { (numberOfDay: $0.0, baseCurrency: $0.1, currencyOfInterest: $1) }
+            .subscribe(settingSubscriber)
+        
+        cancelSubject
+            .subscribe(cancelSubscriber)
     }
-    
 }

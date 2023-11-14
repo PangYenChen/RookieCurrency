@@ -114,3 +114,12 @@ class ResultModel: BaseResultModel {
             .store(in: &anyCancellableSet)
     }
 }
+
+// MARK: - internal method
+extension ResultModel {
+    func settingModel() -> SettingModel {
+        SettingModel(userSetting: userSetting.value,
+                     settingSubscriber: AnySubscriber(userSetting),
+                     cancelSubscriber: AnySubscriber<Void, Never>())
+    }
+}

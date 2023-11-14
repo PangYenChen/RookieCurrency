@@ -2,25 +2,28 @@ import UIKit
 
 class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - properties
-    // MARK: UI objects
-    @IBOutlet weak var saveButton: UIBarButtonItem!
+    var editedNumberOfDays: Int { fatalError("editedNumberOfDays has not been implemented") }
     
-    @IBOutlet weak var sectionFooterView: UIView!
+    var editedNumberOfDaysString: String { fatalError("editedNumberOfDayString has not been implemented") }
+    
+    var editedBaseCurrencyString: String { fatalError("editedBaseCurrencyString has not been implemented") }
+    
+    var editedCurrencyOfInterestString: String { fatalError("editedCurrencyOfInterestString has not been implemented") }
+    // MARK: UI objects
+    @IBOutlet var saveButton: UIBarButtonItem!
+    
+    @IBOutlet private var sectionFooterView: UIView!
     
     let stepper: UIStepper
     
-    @IBOutlet weak var versionLabel: UILabel!
+    @IBOutlet private var versionLabel: UILabel!
     
-    @IBOutlet weak var dateLabel: UILabel!
-    // MARK: property
-    private let model: BaseSettingModel
+    @IBOutlet private var dateLabel: UILabel!
     
     // MARK: - methods
-    required init?(coder: NSCoder, model: BaseSettingModel) {
+    required init?(coder: NSCoder) {
         
         stepper = UIStepper()
-        
-        self.model = model
         
         super.init(coder: coder)
         
@@ -31,10 +34,6 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         }
         
         title = R.string.settingScene.setting()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -81,7 +80,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         dismiss(animated: true)
     }
     
-    func presentCancelAlert(showingSave: Bool) {
+    final func presentCancelAlert(showingSave: Bool) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         // 儲存的 action，只有在下拉的時候加上這個 action。
@@ -151,17 +150,18 @@ extension BaseSettingTableViewController {
             switch row {
             case .numberOfDay:
                 contentConfiguration.text = R.string.settingScene.numberOfConsideredDay()
-                contentConfiguration.secondaryText = model.editedNumberOfDaysString
+                contentConfiguration.secondaryText = editedNumberOfDaysString
                 contentConfiguration.image = UIImage(systemName: "calendar")
+                stepper.value = Double(editedNumberOfDays)
                 cell.accessoryView = stepper
             case .baseCurrency:
                 contentConfiguration.text = R.string.share.baseCurrency()
-                contentConfiguration.secondaryText = model.editedBaseCurrencyString
+                contentConfiguration.secondaryText = editedBaseCurrencyString
                 contentConfiguration.image = UIImage(systemName: "dollarsign.circle")
                 cell.accessoryType = .disclosureIndicator
             case .currencyOfInterest:
                 contentConfiguration.text = R.string.share.currencyOfInterest()
-                contentConfiguration.secondaryText = model.editedCurrencyOfInterestString
+                contentConfiguration.secondaryText = editedCurrencyOfInterestString
                 contentConfiguration.image = UIImage(systemName: "checklist")
                 cell.accessoryType = .disclosureIndicator
             case .language:
