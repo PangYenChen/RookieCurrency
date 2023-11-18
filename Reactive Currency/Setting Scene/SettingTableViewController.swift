@@ -22,11 +22,6 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        model.didTapCancelButtonSubject
-            .withLatestFrom(model.hasChanges)
-            .sink { [unowned self] _, hasChanges in hasChanges ? presentCancelAlert(showingSave: false) : cancel() }
-            .store(in: &anyCancellableSet)
-        
         model.editedNumberOfDays
             .dropFirst()
             .sink { [unowned self] numberOfDays in
@@ -61,10 +56,11 @@ class SettingTableViewController: BaseSettingTableViewController {
             }
             .store(in: &anyCancellableSet)
         
-        model.hasChanges
-            .sink { [unowned self] hasChanges in
-                saveButton.isEnabled = hasChanges
-                isModalInPresentation = hasChanges
+        model.hasChangesToSave
+            .sink { [unowned self] hasChangesToSave in
+                self.hasChangesToSave = hasChangesToSave
+                saveButton.isEnabled = hasChangesToSave
+                isModalInPresentation = hasChangesToSave
             }
             .store(in: &anyCancellableSet)
     }
@@ -74,17 +70,17 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     override func cancel() {
+        model.cancel()
         super.cancel()
-        model.cancelSubject.send()
     }
     
     @IBAction override func save() {
-        model.didTapSaveButtonSubject.send()
+        model.save()
         super.save()
     }
     
     @IBAction private func didTapCancelButton() {
-        model.didTapCancelButtonSubject.send()
+        hasChangesToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
     }
     
     // MARK: - Navigation

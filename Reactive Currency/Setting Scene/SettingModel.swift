@@ -8,19 +8,15 @@ class SettingModel {
     
     let editedCurrencyOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
     
-    let hasChanges: AnyPublisher<Bool, Never>
+    let hasChangesToSave: AnyPublisher<Bool, Never>
     
-    let didTapCancelButtonSubject: PassthroughSubject<Void, Never>
+    // MARK: - properties used to communicate with `ResultModel`
+    private let cancelSubject: PassthroughSubject<Void, Never>
     
-    let cancelSubject: PassthroughSubject<Void, Never>
-    
-    let didTapSaveButtonSubject: PassthroughSubject<Void, Never>
-    // MARK: output
+    private let saveSubject: PassthroughSubject<Void, Never>
     
     init(userSetting: BaseResultModel.UserSetting,
-         settingSubscriber: AnySubscriber<(numberOfDay: Int,
-                                           baseCurrency: ResponseDataModel.CurrencyCode,
-                                           currencyOfInterest: Set<ResponseDataModel.CurrencyCode>), Never>,
+         settingSubscriber: AnySubscriber<BaseResultModel.UserSetting, Never>,
          cancelSubscriber: AnySubscriber<Void, Never>) {
         editedNumberOfDays = CurrentValueSubject<Int, Never>(userSetting.numberOfDay)
         
@@ -33,20 +29,18 @@ class SettingModel {
             let numberOfDayHasChanges = editedNumberOfDays.map { $0 != userSetting.numberOfDay }
             let baseCurrencyHasChanges = editedBaseCurrency.map { $0 != userSetting.baseCurrency }
             let currencyOfInterestHasChanges = editedCurrencyOfInterest.map { $0 != userSetting.currencyOfInterest }
-            hasChanges = Publishers.CombineLatest3(numberOfDayHasChanges, baseCurrencyHasChanges, currencyOfInterestHasChanges)
+            hasChangesToSave = Publishers.CombineLatest3(numberOfDayHasChanges, baseCurrencyHasChanges, currencyOfInterestHasChanges)
                 .map { $0 || $1 || $2 }
                 .eraseToAnyPublisher()
         }
-        
-        didTapCancelButtonSubject = PassthroughSubject<Void, Never>()
-        
+    
         cancelSubject = PassthroughSubject<Void, Never>()
         
-        didTapSaveButtonSubject = PassthroughSubject<Void, Never>()
+        saveSubject = PassthroughSubject<Void, Never>()
         
         // finish initialization
         
-        didTapSaveButtonSubject
+        saveSubject
             .withLatestFrom(editedNumberOfDays)
             .map { $1 }
             .withLatestFrom(editedBaseCurrency)
@@ -56,5 +50,17 @@ class SettingModel {
         
         cancelSubject
             .subscribe(cancelSubscriber)
+    }
+    
+}
+
+// MARK: - internal methods
+extension SettingModel {
+    func cancel() {
+        cancelSubject.send()
+    }
+    
+    func save() {
+        saveSubject.send()
     }
 }

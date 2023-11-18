@@ -8,6 +8,8 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
+    var hasChangesToSave: Bool
+    
     // MARK: UI objects
     @IBOutlet var saveButton: UIBarButtonItem!
     
@@ -27,6 +29,8 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         editedBaseCurrencyCode = ""
         
         editedCurrencyCodeOfInterest = Set<ResponseDataModel.CurrencyCode>()
+        
+        hasChangesToSave = false
         
         stepper = UIStepper()
         
@@ -63,16 +67,16 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
-        let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
-        DispatchQueue.main.async { [unowned self] in
-            tableView.reloadRows(at: [baseCurrencyIndexPath, currencyOfInterestIndexPath], with: .automatic)
-        }
-    }
-    
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        
+//        let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
+//        let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
+//        DispatchQueue.main.async { [unowned self] in
+//            tableView.reloadRows(at: [baseCurrencyIndexPath, currencyOfInterestIndexPath], with: .automatic)
+//        }
+//    }
+    // TODO: 要確認從下一頁回來沒問題
     func stepperValueDidChange() {
         fatalError("stepperValueDidChange() has not been implemented")
     }
@@ -85,11 +89,22 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         dismiss(animated: true)
     }
     
-    final func presentCancelAlert(showingSave: Bool) {
+    // MARK: - Navigation
+    @IBSegueAction func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+        fatalError("showBaseCurrencyTableViewController(_:) has not been implemented")
+    }
+    @IBSegueAction func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+        fatalError("showCurrencyOfInterestTableViewController(_:) has not been implemented")
+    }
+}
+
+    // MARK: - helper method
+extension BaseSettingTableViewController {
+    final func presentDismissalConfirmation(withSaveOption: Bool) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         // 儲存的 action，只有在下拉的時候加上這個 action。
-        if showingSave {
+        if withSaveOption {
             let title = R.string.settingScene.cancelAlertSavingTitle()
             let saveAction = UIAlertAction(title: title,
                                            style: .default) { [unowned self] _ in save() }
@@ -116,17 +131,6 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         present(alertController, animated: true)
     }
     
-    // MARK: - Navigation
-    @IBSegueAction func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        fatalError("showBaseCurrencyTableViewController(_:) has not been implemented")
-    }
-    @IBSegueAction func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        fatalError("showCurrencyOfInterestTableViewController(_:) has not been implemented")
-    }
-}
-
-    // MARK: - helper method
-extension BaseSettingTableViewController {
     final func updateNumberOfDaysRow(for numberOfDays: Int) {
         let numberOfDayRow = IndexPath(row: Row.numberOfDay.rawValue, section: 0)
         
@@ -302,7 +306,7 @@ extension BaseSettingTableViewController {
 extension BaseSettingTableViewController: UIAdaptivePresentationControllerDelegate {
     
     func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
-        presentCancelAlert(showingSave: true)
+        presentDismissalConfirmation(withSaveOption: true)
     }
     
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
