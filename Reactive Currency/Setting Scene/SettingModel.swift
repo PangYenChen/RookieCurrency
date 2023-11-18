@@ -15,6 +15,7 @@ class SettingModel {
     let cancelSubject: PassthroughSubject<Void, Never>
     
     let didTapSaveButtonSubject: PassthroughSubject<Void, Never>
+    // MARK: output
     
     init(userSetting: BaseResultModel.UserSetting,
          settingSubscriber: AnySubscriber<(numberOfDay: Int,

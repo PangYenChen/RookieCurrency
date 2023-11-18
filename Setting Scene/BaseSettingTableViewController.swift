@@ -2,13 +2,12 @@ import UIKit
 
 class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - properties
-    var editedNumberOfDays: Int { fatalError("editedNumberOfDays has not been implemented") }
+    var editedNumberOfDays: Int
     
-    var editedNumberOfDaysString: String { fatalError("editedNumberOfDayString has not been implemented") }
+    var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode
     
-    var editedBaseCurrencyString: String { fatalError("editedBaseCurrencyString has not been implemented") }
+    var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
-    var editedCurrencyOfInterestString: String { fatalError("editedCurrencyOfInterestString has not been implemented") }
     // MARK: UI objects
     @IBOutlet var saveButton: UIBarButtonItem!
     
@@ -22,6 +21,12 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     
     // MARK: - methods
     required init?(coder: NSCoder) {
+        
+        editedNumberOfDays = -1
+        
+        editedBaseCurrencyCode = ""
+        
+        editedCurrencyCodeOfInterest = Set<ResponseDataModel.CurrencyCode>()
         
         stepper = UIStepper()
         
@@ -120,6 +125,33 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     }
 }
 
+    // MARK: - helper method
+extension BaseSettingTableViewController {
+    final func updateNumberOfDaysRow(for numberOfDays: Int) {
+        let numberOfDayRow = IndexPath(row: Row.numberOfDay.rawValue, section: 0)
+        
+        guard let cell = tableView.cellForRow(at: numberOfDayRow) else {
+            assertionFailure("###, \(#function), \(self), 拿不到設定 number of day 的 cell。")
+            return
+        }
+        
+        guard var contentConfiguration = cell.contentConfiguration as? UIListContentConfiguration else {
+            assertionFailure("###, \(#function), \(self), 在 data source method 中，cell 的 content configuration 應該要是 UIListContentConfiguration，但是中途被改掉了。")
+            return
+        }
+        
+        contentConfiguration.secondaryText = String(numberOfDays)
+        
+        cell.contentConfiguration = contentConfiguration
+    }
+    
+    final func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
+        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ??
+        AppUtility.supportedSymbols?[currencyCode] ??
+        currencyCode
+    }
+}
+
 // MARK: - Table view data source
 extension BaseSettingTableViewController {
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -150,18 +182,25 @@ extension BaseSettingTableViewController {
             switch row {
             case .numberOfDay:
                 contentConfiguration.text = R.string.settingScene.numberOfConsideredDay()
-                contentConfiguration.secondaryText = editedNumberOfDaysString
+                contentConfiguration.secondaryText = String(editedNumberOfDays)
                 contentConfiguration.image = UIImage(systemName: "calendar")
                 stepper.value = Double(editedNumberOfDays)
                 cell.accessoryView = stepper
             case .baseCurrency:
                 contentConfiguration.text = R.string.share.baseCurrency()
-                contentConfiguration.secondaryText = editedBaseCurrencyString
+                contentConfiguration.secondaryText = displayStringFor(currencyCode: editedBaseCurrencyCode)
                 contentConfiguration.image = UIImage(systemName: "dollarsign.circle")
                 cell.accessoryType = .disclosureIndicator
             case .currencyOfInterest:
                 contentConfiguration.text = R.string.share.currencyOfInterest()
-                contentConfiguration.secondaryText = editedCurrencyOfInterestString
+                
+                let editedCurrencyNameOfInterest = editedCurrencyCodeOfInterest
+                    .map(self.displayStringFor(currencyCode:))
+                    .sorted()
+                
+                let displayStringForEditedCurrencyNameOfInterest = ListFormatter.localizedString(byJoining: editedCurrencyNameOfInterest)
+                
+                contentConfiguration.secondaryText = displayStringForEditedCurrencyNameOfInterest
                 contentConfiguration.image = UIImage(systemName: "checklist")
                 cell.accessoryType = .disclosureIndicator
             case .language:

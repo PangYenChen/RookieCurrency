@@ -2,31 +2,8 @@ import UIKit
 import Combine
 
 class SettingTableViewController: BaseSettingTableViewController {
-    // MARK: - properties
+    // MARK: - private properties
     private let model: SettingModel
-    
-    // MARK: override super class' computed properties
-    override var editedNumberOfDays: Int { model.editedNumberOfDays.value }
-    
-    override var editedNumberOfDaysString: String { String(editedNumberOfDays) }
-    
-    override var editedBaseCurrencyString: String {
-        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: model.editedBaseCurrency.value) ??
-        AppUtility.supportedSymbols?[model.editedBaseCurrency.value] ??
-        model.editedBaseCurrency.value
-    }
-    
-    override var editedCurrencyOfInterestString: String {
-        let editedCurrencyDisplayString = model.editedCurrencyOfInterest.value
-            .map { currencyCode in
-                Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ??
-                AppUtility.supportedSymbols?[currencyCode] ??
-                currencyCode
-            }
-            .sorted()
-        
-        return ListFormatter.localizedString(byJoining: editedCurrencyDisplayString)
-    }
     
     private var anyCancellableSet: Set<AnyCancellable>
     
@@ -52,23 +29,35 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         model.editedNumberOfDays
             .dropFirst()
-            .sink { [unowned self] _ in
-                
-                let numberOfDayRow = IndexPath(row: Row.numberOfDay.rawValue, section: 0)
-                
-                guard let cell = tableView.cellForRow(at: numberOfDayRow) else {
-                    assertionFailure("###, \(#function), \(self), 拿不到設定 number of day 的 cell。")
-                    return
-                }
-                
-                guard var contentConfiguration = cell.contentConfiguration as? UIListContentConfiguration else {
-                    assertionFailure("###, \(#function), \(self), 在 data source method 中，cell 的 content configuration 應該要是 UIListContentConfiguration，但是中途被改掉了。")
-                    return
-                }
-                
-                contentConfiguration.secondaryText = editedNumberOfDaysString
-                
-                cell.contentConfiguration = contentConfiguration
+            .sink { [unowned self] numberOfDays in
+                self.updateNumberOfDaysRow(for: numberOfDays)
+                self.editedNumberOfDays = numberOfDays
+            }
+            .store(in: &anyCancellableSet)
+        
+        model.editedNumberOfDays
+            .first()
+            .sink { [unowned self] numberOfDays in
+                self.editedNumberOfDays = numberOfDays
+                // table view 在 viewIsAppearing 跟 viewDidAppear 之間才會第一次 call data source method
+                // 所以這時候無法透過 table view 的 cellForRow(at:) 拿到 cell
+                // 只能讓 table view 自己處理
+            }
+            .store(in: &anyCancellableSet)
+        
+        model.editedBaseCurrency
+            .sink { [unowned self] editedBaseCurrencyCode in
+                self.editedBaseCurrencyCode = editedBaseCurrencyCode
+                let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
+                self.tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
+            }
+            .store(in: &anyCancellableSet)
+        
+        model.editedCurrencyOfInterest
+            .sink { editedCurrencyCodeOfInterest in
+                self.editedCurrencyCodeOfInterest = editedCurrencyCodeOfInterest
+                let baseCurrencyIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
+                self.tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
             }
             .store(in: &anyCancellableSet)
         
