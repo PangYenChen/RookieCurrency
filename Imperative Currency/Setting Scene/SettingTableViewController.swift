@@ -37,8 +37,8 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         hasChangesToSave = model.hasChange
         
-        reloadBaseCurrencyRowIfNeeded()
-        reloadCurrencyOfInterestRowIfNeeded()
+        reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: model.editedBaseCurrency)
+        reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: model.editedCurrencyOfInterest)
     }
     
     // MARK: - override hook methods
@@ -73,22 +73,5 @@ class SettingTableViewController: BaseSettingTableViewController {
             }
 
         return CurrencyTableViewController(coder: coder, strategy: currencyOfInterestSelectionStrategy)
-    }
-}
-
-// MARK: - private methods
-private extension SettingTableViewController {
-    func reloadBaseCurrencyRowIfNeeded() {
-        guard editedBaseCurrencyCode != model.editedBaseCurrency else { return }
-        
-        editedBaseCurrencyCode = model.editedBaseCurrency
-        reloadBaseCurrencyRow()
-    }
-    
-    func reloadCurrencyOfInterestRowIfNeeded() {
-        guard editedCurrencyCodeOfInterest != model.editedCurrencyOfInterest else { return }
-        
-        editedCurrencyCodeOfInterest = model.editedCurrencyOfInterest
-        reloadCurrencyOfInterestRow()
     }
 }
