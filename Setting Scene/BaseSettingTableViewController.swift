@@ -167,12 +167,20 @@ extension BaseSettingTableViewController {
         cell.contentConfiguration = contentConfiguration
     }
     
-    final func reloadBaseCurrencyRow() {
+    final func reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: ResponseDataModel.CurrencyCode) {
+        guard editedBaseCurrencyCode != baseCurrencyCode else { return }
+        
+        editedBaseCurrencyCode = baseCurrencyCode
+        
         let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
         tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
     }
     
-    final func reloadCurrencyOfInterestRow() {
+    final func reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) {
+        guard editedCurrencyCodeOfInterest != currencyCodeOfInterest else { return }
+        
+        editedCurrencyCodeOfInterest = currencyCodeOfInterest
+        
         let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
         tableView.reloadRows(at: [currencyOfInterestIndexPath], with: .automatic)
     }

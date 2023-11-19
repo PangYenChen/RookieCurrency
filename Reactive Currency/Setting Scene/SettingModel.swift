@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-class SettingModel {
+class SettingModel: BaseSettingModel {
     let editedNumberOfDays: CurrentValueSubject<Int, Never>
     
     let editedBaseCurrency: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
@@ -52,15 +52,12 @@ class SettingModel {
             .subscribe(cancelSubscriber)
     }
     
-}
-
-// MARK: - internal methods
-extension SettingModel {
-    func cancel() {
+    // MARK: - override hook methods
+    override func cancel() {
         cancelSubject.send()
     }
     
-    func save() {
+    override func save() {
         saveSubject.send()
     }
 }

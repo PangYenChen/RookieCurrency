@@ -14,7 +14,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         anyCancellableSet = Set<AnyCancellable>()
         
-        super.init(coder: coder)
+        super.init(coder: coder, baseSettingModel: model)
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -41,19 +41,11 @@ class SettingTableViewController: BaseSettingTableViewController {
             .store(in: &anyCancellableSet)
         
         model.editedBaseCurrency
-            .sink { [unowned self] editedBaseCurrencyCode in
-                self.editedBaseCurrencyCode = editedBaseCurrencyCode
-                let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
-                self.tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
-            }
+            .sink(receiveValue: self.reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode:))
             .store(in: &anyCancellableSet)
         
         model.editedCurrencyOfInterest
-            .sink { editedCurrencyCodeOfInterest in
-                self.editedCurrencyCodeOfInterest = editedCurrencyCodeOfInterest
-                let baseCurrencyIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
-                self.tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
-            }
+            .sink(receiveValue: self.reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest:))
             .store(in: &anyCancellableSet)
         
         model.hasChangesToSave
@@ -67,20 +59,6 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     override func stepperValueDidChange() {
         model.editedNumberOfDays.send(Int(stepper.value))
-    }
-    
-    override func cancel() {
-        model.cancel()
-        super.cancel()
-    }
-    
-    @IBAction override func save() {
-        model.save()
-        super.save()
-    }
-    
-    @IBAction private func didTapCancelButton() {
-        hasChangesToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
     }
     
     // MARK: - Navigation
