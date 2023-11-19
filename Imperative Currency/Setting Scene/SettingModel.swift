@@ -1,13 +1,13 @@
 import Foundation
 
-class SettingModel {
-    let originalNumberOfDay: Int
+class SettingModel: BaseSettingModel {
+    private let originalNumberOfDay: Int
     var editedNumberOfDay: Int
     
-    let originalBaseCurrency: ResponseDataModel.CurrencyCode
+    private let originalBaseCurrency: ResponseDataModel.CurrencyCode
     var editedBaseCurrency: ResponseDataModel.CurrencyCode
     
-    let originalCurrencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+    private let originalCurrencyOfInterest: Set<ResponseDataModel.CurrencyCode>
     var editedCurrencyOfInterest: Set<ResponseDataModel.CurrencyCode>
     
     var hasChange: Bool {
@@ -36,5 +36,13 @@ class SettingModel {
         
         self.saveCompletionHandler = saveCompletionHandler
         self.cancelCompletionHandler = cancelCompletionHandler
+    }
+    
+    override func save() {
+        saveCompletionHandler(editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest)
+    }
+    
+    override func cancel() {
+        cancelCompletionHandler()
     }
 }

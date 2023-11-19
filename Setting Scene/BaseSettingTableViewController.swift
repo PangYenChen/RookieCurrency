@@ -21,8 +21,12 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     
     @IBOutlet private var dateLabel: UILabel!
     
+    // MARK: - private property
+    
+    private let baseSettingModel: BaseSettingModel
+    
     // MARK: - methods
-    required init?(coder: NSCoder) {
+    init?(coder: NSCoder, baseSettingModel: BaseSettingModel) {
         
         editedNumberOfDays = -1
         
@@ -34,6 +38,8 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         
         stepper = UIStepper()
         
+        self.baseSettingModel = baseSettingModel
+        
         super.init(coder: coder)
         
         // stepper
@@ -43,6 +49,10 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         }
         
         title = R.string.settingScene.setting()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -77,16 +87,10 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
 //        }
 //    }
     // TODO: 要確認從下一頁回來沒問題
+    
+    // MARK: - hook methods
     func stepperValueDidChange() {
         fatalError("stepperValueDidChange() has not been implemented")
-    }
-    
-    @IBAction func save() {
-        dismiss(animated: true)
-    }
-    
-    func cancel() {
-        dismiss(animated: true)
     }
     
     // MARK: - Navigation
@@ -98,8 +102,22 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     }
 }
 
-    // MARK: - helper method
+// MARK: - internal method
 extension BaseSettingTableViewController {
+    @IBAction final func didTapCancelButton(_ sender: UIBarButtonItem) {
+        hasChangesToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
+    }
+    
+    @IBAction final func save() {
+        baseSettingModel.save()
+        dismiss(animated: true)
+    }
+    
+    final func cancel() {
+        baseSettingModel.cancel()
+        dismiss(animated: true)
+    }
+    
     final func presentDismissalConfirmation(withSaveOption: Bool) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
@@ -147,6 +165,16 @@ extension BaseSettingTableViewController {
         contentConfiguration.secondaryText = String(numberOfDays)
         
         cell.contentConfiguration = contentConfiguration
+    }
+    
+    final func reloadBaseCurrencyRow() {
+        let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
+        tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
+    }
+    
+    final func reloadCurrencyOfInterestRow() {
+        let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
+        tableView.reloadRows(at: [currencyOfInterestIndexPath], with: .automatic)
     }
     
     final func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {

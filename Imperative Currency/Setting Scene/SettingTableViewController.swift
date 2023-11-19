@@ -1,8 +1,7 @@
 import UIKit
 
 class SettingTableViewController: BaseSettingTableViewController {
-    
-    // MARK: - properties
+    // MARK: - private property
     private let model: SettingModel
     
     // MARK: - methods
@@ -19,49 +18,42 @@ class SettingTableViewController: BaseSettingTableViewController {
                              saveCompletionHandler: saveCompletionHandler,
                              cancelCompletionHandler: cancelCompletionHandler)
         
-        super.init(coder: coder)
+        super.init(coder: coder, baseSettingModel: model)
         
         self.editedNumberOfDays = numberOfDay
         self.editedBaseCurrencyCode = baseCurrency
         self.editedCurrencyCodeOfInterest = currencyOfInterest
         
         stepper.value = Double(numberOfDay)
-
+        
         isModalInPresentation = model.hasChange
+        hasChangesToSave = model.hasChange
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        
+        hasChangesToSave = model.hasChange
+        
+        reloadBaseCurrencyRowIfNeeded()
+        reloadCurrencyOfInterestRowIfNeeded()
     }
     
+    // MARK: - override hook methods
     override func stepperValueDidChange() {
         model.editedNumberOfDay = Int(stepper.value)
-
+        
+        hasChangesToSave = model.hasChange
         saveButton.isEnabled = model.hasChange
         isModalInPresentation = model.hasChange
         
         updateNumberOfDaysRow(for: model.editedNumberOfDay)
     }
     
-    @IBAction override func save() {
-        model.saveCompletionHandler(model.editedNumberOfDay,
-                                    model.editedBaseCurrency,
-                                    model.editedCurrencyOfInterest)
-        super.save()
-    }
-    
-    override func cancel() {
-        model.cancelCompletionHandler()
-        super.cancel()
-    }
-    
-    @IBAction private func didTapCancelButton() {
-        model.hasChange ? presentDismissalConfirmation(withSaveOption: false) : cancel()
-    }
-    
     // MARK: - Navigation
     override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        
         let baseCurrencySelectionStrategy = CurrencyTableViewController
             .BaseCurrencySelectionStrategy(baseCurrencyCode: model.editedBaseCurrency) { [unowned self] selectedBaseCurrency in
                 model.editedBaseCurrency = selectedBaseCurrency
@@ -73,7 +65,6 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        
         let currencyOfInterestSelectionStrategy = CurrencyTableViewController
             .CurrencyOfInterestSelectionStrategy(currencyOfInterest: model.editedCurrencyOfInterest) { [unowned self] selectedCurrencyOfInterest in
                 model.editedCurrencyOfInterest = selectedCurrencyOfInterest
@@ -83,5 +74,21 @@ class SettingTableViewController: BaseSettingTableViewController {
 
         return CurrencyTableViewController(coder: coder, strategy: currencyOfInterestSelectionStrategy)
     }
+}
+
+// MARK: - private methods
+private extension SettingTableViewController {
+    func reloadBaseCurrencyRowIfNeeded() {
+        guard editedBaseCurrencyCode != model.editedBaseCurrency else { return }
+        
+        editedBaseCurrencyCode = model.editedBaseCurrency
+        reloadBaseCurrencyRow()
+    }
     
+    func reloadCurrencyOfInterestRowIfNeeded() {
+        guard editedCurrencyCodeOfInterest != model.editedCurrencyOfInterest else { return }
+        
+        editedCurrencyCodeOfInterest = model.editedCurrencyOfInterest
+        reloadCurrencyOfInterestRow()
+    }
 }
