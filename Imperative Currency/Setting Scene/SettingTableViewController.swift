@@ -6,25 +6,21 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - methods
     required init?(coder: NSCoder,
-                   numberOfDay: Int,
-                   baseCurrency: ResponseDataModel.CurrencyCode,
-                   currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
+                   userSetting: BaseResultModel.UserSetting,
                    saveCompletionHandler: @escaping (Int, ResponseDataModel.CurrencyCode, Set<ResponseDataModel.CurrencyCode>) -> Void,
                    cancelCompletionHandler: @escaping () -> Void) {
         
-        model = SettingModel(numberOfDays: numberOfDay,
-                             baseCurrency: baseCurrency,
-                             currencyOfInterest: currencyOfInterest,
+        model = SettingModel(userSetting: userSetting,
                              saveCompletionHandler: saveCompletionHandler,
                              cancelCompletionHandler: cancelCompletionHandler)
         
         super.init(coder: coder, baseSettingModel: model)
         
-        self.editedNumberOfDays = numberOfDay
-        self.editedBaseCurrencyCode = baseCurrency
-        self.editedCurrencyCodeOfInterest = currencyOfInterest
+        self.editedNumberOfDays = model.editedNumberOfDays
+        self.editedBaseCurrencyCode = model.editedBaseCurrency
+        self.editedCurrencyCodeOfInterest = model.editedCurrencyOfInterest
         
-        stepper.value = Double(numberOfDay)
+        stepper.value = Double(model.editedNumberOfDays)
         
         isModalInPresentation = model.hasChange
         hasChangesToSave = model.hasChange
@@ -41,15 +37,15 @@ class SettingTableViewController: BaseSettingTableViewController {
         reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: model.editedCurrencyOfInterest)
     }
     
-    // MARK: - override hook methods
+    // MARK: - hook methods
     override func stepperValueDidChange() {
-        model.editedNumberOfDay = Int(stepper.value)
+        model.editedNumberOfDays = Int(stepper.value)
         
         hasChangesToSave = model.hasChange
         saveButton.isEnabled = model.hasChange
         isModalInPresentation = model.hasChange
         
-        updateNumberOfDaysRow(for: model.editedNumberOfDay)
+        updateNumberOfDaysRow(for: model.editedNumberOfDays)
     }
     
     // MARK: - Navigation

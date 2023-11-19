@@ -1,48 +1,58 @@
 import Foundation
 
 class SettingModel: BaseSettingModel {
-    private let originalNumberOfDay: Int
-    var editedNumberOfDay: Int
+    // MARK: - internal properties
+    var editedNumberOfDays: Int
     
-    private let originalBaseCurrency: ResponseDataModel.CurrencyCode
     var editedBaseCurrency: ResponseDataModel.CurrencyCode
     
-    private let originalCurrencyOfInterest: Set<ResponseDataModel.CurrencyCode>
     var editedCurrencyOfInterest: Set<ResponseDataModel.CurrencyCode>
     
     var hasChange: Bool {
-        originalNumberOfDay != editedNumberOfDay ||
+        originalNumberOfDays != editedNumberOfDays ||
         originalBaseCurrency != editedBaseCurrency ||
         originalCurrencyOfInterest != editedCurrencyOfInterest
     }
     
-    let saveCompletionHandler: (Int, ResponseDataModel.CurrencyCode, Set<ResponseDataModel.CurrencyCode>) -> Void
+    // MARK: - private properties
+    private let originalNumberOfDays: Int
     
-    let cancelCompletionHandler: () -> Void
+    private let originalBaseCurrency: ResponseDataModel.CurrencyCode
     
-    init(numberOfDays: Int,
-         baseCurrency: ResponseDataModel.CurrencyCode,
-         currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
-         saveCompletionHandler: @escaping (Int, ResponseDataModel.CurrencyCode, Set<ResponseDataModel.CurrencyCode>) -> Void,
-         cancelCompletionHandler: @escaping () -> Void) {
-        originalNumberOfDay = numberOfDays
-        editedNumberOfDay = numberOfDays
+    private let originalCurrencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+    
+    private let saveCompletionHandler: SaveHandler
+    
+    private let cancelCompletionHandler: CancelHandler
+    
+    init(userSetting: BaseResultModel.UserSetting,
+         saveCompletionHandler: @escaping SaveHandler,
+         cancelCompletionHandler: @escaping CancelHandler) {
+        originalNumberOfDays = userSetting.numberOfDay
+        editedNumberOfDays = userSetting.numberOfDay
         
-        originalBaseCurrency =  baseCurrency
-        editedBaseCurrency =  baseCurrency
+        originalBaseCurrency = userSetting.baseCurrency
+        editedBaseCurrency = userSetting.baseCurrency
         
-        originalCurrencyOfInterest = currencyOfInterest
-        editedCurrencyOfInterest = currencyOfInterest
+        originalCurrencyOfInterest = userSetting.currencyOfInterest
+        editedCurrencyOfInterest = userSetting.currencyOfInterest
         
         self.saveCompletionHandler = saveCompletionHandler
         self.cancelCompletionHandler = cancelCompletionHandler
     }
     
     override func save() {
-        saveCompletionHandler(editedNumberOfDay, editedBaseCurrency, editedCurrencyOfInterest)
+        let userSetting = (numberOfDay: editedNumberOfDays, baseCurrency: editedBaseCurrency, currencyOfInterest: editedCurrencyOfInterest)
+        saveCompletionHandler(userSetting)
     }
     
     override func cancel() {
         cancelCompletionHandler()
     }
+}
+
+// MARK: - name space
+extension SettingModel {
+    typealias SaveHandler = (_ userSetting: BaseResultModel.UserSetting) -> Void
+    typealias CancelHandler = () -> Void
 }

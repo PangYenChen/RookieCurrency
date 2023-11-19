@@ -37,11 +37,11 @@ class ResultTableViewController: BaseResultTableViewController {
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
         model.suspendAutoUpdatingState()
         
+        let userSetting = (numberOfDay: model.numberOfDays, baseCurrency: model.baseCurrencyCode, currencyOfInterest: model.currencyCodeOfInterest)
+        
         return SettingTableViewController(
             coder: coder,
-            numberOfDay: model.numberOfDays,
-            baseCurrency: model.baseCurrencyCode,
-            currencyOfInterest: model.currencyCodeOfInterest
+            userSetting: userSetting
         ) { [unowned self] editedNumberOfDays, editedBaseCurrencyCode, editedCurrencyCodeOfInterest in
             model.resumeAutoUpdatingStateFor(numberOfDays: editedNumberOfDays,
                                              baseCurrencyCode: editedBaseCurrencyCode,
@@ -59,6 +59,7 @@ private extension ResultTableViewController {
         switch state {
         case .updating:
             updatingStatusBarButtonItem.title = R.string.resultScene.updating()
+            
         case .updated(let timestamp, let analyzedDataArray):
             self.latestUpdateTime = timestamp
             populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)

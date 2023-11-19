@@ -52,7 +52,7 @@ class SettingModel: BaseSettingModel {
             .subscribe(cancelSubscriber)
     }
     
-    // MARK: - override hook methods
+    // MARK: - hook methods
     override func cancel() {
         cancelSubject.send()
     }
