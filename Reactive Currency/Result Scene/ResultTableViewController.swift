@@ -9,8 +9,6 @@ class ResultTableViewController: BaseResultTableViewController {
     
     private var anyCancellableSet: Set<AnyCancellable>
     
-    private var latestUpdateTime: Int?
-    
     // MARK: - Methods
     required init?(coder: NSCoder) {
         
@@ -33,32 +31,7 @@ class ResultTableViewController: BaseResultTableViewController {
         
         model.state
             .receive(on: DispatchQueue.main)
-            .sink { [unowned self] state in
-                // TODO: 抽到 super class
-                switch state {
-                case .updating:
-                    updatingStatusBarButtonItem.title = R.string.resultScene.updating()
-                case .updated(let timestamp, let analyzedDataArray):
-                    self.latestUpdateTime = timestamp
-                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
-                    populateTableViewWith(analyzedDataArray)
-                    
-                    if tableView.refreshControl?.isRefreshing == true {
-                        tableView.refreshControl?.endRefreshing()
-                    }
-                    
-                case .sorted(let analyzedDataArray):
-                    populateTableViewWith(analyzedDataArray)
-                    
-                case .failure(let error):
-                    populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
-                    presentAlert(error: error)
-                    
-                    if tableView.refreshControl?.isRefreshing == true {
-                        tableView.refreshControl?.endRefreshing()
-                    }
-                }
-            }
+            .sink(receiveValue: self.updateUIFor(_:))
             .store(in: &anyCancellableSet)
         
     }
