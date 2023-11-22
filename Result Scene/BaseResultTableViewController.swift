@@ -2,18 +2,18 @@ import UIKit
 
 class BaseResultTableViewController: UITableViewController {
     // MARK: - IBOutlet
-    @IBOutlet weak var updatingStatusBarButtonItem: UIBarButtonItem!
+    @IBOutlet var updatingStatusBarButtonItem: UIBarButtonItem!
     
-    @IBOutlet weak var sortingBarButtonItem: UIBarButtonItem!
+    @IBOutlet var sortingBarButtonItem: UIBarButtonItem!
     
     // MARK: - store properties
     private var dataSource: DataSource!
     
-    private let initialOrder: BaseResultModel.Order
+    private let baseResultModel: BaseResultModel
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, initialOrder: BaseResultModel.Order) {
-        self.initialOrder = initialOrder
+    required init?(coder: NSCoder, baseResultModel: BaseResultModel) {
+        self.baseResultModel = baseResultModel
         
         super.init(coder: coder)
         
@@ -49,7 +49,7 @@ class BaseResultTableViewController: UITableViewController {
         // refresh control
         do {
             refreshControl = UIRefreshControl()
-            let handler = UIAction { [unowned self] _ in updateState() }
+            let handler = UIAction { [unowned self] _ in baseResultModel.updateState() }
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
         }
         
@@ -107,12 +107,12 @@ class BaseResultTableViewController: UITableViewController {
         do {
             let increasingAction = UIAction(title: BaseResultModel.Order.increasing.localizedName,
                                             image: UIImage(systemName: "arrow.up.right"),
-                                            handler: { [unowned self] _ in setOrder(.increasing) })
+                                            handler: { [unowned self] _ in baseResultModel.setOrder(.increasing) })
             let decreasingAction = UIAction(title: BaseResultModel.Order.decreasing.localizedName,
                                             image: UIImage(systemName: "arrow.down.right"),
-                                            handler: { [unowned self] _ in setOrder(.decreasing) })
+                                            handler: { [unowned self] _ in baseResultModel.setOrder(.decreasing) })
             
-            switch initialOrder {
+            switch baseResultModel.initialOrder {
             case .increasing:
                 increasingAction.state = .on
             case .decreasing:
@@ -128,17 +128,8 @@ class BaseResultTableViewController: UITableViewController {
                                                options: .singleSelection,
                                                children: [sortMenu])
             
-            sortingBarButtonItem.menu?.children.first?.subtitle = initialOrder.localizedName
+            sortingBarButtonItem.menu?.children.first?.subtitle = baseResultModel.initialOrder.localizedName
         }
-    }
-    
-    // MARK: - Hook methods
-    func setOrder(_ order: BaseResultModel.Order) {
-        fatalError("select(order:) has not been implemented")
-    }
-    
-    func updateState() {
-        fatalError("refreshControlTriggered()")
     }
     
     @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
@@ -169,7 +160,15 @@ extension BaseResultTableViewController {
 extension BaseResultTableViewController: AlertPresenter {}
 
 // MARK: - Search Bar Delegate
-extension BaseResultTableViewController: UISearchBarDelegate {}
+extension BaseResultTableViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        baseResultModel.setSearchText(searchText)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        baseResultModel.setSearchText(nil)
+    }
+}
 
 // MARK: - private name space
 private extension BaseResultTableViewController {

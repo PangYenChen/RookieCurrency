@@ -6,6 +6,19 @@ class BaseResultModel {
     init() {
         initialOrder = AppUtility.order
     }
+    
+    // MARK: - hook methods
+    func updateState() {
+        fatalError("updateState() has not been implemented")
+    }
+    
+    func setOrder(_ order: Order) {
+        fatalError("setOrder(_:) has not been implemented")
+    }
+    
+    func setSearchText(_ searchText: String?) {
+        fatalError("setSearchText(_:) has not been implemented")
+    }
 }
 
 // MARK: - helper method
@@ -50,13 +63,11 @@ extension BaseResultModel {
     }
     
     typealias UserSetting = (numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
-}
 
-// MARK: - name space
-extension BaseResultModel {
     enum State {
         case updating
         case updated(timestamp: Int, analyzedDataArray: [AnalyzedData])
+        case sorted(analyzedDataArray: [AnalyzedData])
         case failure(Error)
     }
     

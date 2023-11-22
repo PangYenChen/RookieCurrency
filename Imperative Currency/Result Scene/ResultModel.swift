@@ -18,6 +18,8 @@ class ResultModel: BaseResultModel {
     
     private let autoUpdateTimeInterval: TimeInterval
     
+    var stateHandler: StateHandler?
+    
     override init() {
         numberOfDays = AppUtility.numberOfDays
         baseCurrencyCode = AppUtility.baseCurrencyCode
@@ -32,37 +34,40 @@ class ResultModel: BaseResultModel {
         
         super.init()
     }
+    
+    override func updateState() {
+        analyzedDataFor(numberOfDays: self.numberOfDays,
+                        baseCurrencyCode: self.baseCurrencyCode,
+                        currencyCodeOfInterest: self.currencyCodeOfInterest)
+    }
+    
+    override func setOrder(_ order: BaseResultModel.Order) {
+        AppUtility.order = order
+        self.order = order
+        
+        let analyzedDataArray = Self.sort(self.analyzedDataArray,
+                                          by: self.order,
+                                          filteredIfNeededBy: self.searchText)
+        stateHandler?(.sorted(analyzedDataArray: analyzedDataArray))
+    }
+    
+    override func setSearchText(_ searchText: String?) {
+        self.searchText = searchText
+        let analyzedDataArray = Self.sort(self.analyzedDataArray,
+                                          by: self.order,
+                                          filteredIfNeededBy: self.searchText)
+        stateHandler?(.sorted(analyzedDataArray: analyzedDataArray))
+    }
 }
 
 // MARK: - internal methods
 extension ResultModel {
-    func updateState(completionHandler: @escaping (BaseResultModel.State) -> Void) {
-        analyzedDataFor(numberOfDays: self.numberOfDays,
-                        baseCurrencyCode: self.baseCurrencyCode,
-                        currencyCodeOfInterest: self.currencyCodeOfInterest,
-                        completionHandler: completionHandler)
-    }
-    
-    func setOrderAndSortAnalyzedDataArray(order: Order) -> [AnalyzedData] {
-        AppUtility.order = order
-        self.order = order
-        
-        return Self.sort(self.analyzedDataArray,
-                         by: self.order,
-                         filteredIfNeededBy: self.searchText)
-    }
-    
-    func setSearchTextAndFilterAnalyzedDataArray(searchText: String?) -> [AnalyzedData] {
-        self.searchText = searchText
-        return Self.sort(self.analyzedDataArray,
-                         by: self.order,
-                         filteredIfNeededBy: self.searchText)
-    }
     
     func updateStateFor(numberOfDays: Int,
                         baseCurrencyCode: ResponseDataModel.CurrencyCode,
                         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
                         completionHandler: @escaping (State) -> Void) {
+        // TODO: 移除 complement handler
         AppUtility.numberOfDays = numberOfDays
         self.numberOfDays = numberOfDays
         
@@ -74,16 +79,14 @@ extension ResultModel {
         
         analyzedDataFor(numberOfDays: self.numberOfDays,
                         baseCurrencyCode: self.baseCurrencyCode,
-                        currencyCodeOfInterest: self.currencyCodeOfInterest,
-                        completionHandler: completionHandler)
+                        currencyCodeOfInterest: self.currencyCodeOfInterest)
     }
     
-    func resumeAutoUpdatingState(completionHandler: @escaping (State) -> Void) {
+    func resumeAutoUpdatingState() {
         timer = Timer.scheduledTimer(withTimeInterval: autoUpdateTimeInterval, repeats: true) { [unowned self] _ in
             analyzedDataFor(numberOfDays: self.numberOfDays,
                             baseCurrencyCode: self.baseCurrencyCode,
-                            currencyCodeOfInterest: self.currencyCodeOfInterest,
-                            completionHandler: completionHandler)
+                            currencyCodeOfInterest: self.currencyCodeOfInterest)
         }
         timer?.fire()
     }
@@ -92,6 +95,7 @@ extension ResultModel {
                                     baseCurrencyCode: ResponseDataModel.CurrencyCode,
                                     currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
                                     completionHandler: @escaping (State) -> Void) {
+        // TODO: remove completion handler
         AppUtility.numberOfDays = numberOfDays
         self.numberOfDays = numberOfDays
         
@@ -101,7 +105,7 @@ extension ResultModel {
         AppUtility.currencyCodeOfInterest = currencyCodeOfInterest
         self.currencyCodeOfInterest = currencyCodeOfInterest
         
-        resumeAutoUpdatingState(completionHandler: completionHandler)
+        resumeAutoUpdatingState(/*completionHandler: completionHandler*/)
     }
     
     func suspendAutoUpdatingState() {
@@ -114,9 +118,8 @@ extension ResultModel {
 private extension ResultModel {
     func analyzedDataFor(numberOfDays: Int,
                          baseCurrencyCode: ResponseDataModel.CurrencyCode,
-                         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
-                         completionHandler: @escaping (BaseResultModel.State) -> Void) {
-        completionHandler(.updating)
+                         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) {
+        stateHandler?(.updating)
         
         RateController.shared.getRateFor(numberOfDays: numberOfDays) { [unowned self] result in
             switch result {
@@ -138,7 +141,7 @@ private extension ResultModel {
                         }
                     
                     guard analyzedFailure.isEmpty else {
-                        completionHandler(.failure(MyError.foo))
+                        stateHandler?(.failure(MyError.foo))
 #warning("還沒處理錯誤")
                         return
                     }
@@ -153,12 +156,17 @@ private extension ResultModel {
                                                       by: self.order,
                                                       filteredIfNeededBy: self.searchText)
                     
-                    completionHandler(.updated(timestamp: latestRate.timestamp, analyzedDataArray: analyzedDataArray))
+                    stateHandler?(.updated(timestamp: latestRate.timestamp, analyzedDataArray: analyzedDataArray))
                 }
                 
             case .failure(let error):
-                completionHandler(.failure(error))
+                stateHandler?(.failure(error))
             }
         }
     }
+}
+
+// MARK: - name space
+extension ResultModel {
+    typealias StateHandler = (_ state: State) -> Void
 }

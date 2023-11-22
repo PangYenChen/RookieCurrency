@@ -11,29 +11,21 @@ class ResultTableViewController: BaseResultTableViewController {
         model = ResultModel()
         latestUpdateTime = nil
         
-        super.init(coder: coder, initialOrder: model.initialOrder)
+        super.init(coder: coder, baseResultModel: model)
     }
     
-    required init?(coder: NSCoder, initialOrder: BaseResultModel.Order) {
-        fatalError("init(coder:initialOrder:) has not been implemented")
+    required init?(coder: NSCoder, baseResultModel: BaseResultModel) {
+        fatalError("init(coder:baseResultModel:) has not been implemented")
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        model.resumeAutoUpdatingState(completionHandler: updateUIFor(_:))
+        model.stateHandler = self.updateUIFor(_:)
+        model.resumeAutoUpdatingState()
     }
     
-    // MARK: - Hook methods
-    override func setOrder(_ order: BaseResultModel.Order) {
-        sortingBarButtonItem.menu?.children.first?.subtitle = order.localizedName
-        populateTableViewWith(model.setOrderAndSortAnalyzedDataArray(order: order))
-    }
-    
-    override func updateState() {
-        model.updateState(completionHandler: updateUIFor(_:))
-    }
-    
+    // MARK: - navigation
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
         model.suspendAutoUpdatingState()
         
@@ -48,7 +40,8 @@ class ResultTableViewController: BaseResultTableViewController {
                                              currencyCodeOfInterest: editedCurrencyCodeOfInterest,
                                              completionHandler: updateUIFor(_:))
         } cancelCompletionHandler: { [unowned self] in
-            model.resumeAutoUpdatingState(completionHandler: updateUIFor(_:))
+            // TODO:
+//            model.resumeAutoUpdatingState(completionHandler: updateUIFor(_:))
         }
     }
 }
@@ -69,6 +62,9 @@ private extension ResultTableViewController {
                 tableView.refreshControl?.endRefreshing()
             }
             
+        case .sorted(let analyzedDataArray):
+            populateTableViewWith(analyzedDataArray)
+            
         case .failure(let error):
             populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
             presentAlert(error: error)
@@ -77,16 +73,5 @@ private extension ResultTableViewController {
                 tableView.refreshControl?.endRefreshing()
             }
         }
-    }
-}
-
-// MARK: - Search Bar Delegate
-extension ResultTableViewController {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        populateTableViewWith(model.setSearchTextAndFilterAnalyzedDataArray(searchText: searchText))
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        populateTableViewWith(model.setSearchTextAndFilterAnalyzedDataArray(searchText: nil))
     }
 }
