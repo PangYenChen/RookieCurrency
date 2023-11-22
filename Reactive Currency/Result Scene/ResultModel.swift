@@ -2,36 +2,26 @@ import Foundation
 import Combine
 
 class ResultModel: BaseResultModel {
-    // MARK: - internal properties
-    // MARK: input
-    let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
-    
-    let order: AnySubscriber<Order, Never>
-    
-    let searchText: AnySubscriber<String?, Never>
-    
-    let updateState: AnySubscriber<Void, Never>
+    // MARK: - private properties
+    private let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
+    private let userTriggeredStateUpdating: CurrentValueSubject<Void, Never>
+    private let order: CurrentValueSubject<Order, Never>
+    private let searchText: CurrentValueSubject<String?, Never>
+    private var anyCancellableSet: Set<AnyCancellable>
     
     let enableAutoUpdateState: AnySubscriber<Bool, Never>
     
     // MARK: output
     let state: AnyPublisher<State, Never>
     
-    // MARK: - private property
-    private var anyCancellableSet: Set<AnyCancellable>
-    
     override init() {
         // input
         userSetting = CurrentValueSubject((AppUtility.numberOfDays, AppUtility.baseCurrencyCode, AppUtility.currencyCodeOfInterest))
+        userTriggeredStateUpdating = CurrentValueSubject<Void, Never>(())
         
-        let orderPublisher = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
-        order = AnySubscriber(orderPublisher)
+        searchText = CurrentValueSubject<String?, Never>(nil)
         
-        let searchTextPublisher = CurrentValueSubject<String?, Never>(nil)
-        searchText = AnySubscriber(searchTextPublisher)
-        
-        let userTriggeredStateUpdating = CurrentValueSubject<Void, Never>(())
-        updateState = AnySubscriber(userTriggeredStateUpdating)
+        order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
         
         let enableAutoUpdateStatePublisher = CurrentValueSubject<Bool, Never>(true)
         enableAutoUpdateState = AnySubscriber(enableAutoUpdateStatePublisher)
@@ -79,7 +69,7 @@ class ResultModel: BaseResultModel {
                 .resultSuccess()
 #warning("還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿")
             
-            let orderAndSearchText = Publishers.CombineLatest(orderPublisher, searchTextPublisher)
+            let orderAndSearchText = Publishers.CombineLatest(order, searchText)
                 .map { (order: $0, searchText: $1) }
             
             state = Publishers.CombineLatest(analyzedSuccessTuple, orderAndSearchText)
@@ -107,11 +97,20 @@ class ResultModel: BaseResultModel {
                 enableAutoUpdateStatePublisher.send(true)
             }
             .store(in: &anyCancellableSet)
-        
-        orderPublisher
-            .dropFirst()
-            .sink { order in AppUtility.order = order }
-            .store(in: &anyCancellableSet)
+    }
+    
+    // MARK: - hook methods
+    override func updateState() {
+        userTriggeredStateUpdating.send()
+    }
+    
+    override func setOrder(_ order: BaseResultModel.Order) {
+        AppUtility.order = order
+        self.order.send(order)
+    }
+    
+    override func setSearchText(_ searchText: String?) {
+        self.searchText.send(searchText)
     }
 }
 

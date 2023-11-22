@@ -5,9 +5,6 @@ class ResultTableViewController: BaseResultTableViewController {
     // MARK: - stored properties
     private let model: ResultModel
     
-    private let order: PassthroughSubject<ResultModel.Order, Never>
-    private let searchText: PassthroughSubject<String?, Never>
-    private let updateModelState: PassthroughSubject<Void, Never>
     private let enableModelAutoUpdate: PassthroughSubject<Bool, Never>
     
     private var anyCancellableSet: Set<AnyCancellable>
@@ -19,25 +16,16 @@ class ResultTableViewController: BaseResultTableViewController {
         
         model = ResultModel()
         
-        order = PassthroughSubject<ResultModel.Order, Never>()
-        order.receive(subscriber: model.order)
-        
-        searchText = PassthroughSubject<String?, Never>()
-        searchText.receive(subscriber: model.searchText)
-        
-        updateModelState = PassthroughSubject<Void, Never>()
-        updateModelState.receive(subscriber: model.updateState)
-        
         enableModelAutoUpdate = PassthroughSubject<Bool, Never>()
         enableModelAutoUpdate.receive(subscriber: model.enableAutoUpdateState)
         
         anyCancellableSet = Set<AnyCancellable>()
         
-        super.init(coder: coder, initialOrder: model.initialOrder)
+        super.init(coder: coder, baseResultModel: model)
     }
     
-    required init?(coder: NSCoder, initialOrder: BaseResultModel.Order) {
-        fatalError("init(coder:initialOrder:) has not been implemented")
+    required init?(coder: NSCoder, baseResultModel: BaseResultModel) {
+        fatalError("init(coder:baseResultModel:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -46,6 +34,7 @@ class ResultTableViewController: BaseResultTableViewController {
         model.state
             .receive(on: DispatchQueue.main)
             .sink { [unowned self] state in
+                // TODO: 抽到 super class
                 switch state {
                 case .updating:
                     updatingStatusBarButtonItem.title = R.string.resultScene.updating()
@@ -57,6 +46,9 @@ class ResultTableViewController: BaseResultTableViewController {
                     if tableView.refreshControl?.isRefreshing == true {
                         tableView.refreshControl?.endRefreshing()
                     }
+                    
+                case .sorted(let analyzedDataArray):
+                    populateTableViewWith(analyzedDataArray)
                     
                 case .failure(let error):
                     populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
@@ -71,29 +63,10 @@ class ResultTableViewController: BaseResultTableViewController {
         
     }
     
-    override func setOrder(_ order: BaseResultModel.Order) {
-        self.order.send(order)
-    }
-    
-    override func updateState() {
-        self.updateModelState.send()
-    }
-    
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
         self.enableModelAutoUpdate.send(false)
         
         return SettingTableViewController(coder: coder,
                                           model: model.settingModel())
-    }
-}
-
-// MARK: - Search Bar Delegate
-extension ResultTableViewController {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.searchText.send(searchText)
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        self.searchText.send(nil)
     }
 }
