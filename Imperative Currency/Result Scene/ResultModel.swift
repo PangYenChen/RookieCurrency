@@ -2,11 +2,8 @@ import Foundation
 
 class ResultModel: BaseResultModel {
 #warning("這些屬性在 setting scene 改成 mvc 之後要擋起來 或者刪掉")
-    var numberOfDays: Int
     
-    var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
-    
-    var baseCurrencyCode: ResponseDataModel.CurrencyCode
+    private var userSetting: UserSetting
     
     private var order: Order
     
@@ -21,9 +18,10 @@ class ResultModel: BaseResultModel {
     var stateHandler: StateHandler?
     
     override init() {
-        numberOfDays = AppUtility.numberOfDays
-        baseCurrencyCode = AppUtility.baseCurrencyCode
-        currencyCodeOfInterest = AppUtility.currencyCodeOfInterest
+        userSetting = (numberOfDay: AppUtility.numberOfDays,
+                       baseCurrency: AppUtility.baseCurrencyCode,
+                       currencyOfInterest: AppUtility.currencyCodeOfInterest)
+        
         order = AppUtility.order
         
         searchText = nil
@@ -33,12 +31,12 @@ class ResultModel: BaseResultModel {
         autoUpdateTimeInterval = 5
         
         super.init()
+        
+        resumeAutoUpdatingState()
     }
     
     override func updateState() {
-        analyzedDataFor(numberOfDays: self.numberOfDays,
-                        baseCurrencyCode: self.baseCurrencyCode,
-                        currencyCodeOfInterest: self.currencyCodeOfInterest)
+        analyzedDataFor(userSetting: userSetting)
     }
     
     override func setOrder(_ order: BaseResultModel.Order) {
@@ -63,74 +61,45 @@ class ResultModel: BaseResultModel {
 // MARK: - internal methods
 extension ResultModel {
     
-    func updateStateFor(numberOfDays: Int,
-                        baseCurrencyCode: ResponseDataModel.CurrencyCode,
-                        currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
-                        completionHandler: @escaping (State) -> Void) {
-        // TODO: 移除 complement handler
-        AppUtility.numberOfDays = numberOfDays
-        self.numberOfDays = numberOfDays
+    func settingModel() -> SettingModel {
+        suspendAutoUpdatingState()
         
-        AppUtility.baseCurrencyCode = baseCurrencyCode
-        self.baseCurrencyCode = baseCurrencyCode
-        
-        AppUtility.currencyCodeOfInterest = currencyCodeOfInterest
-        self.currencyCodeOfInterest = currencyCodeOfInterest
-        
-        analyzedDataFor(numberOfDays: self.numberOfDays,
-                        baseCurrencyCode: self.baseCurrencyCode,
-                        currencyCodeOfInterest: self.currencyCodeOfInterest)
+        return SettingModel(userSetting: userSetting) { [unowned self] userSetting in
+            self.userSetting = userSetting
+            self.resumeAutoUpdatingState()
+        } cancelCompletionHandler: { [unowned self] in
+            self.resumeAutoUpdatingState()
+        }
     }
-    
+}
+
+// MARK: - private method
+private extension ResultModel {
     func resumeAutoUpdatingState() {
         timer = Timer.scheduledTimer(withTimeInterval: autoUpdateTimeInterval, repeats: true) { [unowned self] _ in
-            analyzedDataFor(numberOfDays: self.numberOfDays,
-                            baseCurrencyCode: self.baseCurrencyCode,
-                            currencyCodeOfInterest: self.currencyCodeOfInterest)
+            analyzedDataFor(userSetting: userSetting)
         }
         timer?.fire()
-    }
-    
-    func resumeAutoUpdatingStateFor(numberOfDays: Int,
-                                    baseCurrencyCode: ResponseDataModel.CurrencyCode,
-                                    currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
-                                    completionHandler: @escaping (State) -> Void) {
-        // TODO: remove completion handler
-        AppUtility.numberOfDays = numberOfDays
-        self.numberOfDays = numberOfDays
-        
-        AppUtility.baseCurrencyCode = baseCurrencyCode
-        self.baseCurrencyCode = baseCurrencyCode
-        
-        AppUtility.currencyCodeOfInterest = currencyCodeOfInterest
-        self.currencyCodeOfInterest = currencyCodeOfInterest
-        
-        resumeAutoUpdatingState(/*completionHandler: completionHandler*/)
     }
     
     func suspendAutoUpdatingState() {
         timer?.invalidate()
         timer = nil
     }
-}
-
-// MARK: - private method
-private extension ResultModel {
-    func analyzedDataFor(numberOfDays: Int,
-                         baseCurrencyCode: ResponseDataModel.CurrencyCode,
-                         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) {
+    
+    func analyzedDataFor(userSetting: UserSetting) {
         stateHandler?(.updating)
         
-        RateController.shared.getRateFor(numberOfDays: numberOfDays) { [unowned self] result in
+        RateController.shared.getRateFor(numberOfDays: userSetting.numberOfDay) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 
                 do {
                     let analyzedResult = Analyst
-                        .analyze(currencyOfInterest: currencyCodeOfInterest,
+                        .analyze(currencyOfInterest: userSetting.currencyOfInterest,
                                  latestRate: latestRate,
                                  historicalRateSet: historicalRateSet,
-                                 baseCurrency: baseCurrencyCode)
+                                 baseCurrency: userSetting.baseCurrency)
                     
                     let analyzedFailure = analyzedResult
                         .filter { _, result in

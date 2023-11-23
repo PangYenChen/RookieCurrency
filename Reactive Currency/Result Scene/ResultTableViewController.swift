@@ -38,7 +38,7 @@ class ResultTableViewController: BaseResultTableViewController {
     
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
         self.enableModelAutoUpdate.send(false)
-        
+        // TODO: 抽到 super class
         return SettingTableViewController(coder: coder,
                                           model: model.settingModel())
     }

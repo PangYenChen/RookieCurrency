@@ -18,27 +18,11 @@ class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        model.stateHandler = self.updateUIFor(_:)
-        model.resumeAutoUpdatingState()
+        model.stateHandler = updateUIFor(_:)
     }
     
     // MARK: - navigation
     @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        model.suspendAutoUpdatingState()
-        
-        let userSetting = (numberOfDay: model.numberOfDays, baseCurrency: model.baseCurrencyCode, currencyOfInterest: model.currencyCodeOfInterest)
-        
-        return SettingTableViewController(
-            coder: coder,
-            userSetting: userSetting
-        ) { [unowned self] editedNumberOfDays, editedBaseCurrencyCode, editedCurrencyCodeOfInterest in
-            model.resumeAutoUpdatingStateFor(numberOfDays: editedNumberOfDays,
-                                             baseCurrencyCode: editedBaseCurrencyCode,
-                                             currencyCodeOfInterest: editedCurrencyCodeOfInterest,
-                                             completionHandler: updateUIFor(_:))
-        } cancelCompletionHandler: { [unowned self] in
-            // TODO:
-//            model.resumeAutoUpdatingState(completionHandler: updateUIFor(_:))
-        }
+        SettingTableViewController(coder: coder, model: model.settingModel())
     }
 }

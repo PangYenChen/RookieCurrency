@@ -6,13 +6,9 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - methods
     required init?(coder: NSCoder,
-                   userSetting: BaseResultModel.UserSetting,
-                   saveCompletionHandler: @escaping (Int, ResponseDataModel.CurrencyCode, Set<ResponseDataModel.CurrencyCode>) -> Void,
-                   cancelCompletionHandler: @escaping () -> Void) {
+                   model: SettingModel) {
         
-        model = SettingModel(userSetting: userSetting,
-                             saveCompletionHandler: saveCompletionHandler,
-                             cancelCompletionHandler: cancelCompletionHandler)
+        self.model = model
         
         super.init(coder: coder, baseSettingModel: model)
         
