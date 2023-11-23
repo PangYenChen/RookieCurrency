@@ -1,7 +1,7 @@
 import UIKit
 
 class ResultTableViewController: BaseResultTableViewController {
-    // MARK: - stored property
+    // MARK: - private property
     private let resultModel: ResultModel
     
     // MARK: - life cycle

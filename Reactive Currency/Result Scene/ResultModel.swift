@@ -7,9 +7,9 @@ class ResultModel: BaseResultModel {
     private let userTriggeredStateUpdating: CurrentValueSubject<Void, Never>
     private let order: CurrentValueSubject<Order, Never>
     private let searchText: CurrentValueSubject<String?, Never>
-    private var anyCancellableSet: Set<AnyCancellable>
+    private let enableAutoUpdateState: CurrentValueSubject<Bool, Never>
     
-    let enableAutoUpdateState: AnySubscriber<Bool, Never>
+    private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: output
     let state: AnyPublisher<State, Never>
@@ -23,14 +23,13 @@ class ResultModel: BaseResultModel {
         
         order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
         
-        let enableAutoUpdateStatePublisher = CurrentValueSubject<Bool, Never>(true)
-        enableAutoUpdateState = AnySubscriber(enableAutoUpdateStatePublisher)
+        enableAutoUpdateState = CurrentValueSubject<Bool, Never>(true)
         
         // output
         do {
             let autoUpdateTimeInterval: TimeInterval = 5
             
-            let autoUpdateState = enableAutoUpdateStatePublisher
+            let autoUpdateState = enableAutoUpdateState
                 .map { isEnable in
                     isEnable ?
                     Timer.publish(every: autoUpdateTimeInterval, on: RunLoop.main, in: .default)
@@ -89,12 +88,12 @@ class ResultModel: BaseResultModel {
         
         userSetting
             .dropFirst()
-            .sink { userSetting in
+            .sink { [unowned self] userSetting in
                 AppUtility.baseCurrencyCode = userSetting.baseCurrency
                 AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
                 AppUtility.numberOfDays = userSetting.numberOfDay
                 #warning("下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通")
-                enableAutoUpdateStatePublisher.send(true)
+                self.enableAutoUpdateState.send(true)
             }
             .store(in: &anyCancellableSet)
     }
@@ -112,13 +111,12 @@ class ResultModel: BaseResultModel {
     override func setSearchText(_ searchText: String?) {
         self.searchText.send(searchText)
     }
-}
-
-// MARK: - internal method
-extension ResultModel {
-    func settingModel() -> SettingModel {
-        SettingModel(userSetting: userSetting.value,
-                     settingSubscriber: AnySubscriber(userSetting),
-                     cancelSubscriber: AnySubscriber<Void, Never>())
+    
+    override func settingModel() -> SettingModel {
+        enableAutoUpdateState.send(false)
+        return SettingModel(userSetting: userSetting.value,
+                            settingSubscriber: AnySubscriber(userSetting),
+                            // TODO: handle cancel
+                            cancelSubscriber: AnySubscriber<Void, Never>())
     }
 }
