@@ -19,6 +19,10 @@ class BaseResultModel {
     func setSearchText(_ searchText: String?) {
         fatalError("setSearchText(_:) has not been implemented")
     }
+    
+    func settingModel() -> SettingModel {
+        fatalError("settingModel() has not been implemented")
+    }
 }
 
 // MARK: - helper method

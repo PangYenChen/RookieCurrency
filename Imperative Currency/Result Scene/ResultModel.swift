@@ -1,8 +1,6 @@
 import Foundation
 
 class ResultModel: BaseResultModel {
-#warning("這些屬性在 setting scene 改成 mvc 之後要擋起來 或者刪掉")
-    
     private var userSetting: UserSetting
     
     private var order: Order
@@ -15,7 +13,11 @@ class ResultModel: BaseResultModel {
     
     private let autoUpdateTimeInterval: TimeInterval
     
-    var stateHandler: StateHandler?
+    var stateHandler: StateHandler? {
+        didSet {
+            // TODO: 一收到要執行一次，不然會錯過 .updating
+        }
+    }
     
     override init() {
         userSetting = (numberOfDay: AppUtility.numberOfDays,
@@ -56,12 +58,8 @@ class ResultModel: BaseResultModel {
                                           filteredIfNeededBy: self.searchText)
         stateHandler?(.sorted(analyzedDataArray: analyzedDataArray))
     }
-}
-
-// MARK: - internal methods
-extension ResultModel {
     
-    func settingModel() -> SettingModel {
+    override func settingModel() -> SettingModel {
         suspendAutoUpdatingState()
         
         return SettingModel(userSetting: userSetting) { [unowned self] userSetting in

@@ -137,7 +137,7 @@ class BaseResultTableViewController: UITableViewController {
     }
     
     @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        fatalError("showSetting(_:) has not been implemented")
+        SettingTableViewController(coder: coder, model: baseResultModel.settingModel())
     }
 }
 

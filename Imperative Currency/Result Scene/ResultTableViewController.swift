@@ -2,13 +2,13 @@ import UIKit
 
 class ResultTableViewController: BaseResultTableViewController {
     // MARK: - stored property
-    private let model: ResultModel
+    private let resultModel: ResultModel
     
     // MARK: - life cycle
     required init?(coder: NSCoder) {
-        model = ResultModel()
+        resultModel = ResultModel()
         
-        super.init(coder: coder, baseResultModel: model)
+        super.init(coder: coder, baseResultModel: resultModel)
     }
     
     required init?(coder: NSCoder, baseResultModel: BaseResultModel) {
@@ -18,11 +18,6 @@ class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        model.stateHandler = updateUIFor(_:)
-    }
-    
-    // MARK: - navigation
-    @IBSegueAction override func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        SettingTableViewController(coder: coder, model: model.settingModel())
+        resultModel.stateHandler = updateUIFor(_:)
     }
 }
