@@ -71,7 +71,7 @@ extension BaseResultModel {
     enum State {
         case updating
         case updated(timestamp: Int, analyzedDataArray: [AnalyzedData])
-        case sorted(analyzedDataArray: [AnalyzedData])
+        case sorted(analyzedSortedDataArray: [AnalyzedData])
         case failure(Error)
     }
     

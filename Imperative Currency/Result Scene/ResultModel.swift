@@ -13,9 +13,11 @@ class ResultModel: BaseResultModel {
     
     private let autoUpdateTimeInterval: TimeInterval
     
+    private var state: State
+    
     var stateHandler: StateHandler? {
         didSet {
-            // TODO: 一收到要執行一次，不然會錯過 .updating
+            stateHandler?(state)
         }
     }
     
@@ -32,6 +34,8 @@ class ResultModel: BaseResultModel {
         timer = nil
         autoUpdateTimeInterval = 5
         
+        state = .updating
+        
         super.init()
         
         resumeAutoUpdatingState()
@@ -45,18 +49,18 @@ class ResultModel: BaseResultModel {
         AppUtility.order = order
         self.order = order
         
-        let analyzedDataArray = Self.sort(self.analyzedDataArray,
-                                          by: self.order,
-                                          filteredIfNeededBy: self.searchText)
-        stateHandler?(.sorted(analyzedDataArray: analyzedDataArray))
+        let analyzedSortedDataArray = Self.sort(self.analyzedDataArray,
+                                                by: self.order,
+                                                filteredIfNeededBy: self.searchText)
+        stateHandler?(.sorted(analyzedSortedDataArray: analyzedSortedDataArray))
     }
     
     override func setSearchText(_ searchText: String?) {
         self.searchText = searchText
-        let analyzedDataArray = Self.sort(self.analyzedDataArray,
-                                          by: self.order,
-                                          filteredIfNeededBy: self.searchText)
-        stateHandler?(.sorted(analyzedDataArray: analyzedDataArray))
+        let analyzedSortedDataArray = Self.sort(self.analyzedDataArray,
+                                                by: self.order,
+                                                filteredIfNeededBy: self.searchText)
+        stateHandler?(.sorted(analyzedSortedDataArray: analyzedSortedDataArray))
     }
     
     override func settingModel() -> SettingModel {
@@ -64,6 +68,10 @@ class ResultModel: BaseResultModel {
         
         return SettingModel(userSetting: userSetting) { [unowned self] userSetting in
             self.userSetting = userSetting
+            AppUtility.numberOfDays = userSetting.numberOfDay
+            AppUtility.baseCurrencyCode = userSetting.baseCurrency
+            AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
+            
             self.resumeAutoUpdatingState()
         } cancelCompletionHandler: { [unowned self] in
             self.resumeAutoUpdatingState()
@@ -108,6 +116,7 @@ private extension ResultModel {
                         }
                     
                     guard analyzedFailure.isEmpty else {
+                        state = .failure(MyError.foo)
                         stateHandler?(.failure(MyError.foo))
 #warning("還沒處理錯誤")
                         return
@@ -122,11 +131,12 @@ private extension ResultModel {
                     let analyzedDataArray = Self.sort(self.analyzedDataArray,
                                                       by: self.order,
                                                       filteredIfNeededBy: self.searchText)
-                    
+                    state = .updated(timestamp: latestRate.timestamp, analyzedDataArray: analyzedDataArray)
                     stateHandler?(.updated(timestamp: latestRate.timestamp, analyzedDataArray: analyzedDataArray))
                 }
                 
             case .failure(let error):
+                state = .failure(error)
                 stateHandler?(.failure(error))
             }
         }
