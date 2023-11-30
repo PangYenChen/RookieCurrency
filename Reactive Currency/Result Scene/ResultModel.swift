@@ -2,7 +2,7 @@ import Foundation
 import Combine
 
 class ResultModel: BaseResultModel {
-    // MARK: - private properties
+    // MARK: - input
     private let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
     private let updateTriggerByUser: PassthroughSubject<Void, Never>
     private let order: CurrentValueSubject<Order, Never>
@@ -15,18 +15,20 @@ class ResultModel: BaseResultModel {
     let state: AnyPublisher<State, Never>
     
     override init() {
-        userSetting = CurrentValueSubject((AppUtility.numberOfDays,
-                                           AppUtility.baseCurrencyCode,
-                                           AppUtility.currencyCodeOfInterest))
-        
-        updateTriggerByUser = PassthroughSubject<Void, Never>()
-        
-        searchText = CurrentValueSubject<String?, Never>(nil)
-        
-        order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
-        
-        isAutoUpdateEnabled = CurrentValueSubject<Bool, Never>(true)
-        
+        // input
+        do {
+            userSetting = CurrentValueSubject((AppUtility.numberOfDays,
+                                               AppUtility.baseCurrencyCode,
+                                               AppUtility.currencyCodeOfInterest))
+            
+            updateTriggerByUser = PassthroughSubject<Void, Never>()
+            
+            searchText = CurrentValueSubject<String?, Never>(nil)
+            
+            order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
+            
+            isAutoUpdateEnabled = CurrentValueSubject<Bool, Never>(true)
+        }
         // output
         do {
             let autoUpdateTimeInterval: TimeInterval = 5
@@ -79,6 +81,7 @@ class ResultModel: BaseResultModel {
                     return State.updated(timestamp: analyzedSuccessTuple.latestUpdateTime,
                                          analyzedDataArray: analyzedDataArray)
                 }
+                .merge(with: update.map { .updating })
                 .eraseToAnyPublisher()
         }
         
