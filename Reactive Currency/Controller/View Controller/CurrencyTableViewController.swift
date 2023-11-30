@@ -9,7 +9,7 @@ final class CurrencyTableViewController: BaseCurrencyTableViewController {
     
     private let triggerRefreshControlSubject: PassthroughSubject<Void, Never>
     
-#warning("看這個能不能用 publisher 之類的取代")
+    // TODO: 看這個能不能用 publisher 之類的取代
     private var isFirstTimePopulate: Bool
     
     private var anyCancellableSet: Set<AnyCancellable>

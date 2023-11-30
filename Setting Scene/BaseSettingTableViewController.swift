@@ -1,28 +1,44 @@
 import UIKit
 
 class BaseSettingTableViewController: UITableViewController, AlertPresenter {
-    
     // MARK: - properties
-    @IBOutlet weak var saveButton: UIBarButtonItem!
+    var editedNumberOfDays: Int
     
-    @IBOutlet weak var sectionFooterView: UIView!
+    var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode
+    
+    var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
+    
+    var hasChangesToSave: Bool
+    
+    // MARK: UI objects
+    @IBOutlet var saveButton: UIBarButtonItem!
+    
+    @IBOutlet private var sectionFooterView: UIView!
     
     let stepper: UIStepper
     
-    @IBOutlet weak var versionLabel: UILabel!
+    @IBOutlet private var versionLabel: UILabel!
     
-    @IBOutlet weak var dateLabel: UILabel!
+    @IBOutlet private var dateLabel: UILabel!
     
-    var editedNumberOfDayString: String { fatalError("editedNumberOfDayString has not been implemented") }
+    // MARK: - private property
     
-    var editedBaseCurrencyString: String { fatalError("editedBaseCurrencyString has not been implemented") }
-    
-    var editedCurrencyOfInterestString: String { fatalError("editedCurrencyOfInterestString has not been implemented") }
+    private let baseSettingModel: BaseSettingModel
     
     // MARK: - methods
-    required init?(coder: NSCoder) {
+    init?(coder: NSCoder, baseSettingModel: BaseSettingModel) {
+        
+        editedNumberOfDays = -1
+        
+        editedBaseCurrencyCode = ""
+        
+        editedCurrencyCodeOfInterest = Set<ResponseDataModel.CurrencyCode>()
+        
+        hasChangesToSave = false
         
         stepper = UIStepper()
+        
+        self.baseSettingModel = baseSettingModel
         
         super.init(coder: coder)
         
@@ -33,6 +49,10 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         }
         
         title = R.string.settingScene.setting()
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override func viewDidLoad() {
@@ -57,33 +77,52 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         }
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        
-        let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
-        let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
-        DispatchQueue.main.async { [unowned self] in
-            tableView.reloadRows(at: [baseCurrencyIndexPath, currencyOfInterestIndexPath], with: .automatic)
-        }
-    }
+//    override func viewDidAppear(_ animated: Bool) {
+//        super.viewDidAppear(animated)
+//        
+//        let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
+//        let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
+//        DispatchQueue.main.async { [unowned self] in
+//            tableView.reloadRows(at: [baseCurrencyIndexPath, currencyOfInterestIndexPath], with: .automatic)
+//        }
+//    }
+    // TODO: 要確認從下一頁回來沒問題
     
+    // MARK: - hook methods
     func stepperValueDidChange() {
         fatalError("stepperValueDidChange() has not been implemented")
     }
     
-    @IBAction func save() {
+    // MARK: - Navigation
+    @IBSegueAction func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+        fatalError("showBaseCurrencyTableViewController(_:) has not been implemented")
+    }
+    @IBSegueAction func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+        fatalError("showCurrencyOfInterestTableViewController(_:) has not been implemented")
+    }
+}
+
+// MARK: - internal method
+extension BaseSettingTableViewController {
+    @IBAction final func didTapCancelButton(_ sender: UIBarButtonItem) {
+        hasChangesToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
+    }
+    
+    @IBAction final func save() {
+        baseSettingModel.save()
         dismiss(animated: true)
     }
     
-    func cancel() {
+    final func cancel() {
+        baseSettingModel.cancel()
         dismiss(animated: true)
     }
     
-    func presentCancelAlert(showingSave: Bool) {
+    final func presentDismissalConfirmation(withSaveOption: Bool) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         // 儲存的 action，只有在下拉的時候加上這個 action。
-        if showingSave {
+        if withSaveOption {
             let title = R.string.settingScene.cancelAlertSavingTitle()
             let saveAction = UIAlertAction(title: title,
                                            style: .default) { [unowned self] _ in save() }
@@ -110,12 +149,46 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         present(alertController, animated: true)
     }
     
-    // MARK: - Navigation
-    @IBSegueAction func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        fatalError("showBaseCurrencyTableViewController(_:) has not been implemented")
+    final func updateNumberOfDaysRow(for numberOfDays: Int) {
+        let numberOfDayRow = IndexPath(row: Row.numberOfDay.rawValue, section: 0)
+        
+        guard let cell = tableView.cellForRow(at: numberOfDayRow) else {
+            assertionFailure("###, \(#function), \(self), 拿不到設定 number of day 的 cell。")
+            return
+        }
+        
+        guard var contentConfiguration = cell.contentConfiguration as? UIListContentConfiguration else {
+            assertionFailure("###, \(#function), \(self), 在 data source method 中，cell 的 content configuration 應該要是 UIListContentConfiguration，但是中途被改掉了。")
+            return
+        }
+        
+        contentConfiguration.secondaryText = String(numberOfDays)
+        
+        cell.contentConfiguration = contentConfiguration
     }
-    @IBSegueAction func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        fatalError("showCurrencyOfInterestTableViewController(_:) has not been implemented")
+    
+    final func reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: ResponseDataModel.CurrencyCode) {
+        guard editedBaseCurrencyCode != baseCurrencyCode else { return }
+        
+        editedBaseCurrencyCode = baseCurrencyCode
+        
+        let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
+        tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
+    }
+    
+    final func reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) {
+        guard editedCurrencyCodeOfInterest != currencyCodeOfInterest else { return }
+        
+        editedCurrencyCodeOfInterest = currencyCodeOfInterest
+        
+        let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
+        tableView.reloadRows(at: [currencyOfInterestIndexPath], with: .automatic)
+    }
+    
+    final func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
+        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ??
+        AppUtility.supportedSymbols?[currencyCode] ??
+        currencyCode
     }
 }
 
@@ -149,17 +222,25 @@ extension BaseSettingTableViewController {
             switch row {
             case .numberOfDay:
                 contentConfiguration.text = R.string.settingScene.numberOfConsideredDay()
-                contentConfiguration.secondaryText = editedNumberOfDayString
+                contentConfiguration.secondaryText = String(editedNumberOfDays)
                 contentConfiguration.image = UIImage(systemName: "calendar")
+                stepper.value = Double(editedNumberOfDays)
                 cell.accessoryView = stepper
             case .baseCurrency:
                 contentConfiguration.text = R.string.share.baseCurrency()
-                contentConfiguration.secondaryText = editedBaseCurrencyString
+                contentConfiguration.secondaryText = displayStringFor(currencyCode: editedBaseCurrencyCode)
                 contentConfiguration.image = UIImage(systemName: "dollarsign.circle")
                 cell.accessoryType = .disclosureIndicator
             case .currencyOfInterest:
                 contentConfiguration.text = R.string.share.currencyOfInterest()
-                contentConfiguration.secondaryText = editedCurrencyOfInterestString
+                
+                let editedCurrencyNameOfInterest = editedCurrencyCodeOfInterest
+                    .map(self.displayStringFor(currencyCode:))
+                    .sorted()
+                
+                let displayStringForEditedCurrencyNameOfInterest = ListFormatter.localizedString(byJoining: editedCurrencyNameOfInterest)
+                
+                contentConfiguration.secondaryText = displayStringForEditedCurrencyNameOfInterest
                 contentConfiguration.image = UIImage(systemName: "checklist")
                 cell.accessoryType = .disclosureIndicator
             case .language:
@@ -261,7 +342,7 @@ extension BaseSettingTableViewController {
 extension BaseSettingTableViewController: UIAdaptivePresentationControllerDelegate {
     
     func presentationControllerDidAttemptToDismiss(_ presentationController: UIPresentationController) {
-        presentCancelAlert(showingSave: true)
+        presentDismissalConfirmation(withSaveOption: true)
     }
     
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {

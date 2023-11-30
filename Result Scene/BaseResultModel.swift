@@ -6,6 +6,23 @@ class BaseResultModel {
     init() {
         initialOrder = AppUtility.order
     }
+    
+    // MARK: - hook methods
+    func updateState() {
+        fatalError("updateState() has not been implemented")
+    }
+    
+    func setOrder(_ order: Order) {
+        fatalError("setOrder(_:) has not been implemented")
+    }
+    
+    func setSearchText(_ searchText: String?) {
+        fatalError("setSearchText(_:) has not been implemented")
+    }
+    
+    func settingModel() -> SettingModel {
+        fatalError("settingModel() has not been implemented")
+    }
 }
 
 // MARK: - helper method
@@ -50,13 +67,11 @@ extension BaseResultModel {
     }
     
     typealias UserSetting = (numberOfDay: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
-}
 
-// MARK: - name space
-extension BaseResultModel {
     enum State {
         case updating
         case updated(timestamp: Int, analyzedDataArray: [AnalyzedData])
+        case sorted(analyzedSortedDataArray: [AnalyzedData])
         case failure(Error)
     }
     
@@ -69,7 +84,7 @@ extension BaseResultModel {
     
     enum MyError: Swift.Error, LocalizedError {
         case foo
-#warning("暫時用的error")
+#warning("重構過程中暫時用的error")
         var localizedDescription: String { "暫時用的error" }
         var errorDescription: String? { "暫時用的error" }
     }

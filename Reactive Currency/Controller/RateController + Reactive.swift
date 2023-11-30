@@ -9,7 +9,7 @@ protocol FetcherProtocol {
 // MARK: - make Fetcher confirm FetcherProtocol
 extension Fetcher: FetcherProtocol {}
 
-#warning("這裡的 method 好長 看能不能拆開")
+// TODO: 這裡的 method 好長 看能不能拆開
 
 extension RateController {
     

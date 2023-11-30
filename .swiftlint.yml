@@ -1,8 +1,10 @@
 disabled_rules:
   - large_tuple
   - nesting
-  - cyclomatic_complexity #要查一下這個是什麼
   - void_function_in_ternary
+
+opt_in_rules:
+  - discouraged_optional_collection
 
 trailing_whitespace:
     ignores_empty_lines: true
@@ -10,6 +12,10 @@ trailing_whitespace:
 line_length:
     warning: 180 #要想一下這個數字
     ignores_interpolated_strings: true
+    
+identifier_name:
+    max_length:
+        warning: 50 #讀到這個規則的時候要再看一下
     
 statement_position:
     statement_mode: uncuddled_else

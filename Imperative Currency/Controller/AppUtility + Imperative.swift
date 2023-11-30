@@ -3,7 +3,7 @@ import Foundation
 extension AppUtility {
     
     private static var isFetching: Bool = false
-    #warning("這裡應該會有同時性問題，等我讀完 concurrency 之後再處理")
+    // TODO: 這裡應該會有同時性問題，等我讀完 concurrency 之後再處理
     private static var completionHandlers: [(Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void] = []
     
     static func fetchSupportedSymbols(completionHandler: @escaping (Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void) {

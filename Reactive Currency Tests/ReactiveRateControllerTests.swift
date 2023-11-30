@@ -4,7 +4,7 @@ import Combine
 
 final class ReactiveRateControllerTests: XCTestCase {
 
-#warning("`RateController` 的 method 太長了，不好測試。等 method 拆解好之後再來寫測試。")
+    // TODO: "`RateController` 的 method 太長了，不好測試。等 method 拆解好之後再來寫測試。
     
     var sut: RateController!
     

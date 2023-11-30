@@ -11,7 +11,7 @@ enum Analyst {
         
         // 計算平均值
         var meanResultDictionary: [ResponseDataModel.CurrencyCode: Result<Decimal, AnalyzedError>] = [:]
-        #warning("好醜想重寫，不用擔心會改壞，已經有unit test了。")
+        // TODO: 好醜想重寫，不用擔心會改壞，已經有unit test了。
     outer: for currencyCode in currencyOfInterest {
         var mean: Decimal = 0
         for historicalRate in historicalRateSet {

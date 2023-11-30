@@ -2,18 +2,22 @@ import UIKit
 
 class BaseResultTableViewController: UITableViewController {
     // MARK: - IBOutlet
-    @IBOutlet weak var updatingStatusBarButtonItem: UIBarButtonItem!
+    @IBOutlet var updatingStatusBarButtonItem: UIBarButtonItem!
     
-    @IBOutlet weak var sortingBarButtonItem: UIBarButtonItem!
+    @IBOutlet var sortingBarButtonItem: UIBarButtonItem!
     
     // MARK: - store properties
     private var dataSource: DataSource!
     
-    private let initialOrder: BaseResultModel.Order
+    private let baseResultModel: BaseResultModel
+    
+    private var latestUpdateTime: Int?
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, initialOrder: BaseResultModel.Order) {
-        self.initialOrder = initialOrder
+    required init?(coder: NSCoder, baseResultModel: BaseResultModel) {
+        self.baseResultModel = baseResultModel
+        
+        latestUpdateTime = nil
         
         super.init(coder: coder)
         
@@ -49,7 +53,7 @@ class BaseResultTableViewController: UITableViewController {
         // refresh control
         do {
             refreshControl = UIRefreshControl()
-            let handler = UIAction { [unowned self] _ in updateState() }
+            let handler = UIAction { [unowned self] _ in baseResultModel.updateState() }
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
         }
         
@@ -107,12 +111,12 @@ class BaseResultTableViewController: UITableViewController {
         do {
             let increasingAction = UIAction(title: BaseResultModel.Order.increasing.localizedName,
                                             image: UIImage(systemName: "arrow.up.right"),
-                                            handler: { [unowned self] _ in setOrder(.increasing) })
+                                            handler: { [unowned self] _ in baseResultModel.setOrder(.increasing) })
             let decreasingAction = UIAction(title: BaseResultModel.Order.decreasing.localizedName,
                                             image: UIImage(systemName: "arrow.down.right"),
-                                            handler: { [unowned self] _ in setOrder(.decreasing) })
+                                            handler: { [unowned self] _ in baseResultModel.setOrder(.decreasing) })
             
-            switch initialOrder {
+            switch baseResultModel.initialOrder {
             case .increasing:
                 increasingAction.state = .on
             case .decreasing:
@@ -128,26 +132,46 @@ class BaseResultTableViewController: UITableViewController {
                                                options: .singleSelection,
                                                children: [sortMenu])
             
-            sortingBarButtonItem.menu?.children.first?.subtitle = initialOrder.localizedName
+            sortingBarButtonItem.menu?.children.first?.subtitle = baseResultModel.initialOrder.localizedName
         }
     }
     
-    // MARK: - Hook methods
-    func setOrder(_ order: BaseResultModel.Order) {
-        fatalError("select(order:) has not been implemented")
-    }
-    
-    func updateState() {
-        fatalError("refreshControlTriggered()")
-    }
-    
     @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        fatalError("showSetting(_:) has not been implemented")
+        SettingTableViewController(coder: coder, model: baseResultModel.settingModel())
     }
 }
 
 // MARK: - helper methods
 extension BaseResultTableViewController {
+    final func updateUIFor(_ state: BaseResultModel.State) {
+        switch state {
+        case .updating:
+            updatingStatusBarButtonItem.title = R.string.resultScene.updating()
+            
+        case .updated(let timestamp, let analyzedDataArray):
+            self.latestUpdateTime = timestamp
+            populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+            populateTableViewWith(analyzedDataArray)
+            
+            if tableView.refreshControl?.isRefreshing == true {
+                tableView.refreshControl?.endRefreshing()
+            }
+            
+        case .sorted(let analyzedDataArray):
+            populateTableViewWith(analyzedDataArray)
+            
+        case .failure(let error):
+            populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+            presentAlert(error: error)
+            
+            if tableView.refreshControl?.isRefreshing == true {
+                tableView.refreshControl?.endRefreshing()
+            }
+        }
+    }
+}
+// MARK: - private methods
+private extension BaseResultTableViewController {
     final func populateTableViewWith(_ analyzedDataArray: [BaseResultModel.AnalyzedData]) {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
@@ -169,7 +193,15 @@ extension BaseResultTableViewController {
 extension BaseResultTableViewController: AlertPresenter {}
 
 // MARK: - Search Bar Delegate
-extension BaseResultTableViewController: UISearchBarDelegate {}
+extension BaseResultTableViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        baseResultModel.setSearchText(searchText)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        baseResultModel.setSearchText(nil)
+    }
+}
 
 // MARK: - private name space
 private extension BaseResultTableViewController {

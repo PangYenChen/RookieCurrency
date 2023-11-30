@@ -2,45 +2,38 @@ import Foundation
 import Combine
 
 class ResultModel: BaseResultModel {
-    // MARK: - internal properties
-    // MARK: input
-    let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
+    // MARK: - input
+    private let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
+    private let updateTriggerByUser: PassthroughSubject<Void, Never>
+    private let order: CurrentValueSubject<Order, Never>
+    private let searchText: CurrentValueSubject<String?, Never>
+    private let isAutoUpdateEnabled: CurrentValueSubject<Bool, Never>
     
-    let order: AnySubscriber<Order, Never>
-    
-    let searchText: AnySubscriber<String?, Never>
-    
-    let updateState: AnySubscriber<Void, Never>
-    
-    let enableAutoUpdateState: AnySubscriber<Bool, Never>
+    private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: output
     let state: AnyPublisher<State, Never>
     
-    // MARK: - private property
-    private var anyCancellableSet: Set<AnyCancellable>
-    
     override init() {
         // input
-        userSetting = CurrentValueSubject((AppUtility.numberOfDays, AppUtility.baseCurrencyCode, AppUtility.currencyCodeOfInterest))
-        
-        let orderPublisher = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
-        order = AnySubscriber(orderPublisher)
-        
-        let searchTextPublisher = CurrentValueSubject<String?, Never>(nil)
-        searchText = AnySubscriber(searchTextPublisher)
-        
-        let userTriggeredStateUpdating = CurrentValueSubject<Void, Never>(())
-        updateState = AnySubscriber(userTriggeredStateUpdating)
-        
-        let enableAutoUpdateStatePublisher = CurrentValueSubject<Bool, Never>(true)
-        enableAutoUpdateState = AnySubscriber(enableAutoUpdateStatePublisher)
-        
+        do {
+            userSetting = CurrentValueSubject((AppUtility.numberOfDays,
+                                               AppUtility.baseCurrencyCode,
+                                               AppUtility.currencyCodeOfInterest))
+            
+            updateTriggerByUser = PassthroughSubject<Void, Never>()
+            
+            searchText = CurrentValueSubject<String?, Never>(nil)
+            
+            order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
+            
+            isAutoUpdateEnabled = CurrentValueSubject<Bool, Never>(true)
+        }
         // output
         do {
             let autoUpdateTimeInterval: TimeInterval = 5
             
-            let autoUpdateState = enableAutoUpdateStatePublisher
+            let autoUpdate = isAutoUpdateEnabled
                 .map { isEnable in
                     isEnable ?
                     Timer.publish(every: autoUpdateTimeInterval, on: RunLoop.main, in: .default)
@@ -52,11 +45,9 @@ class ResultModel: BaseResultModel {
                 }
                 .switchToLatest()
             
-            let updateState = Publishers.Merge(userTriggeredStateUpdating, autoUpdateState)
+            let update = Publishers.Merge(updateTriggerByUser, autoUpdate)
             
-            let shouldUpdateRate = Publishers.CombineLatest(updateState, userSetting)
-            
-            let analyzedSuccessTuple = shouldUpdateRate
+            let analyzedSuccessTuple = Publishers.CombineLatest(update, userSetting)
                 .flatMap { _, userSetting in
                     RateController.shared
                         .ratePublisher(numberOfDay: userSetting.numberOfDay)
@@ -77,9 +68,9 @@ class ResultModel: BaseResultModel {
                     
                 }
                 .resultSuccess()
-#warning("還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿")
+            // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
             
-            let orderAndSearchText = Publishers.CombineLatest(orderPublisher, searchTextPublisher)
+            let orderAndSearchText = Publishers.CombineLatest(order, searchText)
                 .map { (order: $0, searchText: $1) }
             
             state = Publishers.CombineLatest(analyzedSuccessTuple, orderAndSearchText)
@@ -90,6 +81,7 @@ class ResultModel: BaseResultModel {
                     return State.updated(timestamp: analyzedSuccessTuple.latestUpdateTime,
                                          analyzedDataArray: analyzedDataArray)
                 }
+                .merge(with: update.map { .updating })
                 .eraseToAnyPublisher()
         }
         
@@ -99,18 +91,39 @@ class ResultModel: BaseResultModel {
         
         userSetting
             .dropFirst()
-            .sink { userSetting in
+            .sink { [unowned self] userSetting in
                 AppUtility.baseCurrencyCode = userSetting.baseCurrency
                 AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
                 AppUtility.numberOfDays = userSetting.numberOfDay
-                #warning("下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通")
-                enableAutoUpdateStatePublisher.send(true)
+                // TODO: 下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通
+                self.isAutoUpdateEnabled.send(true)
             }
             .store(in: &anyCancellableSet)
         
-        orderPublisher
+        order
             .dropFirst()
             .sink { order in AppUtility.order = order }
             .store(in: &anyCancellableSet)
+    }
+    
+    // MARK: - hook methods
+    override func updateState() {
+        updateTriggerByUser.send()
+    }
+    
+    override func setOrder(_ order: BaseResultModel.Order) {
+        self.order.send(order)
+    }
+    
+    override func setSearchText(_ searchText: String?) {
+        self.searchText.send(searchText)
+    }
+    
+    override func settingModel() -> SettingModel {
+        isAutoUpdateEnabled.send(false)
+        return SettingModel(userSetting: userSetting.value,
+                            settingSubscriber: AnySubscriber(userSetting),
+                            // TODO: handle cancel
+                            cancelSubscriber: AnySubscriber<Void, Never>())
     }
 }
