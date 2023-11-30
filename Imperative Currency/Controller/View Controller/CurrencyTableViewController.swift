@@ -107,7 +107,7 @@ extension CurrencyTableViewController {
         
         private var baseCurrencyCode: String
         
-        var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode] }
+        var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode] }
         
         let allowsMultipleSelection: Bool
         
@@ -135,30 +135,30 @@ extension CurrencyTableViewController {
         
         let title: String
         
-        private var currencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+        private var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
         
-        var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { currencyOfInterest }
+        var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest }
         
         let allowsMultipleSelection: Bool
         
         private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
         
-        init(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
+        init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
              completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
             title = R.string.share.currencyOfInterest()
-            self.currencyOfInterest = currencyOfInterest
+            self.currencyCodeOfInterest = currencyCodeOfInterest
             allowsMultipleSelection = true
             self.completionHandler = completionHandler
         }
         
         func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            currencyOfInterest.insert(selectedCurrencyCode)
-            completionHandler(currencyOfInterest)
+            currencyCodeOfInterest.insert(selectedCurrencyCode)
+            completionHandler(currencyCodeOfInterest)
         }
         
         func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            currencyOfInterest.remove(deselectedCurrencyCode)
-            completionHandler(currencyOfInterest)
+            currencyCodeOfInterest.remove(deselectedCurrencyCode)
+            completionHandler(currencyCodeOfInterest)
         }
     }
 }

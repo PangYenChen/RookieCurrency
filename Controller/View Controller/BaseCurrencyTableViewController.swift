@@ -258,7 +258,7 @@ class BaseCurrencyTableViewController: UITableViewController {
             self?.dataSource.apply(snapshot) { [weak self] in
                 guard let self else { return }
                 
-                let selectedIndexPath = strategy.selectedCurrencies
+                let selectedIndexPath = strategy.selectedCurrencyCode
                     .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
                 
                 selectedIndexPath
@@ -364,7 +364,7 @@ protocol CurrencyTableStrategy {
     
     var title: String { get }
     
-    var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { get }
+    var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { get }
     
     var allowsMultipleSelection: Bool { get }
     

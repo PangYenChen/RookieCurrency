@@ -3,7 +3,7 @@ import Foundation
 /// 從數據中分析出貨幣的升貶值的物件
 enum Analyst {
     
-    static func analyze(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
+    static func analyze(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
                         latestRate: ResponseDataModel.LatestRate,
                         historicalRateSet: Set<ResponseDataModel.HistoricalRate>,
                         baseCurrencyCode: ResponseDataModel.CurrencyCode)
@@ -12,7 +12,7 @@ enum Analyst {
         // 計算平均值
         var meanResultDictionary: [ResponseDataModel.CurrencyCode: Result<Decimal, AnalyzedError>] = [:]
         // TODO: 好醜想重寫，不用擔心會改壞，已經有unit test了。
-    outer: for currencyCode in currencyOfInterest {
+    outer: for currencyCode in currencyCodeOfInterest {
         var mean: Decimal = 0
         for historicalRate in historicalRateSet {
             

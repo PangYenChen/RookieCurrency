@@ -54,10 +54,11 @@ class ResultModel: BaseResultModel {
                         .convertOutputToResult()
                         .map { result in
                             result.map { rateTuple in
-                                let analyzedDataArray = Analyst.analyze(currencyOfInterest: userSetting.currencyOfInterest,
-                                                                        latestRate: rateTuple.latestRate,
-                                                                        historicalRateSet: rateTuple.historicalRateSet,
-                                                                        baseCurrencyCode: userSetting.baseCurrencyCode)
+                                let analyzedDataArray = Analyst
+                                    .analyze(currencyCodeOfInterest: userSetting.currencyCodeOfInterest,
+                                             latestRate: rateTuple.latestRate,
+                                             historicalRateSet: rateTuple.historicalRateSet,
+                                             baseCurrencyCode: userSetting.baseCurrencyCode)
                                     .compactMapValues { result in try? result.get() }
                                     .map { tuple in
                                         AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
@@ -93,7 +94,7 @@ class ResultModel: BaseResultModel {
             .dropFirst()
             .sink { [unowned self] userSetting in
                 AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
-                AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
+                AppUtility.currencyCodeOfInterest = userSetting.currencyCodeOfInterest
                 AppUtility.numberOfDays = userSetting.numberOfDays
                 // TODO: 下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通
                 self.isAutoUpdateEnabled.send(true)

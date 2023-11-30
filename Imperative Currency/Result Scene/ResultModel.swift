@@ -24,7 +24,7 @@ class ResultModel: BaseResultModel {
     override init() {
         userSetting = (numberOfDays: AppUtility.numberOfDays,
                        baseCurrencyCode: AppUtility.baseCurrencyCode,
-                       currencyOfInterest: AppUtility.currencyCodeOfInterest)
+                       currencyCodeOfInterest: AppUtility.currencyCodeOfInterest)
         
         order = AppUtility.order
         
@@ -70,7 +70,7 @@ class ResultModel: BaseResultModel {
             self.userSetting = userSetting
             AppUtility.numberOfDays = userSetting.numberOfDays
             AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
-            AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
+            AppUtility.currencyCodeOfInterest = userSetting.currencyCodeOfInterest
             
             self.resumeAutoUpdatingState()
         } cancelCompletionHandler: { [unowned self] in
@@ -102,7 +102,7 @@ private extension ResultModel {
                 
                 do {
                     let analyzedResult = Analyst
-                        .analyze(currencyOfInterest: userSetting.currencyOfInterest,
+                        .analyze(currencyCodeOfInterest: userSetting.currencyCodeOfInterest,
                                  latestRate: latestRate,
                                  historicalRateSet: historicalRateSet,
                                  baseCurrencyCode: userSetting.baseCurrencyCode)

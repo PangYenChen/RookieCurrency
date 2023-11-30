@@ -44,7 +44,7 @@ class SettingTableViewController: BaseSettingTableViewController {
             .sink(receiveValue: self.reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode:))
             .store(in: &anyCancellableSet)
         
-        model.editedCurrencyOfInterest
+        model.editedCurrencyCodeOfInterest
             .sink(receiveValue: self.reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest:))
             .store(in: &anyCancellableSet)
         
@@ -72,8 +72,8 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
         let strategy = CurrencyTableViewController
-            .CurrencyOfInterestSelectionStrategy(currencyOfInterest: model.editedCurrencyOfInterest.value,
-                                                 selectedCurrencyOfInterest: AnySubscriber(model.editedCurrencyOfInterest))
+            .CurrencyOfInterestSelectionStrategy(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest.value,
+                                                 selectedCurrencyCodeOfInterest: AnySubscriber(model.editedCurrencyCodeOfInterest))
         
         return CurrencyTableViewController(coder: coder, strategy: strategy)
     }

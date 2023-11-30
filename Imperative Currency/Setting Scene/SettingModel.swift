@@ -6,12 +6,12 @@ class SettingModel: BaseSettingModel {
     
     var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode
     
-    var editedCurrencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+    var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
     var hasChange: Bool {
         originalNumberOfDays != editedNumberOfDays ||
         originalBaseCurrencyCode != editedBaseCurrencyCode ||
-        originalCurrencyOfInterest != editedCurrencyOfInterest
+        originalCurrencyCodeOfInterest != editedCurrencyCodeOfInterest
     }
     
     // MARK: - private properties
@@ -19,7 +19,7 @@ class SettingModel: BaseSettingModel {
     
     private let originalBaseCurrencyCode: ResponseDataModel.CurrencyCode
     
-    private let originalCurrencyOfInterest: Set<ResponseDataModel.CurrencyCode>
+    private let originalCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
     private let saveCompletionHandler: SaveHandler
     
@@ -34,8 +34,8 @@ class SettingModel: BaseSettingModel {
         originalBaseCurrencyCode = userSetting.baseCurrencyCode
         editedBaseCurrencyCode = userSetting.baseCurrencyCode
         
-        originalCurrencyOfInterest = userSetting.currencyOfInterest
-        editedCurrencyOfInterest = userSetting.currencyOfInterest
+        originalCurrencyCodeOfInterest = userSetting.currencyCodeOfInterest
+        editedCurrencyCodeOfInterest = userSetting.currencyCodeOfInterest
         
         self.saveCompletionHandler = saveCompletionHandler
         self.cancelCompletionHandler = cancelCompletionHandler
@@ -44,7 +44,7 @@ class SettingModel: BaseSettingModel {
     override func save() {
         let userSetting = (numberOfDays: editedNumberOfDays,
                            baseCurrencyCode: editedBaseCurrencyCode,
-                           currencyOfInterest: editedCurrencyOfInterest)
+                           currencyCodeOfInterest: editedCurrencyCodeOfInterest)
         saveCompletionHandler(userSetting)
     }
     
