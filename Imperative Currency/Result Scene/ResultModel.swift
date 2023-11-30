@@ -23,7 +23,7 @@ class ResultModel: BaseResultModel {
     
     override init() {
         userSetting = (numberOfDays: AppUtility.numberOfDays,
-                       baseCurrency: AppUtility.baseCurrencyCode,
+                       baseCurrencyCode: AppUtility.baseCurrencyCode,
                        currencyOfInterest: AppUtility.currencyCodeOfInterest)
         
         order = AppUtility.order
@@ -69,7 +69,7 @@ class ResultModel: BaseResultModel {
         return SettingModel(userSetting: userSetting) { [unowned self] userSetting in
             self.userSetting = userSetting
             AppUtility.numberOfDays = userSetting.numberOfDays
-            AppUtility.baseCurrencyCode = userSetting.baseCurrency
+            AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
             AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
             
             self.resumeAutoUpdatingState()
@@ -105,7 +105,7 @@ private extension ResultModel {
                         .analyze(currencyOfInterest: userSetting.currencyOfInterest,
                                  latestRate: latestRate,
                                  historicalRateSet: historicalRateSet,
-                                 baseCurrency: userSetting.baseCurrency)
+                                 baseCurrencyCode: userSetting.baseCurrencyCode)
                     
                     let analyzedFailure = analyzedResult
                         .filter { _, result in

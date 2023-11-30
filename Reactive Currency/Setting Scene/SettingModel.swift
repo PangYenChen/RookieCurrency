@@ -4,7 +4,7 @@ import Combine
 class SettingModel: BaseSettingModel {
     let editedNumberOfDays: CurrentValueSubject<Int, Never>
     
-    let editedBaseCurrency: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
+    let editedBaseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
     
     let editedCurrencyOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
     
@@ -20,16 +20,16 @@ class SettingModel: BaseSettingModel {
          cancelSubscriber: AnySubscriber<Void, Never>) {
         editedNumberOfDays = CurrentValueSubject<Int, Never>(userSetting.numberOfDays)
         
-        editedBaseCurrency = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(userSetting.baseCurrency)
+        editedBaseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(userSetting.baseCurrencyCode)
         
         editedCurrencyOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(userSetting.currencyOfInterest)
         
         // has changes
         do {
             let numberOfDaysHasChanges = editedNumberOfDays.map { $0 != userSetting.numberOfDays }
-            let baseCurrencyHasChanges = editedBaseCurrency.map { $0 != userSetting.baseCurrency }
+            let baseCurrencyCodeHasChanges = editedBaseCurrencyCode.map { $0 != userSetting.baseCurrencyCode }
             let currencyOfInterestHasChanges = editedCurrencyOfInterest.map { $0 != userSetting.currencyOfInterest }
-            hasChangesToSave = Publishers.CombineLatest3(numberOfDaysHasChanges, baseCurrencyHasChanges, currencyOfInterestHasChanges)
+            hasChangesToSave = Publishers.CombineLatest3(numberOfDaysHasChanges, baseCurrencyCodeHasChanges, currencyOfInterestHasChanges)
                 .map { $0 || $1 || $2 }
                 .eraseToAnyPublisher()
         }
@@ -43,9 +43,9 @@ class SettingModel: BaseSettingModel {
         saveSubject
             .withLatestFrom(editedNumberOfDays)
             .map { $1 }
-            .withLatestFrom(editedBaseCurrency)
+            .withLatestFrom(editedBaseCurrencyCode)
             .withLatestFrom(editedCurrencyOfInterest)
-            .map { (numberOfDays: $0.0, baseCurrency: $0.1, currencyOfInterest: $1) }
+            .map { (numberOfDays: $0.0, baseCurrencyCode: $0.1, currencyOfInterest: $1) }
             .subscribe(settingSubscriber)
         
         cancelSubject

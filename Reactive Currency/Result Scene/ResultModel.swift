@@ -57,7 +57,7 @@ class ResultModel: BaseResultModel {
                                 let analyzedDataArray = Analyst.analyze(currencyOfInterest: userSetting.currencyOfInterest,
                                                                         latestRate: rateTuple.latestRate,
                                                                         historicalRateSet: rateTuple.historicalRateSet,
-                                                                        baseCurrency: userSetting.baseCurrency)
+                                                                        baseCurrencyCode: userSetting.baseCurrencyCode)
                                     .compactMapValues { result in try? result.get() }
                                     .map { tuple in
                                         AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
@@ -92,7 +92,7 @@ class ResultModel: BaseResultModel {
         userSetting
             .dropFirst()
             .sink { [unowned self] userSetting in
-                AppUtility.baseCurrencyCode = userSetting.baseCurrency
+                AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
                 AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
                 AppUtility.numberOfDays = userSetting.numberOfDays
                 // TODO: 下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通

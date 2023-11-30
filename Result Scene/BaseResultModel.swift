@@ -66,7 +66,7 @@ extension BaseResultModel {
         }
     }
     
-    typealias UserSetting = (numberOfDays: Int, baseCurrency: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
+    typealias UserSetting = (numberOfDays: Int, baseCurrencyCode: ResponseDataModel.CurrencyCode, currencyOfInterest: Set<ResponseDataModel.CurrencyCode>)
 
     enum State {
         case updating

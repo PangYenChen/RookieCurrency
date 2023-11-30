@@ -13,7 +13,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         super.init(coder: coder, baseSettingModel: model)
         
         self.editedNumberOfDays = model.editedNumberOfDays
-        self.editedBaseCurrencyCode = model.editedBaseCurrency
+        self.editedBaseCurrencyCode = model.editedBaseCurrencyCode
         self.editedCurrencyCodeOfInterest = model.editedCurrencyOfInterest
         
         stepper.value = Double(model.editedNumberOfDays)
@@ -29,7 +29,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         hasChangesToSave = model.hasChange
         
-        reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: model.editedBaseCurrency)
+        reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: model.editedBaseCurrencyCode)
         reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: model.editedCurrencyOfInterest)
     }
     
@@ -47,8 +47,8 @@ class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - Navigation
     override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
         let baseCurrencySelectionStrategy = CurrencyTableViewController
-            .BaseCurrencySelectionStrategy(baseCurrencyCode: model.editedBaseCurrency) { [unowned self] selectedBaseCurrency in
-                model.editedBaseCurrency = selectedBaseCurrency
+            .BaseCurrencySelectionStrategy(baseCurrencyCode: model.editedBaseCurrencyCode) { [unowned self] selectedBaseCurrencyCode in
+                model.editedBaseCurrencyCode = selectedBaseCurrencyCode
                 saveButton.isEnabled = model.hasChange
                 isModalInPresentation = model.hasChange
             }

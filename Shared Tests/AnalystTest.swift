@@ -16,13 +16,13 @@ final class AnalystTest: XCTestCase {
         let dummyDateString = "1970-01-01"
         let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
         let latestRate = try TestingData.Instance.latestRate()
-        let baseCurrency = "USD"
+        let baseCurrencyCode = "USD"
         
         // act
         let analyzedData = Analyst.analyze(currencyOfInterest: currencyOfInterest,
                                            latestRate: latestRate,
                                            historicalRateSet: [historicalRate],
-                                           baseCurrency: baseCurrency)
+                                           baseCurrencyCode: baseCurrencyCode)
         
         // assert
         // 檢查回傳資料沒有遺漏
@@ -58,13 +58,13 @@ final class AnalystTest: XCTestCase {
         XCTAssertNil(historicalRate[currencyCode: currencyLossInHistoricalRate])
         let latestRate = try TestingData.Instance.latestRate()
         XCTAssertNotNil(latestRate[currencyCode: currencyLossInHistoricalRate])
-        let baseCurrency = "USD"
+        let baseCurrencyCode = "USD"
         
         // act
         var analyzedData = Analyst.analyze(currencyOfInterest: currencyOfInterest,
                                            latestRate: latestRate,
                                            historicalRateSet: [historicalRate],
-                                           baseCurrency: baseCurrency)
+                                           baseCurrencyCode: baseCurrencyCode)
         
         // assert
         // 檢查 currencyLossInHistoricalRate 確實分析失敗
@@ -88,13 +88,13 @@ final class AnalystTest: XCTestCase {
         XCTAssertNotNil(historicalRate[currencyCode: currencyLossInLatestRate])
         let latestRate = try TestingData.Instance.latestRate()
         XCTAssertNil(latestRate[currencyCode: currencyLossInLatestRate])
-        let baseCurrency = "USD"
+        let baseCurrencyCode = "USD"
         
         // act
         var analyzedData = Analyst.analyze(currencyOfInterest: currencyOfInterest,
                                            latestRate: latestRate,
                                            historicalRateSet: [historicalRate],
-                                           baseCurrency: baseCurrency)
+                                           baseCurrencyCode: baseCurrencyCode)
         
         // assert
         // 檢查 currencyLossInLatestRate 確實分析失敗

@@ -6,7 +6,7 @@ enum Analyst {
     static func analyze(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
                         latestRate: ResponseDataModel.LatestRate,
                         historicalRateSet: Set<ResponseDataModel.HistoricalRate>,
-                        baseCurrency: ResponseDataModel.CurrencyCode)
+                        baseCurrencyCode: ResponseDataModel.CurrencyCode)
     -> [ResponseDataModel.CurrencyCode: Result<AnalyzedData, AnalyzedError>] {
         
         // 計算平均值
@@ -16,9 +16,9 @@ enum Analyst {
         var mean: Decimal = 0
         for historicalRate in historicalRateSet {
             
-            let rateConverter = RateConverter(rate: historicalRate, baseCurrency: baseCurrency)
+            let rateConverter = RateConverter(rate: historicalRate, baseCurrencyCode: baseCurrencyCode)
             
-            if let convertedHistoricalRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
+            if let convertedHistoricalRateForCurrencyCode = rateConverter[currencyCodeCode: currencyCode] {
                 mean += convertedHistoricalRateForCurrencyCode
             }
             else {
@@ -35,9 +35,9 @@ enum Analyst {
         
         for (currencyCode, meanResult) in meanResultDictionary {
             resultDictionary[currencyCode] = meanResult.flatMap { mean in
-                let rateConverter = RateConverter(rate: latestRate, baseCurrency: baseCurrency)
+                let rateConverter = RateConverter(rate: latestRate, baseCurrencyCode: baseCurrencyCode)
                 
-                if let convertedLatestRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
+                if let convertedLatestRateForCurrencyCode = rateConverter[currencyCodeCode: currencyCode] {
                     let deviation = (convertedLatestRateForCurrencyCode - mean) / mean
                     return .success((latest: convertedLatestRateForCurrencyCode, mean: mean, deviation: deviation))
                 }
@@ -65,19 +65,19 @@ extension Analyst {
         
         private let rate: Rate
         
-        private let baseCurrency: ResponseDataModel.CurrencyCode
+        private let baseCurrencyCode: ResponseDataModel.CurrencyCode
         
         init(rate: Rate,
-             baseCurrency: ResponseDataModel.CurrencyCode) {
+             baseCurrencyCode: ResponseDataModel.CurrencyCode) {
             self.rate = rate
-            self.baseCurrency = baseCurrency
+            self.baseCurrencyCode = baseCurrencyCode
         }
         
-        subscript(currencyCode currencyCode: ResponseDataModel.CurrencyCode) -> Decimal? {
-            guard let rateForBaseCurrency = rate[currencyCode: baseCurrency],
-                  let rateForCurrency = rate[currencyCode: currencyCode] else { return nil }
+        subscript(currencyCodeCode currencyCodeCode: ResponseDataModel.CurrencyCode) -> Decimal? {
+            guard let rateForBaseCurrencyCode = rate[currencyCode: baseCurrencyCode],
+                  let rateForCurrencyCode = rate[currencyCode: currencyCodeCode] else { return nil }
             
-            return rateForBaseCurrency / rateForCurrency
+            return rateForBaseCurrencyCode / rateForCurrencyCode
         }
     }
 }
