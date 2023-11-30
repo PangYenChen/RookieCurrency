@@ -50,7 +50,7 @@ class ResultModel: BaseResultModel {
             let analyzedSuccessTuple = Publishers.CombineLatest(update, userSetting)
                 .flatMap { _, userSetting in
                     RateController.shared
-                        .ratePublisher(numberOfDay: userSetting.numberOfDay)
+                        .ratePublisher(numberOfDays: userSetting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in
                             result.map { rateTuple in
@@ -94,7 +94,7 @@ class ResultModel: BaseResultModel {
             .sink { [unowned self] userSetting in
                 AppUtility.baseCurrencyCode = userSetting.baseCurrency
                 AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
-                AppUtility.numberOfDays = userSetting.numberOfDay
+                AppUtility.numberOfDays = userSetting.numberOfDays
                 // TODO: 下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通
                 self.isAutoUpdateEnabled.send(true)
             }

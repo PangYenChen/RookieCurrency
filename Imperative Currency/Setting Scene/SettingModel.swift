@@ -28,8 +28,8 @@ class SettingModel: BaseSettingModel {
     init(userSetting: BaseResultModel.UserSetting,
          saveCompletionHandler: @escaping SaveHandler,
          cancelCompletionHandler: @escaping CancelHandler) {
-        originalNumberOfDays = userSetting.numberOfDay
-        editedNumberOfDays = userSetting.numberOfDay
+        originalNumberOfDays = userSetting.numberOfDays
+        editedNumberOfDays = userSetting.numberOfDays
         
         originalBaseCurrency = userSetting.baseCurrency
         editedBaseCurrency = userSetting.baseCurrency
@@ -42,7 +42,7 @@ class SettingModel: BaseSettingModel {
     }
     
     override func save() {
-        let userSetting = (numberOfDay: editedNumberOfDays, baseCurrency: editedBaseCurrency, currencyOfInterest: editedCurrencyOfInterest)
+        let userSetting = (numberOfDays: editedNumberOfDays, baseCurrency: editedBaseCurrency, currencyOfInterest: editedCurrencyOfInterest)
         saveCompletionHandler(userSetting)
     }
     

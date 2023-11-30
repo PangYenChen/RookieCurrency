@@ -22,7 +22,7 @@ class ResultModel: BaseResultModel {
     }
     
     override init() {
-        userSetting = (numberOfDay: AppUtility.numberOfDays,
+        userSetting = (numberOfDays: AppUtility.numberOfDays,
                        baseCurrency: AppUtility.baseCurrencyCode,
                        currencyOfInterest: AppUtility.currencyCodeOfInterest)
         
@@ -68,7 +68,7 @@ class ResultModel: BaseResultModel {
         
         return SettingModel(userSetting: userSetting) { [unowned self] userSetting in
             self.userSetting = userSetting
-            AppUtility.numberOfDays = userSetting.numberOfDay
+            AppUtility.numberOfDays = userSetting.numberOfDays
             AppUtility.baseCurrencyCode = userSetting.baseCurrency
             AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
             
@@ -96,7 +96,7 @@ private extension ResultModel {
     func analyzedDataFor(userSetting: UserSetting) {
         stateHandler?(.updating)
         
-        RateController.shared.getRateFor(numberOfDays: userSetting.numberOfDay) { [unowned self] result in
+        RateController.shared.getRateFor(numberOfDays: userSetting.numberOfDays) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 

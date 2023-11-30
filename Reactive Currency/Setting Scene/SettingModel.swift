@@ -18,7 +18,7 @@ class SettingModel: BaseSettingModel {
     init(userSetting: BaseResultModel.UserSetting,
          settingSubscriber: AnySubscriber<BaseResultModel.UserSetting, Never>,
          cancelSubscriber: AnySubscriber<Void, Never>) {
-        editedNumberOfDays = CurrentValueSubject<Int, Never>(userSetting.numberOfDay)
+        editedNumberOfDays = CurrentValueSubject<Int, Never>(userSetting.numberOfDays)
         
         editedBaseCurrency = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(userSetting.baseCurrency)
         
@@ -26,10 +26,10 @@ class SettingModel: BaseSettingModel {
         
         // has changes
         do {
-            let numberOfDayHasChanges = editedNumberOfDays.map { $0 != userSetting.numberOfDay }
+            let numberOfDaysHasChanges = editedNumberOfDays.map { $0 != userSetting.numberOfDays }
             let baseCurrencyHasChanges = editedBaseCurrency.map { $0 != userSetting.baseCurrency }
             let currencyOfInterestHasChanges = editedCurrencyOfInterest.map { $0 != userSetting.currencyOfInterest }
-            hasChangesToSave = Publishers.CombineLatest3(numberOfDayHasChanges, baseCurrencyHasChanges, currencyOfInterestHasChanges)
+            hasChangesToSave = Publishers.CombineLatest3(numberOfDaysHasChanges, baseCurrencyHasChanges, currencyOfInterestHasChanges)
                 .map { $0 || $1 || $2 }
                 .eraseToAnyPublisher()
         }
@@ -45,7 +45,7 @@ class SettingModel: BaseSettingModel {
             .map { $1 }
             .withLatestFrom(editedBaseCurrency)
             .withLatestFrom(editedCurrencyOfInterest)
-            .map { (numberOfDay: $0.0, baseCurrency: $0.1, currencyOfInterest: $1) }
+            .map { (numberOfDays: $0.0, baseCurrency: $0.1, currencyOfInterest: $1) }
             .subscribe(settingSubscriber)
         
         cancelSubject
