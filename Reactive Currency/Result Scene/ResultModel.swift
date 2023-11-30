@@ -50,14 +50,15 @@ class ResultModel: BaseResultModel {
             let analyzedSuccessTuple = Publishers.CombineLatest(update, userSetting)
                 .flatMap { _, userSetting in
                     RateController.shared
-                        .ratePublisher(numberOfDay: userSetting.numberOfDay)
+                        .ratePublisher(numberOfDays: userSetting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in
                             result.map { rateTuple in
-                                let analyzedDataArray = Analyst.analyze(currencyOfInterest: userSetting.currencyOfInterest,
-                                                                        latestRate: rateTuple.latestRate,
-                                                                        historicalRateSet: rateTuple.historicalRateSet,
-                                                                        baseCurrency: userSetting.baseCurrency)
+                                let analyzedDataArray = Analyst
+                                    .analyze(currencyCodeOfInterest: userSetting.currencyCodeOfInterest,
+                                             latestRate: rateTuple.latestRate,
+                                             historicalRateSet: rateTuple.historicalRateSet,
+                                             baseCurrencyCode: userSetting.baseCurrencyCode)
                                     .compactMapValues { result in try? result.get() }
                                     .map { tuple in
                                         AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
@@ -92,9 +93,9 @@ class ResultModel: BaseResultModel {
         userSetting
             .dropFirst()
             .sink { [unowned self] userSetting in
-                AppUtility.baseCurrencyCode = userSetting.baseCurrency
-                AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
-                AppUtility.numberOfDays = userSetting.numberOfDay
+                AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
+                AppUtility.currencyCodeOfInterest = userSetting.currencyCodeOfInterest
+                AppUtility.numberOfDays = userSetting.numberOfDays
                 // TODO: 下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通
                 self.isAutoUpdateEnabled.send(true)
             }

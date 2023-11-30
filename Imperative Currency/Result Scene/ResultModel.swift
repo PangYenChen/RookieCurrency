@@ -22,9 +22,9 @@ class ResultModel: BaseResultModel {
     }
     
     override init() {
-        userSetting = (numberOfDay: AppUtility.numberOfDays,
-                       baseCurrency: AppUtility.baseCurrencyCode,
-                       currencyOfInterest: AppUtility.currencyCodeOfInterest)
+        userSetting = (numberOfDays: AppUtility.numberOfDays,
+                       baseCurrencyCode: AppUtility.baseCurrencyCode,
+                       currencyCodeOfInterest: AppUtility.currencyCodeOfInterest)
         
         order = AppUtility.order
         
@@ -68,9 +68,9 @@ class ResultModel: BaseResultModel {
         
         return SettingModel(userSetting: userSetting) { [unowned self] userSetting in
             self.userSetting = userSetting
-            AppUtility.numberOfDays = userSetting.numberOfDay
-            AppUtility.baseCurrencyCode = userSetting.baseCurrency
-            AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
+            AppUtility.numberOfDays = userSetting.numberOfDays
+            AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
+            AppUtility.currencyCodeOfInterest = userSetting.currencyCodeOfInterest
             
             self.resumeAutoUpdatingState()
         } cancelCompletionHandler: { [unowned self] in
@@ -96,16 +96,16 @@ private extension ResultModel {
     func analyzedDataFor(userSetting: UserSetting) {
         stateHandler?(.updating)
         
-        RateController.shared.getRateFor(numberOfDays: userSetting.numberOfDay) { [unowned self] result in
+        RateController.shared.getRateFor(numberOfDays: userSetting.numberOfDays) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 
                 do {
                     let analyzedResult = Analyst
-                        .analyze(currencyOfInterest: userSetting.currencyOfInterest,
+                        .analyze(currencyCodeOfInterest: userSetting.currencyCodeOfInterest,
                                  latestRate: latestRate,
                                  historicalRateSet: historicalRateSet,
-                                 baseCurrency: userSetting.baseCurrency)
+                                 baseCurrencyCode: userSetting.baseCurrencyCode)
                     
                     let analyzedFailure = analyzedResult
                         .filter { _, result in

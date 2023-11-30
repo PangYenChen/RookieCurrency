@@ -12,21 +12,21 @@ final class AnalystTest: XCTestCase {
         // arrange
         
         // 使用的 currency of interest 就是強勢貨幣，但就這個 test method 的測試目的來說，只要 currency of interest 包含於測試資料中即可
-        let currencyOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
+        let currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
         let dummyDateString = "1970-01-01"
         let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
         let latestRate = try TestingData.Instance.latestRate()
-        let baseCurrency = "USD"
+        let baseCurrencyCode = "USD"
         
         // act
-        let analyzedData = Analyst.analyze(currencyOfInterest: currencyOfInterest,
+        let analyzedData = Analyst.analyze(currencyCodeOfInterest: currencyCodeOfInterest,
                                            latestRate: latestRate,
                                            historicalRateSet: [historicalRate],
-                                           baseCurrency: baseCurrency)
+                                           baseCurrencyCode: baseCurrencyCode)
         
         // assert
         // 檢查回傳資料沒有遺漏
-        XCTAssertEqual(Set(analyzedData.keys), currencyOfInterest)
+        XCTAssertEqual(Set(analyzedData.keys), currencyCodeOfInterest)
         
         // 每個 currency 都成功分析
         let isAnalyzedDataContainsFailure = analyzedData.values
@@ -51,20 +51,20 @@ final class AnalystTest: XCTestCase {
     func testHistoricalRateLossACurrency() throws {
         // arrange
         let currencyLossInHistoricalRate = "FakeCurrencyInLatestRate"
-        let currencyOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF", currencyLossInHistoricalRate]
+        let currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF", currencyLossInHistoricalRate]
         
         let dummyDateString = "1970-01-01"
         let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
         XCTAssertNil(historicalRate[currencyCode: currencyLossInHistoricalRate])
         let latestRate = try TestingData.Instance.latestRate()
         XCTAssertNotNil(latestRate[currencyCode: currencyLossInHistoricalRate])
-        let baseCurrency = "USD"
+        let baseCurrencyCode = "USD"
         
         // act
-        var analyzedData = Analyst.analyze(currencyOfInterest: currencyOfInterest,
+        var analyzedData = Analyst.analyze(currencyCodeOfInterest: currencyCodeOfInterest,
                                            latestRate: latestRate,
                                            historicalRateSet: [historicalRate],
-                                           baseCurrency: baseCurrency)
+                                           baseCurrencyCode: baseCurrencyCode)
         
         // assert
         // 檢查 currencyLossInHistoricalRate 確實分析失敗
@@ -81,20 +81,20 @@ final class AnalystTest: XCTestCase {
     func testLatestRateLossACurrency() throws {
         // arrange
         let currencyLossInLatestRate = "FakeCurrencyInHistoricalRate"
-        let currencyOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF", currencyLossInLatestRate]
+        let currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF", currencyLossInLatestRate]
         
         let dummyDateString = "1970-01-01"
         let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
         XCTAssertNotNil(historicalRate[currencyCode: currencyLossInLatestRate])
         let latestRate = try TestingData.Instance.latestRate()
         XCTAssertNil(latestRate[currencyCode: currencyLossInLatestRate])
-        let baseCurrency = "USD"
+        let baseCurrencyCode = "USD"
         
         // act
-        var analyzedData = Analyst.analyze(currencyOfInterest: currencyOfInterest,
+        var analyzedData = Analyst.analyze(currencyCodeOfInterest: currencyCodeOfInterest,
                                            latestRate: latestRate,
                                            historicalRateSet: [historicalRate],
-                                           baseCurrency: baseCurrency)
+                                           baseCurrencyCode: baseCurrencyCode)
         
         // assert
         // 檢查 currencyLossInLatestRate 確實分析失敗

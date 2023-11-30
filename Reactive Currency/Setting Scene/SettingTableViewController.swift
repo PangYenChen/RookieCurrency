@@ -40,11 +40,11 @@ class SettingTableViewController: BaseSettingTableViewController {
             }
             .store(in: &anyCancellableSet)
         
-        model.editedBaseCurrency
+        model.editedBaseCurrencyCode
             .sink(receiveValue: self.reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode:))
             .store(in: &anyCancellableSet)
         
-        model.editedCurrencyOfInterest
+        model.editedCurrencyCodeOfInterest
             .sink(receiveValue: self.reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest:))
             .store(in: &anyCancellableSet)
         
@@ -64,16 +64,16 @@ class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - Navigation
     override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
         let strategy = CurrencyTableViewController
-            .BaseCurrencySelectionStrategy(baseCurrencyCode: model.editedBaseCurrency.value,
-                                           selectedBaseCurrencyCode: AnySubscriber(model.editedBaseCurrency))
+            .BaseCurrencySelectionStrategy(baseCurrencyCode: model.editedBaseCurrencyCode.value,
+                                           selectedBaseCurrencyCode: AnySubscriber(model.editedBaseCurrencyCode))
         
         return CurrencyTableViewController(coder: coder, strategy: strategy)
     }
     
     override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
         let strategy = CurrencyTableViewController
-            .CurrencyOfInterestSelectionStrategy(currencyOfInterest: model.editedCurrencyOfInterest.value,
-                                                 selectedCurrencyOfInterest: AnySubscriber(model.editedCurrencyOfInterest))
+            .CurrencyOfInterestSelectionStrategy(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest.value,
+                                                 selectedCurrencyCodeOfInterest: AnySubscriber(model.editedCurrencyCodeOfInterest))
         
         return CurrencyTableViewController(coder: coder, strategy: strategy)
     }

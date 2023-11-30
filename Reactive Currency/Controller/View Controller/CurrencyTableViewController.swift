@@ -113,7 +113,7 @@ extension CurrencyTableViewController {
         
         private let baseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
         
-        var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode.value] }
+        var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode.value] }
         
         let allowsMultipleSelection: Bool
         
@@ -143,31 +143,31 @@ extension CurrencyTableViewController {
 
         let title: String
         
-        private let currencyOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
+        private let currencyCodeOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
 
-        var selectedCurrencies: Set<ResponseDataModel.CurrencyCode> { currencyOfInterest.value }
+        var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest.value }
         
         let allowsMultipleSelection: Bool
 
-        init(currencyOfInterest: Set<ResponseDataModel.CurrencyCode>,
-             selectedCurrencyOfInterest: AnySubscriber<Set<ResponseDataModel.CurrencyCode>, Never>) {
+        init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
+             selectedCurrencyCodeOfInterest: AnySubscriber<Set<ResponseDataModel.CurrencyCode>, Never>) {
             
             title = R.string.share.currencyOfInterest()
-            self.currencyOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyOfInterest)
+            self.currencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyCodeOfInterest)
             allowsMultipleSelection = true
             // initialization completes
             
-            self.currencyOfInterest
+            self.currencyCodeOfInterest
                 .dropFirst()
-                .subscribe(selectedCurrencyOfInterest)
+                .subscribe(selectedCurrencyCodeOfInterest)
         }
         
         func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            currencyOfInterest.value.insert(selectedCurrencyCode)
+            currencyCodeOfInterest.value.insert(selectedCurrencyCode)
         }
         
         func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            currencyOfInterest.value.remove(deselectedCurrencyCode)
+            currencyCodeOfInterest.value.remove(deselectedCurrencyCode)
         }
     }
 }

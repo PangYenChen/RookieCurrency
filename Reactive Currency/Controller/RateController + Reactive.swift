@@ -13,9 +13,9 @@ extension Fetcher: FetcherProtocol {}
 
 extension RateController {
     
-    func ratePublisher(numberOfDay: Int, from start: Date = .now)
+    func ratePublisher(numberOfDays: Int, from start: Date = .now)
     -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> {
-        historicalRateDateStrings(numberOfDaysAgo: numberOfDay, from: start)
+        historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .publisher
             .flatMap { [unowned self] dateString -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> in
                 if let cacheHistoricalRate = concurrentQueue.sync(execute: { historicalRateDictionary[dateString] }) {
@@ -64,7 +64,7 @@ extension RateController {
                         .eraseToAnyPublisher()
                 }
             }
-            .collect(numberOfDay)
+            .collect(numberOfDays)
             .combineLatest(fetcher.publisher(for: Endpoints.Latest()))
             .map { (latestRate: $0.1, historicalRateSet: Set($0.0)) }
             .eraseToAnyPublisher()

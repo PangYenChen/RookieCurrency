@@ -150,9 +150,9 @@ extension BaseSettingTableViewController {
     }
     
     final func updateNumberOfDaysRow(for numberOfDays: Int) {
-        let numberOfDayRow = IndexPath(row: Row.numberOfDay.rawValue, section: 0)
+        let numberOfDaysRow = IndexPath(row: Row.numberOfDays.rawValue, section: 0)
         
-        guard let cell = tableView.cellForRow(at: numberOfDayRow) else {
+        guard let cell = tableView.cellForRow(at: numberOfDaysRow) else {
             assertionFailure("###, \(#function), \(self), 拿不到設定 number of day 的 cell。")
             return
         }
@@ -220,7 +220,7 @@ extension BaseSettingTableViewController {
         do {
             let row = Row(rawValue: indexPath.row)
             switch row {
-            case .numberOfDay:
+            case .numberOfDays:
                 contentConfiguration.text = R.string.settingScene.numberOfConsideredDay()
                 contentConfiguration.secondaryText = String(editedNumberOfDays)
                 contentConfiguration.image = UIImage(systemName: "calendar")
@@ -278,7 +278,7 @@ extension BaseSettingTableViewController {
     override func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
         let row = Row(rawValue: indexPath.row)
         switch row {
-        case .numberOfDay:
+        case .numberOfDays:
             return nil
         case .baseCurrency, .currencyOfInterest, .language, .removeFile:
             return indexPath
@@ -295,7 +295,7 @@ extension BaseSettingTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let row = Row(rawValue: indexPath.row)
         switch row {
-        case .numberOfDay:
+        case .numberOfDays:
             assertionFailure("###, \(#function), \(self), number of day 這個 row 在 tableView(_:willSelectRowAt:) 被設定成不能被點")
             
         case .baseCurrency:
@@ -326,7 +326,7 @@ extension BaseSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, shouldHighlightRowAt indexPath: IndexPath) -> Bool {
-        Row(rawValue: indexPath.row) != .numberOfDay
+        Row(rawValue: indexPath.row) != .numberOfDays
     }
     
     override func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
@@ -354,7 +354,7 @@ extension BaseSettingTableViewController: UIAdaptivePresentationControllerDelega
 extension BaseSettingTableViewController {
     /// 表示 table view 的 row
     enum Row: Int, CaseIterable {
-        case numberOfDay = 0
+        case numberOfDays = 0
         case baseCurrency
         case currencyOfInterest
         case language
