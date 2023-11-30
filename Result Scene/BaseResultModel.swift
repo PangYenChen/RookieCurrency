@@ -84,7 +84,7 @@ extension BaseResultModel {
     
     enum MyError: Swift.Error, LocalizedError {
         case foo
-#warning("暫時用的error")
+#warning("重構過程中暫時用的error")
         var localizedDescription: String { "暫時用的error" }
         var errorDescription: String? { "暫時用的error" }
     }

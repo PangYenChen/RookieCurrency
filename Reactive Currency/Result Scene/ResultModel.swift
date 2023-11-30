@@ -4,10 +4,10 @@ import Combine
 class ResultModel: BaseResultModel {
     // MARK: - private properties
     private let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
-    private let userTriggeredStateUpdating: CurrentValueSubject<Void, Never>
+    private let updateTriggerByUser: PassthroughSubject<Void, Never>
     private let order: CurrentValueSubject<Order, Never>
     private let searchText: CurrentValueSubject<String?, Never>
-    private let enableAutoUpdateState: CurrentValueSubject<Bool, Never>
+    private let isAutoUpdateEnabled: CurrentValueSubject<Bool, Never>
     
     private var anyCancellableSet: Set<AnyCancellable>
     
@@ -15,21 +15,23 @@ class ResultModel: BaseResultModel {
     let state: AnyPublisher<State, Never>
     
     override init() {
-        // input
-        userSetting = CurrentValueSubject((AppUtility.numberOfDays, AppUtility.baseCurrencyCode, AppUtility.currencyCodeOfInterest))
-        userTriggeredStateUpdating = CurrentValueSubject<Void, Never>(())
+        userSetting = CurrentValueSubject((AppUtility.numberOfDays,
+                                           AppUtility.baseCurrencyCode,
+                                           AppUtility.currencyCodeOfInterest))
+        
+        updateTriggerByUser = PassthroughSubject<Void, Never>()
         
         searchText = CurrentValueSubject<String?, Never>(nil)
         
         order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
         
-        enableAutoUpdateState = CurrentValueSubject<Bool, Never>(true)
+        isAutoUpdateEnabled = CurrentValueSubject<Bool, Never>(true)
         
         // output
         do {
             let autoUpdateTimeInterval: TimeInterval = 5
             
-            let autoUpdateState = enableAutoUpdateState
+            let autoUpdate = isAutoUpdateEnabled
                 .map { isEnable in
                     isEnable ?
                     Timer.publish(every: autoUpdateTimeInterval, on: RunLoop.main, in: .default)
@@ -41,11 +43,9 @@ class ResultModel: BaseResultModel {
                 }
                 .switchToLatest()
             
-            let updateState = Publishers.Merge(userTriggeredStateUpdating, autoUpdateState)
+            let update = Publishers.Merge(updateTriggerByUser, autoUpdate)
             
-            let shouldUpdateRate = Publishers.CombineLatest(updateState, userSetting)
-            
-            let analyzedSuccessTuple = shouldUpdateRate
+            let analyzedSuccessTuple = Publishers.CombineLatest(update, userSetting)
                 .flatMap { _, userSetting in
                     RateController.shared
                         .ratePublisher(numberOfDay: userSetting.numberOfDay)
@@ -66,7 +66,7 @@ class ResultModel: BaseResultModel {
                     
                 }
                 .resultSuccess()
-#warning("還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿")
+            // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
             
             let orderAndSearchText = Publishers.CombineLatest(order, searchText)
                 .map { (order: $0, searchText: $1) }
@@ -92,19 +92,23 @@ class ResultModel: BaseResultModel {
                 AppUtility.baseCurrencyCode = userSetting.baseCurrency
                 AppUtility.currencyCodeOfInterest = userSetting.currencyOfInterest
                 AppUtility.numberOfDays = userSetting.numberOfDay
-                #warning("下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通")
-                self.enableAutoUpdateState.send(true)
+                // TODO: 下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通
+                self.isAutoUpdateEnabled.send(true)
             }
+            .store(in: &anyCancellableSet)
+        
+        order
+            .dropFirst()
+            .sink { order in AppUtility.order = order }
             .store(in: &anyCancellableSet)
     }
     
     // MARK: - hook methods
     override func updateState() {
-        userTriggeredStateUpdating.send()
+        updateTriggerByUser.send()
     }
     
     override func setOrder(_ order: BaseResultModel.Order) {
-        AppUtility.order = order
         self.order.send(order)
     }
     
@@ -113,7 +117,7 @@ class ResultModel: BaseResultModel {
     }
     
     override func settingModel() -> SettingModel {
-        enableAutoUpdateState.send(false)
+        isAutoUpdateEnabled.send(false)
         return SettingModel(userSetting: userSetting.value,
                             settingSubscriber: AnySubscriber(userSetting),
                             // TODO: handle cancel

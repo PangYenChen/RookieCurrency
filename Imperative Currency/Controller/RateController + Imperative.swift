@@ -11,7 +11,7 @@ protocol FetcherProtocol {
 // MARK: - make Fetcher confirm FetcherProtocol
 extension Fetcher: FetcherProtocol {}
 
-#warning("這裡的 method 好長 看能不能拆開")
+// TODO: 這裡的 method 好長 看能不能拆開"
 extension RateController {
     
     func getRateFor(
@@ -91,7 +91,7 @@ extension RateController {
                         }
                     }
                     catch {
-                        #warning("這段需要 unit test")
+                        // TODO: 這段需要 unit test
                         // fall back to fetch
                         fetcher.fetch(Endpoints.Historical(dateString: historicalRateDateString)) { [unowned self] result in
                             switch result {

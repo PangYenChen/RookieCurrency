@@ -118,7 +118,7 @@ private extension ResultModel {
                     guard analyzedFailure.isEmpty else {
                         state = .failure(MyError.foo)
                         stateHandler?(.failure(MyError.foo))
-#warning("還沒處理錯誤")
+                    // TODO: 還沒處理錯誤"
                         return
                     }
                     

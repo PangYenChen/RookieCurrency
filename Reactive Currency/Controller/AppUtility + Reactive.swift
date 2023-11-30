@@ -4,7 +4,7 @@ import Combine
 extension AppUtility {
     
     private static var wrappedSupportedSymbols: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error>?
-#warning("這裡應該會有同時性問題，等我讀完 concurrency 之後再處理")
+    // TODO: 這裡應該會有同時性問題，等我讀完 concurrency 之後再處理
     
     static func supportedSymbolsPublisher() -> AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> {
         if let supportedSymbols {
