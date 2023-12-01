@@ -7,7 +7,8 @@ class ResultModel: BaseResultModel {
     private let updateTriggerByUser: PassthroughSubject<Void, Never>
     private let order: CurrentValueSubject<Order, Never>
     private let searchText: CurrentValueSubject<String?, Never>
-    private let isAutoUpdateEnabled: CurrentValueSubject<Bool, Never>
+    private let enableAutoUpdate: CurrentValueSubject<Void, Never>
+    private let disableAutoUpdate: PassthroughSubject<Void, Never>
     
     private var anyCancellableSet: Set<AnyCancellable>
     
@@ -27,23 +28,35 @@ class ResultModel: BaseResultModel {
             
             order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
             
-            isAutoUpdateEnabled = CurrentValueSubject<Bool, Never>(true)
+            enableAutoUpdate = CurrentValueSubject<Void, Never>(())
+            
+            disableAutoUpdate = PassthroughSubject<Void, Never>()
         }
+        
+        let settingFromSettingModel = userSetting.dropFirst()
+        
         // output
         do {
-            let autoUpdateTimeInterval: TimeInterval = 5
+            let autoUpdate: AnyPublisher<Void, Never>
             
-            let autoUpdate = isAutoUpdateEnabled
-                .map { isEnable in
-                    isEnable ?
-                    Timer.publish(every: autoUpdateTimeInterval, on: RunLoop.main, in: .default)
-                        .autoconnect()
-                        .map { _ in return }
-                        .eraseToAnyPublisher() :
-                    Empty<Void, Never>()
-                        .eraseToAnyPublisher()
-                }
-                .switchToLatest()
+            do {
+                let autoUpdateTimeInterval: TimeInterval = 5
+                
+                let timerPublisher = Publishers.Merge(enableAutoUpdate,
+                                                       settingFromSettingModel.map { _ in })
+                    .map { _ in
+                        Timer.publish(every: autoUpdateTimeInterval, on: RunLoop.main, in: .default)
+                            .autoconnect()
+                            .map { _ in return }
+                            .eraseToAnyPublisher()
+                    }
+                
+                let emptyPublisher = disableAutoUpdate.map { Empty<Void, Never>().eraseToAnyPublisher() }
+                
+                autoUpdate = Publishers.Merge(timerPublisher, emptyPublisher)
+                    .switchToLatest()
+                    .eraseToAnyPublisher()
+            }
             
             let update = Publishers.Merge(updateTriggerByUser, autoUpdate)
             
@@ -66,7 +79,6 @@ class ResultModel: BaseResultModel {
                                 return (latestUpdateTime: rateTuple.latestRate.timestamp, analyzedDataArray: analyzedDataArray)
                             }
                         }
-                    
                 }
                 .resultSuccess()
             // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
@@ -90,21 +102,21 @@ class ResultModel: BaseResultModel {
         
         super.init()
         
-        userSetting
-            .dropFirst()
-            .sink { [unowned self] userSetting in
-                AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
-                AppUtility.currencyCodeOfInterest = userSetting.currencyCodeOfInterest
-                AppUtility.numberOfDays = userSetting.numberOfDays
-                // TODO: 下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通
-                self.isAutoUpdateEnabled.send(true)
-            }
-            .store(in: &anyCancellableSet)
-        
-        order
-            .dropFirst()
-            .sink { order in AppUtility.order = order }
-            .store(in: &anyCancellableSet)
+        // subscribe
+        do {
+            settingFromSettingModel
+                .sink { userSetting in
+                    AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
+                    AppUtility.currencyCodeOfInterest = userSetting.currencyCodeOfInterest
+                    AppUtility.numberOfDays = userSetting.numberOfDays
+                }
+                .store(in: &anyCancellableSet)
+            
+            order
+                .dropFirst()
+                .sink { order in AppUtility.order = order }
+                .store(in: &anyCancellableSet)
+        }
     }
     
     // MARK: - hook methods
@@ -121,10 +133,9 @@ class ResultModel: BaseResultModel {
     }
     
     override func settingModel() -> SettingModel {
-        isAutoUpdateEnabled.send(false)
+        disableAutoUpdate.send()
         return SettingModel(userSetting: userSetting.value,
                             settingSubscriber: AnySubscriber(userSetting),
-                            // TODO: handle cancel
-                            cancelSubscriber: AnySubscriber<Void, Never>())
+                            cancelSubscriber: AnySubscriber(enableAutoUpdate))
     }
 }
