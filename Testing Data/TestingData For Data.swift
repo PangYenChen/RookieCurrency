@@ -6,6 +6,8 @@ import Foundation
 @testable import ReactiveCurrency
 #endif
 
+// swiftlint:disable function_body_length file_length
+
 extension TestingData {
     
     /// 用來放`Data`型別的測試資料的 name space
@@ -572,3 +574,5 @@ Invalid authentication credentials
 """.data(using: .utf8)
     }
 }
+
+// swiftlint:enable function_body_length

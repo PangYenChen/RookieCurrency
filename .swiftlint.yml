@@ -10,24 +10,16 @@ identifier_name:
 opt_in_rules:
   - discouraged_optional_collection
 
-###########
-trailing_whitespace:
-    ignores_empty_lines: true
-
 line_length:
-    warning: 180 #要想一下這個數字
+    warning: 164
     ignores_interpolated_strings: true
     
-    
+###########
 statement_position:
     statement_mode: uncuddled_else
     
-function_body_length:
-    warning: 200 #要想一下這個數字
+trailing_whitespace:
+    ignores_empty_lines: true
     
 type_body_length:
     warning: 600 # test case 的檔案很長，看要不要拆開
-    
-file_length:
-    warning: 700 # test case 的檔案很長，看要不要拆開
-    
