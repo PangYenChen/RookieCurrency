@@ -146,32 +146,36 @@ extension BaseResultTableViewController {
     final func updateUIFor(_ state: BaseResultModel.State) {
         switch state {
         case .updating:
+            dismissAlertIfPresented()
             updatingStatusBarButtonItem.title = R.string.resultScene.updating()
             
         case .updated(let timestamp, let analyzedDataArray):
             self.latestUpdateTime = timestamp
-            populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
-            populateTableViewWith(analyzedDataArray)
             
-            if tableView.refreshControl?.isRefreshing == true {
-                tableView.refreshControl?.endRefreshing()
-            }
+            populateTableViewWith(analyzedDataArray)
+            endRefreshingRefreshControlIfStarted()
+            populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
             
         case .sorted(let analyzedDataArray):
             populateTableViewWith(analyzedDataArray)
             
         case .failure(let error):
-            populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+            endRefreshingRefreshControlIfStarted()
+            dismissAlertIfPresented()
             presentAlert(error: error)
+            populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
             
-            if tableView.refreshControl?.isRefreshing == true {
-                tableView.refreshControl?.endRefreshing()
-            }
         }
     }
 }
 // MARK: - private methods
 private extension BaseResultTableViewController {
+    final func dismissAlertIfPresented() {
+        if presentingViewController is UIAlertController {
+            dismiss(animated: true)
+        }
+    }
+    
     final func populateTableViewWith(_ analyzedDataArray: [BaseResultModel.AnalyzedData]) {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
@@ -179,6 +183,12 @@ private extension BaseResultTableViewController {
         snapshot.reloadSections([.main])
         
         dataSource.apply(snapshot)
+    }
+    
+    final func endRefreshingRefreshControlIfStarted() {
+        if tableView.refreshControl?.isRefreshing == true {
+            tableView.refreshControl?.endRefreshing()
+        }
     }
     
     final func populateUpdatingStatusBarButtonItemWith(_ timestamp: Int?) {
