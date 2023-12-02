@@ -63,7 +63,7 @@ extension AppUtility {
             UserDefaults.standard.setValue(newValue.sorted(), forKey: Key.currencyCodeOfInterest.rawValue)
         }
     }
-    
+    // swiftlint:disable:next discouraged_optional_collection
     static var supportedSymbols: [ResponseDataModel.CurrencyCode: String]?
 }
 
