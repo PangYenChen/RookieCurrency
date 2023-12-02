@@ -2,7 +2,7 @@ import Foundation
 
 class ResultModel: BaseResultModel {
     // MARK: - private properties
-    private var userSetting: UserSetting
+    private var setting: Setting
     
     private var order: Order
     
@@ -11,8 +11,6 @@ class ResultModel: BaseResultModel {
     private var analyzedSortedDataArray: [AnalyzedData]
     
     private var timer: Timer?
-    
-    private let autoUpdateTimeInterval: TimeInterval
     
     private var state: State
     
@@ -24,9 +22,9 @@ class ResultModel: BaseResultModel {
     }
     // MARK: - life cycle
     override init() {
-        userSetting = (numberOfDays: AppUtility.numberOfDays,
-                       baseCurrencyCode: AppUtility.baseCurrencyCode,
-                       currencyCodeOfInterest: AppUtility.currencyCodeOfInterest)
+        setting = (numberOfDays: AppUtility.numberOfDays,
+                   baseCurrencyCode: AppUtility.baseCurrencyCode,
+                   currencyCodeOfInterest: AppUtility.currencyCodeOfInterest)
         
         order = AppUtility.order
         
@@ -34,7 +32,6 @@ class ResultModel: BaseResultModel {
         analyzedSortedDataArray = []
         
         timer = nil
-        autoUpdateTimeInterval = 5
         
         state = .updating
         
@@ -45,7 +42,7 @@ class ResultModel: BaseResultModel {
     
     // MARK: - hook methods
     override func updateState() {
-        analyzedDataFor(userSetting: userSetting)
+        analyzedDataFor(setting: setting)
     }
     
     override func setOrder(_ order: BaseResultModel.Order) {
@@ -76,12 +73,12 @@ class ResultModel: BaseResultModel {
     override func settingModel() -> SettingModel {
         suspendAutoUpdatingState()
         
-        return SettingModel(userSetting: userSetting) { [unowned self] userSetting in
-            self.userSetting = userSetting
+        return SettingModel(setting: setting) { [unowned self] setting in
+            self.setting = setting
             
-            AppUtility.numberOfDays = userSetting.numberOfDays
-            AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
-            AppUtility.currencyCodeOfInterest = userSetting.currencyCodeOfInterest
+            AppUtility.numberOfDays = setting.numberOfDays
+            AppUtility.baseCurrencyCode = setting.baseCurrencyCode
+            AppUtility.currencyCodeOfInterest = setting.currencyCodeOfInterest
             
             self.resumeAutoUpdatingState()
         } cancelCompletionHandler: { [unowned self] in
@@ -93,8 +90,9 @@ class ResultModel: BaseResultModel {
 // MARK: - private method
 private extension ResultModel {
     func resumeAutoUpdatingState() {
+        let autoUpdateTimeInterval: TimeInterval = 5
         timer = Timer.scheduledTimer(withTimeInterval: autoUpdateTimeInterval, repeats: true) { [unowned self] _ in
-            analyzedDataFor(userSetting: userSetting)
+            analyzedDataFor(setting: setting)
         }
         timer?.fire()
     }
@@ -104,17 +102,17 @@ private extension ResultModel {
         timer = nil
     }
     
-    func analyzedDataFor(userSetting: UserSetting) {
+    func analyzedDataFor(setting: Setting) {
         stateHandler?(.updating)
         
-        RateController.shared.getRateFor(numberOfDays: userSetting.numberOfDays) { [unowned self] result in
+        RateController.shared.getRateFor(numberOfDays: setting.numberOfDays) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 let analyzedResult = Analyst
-                    .analyze(currencyCodeOfInterest: userSetting.currencyCodeOfInterest,
+                    .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
                              latestRate: latestRate,
                              historicalRateSet: historicalRateSet,
-                             baseCurrencyCode: userSetting.baseCurrencyCode)
+                             baseCurrencyCode: setting.baseCurrencyCode)
                 
                 let analyzedFailure = analyzedResult
                     .filter { _, result in

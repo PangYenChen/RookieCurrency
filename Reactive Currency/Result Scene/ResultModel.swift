@@ -3,7 +3,7 @@ import Combine
 
 class ResultModel: BaseResultModel {
     // MARK: - input
-    private let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
+    private let setting: CurrentValueSubject<BaseResultModel.Setting, Never>
     private let updateTriggerByUser: PassthroughSubject<Void, Never>
     private let order: CurrentValueSubject<Order, Never>
     private let searchText: CurrentValueSubject<String?, Never>
@@ -18,9 +18,9 @@ class ResultModel: BaseResultModel {
     override init() {
         // input
         do {
-            userSetting = CurrentValueSubject((AppUtility.numberOfDays,
-                                               AppUtility.baseCurrencyCode,
-                                               AppUtility.currencyCodeOfInterest))
+            setting = CurrentValueSubject((AppUtility.numberOfDays,
+                                           AppUtility.baseCurrencyCode,
+                                           AppUtility.currencyCodeOfInterest))
             
             updateTriggerByUser = PassthroughSubject<Void, Never>()
             
@@ -33,7 +33,7 @@ class ResultModel: BaseResultModel {
             disableAutoUpdate = PassthroughSubject<Void, Never>()
         }
         
-        let settingFromSettingModel = userSetting.dropFirst()
+        let settingFromSettingModel = setting.dropFirst()
         
         // output
         do {
@@ -67,18 +67,18 @@ class ResultModel: BaseResultModel {
             
             let updatingStatePublisher = update.map { State.updating }
             
-            let analyzedResult = update.withLatestFrom(userSetting)
-                .flatMap { _, userSetting in
+            let analyzedResult = update.withLatestFrom(setting)
+                .flatMap { _, setting in
                     RateController.shared
-                        .ratePublisher(numberOfDays: userSetting.numberOfDays)
+                        .ratePublisher(numberOfDays: setting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in
                             result.map { rateTuple in
                                 let analyzedDataArray = Analyst
-                                    .analyze(currencyCodeOfInterest: userSetting.currencyCodeOfInterest,
+                                    .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
                                              latestRate: rateTuple.latestRate,
                                              historicalRateSet: rateTuple.historicalRateSet,
-                                             baseCurrencyCode: userSetting.baseCurrencyCode)
+                                             baseCurrencyCode: setting.baseCurrencyCode)
                                     .compactMapValues { result in try? result.get() }
                                     // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
                                     .map { tuple in
@@ -131,10 +131,10 @@ class ResultModel: BaseResultModel {
         // subscribe
         do {
             settingFromSettingModel
-                .sink { userSetting in
-                    AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
-                    AppUtility.currencyCodeOfInterest = userSetting.currencyCodeOfInterest
-                    AppUtility.numberOfDays = userSetting.numberOfDays
+                .sink { setting in
+                    AppUtility.baseCurrencyCode = setting.baseCurrencyCode
+                    AppUtility.currencyCodeOfInterest = setting.currencyCodeOfInterest
+                    AppUtility.numberOfDays = setting.numberOfDays
                 }
                 .store(in: &anyCancellableSet)
             
@@ -160,8 +160,8 @@ class ResultModel: BaseResultModel {
     
     override func settingModel() -> SettingModel {
         disableAutoUpdate.send()
-        return SettingModel(userSetting: userSetting.value,
-                            settingSubscriber: AnySubscriber(userSetting),
+        return SettingModel(setting: setting.value,
+                            settingSubscriber: AnySubscriber(setting),
                             cancelSubscriber: AnySubscriber(enableAutoUpdate))
     }
 }
