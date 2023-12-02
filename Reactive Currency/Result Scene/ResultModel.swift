@@ -37,30 +37,37 @@ class ResultModel: BaseResultModel {
         
         // output
         do {
-            let autoUpdate: AnyPublisher<Void, Never>
+            let update: AnyPublisher<Void, Never>
             
             do {
-                let autoUpdateTimeInterval: TimeInterval = 5
+                let autoUpdate: AnyPublisher<Void, Never>
+
+                do {
+                    let autoUpdateTimeInterval: TimeInterval = 5
+                    
+                    let timerPublisher = Publishers.Merge(enableAutoUpdate,
+                                                          settingFromSettingModel.map { _ in })
+                        .map { _ in
+                            Timer.publish(every: autoUpdateTimeInterval, on: RunLoop.main, in: .default)
+                                .autoconnect()
+                                .map { _ in return }
+                                .prepend(()) // start immediately after subscribing
+                                .eraseToAnyPublisher()
+                        }
+                    
+                    let emptyPublisher = disableAutoUpdate.map { Empty<Void, Never>().eraseToAnyPublisher() }
+                    
+                    autoUpdate = Publishers.Merge(timerPublisher, emptyPublisher)
+                        .switchToLatest()
+                        .eraseToAnyPublisher()
+                }
                 
-                let timerPublisher = Publishers.Merge(enableAutoUpdate,
-                                                       settingFromSettingModel.map { _ in })
-                    .map { _ in
-                        Timer.publish(every: autoUpdateTimeInterval, on: RunLoop.main, in: .default)
-                            .autoconnect()
-                            .map { _ in return }
-                            .eraseToAnyPublisher()
-                    }
-                
-                let emptyPublisher = disableAutoUpdate.map { Empty<Void, Never>().eraseToAnyPublisher() }
-                
-                autoUpdate = Publishers.Merge(timerPublisher, emptyPublisher)
-                    .switchToLatest()
-                    .eraseToAnyPublisher()
+                update = Publishers.Merge(updateTriggerByUser, autoUpdate).eraseToAnyPublisher()
             }
             
-            let update = Publishers.Merge(updateTriggerByUser, autoUpdate)
+            let updatingStatePublisher = update.map { State.updating }
             
-            let analyzedSuccessTuple = Publishers.CombineLatest(update, userSetting)
+            let analyzedResult = update.withLatestFrom(userSetting)
                 .flatMap { _, userSetting in
                     RateController.shared
                         .ratePublisher(numberOfDays: userSetting.numberOfDays)
@@ -73,6 +80,7 @@ class ResultModel: BaseResultModel {
                                              historicalRateSet: rateTuple.historicalRateSet,
                                              baseCurrencyCode: userSetting.baseCurrencyCode)
                                     .compactMapValues { result in try? result.get() }
+                                    // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
                                     .map { tuple in
                                         AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                                     }
@@ -80,22 +88,40 @@ class ResultModel: BaseResultModel {
                             }
                         }
                 }
-                .resultSuccess()
-            // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
+                .share()
             
+            let failureStatePublisher = analyzedResult.resultFailure().map { error in State.failure(error) }
+            
+            let analyzedSuccessTuple = analyzedResult.resultSuccess()
+
             let orderAndSearchText = Publishers.CombineLatest(order, searchText)
                 .map { (order: $0, searchText: $1) }
             
-            state = Publishers.CombineLatest(analyzedSuccessTuple, orderAndSearchText)
+            let updatedStatePublisher = analyzedSuccessTuple.withLatestFrom(orderAndSearchText)
                 .map { analyzedSuccessTuple, orderAndSearchText in
-                    let analyzedDataArray = Self.sort(analyzedSuccessTuple.analyzedDataArray,
-                                                      by: orderAndSearchText.order,
-                                                      filteredIfNeededBy: orderAndSearchText.searchText)
+                    let analyzedSortedDataArray = Self.sort(analyzedSuccessTuple.analyzedDataArray,
+                                                            by: orderAndSearchText.order,
+                                                            filteredIfNeededBy: orderAndSearchText.searchText)
                     return State.updated(timestamp: analyzedSuccessTuple.latestUpdateTime,
-                                         analyzedDataArray: analyzedDataArray)
+                                         analyzedDataArray: analyzedSortedDataArray)
                 }
-                .merge(with: update.map { .updating })
                 .eraseToAnyPublisher()
+            
+            let sortedStatePublisher = orderAndSearchText.withLatestFrom(analyzedSuccessTuple)
+                .map { (orderAndSearchText, analyzedSuccessTuple) in
+                    let analyzedSortedDataArray = Self.sort(analyzedSuccessTuple.analyzedDataArray,
+                                                            by: orderAndSearchText.order,
+                                                            filteredIfNeededBy: orderAndSearchText.searchText)
+                    return State.sorted(analyzedSortedDataArray: analyzedSortedDataArray)
+                }
+                .eraseToAnyPublisher()
+            
+            state = Publishers.Merge4(updatingStatePublisher,
+                                      updatedStatePublisher,
+                                      sortedStatePublisher,
+                                      failureStatePublisher)
+            .eraseToAnyPublisher()
+            
         }
         
         anyCancellableSet = Set<AnyCancellable>()
