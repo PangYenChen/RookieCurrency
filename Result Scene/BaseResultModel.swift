@@ -73,7 +73,7 @@ extension BaseResultModel {
 
     enum State {
         case updating
-        case updated(timestamp: Int, analyzedDataArray: [AnalyzedData])
+        case updated(timestamp: Int, analyzedSortedDataArray: [AnalyzedData])
         case sorted(analyzedSortedDataArray: [AnalyzedData])
         case failure(Error)
     }
@@ -83,12 +83,5 @@ extension BaseResultModel {
         let latest: Decimal
         let mean: Decimal
         let deviation: Decimal
-    }
-    
-    enum MyError: Swift.Error, LocalizedError {
-        case foo
-#warning("重構過程中暫時用的error")
-        var localizedDescription: String { "暫時用的error" }
-        var errorDescription: String? { "暫時用的error" }
     }
 }

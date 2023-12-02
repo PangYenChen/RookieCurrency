@@ -2,9 +2,9 @@ import UIKit
 
 class BaseResultTableViewController: UITableViewController {
     // MARK: - IBOutlet
-    @IBOutlet var updatingStatusBarButtonItem: UIBarButtonItem!
+    @IBOutlet private var updatingStatusBarButtonItem: UIBarButtonItem!
     
-    @IBOutlet var sortingBarButtonItem: UIBarButtonItem!
+    @IBOutlet private var sortingBarButtonItem: UIBarButtonItem!
     
     // MARK: - store properties
     private var dataSource: DataSource!

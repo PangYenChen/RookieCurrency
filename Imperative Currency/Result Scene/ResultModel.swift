@@ -125,8 +125,6 @@ private extension ResultModel {
                     }
                 
                 guard analyzedFailure.isEmpty else {
-                    state = .failure(MyError.foo)
-                    stateHandler?(state)
                     // TODO: 還沒處理錯誤"
                     return
                 }
@@ -141,7 +139,7 @@ private extension ResultModel {
                                                     by: self.order,
                                                     filteredIfNeededBy: self.searchText)
                 
-                state = .updated(timestamp: latestRate.timestamp, analyzedDataArray: analyzedSortedDataArray)
+                state = .updated(timestamp: latestRate.timestamp, analyzedSortedDataArray: analyzedSortedDataArray)
                 stateHandler?(state)
                 
             case .failure(let error):

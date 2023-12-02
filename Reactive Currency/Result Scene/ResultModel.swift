@@ -103,7 +103,7 @@ class ResultModel: BaseResultModel {
                                                             by: orderAndSearchText.order,
                                                             filteredIfNeededBy: orderAndSearchText.searchText)
                     return State.updated(timestamp: analyzedSuccessTuple.latestUpdateTime,
-                                         analyzedDataArray: analyzedSortedDataArray)
+                                         analyzedSortedDataArray: analyzedSortedDataArray)
                 }
                 .eraseToAnyPublisher()
             
