@@ -3,11 +3,12 @@ import Combine
 
 class ResultModel: BaseResultModel {
     // MARK: - input
-    private let userSetting: CurrentValueSubject<BaseResultModel.UserSetting, Never>
+    private let setting: CurrentValueSubject<BaseResultModel.Setting, Never>
     private let updateTriggerByUser: PassthroughSubject<Void, Never>
     private let order: CurrentValueSubject<Order, Never>
     private let searchText: CurrentValueSubject<String?, Never>
-    private let isAutoUpdateEnabled: CurrentValueSubject<Bool, Never>
+    private let enableAutoUpdate: CurrentValueSubject<Void, Never>
+    private let disableAutoUpdate: PassthroughSubject<Void, Never>
     
     private var anyCancellableSet: Set<AnyCancellable>
     
@@ -17,9 +18,9 @@ class ResultModel: BaseResultModel {
     override init() {
         // input
         do {
-            userSetting = CurrentValueSubject((AppUtility.numberOfDays,
-                                               AppUtility.baseCurrencyCode,
-                                               AppUtility.currencyCodeOfInterest))
+            setting = CurrentValueSubject((AppUtility.numberOfDays,
+                                           AppUtility.baseCurrencyCode,
+                                           AppUtility.currencyCodeOfInterest))
             
             updateTriggerByUser = PassthroughSubject<Void, Never>()
             
@@ -27,84 +28,121 @@ class ResultModel: BaseResultModel {
             
             order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
             
-            isAutoUpdateEnabled = CurrentValueSubject<Bool, Never>(true)
+            enableAutoUpdate = CurrentValueSubject<Void, Never>(())
+            
+            disableAutoUpdate = PassthroughSubject<Void, Never>()
         }
+        
+        let settingFromSettingModel = setting.dropFirst()
+        
         // output
         do {
-            let autoUpdateTimeInterval: TimeInterval = 5
+            let update: AnyPublisher<Void, Never>
             
-            let autoUpdate = isAutoUpdateEnabled
-                .map { isEnable in
-                    isEnable ?
-                    Timer.publish(every: autoUpdateTimeInterval, on: RunLoop.main, in: .default)
-                        .autoconnect()
-                        .map { _ in return }
-                        .eraseToAnyPublisher() :
-                    Empty<Void, Never>()
+            do {
+                let autoUpdate: AnyPublisher<Void, Never>
+
+                do {
+                    let autoUpdateTimeInterval: TimeInterval = 5
+                    
+                    let timerPublisher = Publishers.Merge(enableAutoUpdate,
+                                                          settingFromSettingModel.map { _ in })
+                        .map { _ in
+                            Timer.publish(every: autoUpdateTimeInterval, on: RunLoop.main, in: .default)
+                                .autoconnect()
+                                .map { _ in return }
+                                .prepend(()) // start immediately after subscribing
+                                .eraseToAnyPublisher()
+                        }
+                    
+                    let emptyPublisher = disableAutoUpdate.map { Empty<Void, Never>().eraseToAnyPublisher() }
+                    
+                    autoUpdate = Publishers.Merge(timerPublisher, emptyPublisher)
+                        .switchToLatest()
                         .eraseToAnyPublisher()
                 }
-                .switchToLatest()
+                
+                update = Publishers.Merge(updateTriggerByUser, autoUpdate).eraseToAnyPublisher()
+            }
             
-            let update = Publishers.Merge(updateTriggerByUser, autoUpdate)
+            let updatingStatePublisher = update.map { State.updating }
             
-            let analyzedSuccessTuple = Publishers.CombineLatest(update, userSetting)
-                .flatMap { _, userSetting in
+            let analyzedResult = update.withLatestFrom(setting)
+                .flatMap { _, setting in
                     RateController.shared
-                        .ratePublisher(numberOfDays: userSetting.numberOfDays)
+                        .ratePublisher(numberOfDays: setting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in
                             result.map { rateTuple in
                                 let analyzedDataArray = Analyst
-                                    .analyze(currencyCodeOfInterest: userSetting.currencyCodeOfInterest,
+                                    .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
                                              latestRate: rateTuple.latestRate,
                                              historicalRateSet: rateTuple.historicalRateSet,
-                                             baseCurrencyCode: userSetting.baseCurrencyCode)
+                                             baseCurrencyCode: setting.baseCurrencyCode)
                                     .compactMapValues { result in try? result.get() }
+                                    // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
                                     .map { tuple in
                                         AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                                     }
                                 return (latestUpdateTime: rateTuple.latestRate.timestamp, analyzedDataArray: analyzedDataArray)
                             }
                         }
-                    
                 }
-                .resultSuccess()
-            // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
+                .share()
             
+            let failureStatePublisher = analyzedResult.resultFailure().map { error in State.failure(error) }
+            
+            let analyzedSuccessTuple = analyzedResult.resultSuccess()
+
             let orderAndSearchText = Publishers.CombineLatest(order, searchText)
                 .map { (order: $0, searchText: $1) }
             
-            state = Publishers.CombineLatest(analyzedSuccessTuple, orderAndSearchText)
+            let updatedStatePublisher = analyzedSuccessTuple.withLatestFrom(orderAndSearchText)
                 .map { analyzedSuccessTuple, orderAndSearchText in
-                    let analyzedDataArray = Self.sort(analyzedSuccessTuple.analyzedDataArray,
-                                                      by: orderAndSearchText.order,
-                                                      filteredIfNeededBy: orderAndSearchText.searchText)
+                    let analyzedSortedDataArray = Self.sort(analyzedSuccessTuple.analyzedDataArray,
+                                                            by: orderAndSearchText.order,
+                                                            filteredIfNeededBy: orderAndSearchText.searchText)
                     return State.updated(timestamp: analyzedSuccessTuple.latestUpdateTime,
-                                         analyzedDataArray: analyzedDataArray)
+                                         analyzedSortedDataArray: analyzedSortedDataArray)
                 }
-                .merge(with: update.map { .updating })
                 .eraseToAnyPublisher()
+            
+            let sortedStatePublisher = orderAndSearchText.withLatestFrom(analyzedSuccessTuple)
+                .map { (orderAndSearchText, analyzedSuccessTuple) in
+                    let analyzedSortedDataArray = Self.sort(analyzedSuccessTuple.analyzedDataArray,
+                                                            by: orderAndSearchText.order,
+                                                            filteredIfNeededBy: orderAndSearchText.searchText)
+                    return State.sorted(analyzedSortedDataArray: analyzedSortedDataArray)
+                }
+                .eraseToAnyPublisher()
+            
+            state = Publishers.Merge4(updatingStatePublisher,
+                                      updatedStatePublisher,
+                                      sortedStatePublisher,
+                                      failureStatePublisher)
+            .eraseToAnyPublisher()
+            
         }
         
         anyCancellableSet = Set<AnyCancellable>()
         
         super.init()
         
-        userSetting
-            .dropFirst()
-            .sink { [unowned self] userSetting in
-                AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
-                AppUtility.currencyCodeOfInterest = userSetting.currencyCodeOfInterest
-                AppUtility.numberOfDays = userSetting.numberOfDays
-                // TODO: 下面這行暫時先這樣，之後改成這個model跟setting model之間的溝通
-                self.isAutoUpdateEnabled.send(true)
-            }
-            .store(in: &anyCancellableSet)
-        
-        order
-            .dropFirst()
-            .sink { order in AppUtility.order = order }
-            .store(in: &anyCancellableSet)
+        // subscribe
+        do {
+            settingFromSettingModel
+                .sink { setting in
+                    AppUtility.baseCurrencyCode = setting.baseCurrencyCode
+                    AppUtility.currencyCodeOfInterest = setting.currencyCodeOfInterest
+                    AppUtility.numberOfDays = setting.numberOfDays
+                }
+                .store(in: &anyCancellableSet)
+            
+            order
+                .dropFirst()
+                .sink { order in AppUtility.order = order }
+                .store(in: &anyCancellableSet)
+        }
     }
     
     // MARK: - hook methods
@@ -121,10 +159,9 @@ class ResultModel: BaseResultModel {
     }
     
     override func settingModel() -> SettingModel {
-        isAutoUpdateEnabled.send(false)
-        return SettingModel(userSetting: userSetting.value,
-                            settingSubscriber: AnySubscriber(userSetting),
-                            // TODO: handle cancel
-                            cancelSubscriber: AnySubscriber<Void, Never>())
+        disableAutoUpdate.send()
+        return SettingModel(setting: setting.value,
+                            settingSubscriber: AnySubscriber(setting),
+                            cancelSubscriber: AnySubscriber(enableAutoUpdate))
     }
 }

@@ -27,6 +27,7 @@ class BaseResultModel {
 
 // MARK: - helper method
 extension BaseResultModel {
+    // TODO: 改成 instance method
     static func sort(_ analyzedDataArray: [AnalyzedData],
                      by order: Order,
                      filteredIfNeededBy searchText: String?) -> [AnalyzedData] {
@@ -66,13 +67,13 @@ extension BaseResultModel {
         }
     }
     
-    typealias UserSetting = (numberOfDays: Int,
-                             baseCurrencyCode: ResponseDataModel.CurrencyCode,
-                             currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>)
+    typealias Setting = (numberOfDays: Int,
+                         baseCurrencyCode: ResponseDataModel.CurrencyCode,
+                         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>)
 
     enum State {
         case updating
-        case updated(timestamp: Int, analyzedDataArray: [AnalyzedData])
+        case updated(timestamp: Int, analyzedSortedDataArray: [AnalyzedData])
         case sorted(analyzedSortedDataArray: [AnalyzedData])
         case failure(Error)
     }
@@ -82,12 +83,5 @@ extension BaseResultModel {
         let latest: Decimal
         let mean: Decimal
         let deviation: Decimal
-    }
-    
-    enum MyError: Swift.Error, LocalizedError {
-        case foo
-#warning("重構過程中暫時用的error")
-        var localizedDescription: String { "暫時用的error" }
-        var errorDescription: String? { "暫時用的error" }
     }
 }

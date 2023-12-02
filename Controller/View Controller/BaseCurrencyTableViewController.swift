@@ -4,7 +4,7 @@ import UIKit
 class BaseCurrencyTableViewController: UITableViewController {
     
     // MARK: - property
-    @IBOutlet weak var sortBarButtonItem: UIBarButtonItem!
+    @IBOutlet var sortBarButtonItem: UIBarButtonItem!
     
     let strategy: CurrencyTableStrategy
     

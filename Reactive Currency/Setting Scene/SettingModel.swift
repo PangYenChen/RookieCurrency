@@ -15,20 +15,20 @@ class SettingModel: BaseSettingModel {
     
     private let saveSubject: PassthroughSubject<Void, Never>
     
-    init(userSetting: BaseResultModel.UserSetting,
-         settingSubscriber: AnySubscriber<BaseResultModel.UserSetting, Never>,
+    init(setting: BaseResultModel.Setting,
+         settingSubscriber: AnySubscriber<BaseResultModel.Setting, Never>,
          cancelSubscriber: AnySubscriber<Void, Never>) {
-        editedNumberOfDays = CurrentValueSubject<Int, Never>(userSetting.numberOfDays)
+        editedNumberOfDays = CurrentValueSubject<Int, Never>(setting.numberOfDays)
         
-        editedBaseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(userSetting.baseCurrencyCode)
+        editedBaseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(setting.baseCurrencyCode)
         
-        editedCurrencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(userSetting.currencyCodeOfInterest)
+        editedCurrencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(setting.currencyCodeOfInterest)
         
         // has changes
         do {
-            let numberOfDaysHasChanges = editedNumberOfDays.map { $0 != userSetting.numberOfDays }
-            let baseCurrencyCodeHasChanges = editedBaseCurrencyCode.map { $0 != userSetting.baseCurrencyCode }
-            let currencyCodeOfInterestHasChanges = editedCurrencyCodeOfInterest.map { $0 != userSetting.currencyCodeOfInterest }
+            let numberOfDaysHasChanges = editedNumberOfDays.map { $0 != setting.numberOfDays }
+            let baseCurrencyCodeHasChanges = editedBaseCurrencyCode.map { $0 != setting.baseCurrencyCode }
+            let currencyCodeOfInterestHasChanges = editedCurrencyCodeOfInterest.map { $0 != setting.currencyCodeOfInterest }
             hasChangesToSave = Publishers.CombineLatest3(numberOfDaysHasChanges, baseCurrencyCodeHasChanges, currencyCodeOfInterestHasChanges)
                 .map { $0 || $1 || $2 }
                 .eraseToAnyPublisher()

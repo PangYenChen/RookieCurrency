@@ -25,27 +25,27 @@ class SettingModel: BaseSettingModel {
     
     private let cancelCompletionHandler: CancelHandler
     
-    init(userSetting: BaseResultModel.UserSetting,
+    init(setting: BaseResultModel.Setting,
          saveCompletionHandler: @escaping SaveHandler,
          cancelCompletionHandler: @escaping CancelHandler) {
-        originalNumberOfDays = userSetting.numberOfDays
-        editedNumberOfDays = userSetting.numberOfDays
+        originalNumberOfDays = setting.numberOfDays
+        editedNumberOfDays = setting.numberOfDays
         
-        originalBaseCurrencyCode = userSetting.baseCurrencyCode
-        editedBaseCurrencyCode = userSetting.baseCurrencyCode
+        originalBaseCurrencyCode = setting.baseCurrencyCode
+        editedBaseCurrencyCode = setting.baseCurrencyCode
         
-        originalCurrencyCodeOfInterest = userSetting.currencyCodeOfInterest
-        editedCurrencyCodeOfInterest = userSetting.currencyCodeOfInterest
+        originalCurrencyCodeOfInterest = setting.currencyCodeOfInterest
+        editedCurrencyCodeOfInterest = setting.currencyCodeOfInterest
         
         self.saveCompletionHandler = saveCompletionHandler
         self.cancelCompletionHandler = cancelCompletionHandler
     }
     
     override func save() {
-        let userSetting = (numberOfDays: editedNumberOfDays,
-                           baseCurrencyCode: editedBaseCurrencyCode,
-                           currencyCodeOfInterest: editedCurrencyCodeOfInterest)
-        saveCompletionHandler(userSetting)
+        let setting = (numberOfDays: editedNumberOfDays,
+                       baseCurrencyCode: editedBaseCurrencyCode,
+                       currencyCodeOfInterest: editedCurrencyCodeOfInterest)
+        saveCompletionHandler(setting)
     }
     
     override func cancel() {
@@ -55,6 +55,6 @@ class SettingModel: BaseSettingModel {
 
 // MARK: - name space
 extension SettingModel {
-    typealias SaveHandler = (_ userSetting: BaseResultModel.UserSetting) -> Void
+    typealias SaveHandler = (_ setting: BaseResultModel.Setting) -> Void
     typealias CancelHandler = () -> Void
 }

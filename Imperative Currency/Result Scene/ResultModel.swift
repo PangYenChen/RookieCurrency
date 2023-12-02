@@ -1,38 +1,37 @@
 import Foundation
 
 class ResultModel: BaseResultModel {
-    private var userSetting: UserSetting
+    // MARK: - private properties
+    private var setting: Setting
     
     private var order: Order
     
     private var searchText: String?
     
-    private var analyzedDataArray: [AnalyzedData]
+    private var analyzedSortedDataArray: [AnalyzedData]
     
     private var timer: Timer?
     
-    private let autoUpdateTimeInterval: TimeInterval
-    
     private var state: State
     
+    // MARK: - internal property
     var stateHandler: StateHandler? {
         didSet {
             stateHandler?(state)
         }
     }
-    
+    // MARK: - life cycle
     override init() {
-        userSetting = (numberOfDays: AppUtility.numberOfDays,
-                       baseCurrencyCode: AppUtility.baseCurrencyCode,
-                       currencyCodeOfInterest: AppUtility.currencyCodeOfInterest)
+        setting = (numberOfDays: AppUtility.numberOfDays,
+                   baseCurrencyCode: AppUtility.baseCurrencyCode,
+                   currencyCodeOfInterest: AppUtility.currencyCodeOfInterest)
         
         order = AppUtility.order
         
         searchText = nil
-        analyzedDataArray = []
+        analyzedSortedDataArray = []
         
         timer = nil
-        autoUpdateTimeInterval = 5
         
         state = .updating
         
@@ -41,36 +40,45 @@ class ResultModel: BaseResultModel {
         resumeAutoUpdatingState()
     }
     
+    // MARK: - hook methods
     override func updateState() {
-        analyzedDataFor(userSetting: userSetting)
+        analyzedDataFor(setting: setting)
     }
     
     override func setOrder(_ order: BaseResultModel.Order) {
         AppUtility.order = order
         self.order = order
         
-        let analyzedSortedDataArray = Self.sort(self.analyzedDataArray,
-                                                by: self.order,
-                                                filteredIfNeededBy: self.searchText)
-        stateHandler?(.sorted(analyzedSortedDataArray: analyzedSortedDataArray))
+        analyzedSortedDataArray = Self.sort(self.analyzedSortedDataArray,
+                                            by: self.order,
+                                            filteredIfNeededBy: self.searchText)
+        
+        state = .sorted(analyzedSortedDataArray: analyzedSortedDataArray)
+        
+        stateHandler?(state)
     }
     
     override func setSearchText(_ searchText: String?) {
         self.searchText = searchText
-        let analyzedSortedDataArray = Self.sort(self.analyzedDataArray,
-                                                by: self.order,
-                                                filteredIfNeededBy: self.searchText)
-        stateHandler?(.sorted(analyzedSortedDataArray: analyzedSortedDataArray))
+        
+        analyzedSortedDataArray = Self.sort(self.analyzedSortedDataArray,
+                                            by: self.order,
+                                            filteredIfNeededBy: self.searchText)
+        
+        state = .sorted(analyzedSortedDataArray: analyzedSortedDataArray)
+        
+        stateHandler?(state)
     }
     
     override func settingModel() -> SettingModel {
         suspendAutoUpdatingState()
         
-        return SettingModel(userSetting: userSetting) { [unowned self] userSetting in
-            self.userSetting = userSetting
-            AppUtility.numberOfDays = userSetting.numberOfDays
-            AppUtility.baseCurrencyCode = userSetting.baseCurrencyCode
-            AppUtility.currencyCodeOfInterest = userSetting.currencyCodeOfInterest
+        return SettingModel(setting: setting) { [unowned self] setting in
+            self.setting = setting
+            
+            AppUtility.numberOfDays = setting.numberOfDays
+            AppUtility.baseCurrencyCode = setting.baseCurrencyCode
+            AppUtility.currencyCodeOfInterest = setting.currencyCodeOfInterest
             
             self.resumeAutoUpdatingState()
         } cancelCompletionHandler: { [unowned self] in
@@ -82,8 +90,9 @@ class ResultModel: BaseResultModel {
 // MARK: - private method
 private extension ResultModel {
     func resumeAutoUpdatingState() {
+        let autoUpdateTimeInterval: TimeInterval = 5
         timer = Timer.scheduledTimer(withTimeInterval: autoUpdateTimeInterval, repeats: true) { [unowned self] _ in
-            analyzedDataFor(userSetting: userSetting)
+            analyzedDataFor(setting: setting)
         }
         timer?.fire()
     }
@@ -93,51 +102,47 @@ private extension ResultModel {
         timer = nil
     }
     
-    func analyzedDataFor(userSetting: UserSetting) {
+    func analyzedDataFor(setting: Setting) {
         stateHandler?(.updating)
         
-        RateController.shared.getRateFor(numberOfDays: userSetting.numberOfDays) { [unowned self] result in
+        RateController.shared.getRateFor(numberOfDays: setting.numberOfDays) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
+                let analyzedResult = Analyst
+                    .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
+                             latestRate: latestRate,
+                             historicalRateSet: historicalRateSet,
+                             baseCurrencyCode: setting.baseCurrencyCode)
                 
-                do {
-                    let analyzedResult = Analyst
-                        .analyze(currencyCodeOfInterest: userSetting.currencyCodeOfInterest,
-                                 latestRate: latestRate,
-                                 historicalRateSet: historicalRateSet,
-                                 baseCurrencyCode: userSetting.baseCurrencyCode)
-                    
-                    let analyzedFailure = analyzedResult
-                        .filter { _, result in
-                            switch result {
-                            case .failure: return true
-                            case .success: return false
-                            }
+                let analyzedFailure = analyzedResult
+                    .filter { _, result in
+                        switch result {
+                        case .failure: return true
+                        case .success: return false
                         }
-                    
-                    guard analyzedFailure.isEmpty else {
-                        state = .failure(MyError.foo)
-                        stateHandler?(.failure(MyError.foo))
-                    // TODO: 還沒處理錯誤"
-                        return
                     }
-                    
-                    analyzedDataArray = analyzedResult
-                        .compactMapValues { result in try? result.get() }
-                        .map { tuple in
-                            AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
-                        }
-                    
-                    let analyzedDataArray = Self.sort(self.analyzedDataArray,
-                                                      by: self.order,
-                                                      filteredIfNeededBy: self.searchText)
-                    state = .updated(timestamp: latestRate.timestamp, analyzedDataArray: analyzedDataArray)
-                    stateHandler?(.updated(timestamp: latestRate.timestamp, analyzedDataArray: analyzedDataArray))
+                
+                guard analyzedFailure.isEmpty else {
+                    // TODO: 還沒處理錯誤"
+                    return
                 }
+                
+                analyzedSortedDataArray = analyzedResult
+                    .compactMapValues { result in try? result.get() }
+                    .map { tuple in
+                        AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
+                    }
+                
+                analyzedSortedDataArray = Self.sort(self.analyzedSortedDataArray,
+                                                    by: self.order,
+                                                    filteredIfNeededBy: self.searchText)
+                
+                state = .updated(timestamp: latestRate.timestamp, analyzedSortedDataArray: analyzedSortedDataArray)
+                stateHandler?(state)
                 
             case .failure(let error):
                 state = .failure(error)
-                stateHandler?(.failure(error))
+                stateHandler?(state)
             }
         }
     }
