@@ -83,6 +83,8 @@
 		51D67ED42975922D008B8928 /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274724758ACB00E0A07D /* SceneDelegate.swift */; };
 		51D6CA482B1C8A7C003F9D13 /* CurrencySelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D6CA472B1C8A7C003F9D13 /* CurrencySelectionModel.swift */; };
 		51D6CA492B1C8A7C003F9D13 /* CurrencySelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51D6CA472B1C8A7C003F9D13 /* CurrencySelectionModel.swift */; };
+		51D6CA592B1CCB54003F9D13 /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 51D6CA582B1CCB54003F9D13 /* SFSafeSymbols */; };
+		51D6CA5E2B1CCE05003F9D13 /* SFSafeSymbols in Frameworks */ = {isa = PBXBuildFile; productRef = 51D6CA5D2B1CCE05003F9D13 /* SFSafeSymbols */; };
 		51DF9167299FD0B200CEA5A6 /* SettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DF9166299FD0B200CEA5A6 /* SettingTableViewController.swift */; };
 		51DF916A299FD0C100CEA5A6 /* CurrencyTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51DF9169299FD0C100CEA5A6 /* CurrencyTableViewController.swift */; };
 		51E0DEB5299FD4980046652B /* PresentWithNavigationController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51119A192999D79C002758B3 /* PresentWithNavigationController.swift */; };
@@ -223,6 +225,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51D6CA5E2B1CCE05003F9D13 /* SFSafeSymbols in Frameworks */,
 				51433D33298FD7BF00F2B4E6 /* RswiftLibrary in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -238,6 +241,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51D6CA592B1CCB54003F9D13 /* SFSafeSymbols in Frameworks */,
 				51433D3B298FD8C400F2B4E6 /* RswiftLibrary in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -626,6 +630,7 @@
 			name = ImperativeCurrency;
 			packageProductDependencies = (
 				51433D32298FD7BF00F2B4E6 /* RswiftLibrary */,
+				51D6CA5D2B1CCE05003F9D13 /* SFSafeSymbols */,
 			);
 			productName = ImperativeCurrnecy;
 			productReference = E13B274224758ACB00E0A07D /* ImperativeCurrency.app */;
@@ -668,6 +673,7 @@
 			name = ReactiveCurrency;
 			packageProductDependencies = (
 				51433D3A298FD8C400F2B4E6 /* RswiftLibrary */,
+				51D6CA582B1CCB54003F9D13 /* SFSafeSymbols */,
 			);
 			productName = ReactiveCurrency;
 			productReference = E15BA6AB24FCA66600CA5B1B /* ReactiveCurrency.app */;
@@ -731,6 +737,7 @@
 			packageReferences = (
 				51433D31298FD7BF00F2B4E6 /* XCRemoteSwiftPackageReference "R" */,
 				51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */,
+				51D6CA572B1CCB03003F9D13 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */,
 			);
 			productRefGroup = E13B274324758ACB00E0A07D /* Products */;
 			projectDirPath = "";
@@ -1695,6 +1702,14 @@
 				minimumVersion = 0.54.0;
 			};
 		};
+		51D6CA572B1CCB03003F9D13 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SFSafeSymbols/SFSafeSymbols";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.1.1;
+			};
+		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
@@ -1735,6 +1750,16 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
 			productName = "plugin:SwiftLintPlugin";
+		};
+		51D6CA582B1CCB54003F9D13 /* SFSafeSymbols */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51D6CA572B1CCB03003F9D13 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */;
+			productName = SFSafeSymbols;
+		};
+		51D6CA5D2B1CCE05003F9D13 /* SFSafeSymbols */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51D6CA572B1CCB03003F9D13 /* XCRemoteSwiftPackageReference "SFSafeSymbols" */;
+			productName = SFSafeSymbols;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

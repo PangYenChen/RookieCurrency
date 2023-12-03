@@ -110,10 +110,10 @@ class BaseResultTableViewController: UITableViewController {
         // sort Item
         do {
             let increasingAction = UIAction(title: BaseResultModel.Order.increasing.localizedName,
-                                            image: UIImage(systemName: "arrow.up.right"),
+                                            image: UIImage(systemSymbol: .arrowUpRight),
                                             handler: { [unowned self] _ in baseResultModel.setOrder(.increasing) })
             let decreasingAction = UIAction(title: BaseResultModel.Order.decreasing.localizedName,
-                                            image: UIImage(systemName: "arrow.down.right"),
+                                            image: UIImage(systemSymbol: .arrowDownRight),
                                             handler: { [unowned self] _ in baseResultModel.setOrder(.decreasing) })
             
             switch baseResultModel.initialOrder {
@@ -124,7 +124,7 @@ class BaseResultTableViewController: UITableViewController {
             }
             
             let sortMenu = UIMenu(title: R.string.share.sortedBy(),
-                                  image: UIImage(systemName: "arrow.up.arrow.down"),
+                                  image: UIImage(systemSymbol: .arrowUpArrowDown),
                                   options: .singleSelection,
                                   children: [increasingAction, decreasingAction])
             

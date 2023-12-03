@@ -224,13 +224,13 @@ extension BaseSettingTableViewController {
             case .numberOfDays:
                 contentConfiguration.text = R.string.settingScene.numberOfConsideredDay()
                 contentConfiguration.secondaryText = String(editedNumberOfDays)
-                contentConfiguration.image = UIImage(systemName: "calendar")
+                contentConfiguration.image = UIImage(systemSymbol: .calendar)
                 stepper.value = Double(editedNumberOfDays)
                 cell.accessoryView = stepper
             case .baseCurrency:
                 contentConfiguration.text = R.string.share.baseCurrency()
                 contentConfiguration.secondaryText = displayStringFor(currencyCode: editedBaseCurrencyCode)
-                contentConfiguration.image = UIImage(systemName: "dollarsign.circle")
+                contentConfiguration.image = UIImage(systemSymbol: .dollarsignCircle)
                 cell.accessoryType = .disclosureIndicator
             case .currencyOfInterest:
                 contentConfiguration.text = R.string.share.currencyOfInterest()
@@ -242,25 +242,25 @@ extension BaseSettingTableViewController {
                 let displayStringForEditedCurrencyNameOfInterest = ListFormatter.localizedString(byJoining: editedCurrencyNameOfInterest)
                 
                 contentConfiguration.secondaryText = displayStringForEditedCurrencyNameOfInterest
-                contentConfiguration.image = UIImage(systemName: "checklist")
+                contentConfiguration.image = UIImage(systemSymbol: .checklistUnchecked)
                 cell.accessoryType = .disclosureIndicator
             case .language:
                 contentConfiguration.text = R.string.settingScene.language()
                 if let languageCode = Bundle.main.preferredLocalizations.first {
                     contentConfiguration.secondaryText = Locale.autoupdatingCurrent.localizedString(forLanguageCode: languageCode)
                 }
-                contentConfiguration.image = UIImage(systemName: "character")
+                contentConfiguration.image = UIImage(systemSymbol: .character)
                 cell.accessoryType = .disclosureIndicator
             case .removeFile:
                 contentConfiguration.text = R.string.settingScene.removeFiles()
                 contentConfiguration.secondaryText = R.string.settingScene.removeFilesDescription()
-                contentConfiguration.image = UIImage(systemName: "folder.badge.minus")
+                contentConfiguration.image = UIImage(systemSymbol: .folderBadgeMinus)
                 cell.accessoryType = .none
 #if DEBUG
             case .debugInfo:
                 contentConfiguration.text = R.string.settingScene.debugInfo()
                 contentConfiguration.secondaryText = nil
-                contentConfiguration.image = UIImage(systemName: "ladybug")
+                contentConfiguration.image = UIImage(systemSymbol: .ladybug)
                 cell.accessoryType = .disclosureIndicator
 #endif
             case nil:

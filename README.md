@@ -90,7 +90,12 @@ There are two targets in this project file that implement the same logic. Impera
 
 ## Third-party package
 
-- R.swift。
+- R.swift
+
+- SwiftLint
+    - Using Regex to define a custom rule
+
+- SFSafeSymbols
 
 ## Thrid-party package manager
 

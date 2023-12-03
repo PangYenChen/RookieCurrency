@@ -88,7 +88,12 @@
 
 ## 使用的第三方套件
 
-- R.swift。
+- R.swift
+
+- SwiftLint
+    - 搭配 Regex 自定義規則
+
+- SFSafeSymbols
 
 ## 使用的套件管理工具
 
