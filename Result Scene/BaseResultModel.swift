@@ -27,7 +27,6 @@ class BaseResultModel {
 
 // MARK: - helper method
 extension BaseResultModel {
-    // TODO: 改成 instance method
     static func sort(_ analyzedDataArray: [AnalyzedData],
                      by order: Order,
                      filteredIfNeededBy searchText: String?) -> [AnalyzedData] {

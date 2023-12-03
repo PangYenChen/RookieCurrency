@@ -16,6 +16,8 @@ extension AppUtility {
             
             guard !isFetching else { return }
             
+            isFetching = true
+            
             Fetcher.shared.fetch(Endpoints.SupportedSymbols()) { result in
                 if case .success(let supportedSymbols) = result {
                     Self.supportedSymbols = supportedSymbols.symbols

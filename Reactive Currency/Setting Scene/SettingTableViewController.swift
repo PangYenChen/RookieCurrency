@@ -62,19 +62,19 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     // MARK: - Navigation
-    override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        let strategy = CurrencyTableViewController
-            .BaseCurrencySelectionStrategy(baseCurrencyCode: model.editedBaseCurrencyCode.value,
+    override func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
+        let baseCurrencySelectionModel = CurrencySelectionTableViewController
+            .BaseCurrencySelectionModel(baseCurrencyCode: model.editedBaseCurrencyCode.value,
                                            selectedBaseCurrencyCode: AnySubscriber(model.editedBaseCurrencyCode))
         
-        return CurrencyTableViewController(coder: coder, strategy: strategy)
+        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: baseCurrencySelectionModel)
     }
     
-    override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        let strategy = CurrencyTableViewController
-            .CurrencyOfInterestSelectionStrategy(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest.value,
+    override func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
+        let currencyOfInterestSelectionModel = CurrencySelectionTableViewController
+            .CurrencyOfInterestSelectionModel(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest.value,
                                                  selectedCurrencyCodeOfInterest: AnySubscriber(model.editedCurrencyCodeOfInterest))
         
-        return CurrencyTableViewController(coder: coder, strategy: strategy)
+        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: currencyOfInterestSelectionModel)
     }
 }

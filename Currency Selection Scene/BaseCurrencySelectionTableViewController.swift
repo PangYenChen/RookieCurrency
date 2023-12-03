@@ -1,21 +1,21 @@
 import UIKit
 
 /// 這裡的 base 是 base class 的意思，不是基準貨幣
-class BaseCurrencyTableViewController: UITableViewController {
+class BaseCurrencySelectionTableViewController: UITableViewController {
     
     // MARK: - property
     @IBOutlet var sortBarButtonItem: UIBarButtonItem!
     
-    let strategy: CurrencyTableStrategy
+    private let currencySelectionModel: CurrencySelectionModel
     
-    var dataSource: DataSource!
+    private var dataSource: DataSource!
     
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]?
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
+    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModel) {
         
-        self.strategy = strategy
+        self.currencySelectionModel = currencySelectionModel
         
         currencyCodeDescriptionDictionary = nil
         
@@ -28,7 +28,7 @@ class BaseCurrencyTableViewController: UITableViewController {
             navigationItem.hidesSearchBarWhenScrolling = false
         }
         
-        title = strategy.title
+        title = currencySelectionModel.title
     }
 
     required init?(coder: NSCoder) {
@@ -38,7 +38,7 @@ class BaseCurrencyTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.allowsMultipleSelection = strategy.allowsMultipleSelection
+        tableView.allowsMultipleSelection = currencySelectionModel.allowsMultipleSelection
         
         // table view data source and delegate
         do {
@@ -178,7 +178,22 @@ class BaseCurrencyTableViewController: UITableViewController {
         }
     }
     
-    // MARK: - method
+    // MARK: - Hook methods
+    func getSortingMethod() -> SortingMethod {
+        fatalError("getSortingMethod() has not been implemented")
+    }
+    
+    func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
+        fatalError("set(sortingMethod:sortingOrder:) has not been implemented")
+    }
+    
+    func triggerRefreshControl() {
+        fatalError("triggerRefreshControl() has not been implemented")
+    }
+}
+
+// MARK: - helper method
+extension BaseCurrencySelectionTableViewController {
     final func convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],
                                                 sortingMethod: SortingMethod,
                                                 sortingOrder: SortingOrder,
@@ -258,7 +273,7 @@ class BaseCurrencyTableViewController: UITableViewController {
             self?.dataSource.apply(snapshot) { [weak self] in
                 guard let self else { return }
                 
-                let selectedIndexPath = strategy.selectedCurrencyCode
+                let selectedIndexPath = currencySelectionModel.selectedCurrencyCode
                     .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
                 
                 selectedIndexPath
@@ -277,30 +292,17 @@ class BaseCurrencyTableViewController: UITableViewController {
             }
         }
     }
-
-    // MARK: - Hook methods
-    func getSortingMethod() -> SortingMethod {
-        fatalError("getSortingMethod() has not been implemented")
-    }
-    
-    func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
-        fatalError("set(sortingMethod:sortingOrder:) has not been implemented")
-    }
-    
-    func triggerRefreshControl() {
-        fatalError("triggerRefreshControl() has not been implemented")
-    }
 }
 
 // MARK: - table view delegate relative
-extension BaseCurrencyTableViewController {
+extension BaseCurrencySelectionTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let selectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
             assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
             return
         }
         
-        strategy.select(currencyCode: selectedCurrencyCode)
+        currencySelectionModel.select(currencyCode: selectedCurrencyCode)
     }
     
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -309,15 +311,15 @@ extension BaseCurrencyTableViewController {
             assertionFailure("###, \(self), \(#function), 取消選取的 item 不在 data source 中，這不可能發生。")
             return
         }
-        strategy.deselect(currencyCode: deselectedCurrencyCode)
+        currencySelectionModel.deselect(currencyCode: deselectedCurrencyCode)
     }
 }
 
 // MARK: - Search Bar Delegate
-extension BaseCurrencyTableViewController: UISearchBarDelegate {}
+extension BaseCurrencySelectionTableViewController: UISearchBarDelegate {}
 
 // MARK: - name space
-extension BaseCurrencyTableViewController {
+extension BaseCurrencySelectionTableViewController {
     enum SortingMethod {
         case currencyName
         case currencyCode
@@ -346,7 +348,7 @@ extension BaseCurrencyTableViewController {
 }
 
 // MARK: - private name space
-extension BaseCurrencyTableViewController {
+extension BaseCurrencySelectionTableViewController {
     enum Section {
         case main
     }
@@ -357,18 +359,4 @@ extension BaseCurrencyTableViewController {
 }
 
 // MARK: - Alert Presenter
-extension BaseCurrencyTableViewController: AlertPresenter {}
-
-// MARK: - strategy
-protocol CurrencyTableStrategy {
-    
-    var title: String { get }
-    
-    var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { get }
-    
-    var allowsMultipleSelection: Bool { get }
-    
-    func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode)
-    
-    func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode)
-}
+extension BaseCurrencySelectionTableViewController: AlertPresenter {}

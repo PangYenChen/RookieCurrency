@@ -1,6 +1,6 @@
 import UIKit
 
-class CurrencyTableViewController: BaseCurrencyTableViewController {
+class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
     
     // MARK: - private properties
     private var sortingMethod: SortingMethod
@@ -12,7 +12,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     private var isFirstTimePopulate: Bool
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
+    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModel) {
         
         sortingMethod = .currencyName
         
@@ -22,7 +22,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
         
         isFirstTimePopulate = true
         
-        super.init(coder: coder, strategy: strategy)
+        super.init(coder: coder, currencySelectionModel: currencySelectionModel)
     }
     
     required init?(coder: NSCoder) {
@@ -30,7 +30,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     }
     
     // MARK: - Hook methods
-    override func getSortingMethod() -> BaseCurrencyTableViewController.SortingMethod {
+    override func getSortingMethod() -> BaseCurrencySelectionTableViewController.SortingMethod {
         sortingMethod
     }
     
@@ -66,7 +66,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
 }
 
 // MARK: - private method
-private extension CurrencyTableViewController {
+private extension CurrencySelectionTableViewController {
     func populateTableViewIfPossible() {
         guard let currencyCodeDescriptionDictionary else {
             return
@@ -84,7 +84,7 @@ private extension CurrencyTableViewController {
 }
 
 // MARK: - search bar delegate
-extension CurrencyTableViewController {
+extension CurrencySelectionTableViewController {
     final func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText = searchText
    
@@ -98,10 +98,10 @@ extension CurrencyTableViewController {
     }
 }
 
-// MARK: - strategy
-extension CurrencyTableViewController {
+// MARK: - CurrencySelectionModel
+extension CurrencySelectionTableViewController {
     
-    final class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
+    final class BaseCurrencySelectionModel: CurrencySelectionModel {
         
         let title: String
         
@@ -131,7 +131,7 @@ extension CurrencyTableViewController {
         }
     }
     
-    final class CurrencyOfInterestSelectionStrategy: CurrencyTableStrategy {
+    final class CurrencyOfInterestSelectionModel: CurrencySelectionModel {
         
         let title: String
         

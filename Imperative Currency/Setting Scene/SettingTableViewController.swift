@@ -45,25 +45,25 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     // MARK: - Navigation
-    override func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        let baseCurrencySelectionStrategy = CurrencyTableViewController
-            .BaseCurrencySelectionStrategy(baseCurrencyCode: model.editedBaseCurrencyCode) { [unowned self] selectedBaseCurrencyCode in
+    override func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
+        let baseCurrencySelectionModel = CurrencySelectionTableViewController
+            .BaseCurrencySelectionModel(baseCurrencyCode: model.editedBaseCurrencyCode) { [unowned self] selectedBaseCurrencyCode in
                 model.editedBaseCurrencyCode = selectedBaseCurrencyCode
                 saveButton.isEnabled = model.hasChange
                 isModalInPresentation = model.hasChange
             }
         
-        return CurrencyTableViewController(coder: coder, strategy: baseCurrencySelectionStrategy)
+        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: baseCurrencySelectionModel)
     }
     
-    override func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        let currencyOfInterestSelectionStrategy = CurrencyTableViewController
-            .CurrencyOfInterestSelectionStrategy(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest) { [unowned self] selectedCurrencyCodeOfInterest in
+    override func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
+        let currencyOfInterestSelectionModel = CurrencySelectionTableViewController
+            .CurrencyOfInterestSelectionModel(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest) { [unowned self] selectedCurrencyCodeOfInterest in
                 model.editedCurrencyCodeOfInterest = selectedCurrencyCodeOfInterest
                 saveButton.isEnabled = model.hasChange
                 isModalInPresentation = model.hasChange
             }
 
-        return CurrencyTableViewController(coder: coder, strategy: currencyOfInterestSelectionStrategy)
+        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: currencyOfInterestSelectionModel)
     }
 }

@@ -116,11 +116,12 @@ class ResultModel: BaseResultModel {
                 }
                 .eraseToAnyPublisher()
             
-            state = Publishers.Merge4(updatingStatePublisher,
-                                      updatedStatePublisher,
-                                      sortedStatePublisher,
-                                      failureStatePublisher)
-            .eraseToAnyPublisher()
+            state = Publishers
+                .Merge4(updatingStatePublisher,
+                        updatedStatePublisher,
+                        sortedStatePublisher,
+                        failureStatePublisher)
+                .eraseToAnyPublisher()
             
         }
         

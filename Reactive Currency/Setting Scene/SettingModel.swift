@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-class SettingModel: BaseSettingModel {
+class SettingModel {
     let editedNumberOfDays: CurrentValueSubject<Int, Never>
     
     let editedBaseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
@@ -10,7 +10,7 @@ class SettingModel: BaseSettingModel {
     
     let hasChangesToSave: AnyPublisher<Bool, Never>
     
-    // MARK: - properties used to communicate with `ResultModel`
+        // MARK: - properties used to communicate with `ResultModel`
     private let cancelSubject: PassthroughSubject<Void, Never>
     
     private let saveSubject: PassthroughSubject<Void, Never>
@@ -24,7 +24,7 @@ class SettingModel: BaseSettingModel {
         
         editedCurrencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(setting.currencyCodeOfInterest)
         
-        // has changes
+            // has changes
         do {
             let numberOfDaysHasChanges = editedNumberOfDays.map { $0 != setting.numberOfDays }
             let baseCurrencyCodeHasChanges = editedBaseCurrencyCode.map { $0 != setting.baseCurrencyCode }
@@ -33,12 +33,12 @@ class SettingModel: BaseSettingModel {
                 .map { $0 || $1 || $2 }
                 .eraseToAnyPublisher()
         }
-    
+        
         cancelSubject = PassthroughSubject<Void, Never>()
         
         saveSubject = PassthroughSubject<Void, Never>()
         
-        // finish initialization
+            // finish initialization
         
         saveSubject
             .withLatestFrom(editedNumberOfDays)
@@ -51,13 +51,15 @@ class SettingModel: BaseSettingModel {
         cancelSubject
             .subscribe(cancelSubscriber)
     }
-    
-    // MARK: - hook methods
-    override func cancel() {
+}
+
+// MARK: - Confirming BaseSettingModel
+extension SettingModel: BaseSettingModel {
+    func cancel() {
         cancelSubject.send()
     }
     
-    override func save() {
+    func save() {
         saveSubject.send()
     }
 }

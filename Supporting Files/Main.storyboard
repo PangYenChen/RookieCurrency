@@ -130,9 +130,9 @@
                         <outlet property="saveButton" destination="4h0-rJ-PQn" id="BSJ-OI-thw"/>
                         <outlet property="sectionFooterView" destination="01U-2C-QVd" id="I4m-7Q-W3n"/>
                         <outlet property="versionLabel" destination="1Fv-BA-uyf" id="DNk-e0-foc"/>
-                        <segue destination="I3t-1P-vym" kind="show" identifier="showBaseCurrencyTableViewController" destinationCreationSelector="showBaseCurrencyTableViewController:" id="Np9-zw-Nph"/>
+                        <segue destination="I3t-1P-vym" kind="show" identifier="showBaseCurrencySelectionTableViewController" destinationCreationSelector="showBaseCurrencySelectionTableViewController:" id="Np9-zw-Nph"/>
                         <segue destination="eIy-JG-5zx" kind="show" identifier="showDebugInfo" id="Lwh-4B-2hb"/>
-                        <segue destination="I3t-1P-vym" kind="show" identifier="showCurrencyOfInterestTableViewController" destinationCreationSelector="showCurrencyOfInterestTableViewController:" id="GlB-SH-qZ6"/>
+                        <segue destination="I3t-1P-vym" kind="show" identifier="showCurrencyOfInterestSelectionTableViewController" destinationCreationSelector="showCurrencyOfInterestSelectionTableViewController:" id="GlB-SH-qZ6"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bN2-6g-ejU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -172,7 +172,7 @@
         <!--## 基準貨幣 或者 感興趣的貨幣-->
         <scene sceneID="Wzb-4c-N6y">
             <objects>
-                <tableViewController id="I3t-1P-vym" customClass="CurrencyTableViewController" customModule="ImperativeCurrency" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="I3t-1P-vym" customClass="CurrencySelectionTableViewController" customModule="ImperativeCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="ran-0e-Rf3">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -309,7 +309,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Np9-zw-Nph"/>
+        <segue reference="GlB-SH-qZ6"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="arrow.up.arrow.down" catalog="system" width="128" height="97"/>
