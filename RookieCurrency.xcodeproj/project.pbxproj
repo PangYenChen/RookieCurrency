@@ -269,15 +269,6 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
-		5120879F29A9EE2F005ED87A /* View Controller */ = {
-			isa = PBXGroup;
-			children = (
-				514C4D0429A0D6570049E192 /* BaseCurrencySelectionTableViewController.swift */,
-				5120879729A8DC71005ED87A /* DebugInfoViewController.swift */,
-			);
-			path = "View Controller";
-			sourceTree = "<group>";
-		};
 		512087A129A9EE5B005ED87A /* Controller */ = {
 			isa = PBXGroup;
 			children = (
@@ -449,6 +440,22 @@
 			path = "Supporting Files";
 			sourceTree = "<group>";
 		};
+		51D6CA432B1C8027003F9D13 /* Currency Selection Scene */ = {
+			isa = PBXGroup;
+			children = (
+				514C4D0429A0D6570049E192 /* BaseCurrencySelectionTableViewController.swift */,
+			);
+			path = "Currency Selection Scene";
+			sourceTree = "<group>";
+		};
+		51D6CA462B1C8066003F9D13 /* Debug Info Scene */ = {
+			isa = PBXGroup;
+			children = (
+				5120879729A8DC71005ED87A /* DebugInfoViewController.swift */,
+			);
+			path = "Debug Info Scene";
+			sourceTree = "<group>";
+		};
 		51E1B4B529ADAD5300D75669 /* Testing Data */ = {
 			isa = PBXGroup;
 			children = (
@@ -489,9 +496,10 @@
 				5196E45F2AC3F2D4001D1B39 /* README_CN.md */,
 				51D67ED2297591BC008B8928 /* Supporting Files */,
 				511E4B2F2AC69314007EA1DE /* Model */,
-				E1CE96A8248555530029ED73 /* Controller */,
 				516FF5172B01005400576177 /* Result Scene */,
 				516FF5182B01008B00576177 /* Setting Scene */,
+				51D6CA432B1C8027003F9D13 /* Currency Selection Scene */,
+				51D6CA462B1C8066003F9D13 /* Debug Info Scene */,
 				E13B274424758ACB00E0A07D /* Imperative Currency */,
 				E15BA6AC24FCA66600CA5B1B /* Reactive Currency */,
 				E1CE96A32485549D0029ED73 /* Extension */,
@@ -575,14 +583,6 @@
 				514C4CFD29A07A7B0049E192 /* Publisher + Helper.swift */,
 			);
 			path = Extension;
-			sourceTree = "<group>";
-		};
-		E1CE96A8248555530029ED73 /* Controller */ = {
-			isa = PBXGroup;
-			children = (
-				5120879F29A9EE2F005ED87A /* View Controller */,
-			);
-			path = Controller;
 			sourceTree = "<group>";
 		};
 		E1FB994024FF9A030096FE2C /* View Controller */ = {
