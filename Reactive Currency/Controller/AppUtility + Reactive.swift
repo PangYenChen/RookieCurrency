@@ -24,6 +24,7 @@ extension AppUtility {
                         receiveCompletion: { _ in Self.wrappedSupportedSymbols = nil },
                         receiveCancel: { Self.wrappedSupportedSymbols = nil }
                     )
+                    .share()
                     .eraseToAnyPublisher()
                 
                 Self.wrappedSupportedSymbols = wrappedSupportedSymbols

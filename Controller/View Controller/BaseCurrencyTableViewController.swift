@@ -6,9 +6,9 @@ class BaseCurrencyTableViewController: UITableViewController {
     // MARK: - property
     @IBOutlet var sortBarButtonItem: UIBarButtonItem!
     
-    let strategy: CurrencyTableStrategy
+    private let strategy: CurrencyTableStrategy
     
-    var dataSource: DataSource!
+    private var dataSource: DataSource!
     
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]?
     
