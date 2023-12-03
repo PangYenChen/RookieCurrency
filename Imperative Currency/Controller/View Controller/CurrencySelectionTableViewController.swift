@@ -12,7 +12,7 @@ class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewContro
     private var isFirstTimePopulate: Bool
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
+    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModel) {
         
         sortingMethod = .currencyName
         
@@ -22,7 +22,7 @@ class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewContro
         
         isFirstTimePopulate = true
         
-        super.init(coder: coder, strategy: strategy)
+        super.init(coder: coder, currencySelectionModel: currencySelectionModel)
     }
     
     required init?(coder: NSCoder) {
@@ -98,10 +98,10 @@ extension CurrencySelectionTableViewController {
     }
 }
 
-// MARK: - strategy
+// MARK: - CurrencySelectionModel
 extension CurrencySelectionTableViewController {
     
-    final class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
+    final class BaseCurrencySelectionModel: CurrencySelectionModel {
         
         let title: String
         
@@ -131,7 +131,7 @@ extension CurrencySelectionTableViewController {
         }
     }
     
-    final class CurrencyOfInterestSelectionStrategy: CurrencyTableStrategy {
+    final class CurrencyOfInterestSelectionModel: CurrencySelectionModel {
         
         let title: String
         

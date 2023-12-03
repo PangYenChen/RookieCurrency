@@ -46,24 +46,24 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - Navigation
     override func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        let baseCurrencySelectionStrategy = CurrencySelectionTableViewController
-            .BaseCurrencySelectionStrategy(baseCurrencyCode: model.editedBaseCurrencyCode) { [unowned self] selectedBaseCurrencyCode in
+        let baseCurrencySelectionModel = CurrencySelectionTableViewController
+            .BaseCurrencySelectionModel(baseCurrencyCode: model.editedBaseCurrencyCode) { [unowned self] selectedBaseCurrencyCode in
                 model.editedBaseCurrencyCode = selectedBaseCurrencyCode
                 saveButton.isEnabled = model.hasChange
                 isModalInPresentation = model.hasChange
             }
         
-        return CurrencySelectionTableViewController(coder: coder, strategy: baseCurrencySelectionStrategy)
+        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: baseCurrencySelectionModel)
     }
     
     override func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        let currencyOfInterestSelectionStrategy = CurrencySelectionTableViewController
-            .CurrencyOfInterestSelectionStrategy(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest) { [unowned self] selectedCurrencyCodeOfInterest in
+        let currencyOfInterestSelectionModel = CurrencySelectionTableViewController
+            .CurrencyOfInterestSelectionModel(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest) { [unowned self] selectedCurrencyCodeOfInterest in
                 model.editedCurrencyCodeOfInterest = selectedCurrencyCodeOfInterest
                 saveButton.isEnabled = model.hasChange
                 isModalInPresentation = model.hasChange
             }
 
-        return CurrencySelectionTableViewController(coder: coder, strategy: currencyOfInterestSelectionStrategy)
+        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: currencyOfInterestSelectionModel)
     }
 }

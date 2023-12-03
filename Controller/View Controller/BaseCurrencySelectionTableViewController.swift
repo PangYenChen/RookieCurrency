@@ -6,16 +6,16 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     // MARK: - property
     @IBOutlet var sortBarButtonItem: UIBarButtonItem!
     
-    private let strategy: CurrencyTableStrategy
+    private let currencySelectionModel: CurrencySelectionModel
     
     private var dataSource: DataSource!
     
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]?
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
+    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModel) {
         
-        self.strategy = strategy
+        self.currencySelectionModel = currencySelectionModel
         
         currencyCodeDescriptionDictionary = nil
         
@@ -28,7 +28,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
             navigationItem.hidesSearchBarWhenScrolling = false
         }
         
-        title = strategy.title
+        title = currencySelectionModel.title
     }
 
     required init?(coder: NSCoder) {
@@ -38,7 +38,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.allowsMultipleSelection = strategy.allowsMultipleSelection
+        tableView.allowsMultipleSelection = currencySelectionModel.allowsMultipleSelection
         
         // table view data source and delegate
         do {
@@ -258,7 +258,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
             self?.dataSource.apply(snapshot) { [weak self] in
                 guard let self else { return }
                 
-                let selectedIndexPath = strategy.selectedCurrencyCode
+                let selectedIndexPath = currencySelectionModel.selectedCurrencyCode
                     .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
                 
                 selectedIndexPath
@@ -300,7 +300,7 @@ extension BaseCurrencySelectionTableViewController {
             return
         }
         
-        strategy.select(currencyCode: selectedCurrencyCode)
+        currencySelectionModel.select(currencyCode: selectedCurrencyCode)
     }
     
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -309,7 +309,7 @@ extension BaseCurrencySelectionTableViewController {
             assertionFailure("###, \(self), \(#function), 取消選取的 item 不在 data source 中，這不可能發生。")
             return
         }
-        strategy.deselect(currencyCode: deselectedCurrencyCode)
+        currencySelectionModel.deselect(currencyCode: deselectedCurrencyCode)
     }
 }
 
@@ -359,8 +359,8 @@ extension BaseCurrencySelectionTableViewController {
 // MARK: - Alert Presenter
 extension BaseCurrencySelectionTableViewController: AlertPresenter {}
 
-// MARK: - strategy
-protocol CurrencyTableStrategy {
+// MARK: - CurrencySelectionModel
+protocol CurrencySelectionModel {
     
     var title: String { get }
     

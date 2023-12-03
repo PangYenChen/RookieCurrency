@@ -15,7 +15,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, strategy: CurrencyTableStrategy) {
+    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModel) {
         
         sortingMethodAndOrder = CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>((method: .currencyName, order: .ascending))
         
@@ -27,7 +27,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
         
         anyCancellableSet = Set<AnyCancellable>()
         
-        super.init(coder: coder, strategy: strategy)
+        super.init(coder: coder, currencySelectionModel: currencySelectionModel)
     }
     
     required init?(coder: NSCoder) {
@@ -104,10 +104,10 @@ extension CurrencySelectionTableViewController {
     }
 }
 
-// MARK: - strategy
+// MARK: - CurrencySelectionModel
 extension CurrencySelectionTableViewController {
     
-    final class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
+    final class BaseCurrencySelectionModel: CurrencySelectionModel {
         
         let title: String
         
@@ -139,7 +139,7 @@ extension CurrencySelectionTableViewController {
         }
     }
     
-    final class CurrencyOfInterestSelectionStrategy: CurrencyTableStrategy {
+    final class CurrencyOfInterestSelectionModel: CurrencySelectionModel {
 
         let title: String
         
