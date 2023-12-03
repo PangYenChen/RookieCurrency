@@ -130,9 +130,9 @@
                         <outlet property="saveButton" destination="4h0-rJ-PQn" id="BSJ-OI-thw"/>
                         <outlet property="sectionFooterView" destination="01U-2C-QVd" id="I4m-7Q-W3n"/>
                         <outlet property="versionLabel" destination="1Fv-BA-uyf" id="DNk-e0-foc"/>
-                        <segue destination="I3t-1P-vym" kind="show" identifier="showBaseCurrencyTableViewController" destinationCreationSelector="showBaseCurrencyTableViewController:" id="Np9-zw-Nph"/>
+                        <segue destination="I3t-1P-vym" kind="show" identifier="showBaseCurrencySelectionTableViewController" destinationCreationSelector="showBaseCurrencySelectionTableViewController:" id="Np9-zw-Nph"/>
                         <segue destination="eIy-JG-5zx" kind="show" identifier="showDebugInfo" id="Lwh-4B-2hb"/>
-                        <segue destination="I3t-1P-vym" kind="show" identifier="showCurrencyOfInterestTableViewController" destinationCreationSelector="showCurrencyOfInterestTableViewController:" id="GlB-SH-qZ6"/>
+                        <segue destination="I3t-1P-vym" kind="show" identifier="showCurrencyOfInterestSelectionTableViewController" destinationCreationSelector="showCurrencyOfInterestSelectionTableViewController:" id="GlB-SH-qZ6"/>
                     </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="bN2-6g-ejU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
@@ -309,7 +309,7 @@
         </scene>
     </scenes>
     <inferredMetricsTieBreakers>
-        <segue reference="Np9-zw-Nph"/>
+        <segue reference="GlB-SH-qZ6"/>
     </inferredMetricsTieBreakers>
     <resources>
         <image name="arrow.up.arrow.down" catalog="system" width="128" height="97"/>

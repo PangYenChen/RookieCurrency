@@ -1,7 +1,7 @@
 import UIKit
 import Combine
 
-final class CurrencyTableViewController: BaseCurrencyTableViewController {
+final class CurrencyTableViewController: BaseCurrencySelectionTableViewController {
     
     private let sortingMethodAndOrder: CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>
     
@@ -80,7 +80,7 @@ final class CurrencyTableViewController: BaseCurrencyTableViewController {
     }
     
     // MARK: - Hook methods
-    override func getSortingMethod() -> BaseCurrencyTableViewController.SortingMethod {
+    override func getSortingMethod() -> BaseCurrencySelectionTableViewController.SortingMethod {
         sortingMethodAndOrder.value.method
     }
     

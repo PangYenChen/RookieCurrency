@@ -94,11 +94,12 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     }
     
     // MARK: - Navigation
-    @IBSegueAction func showBaseCurrencyTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        fatalError("showBaseCurrencyTableViewController(_:) has not been implemented")
+    @IBSegueAction func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+        fatalError("showBaseCurrencySelectionTableViewController(_:) has not been implemented")
     }
-    @IBSegueAction func showCurrencyOfInterestTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        fatalError("showCurrencyOfInterestTableViewController(_:) has not been implemented")
+    
+    @IBSegueAction func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+        fatalError("showCurrencyOfInterestSelectionTableViewController(_:) has not been implemented")
     }
 }
 
@@ -299,11 +300,11 @@ extension BaseSettingTableViewController {
             assertionFailure("###, \(#function), \(self), number of day 這個 row 在 tableView(_:willSelectRowAt:) 被設定成不能被點")
             
         case .baseCurrency:
-            let identifier = R.segue.settingTableViewController.showBaseCurrencyTableViewController.identifier
+            let identifier = R.segue.settingTableViewController.showBaseCurrencySelectionTableViewController.identifier
             performSegue(withIdentifier: identifier, sender: self)
             
         case .currencyOfInterest:
-            let identifier = R.segue.settingTableViewController.showCurrencyOfInterestTableViewController.identifier
+            let identifier = R.segue.settingTableViewController.showCurrencyOfInterestSelectionTableViewController.identifier
             performSegue(withIdentifier: identifier, sender: self)
             
         case .language:

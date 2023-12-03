@@ -1,7 +1,7 @@
 import UIKit
 
 /// 這裡的 base 是 base class 的意思，不是基準貨幣
-class BaseCurrencyTableViewController: UITableViewController {
+class BaseCurrencySelectionTableViewController: UITableViewController {
     
     // MARK: - property
     @IBOutlet var sortBarButtonItem: UIBarButtonItem!
@@ -293,7 +293,7 @@ class BaseCurrencyTableViewController: UITableViewController {
 }
 
 // MARK: - table view delegate relative
-extension BaseCurrencyTableViewController {
+extension BaseCurrencySelectionTableViewController {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let selectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
             assertionFailure("###, \(self), \(#function), 選到的 item 不在 data source 中，這不可能發生。")
@@ -314,10 +314,10 @@ extension BaseCurrencyTableViewController {
 }
 
 // MARK: - Search Bar Delegate
-extension BaseCurrencyTableViewController: UISearchBarDelegate {}
+extension BaseCurrencySelectionTableViewController: UISearchBarDelegate {}
 
 // MARK: - name space
-extension BaseCurrencyTableViewController {
+extension BaseCurrencySelectionTableViewController {
     enum SortingMethod {
         case currencyName
         case currencyCode
@@ -346,7 +346,7 @@ extension BaseCurrencyTableViewController {
 }
 
 // MARK: - private name space
-extension BaseCurrencyTableViewController {
+extension BaseCurrencySelectionTableViewController {
     enum Section {
         case main
     }
@@ -357,7 +357,7 @@ extension BaseCurrencyTableViewController {
 }
 
 // MARK: - Alert Presenter
-extension BaseCurrencyTableViewController: AlertPresenter {}
+extension BaseCurrencySelectionTableViewController: AlertPresenter {}
 
 // MARK: - strategy
 protocol CurrencyTableStrategy {

@@ -1,6 +1,6 @@
 import UIKit
 
-class CurrencyTableViewController: BaseCurrencyTableViewController {
+class CurrencyTableViewController: BaseCurrencySelectionTableViewController {
     
     // MARK: - private properties
     private var sortingMethod: SortingMethod
@@ -30,7 +30,7 @@ class CurrencyTableViewController: BaseCurrencyTableViewController {
     }
     
     // MARK: - Hook methods
-    override func getSortingMethod() -> BaseCurrencyTableViewController.SortingMethod {
+    override func getSortingMethod() -> BaseCurrencySelectionTableViewController.SortingMethod {
         sortingMethod
     }
     
