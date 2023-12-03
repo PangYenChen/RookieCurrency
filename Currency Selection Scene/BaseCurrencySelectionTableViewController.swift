@@ -178,7 +178,22 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
         }
     }
     
-    // MARK: - method
+    // MARK: - Hook methods
+    func getSortingMethod() -> SortingMethod {
+        fatalError("getSortingMethod() has not been implemented")
+    }
+    
+    func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
+        fatalError("set(sortingMethod:sortingOrder:) has not been implemented")
+    }
+    
+    func triggerRefreshControl() {
+        fatalError("triggerRefreshControl() has not been implemented")
+    }
+}
+
+// MARK: - helper method
+extension BaseCurrencySelectionTableViewController {
     final func convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],
                                                 sortingMethod: SortingMethod,
                                                 sortingOrder: SortingOrder,
@@ -277,19 +292,6 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
             }
         }
     }
-
-    // MARK: - Hook methods
-    func getSortingMethod() -> SortingMethod {
-        fatalError("getSortingMethod() has not been implemented")
-    }
-    
-    func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
-        fatalError("set(sortingMethod:sortingOrder:) has not been implemented")
-    }
-    
-    func triggerRefreshControl() {
-        fatalError("triggerRefreshControl() has not been implemented")
-    }
 }
 
 // MARK: - table view delegate relative
@@ -358,17 +360,3 @@ extension BaseCurrencySelectionTableViewController {
 
 // MARK: - Alert Presenter
 extension BaseCurrencySelectionTableViewController: AlertPresenter {}
-
-// MARK: - CurrencySelectionModel
-protocol CurrencySelectionModel {
-    
-    var title: String { get }
-    
-    var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { get }
-    
-    var allowsMultipleSelection: Bool { get }
-    
-    func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode)
-    
-    func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode)
-}
