@@ -1,4 +1,5 @@
 import UIKit
+import SFSafeSymbols
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
