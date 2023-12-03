@@ -1,6 +1,6 @@
 import Foundation
 
-class SettingModel: BaseSettingModel {
+class SettingModel {
     // MARK: - internal properties
     var editedNumberOfDays: Int
     
@@ -40,15 +40,18 @@ class SettingModel: BaseSettingModel {
         self.saveCompletionHandler = saveCompletionHandler
         self.cancelCompletionHandler = cancelCompletionHandler
     }
-    
-    override func save() {
+}
+
+// MARK: - Confirming BaseSettingModel
+extension SettingModel: BaseSettingModel {
+    func save() {
         let setting = (numberOfDays: editedNumberOfDays,
                        baseCurrencyCode: editedBaseCurrencyCode,
                        currencyCodeOfInterest: editedCurrencyCodeOfInterest)
         saveCompletionHandler(setting)
     }
     
-    override func cancel() {
+    func cancel() {
         cancelCompletionHandler()
     }
 }
