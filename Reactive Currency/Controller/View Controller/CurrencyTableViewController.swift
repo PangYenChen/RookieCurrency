@@ -1,7 +1,7 @@
 import UIKit
 import Combine
 
-final class CurrencyTableViewController: BaseCurrencySelectionTableViewController {
+final class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
     
     private let sortingMethodAndOrder: CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>
     
@@ -94,7 +94,7 @@ final class CurrencyTableViewController: BaseCurrencySelectionTableViewControlle
 }
 
 // MARK: - search bar delegate
-extension CurrencyTableViewController {
+extension CurrencySelectionTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText.send(searchText)
     }
@@ -105,7 +105,7 @@ extension CurrencyTableViewController {
 }
 
 // MARK: - strategy
-extension CurrencyTableViewController {
+extension CurrencySelectionTableViewController {
     
     final class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
         

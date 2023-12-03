@@ -45,25 +45,25 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     // MARK: - Navigation
-    override func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        let baseCurrencySelectionStrategy = CurrencyTableViewController
+    override func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
+        let baseCurrencySelectionStrategy = CurrencySelectionTableViewController
             .BaseCurrencySelectionStrategy(baseCurrencyCode: model.editedBaseCurrencyCode) { [unowned self] selectedBaseCurrencyCode in
                 model.editedBaseCurrencyCode = selectedBaseCurrencyCode
                 saveButton.isEnabled = model.hasChange
                 isModalInPresentation = model.hasChange
             }
         
-        return CurrencyTableViewController(coder: coder, strategy: baseCurrencySelectionStrategy)
+        return CurrencySelectionTableViewController(coder: coder, strategy: baseCurrencySelectionStrategy)
     }
     
-    override func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
-        let currencyOfInterestSelectionStrategy = CurrencyTableViewController
+    override func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
+        let currencyOfInterestSelectionStrategy = CurrencySelectionTableViewController
             .CurrencyOfInterestSelectionStrategy(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest) { [unowned self] selectedCurrencyCodeOfInterest in
                 model.editedCurrencyCodeOfInterest = selectedCurrencyCodeOfInterest
                 saveButton.isEnabled = model.hasChange
                 isModalInPresentation = model.hasChange
             }
 
-        return CurrencyTableViewController(coder: coder, strategy: currencyOfInterestSelectionStrategy)
+        return CurrencySelectionTableViewController(coder: coder, strategy: currencyOfInterestSelectionStrategy)
     }
 }

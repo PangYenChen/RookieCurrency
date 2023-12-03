@@ -94,11 +94,11 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     }
     
     // MARK: - Navigation
-    @IBSegueAction func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+    @IBSegueAction func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
         fatalError("showBaseCurrencySelectionTableViewController(_:) has not been implemented")
     }
     
-    @IBSegueAction func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencyTableViewController? {
+    @IBSegueAction func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
         fatalError("showCurrencyOfInterestSelectionTableViewController(_:) has not been implemented")
     }
 }

@@ -1,6 +1,6 @@
 import UIKit
 
-class CurrencyTableViewController: BaseCurrencySelectionTableViewController {
+class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
     
     // MARK: - private properties
     private var sortingMethod: SortingMethod
@@ -66,7 +66,7 @@ class CurrencyTableViewController: BaseCurrencySelectionTableViewController {
 }
 
 // MARK: - private method
-private extension CurrencyTableViewController {
+private extension CurrencySelectionTableViewController {
     func populateTableViewIfPossible() {
         guard let currencyCodeDescriptionDictionary else {
             return
@@ -84,7 +84,7 @@ private extension CurrencyTableViewController {
 }
 
 // MARK: - search bar delegate
-extension CurrencyTableViewController {
+extension CurrencySelectionTableViewController {
     final func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         self.searchText = searchText
    
@@ -99,7 +99,7 @@ extension CurrencyTableViewController {
 }
 
 // MARK: - strategy
-extension CurrencyTableViewController {
+extension CurrencySelectionTableViewController {
     
     final class BaseCurrencySelectionStrategy: CurrencyTableStrategy {
         

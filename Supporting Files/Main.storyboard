@@ -172,7 +172,7 @@
         <!--## 基準貨幣 或者 感興趣的貨幣-->
         <scene sceneID="Wzb-4c-N6y">
             <objects>
-                <tableViewController id="I3t-1P-vym" customClass="CurrencyTableViewController" customModule="ImperativeCurrency" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController id="I3t-1P-vym" customClass="CurrencySelectionTableViewController" customModule="ImperativeCurrency" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="-1" estimatedSectionHeaderHeight="-1" sectionFooterHeight="-1" estimatedSectionFooterHeight="-1" id="ran-0e-Rf3">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="886"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
