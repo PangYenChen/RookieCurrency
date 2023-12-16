@@ -2,7 +2,6 @@ import Foundation
 import Combine
 
 final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
-    
     let title: String
     
     private let baseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
@@ -35,11 +34,11 @@ final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
     // allowsMultipleSelection = false，會呼叫這個 delegate method 的唯一時機是其他 cell 被選取了，table view deselect 原本被選取的 cell
     }
     
-    func getSortingMethod() -> SortingMethod {
-        sortingMethodAndOrder.value.method
-    }
+    func getSortingMethod() -> SortingMethod { sortingMethodAndOrder.value.method }
     
     func set(sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder) {
         sortingMethodAndOrder.send((method: sortingMethod, order: sortingOrder))
     }
+    
+    func getSortingOrder() -> SortingOrder { sortingMethodAndOrder.value.order }
 }

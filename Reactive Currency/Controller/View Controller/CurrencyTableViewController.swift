@@ -55,21 +55,23 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
                 .store(in: &anyCancellableSet)
             
             // TODO:
-//            symbolsResult.resultSuccess()
+            symbolsResult.resultSuccess()
 //                .combineLatest(currencySelectionModel.sortingMethodAndOrder, searchText)
 //                .sink { [unowned self] (supportedSymbols, sortingMethodAndOrder, searchText) in
-//                    currencyCodeDescriptionDictionary = supportedSymbols
-//                    
+                .combineLatest(searchText)
+                .sink { [unowned self] supportedSymbols, searchText in
+                    currencyCodeDescriptionDictionary = supportedSymbols
+                    
 //                    let (sortingMethod, sortingOrder) = sortingMethodAndOrder
-//                    
-//                    convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: supportedSymbols,
-//                                                     sortingMethod: sortingMethod,
-//                                                     sortingOrder: sortingOrder,
-//                                                     searchText: searchText,
-//                                                     isFirstTimePopulate: isFirstTimePopulate)
-//                    isFirstTimePopulate = false
-//                }
-//                .store(in: &anyCancellableSet)
+                    
+                    convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: supportedSymbols,
+                                                     sortingMethod: currencySelectionModel.getSortingMethod(),
+                                                     sortingOrder: currencySelectionModel.getSortingOrder(),
+                                                     searchText: searchText,
+                                                     isFirstTimePopulate: isFirstTimePopulate)
+                    isFirstTimePopulate = false
+                }
+                .store(in: &anyCancellableSet)
         }
         
         // super 的 viewDidLoad 給初始值，所以要在最後 call
