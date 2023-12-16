@@ -63,16 +63,14 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - Navigation
     override func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        let baseCurrencySelectionModel = CurrencySelectionTableViewController
-            .BaseCurrencySelectionModel(baseCurrencyCode: model.editedBaseCurrencyCode.value,
+        let baseCurrencySelectionModel = BaseCurrencySelectionModel(baseCurrencyCode: model.editedBaseCurrencyCode.value,
                                            selectedBaseCurrencyCode: AnySubscriber(model.editedBaseCurrencyCode))
         
         return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: baseCurrencySelectionModel)
     }
     
     override func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        let currencyOfInterestSelectionModel = CurrencySelectionTableViewController
-            .CurrencyOfInterestSelectionModel(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest.value,
+        let currencyOfInterestSelectionModel = CurrencyOfInterestSelectionModel(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest.value,
                                                  selectedCurrencyCodeOfInterest: AnySubscriber(model.editedCurrencyCodeOfInterest))
         
         return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: currencyOfInterestSelectionModel)

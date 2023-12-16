@@ -180,7 +180,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     
     // MARK: - Hook methods
     func getSortingMethod() -> SortingMethod {
-        fatalError("getSortingMethod() has not been implemented")
+        currencySelectionModel.getSortingMethod()
     }
     
     func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
@@ -317,22 +317,6 @@ extension BaseCurrencySelectionTableViewController {
 
 // MARK: - Search Bar Delegate
 extension BaseCurrencySelectionTableViewController: UISearchBarDelegate {}
-
-// MARK: - name space
-extension BaseCurrencySelectionTableViewController {
-    
-    enum SortingOrder {
-        case ascending
-        case descending
-        
-        var localizedName: String {
-            switch self {
-            case .ascending: return R.string.currencyScene.ascending()
-            case .descending: return R.string.currencyScene.descending()
-            }
-        }
-    }
-}
 
 // MARK: - private name space
 extension BaseCurrencySelectionTableViewController {

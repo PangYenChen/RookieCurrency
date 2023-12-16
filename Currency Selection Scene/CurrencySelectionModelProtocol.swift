@@ -14,11 +14,11 @@ protocol CurrencySelectionModelProtocol {
     
     func getSortingMethod() -> SortingMethod
     
-    func set(sortingMethod: SortingMethod)
+    func set(sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder)
 }
 
-enum SortingMethod {
     // TODO: 要做出一個 name space
+enum SortingMethod {
     case currencyName
     case currencyCode
     case currencyNameZhuyin
@@ -28,6 +28,18 @@ enum SortingMethod {
         case .currencyName: return R.string.currencyScene.currencyName()
         case .currencyCode: return R.string.currencyScene.currencyCode()
         case .currencyNameZhuyin: return R.string.currencyScene.currencyZhuyin()
+        }
+    }
+}
+
+enum SortingOrder {
+    case ascending
+    case descending
+    
+    var localizedName: String {
+        switch self {
+        case .ascending: return R.string.currencyScene.ascending()
+        case .descending: return R.string.currencyScene.descending()
         }
     }
 }

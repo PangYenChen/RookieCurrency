@@ -1,4 +1,5 @@
 import Foundation
+import Combine
 
 final class CurrencyOfInterestSelectionModel: CurrencySelectionModelProtocol {
     #warning("還沒實作")
@@ -12,29 +13,30 @@ final class CurrencyOfInterestSelectionModel: CurrencySelectionModelProtocol {
     
     let title: String
     
-    private var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
+    private let currencyCodeOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
     
-    var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest }
+    var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest.value }
     
     let allowsMultipleSelection: Bool
     
-    private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
-    
     init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
-         completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
+         selectedCurrencyCodeOfInterest: AnySubscriber<Set<ResponseDataModel.CurrencyCode>, Never>) {
+        
         title = R.string.share.currencyOfInterest()
-        self.currencyCodeOfInterest = currencyCodeOfInterest
+        self.currencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyCodeOfInterest)
         allowsMultipleSelection = true
-        self.completionHandler = completionHandler
+            // initialization completes
+        
+        self.currencyCodeOfInterest
+            .dropFirst()
+            .subscribe(selectedCurrencyCodeOfInterest)
     }
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-        currencyCodeOfInterest.insert(selectedCurrencyCode)
-        completionHandler(currencyCodeOfInterest)
+        currencyCodeOfInterest.value.insert(selectedCurrencyCode)
     }
     
     func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-        currencyCodeOfInterest.remove(deselectedCurrencyCode)
-        completionHandler(currencyCodeOfInterest)
+        currencyCodeOfInterest.value.remove(deselectedCurrencyCode)
     }
 }

@@ -2,9 +2,6 @@ import UIKit
 import Combine
 
 final class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
-    
-    private let sortingMethodAndOrder: CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>
-    
     private let searchText: CurrentValueSubject<String, Never>
     
     private let triggerRefreshControlSubject: PassthroughSubject<Void, Never>
@@ -15,10 +12,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModel) {
-        
-        sortingMethodAndOrder = CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>((method: .currencyName, order: .ascending))
-        
+    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
         searchText = CurrentValueSubject<String, Never>("")
         
         triggerRefreshControlSubject = PassthroughSubject<Void, Never>()
@@ -38,11 +32,13 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
 
         // subscribe
         do {
-            sortingMethodAndOrder
-                .sink { [unowned self] (sortingMethod, sortingOrder) in
-                    sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
-                }
-                .store(in: &anyCancellableSet)
+            
+            // TODO:
+//            sortingMethodAndOrder
+//                .sink { [unowned self] (sortingMethod, sortingOrder) in
+//                    sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
+//                }
+//                .store(in: &anyCancellableSet)
             
             let symbolsResult = triggerRefreshControlSubject
                 .flatMap { _ in AppUtility.supportedSymbolsPublisher().convertOutputToResult() }
@@ -58,21 +54,22 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
                 .sink { [weak self] error in self?.presentAlert(error: error) }
                 .store(in: &anyCancellableSet)
             
-            symbolsResult.resultSuccess()
-                .combineLatest(sortingMethodAndOrder, searchText)
-                .sink { [unowned self] (supportedSymbols, sortingMethodAndOrder, searchText) in
-                    currencyCodeDescriptionDictionary = supportedSymbols
-                    
-                    let (sortingMethod, sortingOrder) = sortingMethodAndOrder
-                    
-                    convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: supportedSymbols,
-                                                     sortingMethod: sortingMethod,
-                                                     sortingOrder: sortingOrder,
-                                                     searchText: searchText,
-                                                     isFirstTimePopulate: isFirstTimePopulate)
-                    isFirstTimePopulate = false
-                }
-                .store(in: &anyCancellableSet)
+            // TODO:
+//            symbolsResult.resultSuccess()
+//                .combineLatest(currencySelectionModel.sortingMethodAndOrder, searchText)
+//                .sink { [unowned self] (supportedSymbols, sortingMethodAndOrder, searchText) in
+//                    currencyCodeDescriptionDictionary = supportedSymbols
+//                    
+//                    let (sortingMethod, sortingOrder) = sortingMethodAndOrder
+//                    
+//                    convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: supportedSymbols,
+//                                                     sortingMethod: sortingMethod,
+//                                                     sortingOrder: sortingOrder,
+//                                                     searchText: searchText,
+//                                                     isFirstTimePopulate: isFirstTimePopulate)
+//                    isFirstTimePopulate = false
+//                }
+//                .store(in: &anyCancellableSet)
         }
         
         // super 的 viewDidLoad 給初始值，所以要在最後 call
@@ -80,12 +77,12 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     }
     
     // MARK: - Hook methods
-    override func getSortingMethod() -> BaseCurrencySelectionTableViewController.SortingMethod {
-        sortingMethodAndOrder.value.method
+    override func getSortingMethod() -> SortingMethod {
+        currencySelectionModel.getSortingMethod()
     }
     
     override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
-        sortingMethodAndOrder.send((method: sortingMethod, order: sortingOrder))
+        currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
     }
     
     override func triggerRefreshControl() {
@@ -101,73 +98,5 @@ extension CurrencySelectionTableViewController {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         searchText.send("")
-    }
-}
-
-// MARK: - CurrencySelectionModel
-extension CurrencySelectionTableViewController {
-    
-    final class BaseCurrencySelectionModel: CurrencySelectionModel {
-        
-        let title: String
-        
-        private let baseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
-        
-        var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode.value] }
-        
-        let allowsMultipleSelection: Bool
-        
-        init(baseCurrencyCode: String,
-             selectedBaseCurrencyCode: AnySubscriber<ResponseDataModel.CurrencyCode, Never>) {
-            
-            title = R.string.share.baseCurrency()
-            self.baseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(baseCurrencyCode)
-            allowsMultipleSelection = false
-            // initialization completes
-            
-            self.baseCurrencyCode
-                .dropFirst()
-                .subscribe(selectedBaseCurrencyCode)
-        }
-        
-        func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            baseCurrencyCode.send(selectedCurrencyCode)
-        }
-        
-        func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            // allowsMultipleSelection = false，會呼叫這個 delegate method 的唯一時機是其他 cell 被選取了，table view deselect 原本被選取的 cell
-        }
-    }
-    
-    final class CurrencyOfInterestSelectionModel: CurrencySelectionModel {
-
-        let title: String
-        
-        private let currencyCodeOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
-
-        var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest.value }
-        
-        let allowsMultipleSelection: Bool
-
-        init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
-             selectedCurrencyCodeOfInterest: AnySubscriber<Set<ResponseDataModel.CurrencyCode>, Never>) {
-            
-            title = R.string.share.currencyOfInterest()
-            self.currencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyCodeOfInterest)
-            allowsMultipleSelection = true
-            // initialization completes
-            
-            self.currencyCodeOfInterest
-                .dropFirst()
-                .subscribe(selectedCurrencyCodeOfInterest)
-        }
-        
-        func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            currencyCodeOfInterest.value.insert(selectedCurrencyCode)
-        }
-        
-        func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            currencyCodeOfInterest.value.remove(deselectedCurrencyCode)
-        }
     }
 }
