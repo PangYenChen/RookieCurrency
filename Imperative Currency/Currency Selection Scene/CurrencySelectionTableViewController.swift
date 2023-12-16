@@ -21,9 +21,6 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     }
     
     // MARK: - Hook methods
-    override func getSortingMethod() -> SortingMethod {
-        currencySelectionModel.getSortingMethod()
-    }
     
     override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
         sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)

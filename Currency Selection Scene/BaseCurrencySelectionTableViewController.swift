@@ -61,7 +61,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                         
                         let currencyDescription = localizedCurrencyDescription ?? serverCurrencyDescription
                         
-                        switch getSortingMethod() {
+                        switch currencySelectionModel.getSortingMethod() {
                         case .currencyName, .currencyNameZhuyin:
                             contentConfiguration.text = currencyDescription
                             contentConfiguration.secondaryText = currencyCode
@@ -179,10 +179,6 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     }
     
     // MARK: - Hook methods
-    func getSortingMethod() -> SortingMethod {
-        currencySelectionModel.getSortingMethod()
-    }
-    
     func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
         fatalError("set(sortingMethod:sortingOrder:) has not been implemented")
     }

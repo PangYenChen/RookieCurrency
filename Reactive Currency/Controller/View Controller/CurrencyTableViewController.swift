@@ -79,10 +79,6 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     }
     
     // MARK: - Hook methods
-    override func getSortingMethod() -> SortingMethod {
-        currencySelectionModel.getSortingMethod()
-    }
-    
     override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
         currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
     }
