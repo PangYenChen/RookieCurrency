@@ -2,7 +2,6 @@ import UIKit
 
 final class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
     // MARK: - private properties
-    private var sortingOrder: SortingOrder
     
     private var searchText: String
     
@@ -10,9 +9,6 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     
     // MARK: - life cycle
     required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
-    
-        sortingOrder = .ascending
-        
         searchText = ""
         
         isFirstTimePopulate = true
@@ -32,8 +28,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
         sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
         
-        currencySelectionModel.set(sortingMethod: sortingMethod)
-        self.sortingOrder = sortingOrder
+        currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
         
         populateTableViewIfPossible()
     }
@@ -69,7 +64,7 @@ private extension CurrencySelectionTableViewController {
         
         convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
                                          sortingMethod: currencySelectionModel.getSortingMethod(),
-                                         sortingOrder: self.sortingOrder,
+                                         sortingOrder: currencySelectionModel.getSortingOrder(),
                                          searchText: searchText,
                                          isFirstTimePopulate: isFirstTimePopulate)
         if isFirstTimePopulate {

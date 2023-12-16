@@ -15,6 +15,9 @@ protocol CurrencySelectionModelProtocol {
     func getSortingMethod() -> SortingMethod
     
     func set(sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder)
+    
+    @available(*, deprecated, message: "邏輯全部搬到 model 後，要刪掉這個 method")
+    func getSortingOrder() -> SortingOrder
 }
 
     // TODO: 要做出一個 name space

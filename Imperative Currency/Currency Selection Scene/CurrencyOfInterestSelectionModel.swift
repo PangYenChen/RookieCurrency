@@ -1,7 +1,11 @@
 import Foundation
 
 final class CurrencyOfInterestSelectionModel: CurrencySelectionModelProtocol {
-    #warning("還沒實作")
+#warning("還沒實作")
+    func getSortingOrder() -> SortingOrder {
+        fatalError()
+    }
+    
     func getSortingMethod() -> SortingMethod {
         fatalError()
     }

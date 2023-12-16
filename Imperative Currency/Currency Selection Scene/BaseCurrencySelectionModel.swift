@@ -12,6 +12,8 @@ final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
     
     private var sortingMethod: SortingMethod
     
+    private var sortingOrder: SortingOrder // TODO: 改成 private
+    
     private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
     
     init(baseCurrencyCode: String, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
@@ -21,6 +23,8 @@ final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
         self.completionHandler = completionHandler
         
         sortingMethod = .currencyName
+        sortingOrder = .ascending
+        
     }
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
@@ -35,7 +39,10 @@ final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
     
     func getSortingMethod() -> SortingMethod { sortingMethod }
     
-    func set(sortingMethod: SortingMethod) {
+    func set(sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder) {
         self.sortingMethod = sortingMethod
+        self.sortingOrder = sortingOrder
     }
+    
+    func getSortingOrder() -> SortingOrder { sortingOrder }
 }
