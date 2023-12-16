@@ -12,6 +12,8 @@ final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
     
     private let sortingMethodAndOrder: CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>
     
+    private let searchText: CurrentValueSubject<String?, Never>
+    
     init(baseCurrencyCode: String,
          selectedBaseCurrencyCode: AnySubscriber<ResponseDataModel.CurrencyCode, Never>) {
         
@@ -19,6 +21,8 @@ final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
         self.baseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(baseCurrencyCode)
         allowsMultipleSelection = false
         sortingMethodAndOrder = CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>((method: .currencyName, order: .ascending))
+        
+        searchText = CurrentValueSubject<String?, Never>(nil)
         // initialization completes
         
         self.baseCurrencyCode
@@ -41,4 +45,8 @@ final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
     }
     
     func getSortingOrder() -> SortingOrder { sortingMethodAndOrder.value.order }
+    
+    func set(searchText: String?) { self.searchText.send(searchText) }
+    
+    func getSearchText() -> String? { searchText.value }
 }

@@ -2,8 +2,6 @@ import UIKit
 import Combine
 
 final class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
-    private let searchText: CurrentValueSubject<String, Never>
-    
     private let triggerRefreshControlSubject: PassthroughSubject<Void, Never>
     
     // TODO: 看這個能不能用 publisher 之類的取代
@@ -13,8 +11,6 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     
     // MARK: - life cycle
     required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
-        searchText = CurrentValueSubject<String, Never>("")
-        
         triggerRefreshControlSubject = PassthroughSubject<Void, Never>()
         
         isFirstTimePopulate = true
@@ -58,8 +54,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
             symbolsResult.resultSuccess()
 //                .combineLatest(currencySelectionModel.sortingMethodAndOrder, searchText)
 //                .sink { [unowned self] (supportedSymbols, sortingMethodAndOrder, searchText) in
-                .combineLatest(searchText)
-                .sink { [unowned self] supportedSymbols, searchText in
+                .sink { [unowned self] supportedSymbols in
                     currencyCodeDescriptionDictionary = supportedSymbols
                     
 //                    let (sortingMethod, sortingOrder) = sortingMethodAndOrder
@@ -67,7 +62,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
                     convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: supportedSymbols,
                                                      sortingMethod: currencySelectionModel.getSortingMethod(),
                                                      sortingOrder: currencySelectionModel.getSortingOrder(),
-                                                     searchText: searchText,
+                                                     searchText: currencySelectionModel.getSearchText() ?? "", // TODO: 改成 optional
                                                      isFirstTimePopulate: isFirstTimePopulate)
                     isFirstTimePopulate = false
                 }
@@ -91,10 +86,10 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
 // MARK: - search bar delegate
 extension CurrencySelectionTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.searchText.send(searchText)
+        currencySelectionModel.set(searchText: searchText)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchText.send("")
+        currencySelectionModel.set(searchText: nil)
     }
 }

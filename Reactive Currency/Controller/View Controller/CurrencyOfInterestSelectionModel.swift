@@ -3,6 +3,14 @@ import Combine
 
 final class CurrencyOfInterestSelectionModel: CurrencySelectionModelProtocol {
 #warning("還沒實作")
+    func set(searchText: String?) {
+        fatalError()
+    }
+    
+    func getSearchText() -> String? {
+        fatalError()
+    }
+    
     func getSortingOrder() -> SortingOrder {
         fatalError()
     }
