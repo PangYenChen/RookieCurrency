@@ -1,10 +1,7 @@
 import UIKit
 
-class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
-    
+final class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
     // MARK: - private properties
-    private var sortingMethod: SortingMethod
-    
     private var sortingOrder: SortingOrder
     
     private var searchText: String
@@ -12,10 +9,8 @@ class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewContro
     private var isFirstTimePopulate: Bool
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModel) {
-        
-        sortingMethod = .currencyName
-        
+    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
+    
         sortingOrder = .ascending
         
         searchText = ""
@@ -30,14 +25,14 @@ class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewContro
     }
     
     // MARK: - Hook methods
-    override func getSortingMethod() -> BaseCurrencySelectionTableViewController.SortingMethod {
-        sortingMethod
+    override func getSortingMethod() -> SortingMethod {
+        currencySelectionModel.getSortingMethod()
     }
     
     override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
         sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
         
-        self.sortingMethod = sortingMethod
+        currencySelectionModel.set(sortingMethod: sortingMethod)
         self.sortingOrder = sortingOrder
         
         populateTableViewIfPossible()
@@ -73,7 +68,7 @@ private extension CurrencySelectionTableViewController {
         }
         
         convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
-                                         sortingMethod: self.sortingMethod,
+                                         sortingMethod: currencySelectionModel.getSortingMethod(),
                                          sortingOrder: self.sortingOrder,
                                          searchText: searchText,
                                          isFirstTimePopulate: isFirstTimePopulate)
@@ -95,70 +90,5 @@ extension CurrencySelectionTableViewController {
         searchText = ""
         
         populateTableViewIfPossible()
-    }
-}
-
-// MARK: - CurrencySelectionModel
-extension CurrencySelectionTableViewController {
-    
-    final class BaseCurrencySelectionModel: CurrencySelectionModel {
-        
-        let title: String
-        
-        private var baseCurrencyCode: String
-        
-        var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode] }
-        
-        let allowsMultipleSelection: Bool
-        
-        private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
-        
-        init(baseCurrencyCode: String, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
-            title = R.string.share.baseCurrency()
-            self.baseCurrencyCode = baseCurrencyCode
-            allowsMultipleSelection = false
-            self.completionHandler = completionHandler
-        }
-        
-        func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            
-            completionHandler(selectedCurrencyCode)
-            baseCurrencyCode = selectedCurrencyCode
-        }
-        
-        func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            // allowsMultipleSelection = false，會呼叫這個 delegate method 的唯一時機是其他 cell 被選取了，table view deselect 原本被選取的 cell
-        }
-    }
-    
-    final class CurrencyOfInterestSelectionModel: CurrencySelectionModel {
-        
-        let title: String
-        
-        private var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
-        
-        var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest }
-        
-        let allowsMultipleSelection: Bool
-        
-        private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
-        
-        init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
-             completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
-            title = R.string.share.currencyOfInterest()
-            self.currencyCodeOfInterest = currencyCodeOfInterest
-            allowsMultipleSelection = true
-            self.completionHandler = completionHandler
-        }
-        
-        func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            currencyCodeOfInterest.insert(selectedCurrencyCode)
-            completionHandler(currencyCodeOfInterest)
-        }
-        
-        func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            currencyCodeOfInterest.remove(deselectedCurrencyCode)
-            completionHandler(currencyCodeOfInterest)
-        }
     }
 }

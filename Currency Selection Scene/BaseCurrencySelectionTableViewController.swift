@@ -6,14 +6,14 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     // MARK: - property
     @IBOutlet var sortBarButtonItem: UIBarButtonItem!
     
-    private let currencySelectionModel: CurrencySelectionModel
+    let currencySelectionModel: CurrencySelectionModelProtocol
     
     private var dataSource: DataSource!
     
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]?
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModel) {
+    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
         
         self.currencySelectionModel = currencySelectionModel
         
@@ -320,19 +320,6 @@ extension BaseCurrencySelectionTableViewController: UISearchBarDelegate {}
 
 // MARK: - name space
 extension BaseCurrencySelectionTableViewController {
-    enum SortingMethod {
-        case currencyName
-        case currencyCode
-        case currencyNameZhuyin
-        
-        var localizedName: String {
-            switch self {
-            case .currencyName: return R.string.currencyScene.currencyName()
-            case .currencyCode: return R.string.currencyScene.currencyCode()
-            case .currencyNameZhuyin: return R.string.currencyScene.currencyZhuyin()
-            }
-        }
-    }
     
     enum SortingOrder {
         case ascending

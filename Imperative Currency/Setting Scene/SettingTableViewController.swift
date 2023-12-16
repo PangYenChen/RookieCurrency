@@ -46,8 +46,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - Navigation
     override func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        let baseCurrencySelectionModel = CurrencySelectionTableViewController
-            .BaseCurrencySelectionModel(baseCurrencyCode: model.editedBaseCurrencyCode) { [unowned self] selectedBaseCurrencyCode in
+        let baseCurrencySelectionModel = BaseCurrencySelectionModel(baseCurrencyCode: model.editedBaseCurrencyCode) { [unowned self] selectedBaseCurrencyCode in
                 model.editedBaseCurrencyCode = selectedBaseCurrencyCode
                 saveButton.isEnabled = model.hasChange
                 isModalInPresentation = model.hasChange
@@ -57,8 +56,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     override func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        let currencyOfInterestSelectionModel = CurrencySelectionTableViewController
-            .CurrencyOfInterestSelectionModel(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest) { [unowned self] selectedCurrencyCodeOfInterest in
+        let currencyOfInterestSelectionModel = CurrencyOfInterestSelectionModel(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest) { [unowned self] selectedCurrencyCodeOfInterest in
                 model.editedCurrencyCodeOfInterest = selectedCurrencyCodeOfInterest
                 saveButton.isEnabled = model.hasChange
                 isModalInPresentation = model.hasChange

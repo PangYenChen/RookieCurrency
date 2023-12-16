@@ -1,16 +1,16 @@
 # custom rules
 custom_rules:
-  sf_safe_symbol:
-    name: "Safe SFSymbol"
-    message: "Use `SFSafeSymbols` via `systemSymbol` parameters for type safety."
-    regex: "(Image\\(systemName:)|(NSImage\\(symbolName:)|(Label[^,]+?,\\s*systemImage:)|(UIApplicationShortcutIcon\\(systemImageName:)"
-    severity: warning
+    sf_safe_symbol:
+        name: "Safe SFSymbol"
+        message: "Use `SFSafeSymbols` via `systemSymbol` parameters for type safety."
+        regex: "(Image\\(systemName:)|(NSImage\\(symbolName:)|(Label[^,]+?,\\s*systemImage:)|(UIApplicationShortcutIcon\\(systemImageName:)"
+        severity: warning
 
 # default rules
 disabled_rules:
-  - large_tuple
-  - nesting
-  - void_function_in_ternary
+      - large_tuple
+      - nesting
+      - void_function_in_ternary
 
 identifier_name:
     max_length:
@@ -20,12 +20,9 @@ line_length:
     warning: 164
     ignores_interpolated_strings: true
     
-# opt-in rules
-opt_in_rules:
-  - discouraged_optional_collection
-
+redundant_void_return:
+    include_closures: false
     
-###########
 statement_position:
     statement_mode: uncuddled_else
     
@@ -34,3 +31,8 @@ trailing_whitespace:
     
 type_body_length:
     warning: 600 # test case 的檔案很長，看要不要拆開
+    
+# opt-in rules
+opt_in_rules:
+    - anonymous_argument_in_multiline_closure
+    - discouraged_optional_collection
