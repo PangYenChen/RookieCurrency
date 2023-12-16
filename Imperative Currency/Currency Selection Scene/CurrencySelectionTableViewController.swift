@@ -2,15 +2,10 @@ import UIKit
 
 final class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
     // MARK: - private properties
-    
-    private var searchText: String
-    
     private var isFirstTimePopulate: Bool
     
     // MARK: - life cycle
     required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
-        searchText = ""
-        
         isFirstTimePopulate = true
         
         super.init(coder: coder, currencySelectionModel: currencySelectionModel)
@@ -62,7 +57,7 @@ private extension CurrencySelectionTableViewController {
         convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
                                          sortingMethod: currencySelectionModel.getSortingMethod(),
                                          sortingOrder: currencySelectionModel.getSortingOrder(),
-                                         searchText: searchText,
+                                         searchText: currencySelectionModel.getSearchText() ?? "", // TODO: 改成 optional
                                          isFirstTimePopulate: isFirstTimePopulate)
         if isFirstTimePopulate {
             isFirstTimePopulate = false
@@ -73,13 +68,13 @@ private extension CurrencySelectionTableViewController {
 // MARK: - search bar delegate
 extension CurrencySelectionTableViewController {
     final func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        self.searchText = searchText
+        currencySelectionModel.set(searchText: searchText)
    
         populateTableViewIfPossible()
     }
     
     final func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        searchText = ""
+        currencySelectionModel.set(searchText: nil)
         
         populateTableViewIfPossible()
     }

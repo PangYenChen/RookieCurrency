@@ -54,7 +54,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
                 .sink { [weak self] error in self?.presentAlert(error: error) }
                 .store(in: &anyCancellableSet)
             
-            // TODO:
+            // TODO: 注意下面的邏輯 應該有漏
             symbolsResult.resultSuccess()
 //                .combineLatest(currencySelectionModel.sortingMethodAndOrder, searchText)
 //                .sink { [unowned self] (supportedSymbols, sortingMethodAndOrder, searchText) in

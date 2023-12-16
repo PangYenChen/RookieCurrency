@@ -18,6 +18,11 @@ protocol CurrencySelectionModelProtocol {
     
     @available(*, deprecated, message: "邏輯全部搬到 model 後，要刪掉這個 method")
     func getSortingOrder() -> SortingOrder
+    
+    func set(searchText: String?)
+    
+    @available(*, deprecated, message: "邏輯全部搬到 model 後，要刪掉這個 method")
+    func getSearchText() -> String?
 }
 
     // TODO: 要做出一個 name space

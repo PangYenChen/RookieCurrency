@@ -2,6 +2,14 @@ import Foundation
 
 final class CurrencyOfInterestSelectionModel: CurrencySelectionModelProtocol {
 #warning("還沒實作")
+    func getSearchText() -> String? {
+        fatalError()
+    }
+    
+    func set(searchText: String?) {
+        fatalError()
+    }
+    
     func getSortingOrder() -> SortingOrder {
         fatalError()
     }
