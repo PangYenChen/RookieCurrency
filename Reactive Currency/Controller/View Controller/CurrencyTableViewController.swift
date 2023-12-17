@@ -2,8 +2,6 @@ import UIKit
 import Combine
 
 final class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
-    private let triggerRefreshControlSubject: PassthroughSubject<Void, Never>
-    
     // TODO: 看這個能不能用 publisher 之類的取代
     private var isFirstTimePopulate: Bool
     
@@ -13,7 +11,6 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     
     // MARK: - life cycle
     init?(coder: NSCoder, currencySelectionModel: ReactiveCurrencySelectionModel) {
-        triggerRefreshControlSubject = PassthroughSubject<Void, Never>()
         
         reactiveCurrencySelectionModel = currencySelectionModel
         
@@ -55,19 +52,13 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
             
             // TODO: 注意下面的邏輯 應該有漏
             symbolsResult.resultSuccess()
-//                .combineLatest(currencySelectionModel.sortingMethodAndOrder, searchText)
-//                .sink { [unowned self] (supportedSymbols, sortingMethodAndOrder, searchText) in
-                .sink { [unowned self] supportedSymbols in
-                    currencyCodeDescriptionDictionary = supportedSymbols
+                .sink { [unowned self] array in
                     
-//                    let (sortingMethod, sortingOrder) = sortingMethodAndOrder
+                    populateTableViewWith(array, shouldScrollToFirstSelectedItem: isFirstTimePopulate)
                     
-                    convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: supportedSymbols,
-                                                     sortingMethod: currencySelectionModel.getSortingMethod(),
-                                                     sortingOrder: currencySelectionModel.getSortingOrder(),
-                                                     searchText: currencySelectionModel.getSearchText() ?? "", // TODO: 改成 optional
-                                                     isFirstTimePopulate: isFirstTimePopulate)
-                    isFirstTimePopulate = false
+                    if isFirstTimePopulate {
+                        isFirstTimePopulate = false
+                    }
                 }
                 .store(in: &anyCancellableSet)
         }

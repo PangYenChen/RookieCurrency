@@ -31,10 +31,10 @@ protocol CurrencySelectionModelProtocol {
 }
 
 extension CurrencySelectionModelProtocol {
-    func convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],
-                                          sortingMethod: SortingMethod,
-                                          sortingOrder: SortingOrder,
-                                          searchText: String?) -> [ResponseDataModel.CurrencyCode] {
+    static func convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],
+                                                 sortingMethod: SortingMethod,
+                                                 sortingOrder: SortingOrder,
+                                                 searchText: String?) -> [ResponseDataModel.CurrencyCode] {
         
         let currencyCodes = currencyCodeDescriptionDictionary.keys
         

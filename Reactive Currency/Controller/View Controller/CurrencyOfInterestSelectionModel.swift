@@ -2,9 +2,11 @@ import Foundation
 import Combine
 
 final class CurrencyOfInterestSelectionModel: ReactiveCurrencySelectionModel {
-    var state: AnyPublisher<Result<[ResponseDataModel.CurrencyCode: String], Error>, Never>
-    
-#warning("還沒實作")
+    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
+
+    var state: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never>
+
+    #warning("還沒實作")
     func fetch() {
         fatalError()
     }
@@ -44,6 +46,7 @@ final class CurrencyOfInterestSelectionModel: ReactiveCurrencySelectionModel {
         self.currencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyCodeOfInterest)
         allowsMultipleSelection = true
         state = Empty().eraseToAnyPublisher()
+        currencyCodeDescriptionDictionary = [:]
             // initialization completes
         
         self.currencyCodeOfInterest

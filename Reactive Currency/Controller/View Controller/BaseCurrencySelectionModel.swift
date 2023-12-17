@@ -2,7 +2,9 @@ import Foundation
 import Combine
 
 final class BaseCurrencySelectionModel: ReactiveCurrencySelectionModel {
-    var state: AnyPublisher<Result<[ResponseDataModel.CurrencyCode : String], Error>, Never>
+    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode : String]
+    
+    var state: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never>
     
     let title: String
     
@@ -32,7 +34,21 @@ final class BaseCurrencySelectionModel: ReactiveCurrencySelectionModel {
         
         state = fetchSubject
             .flatMap { AppUtility.supportedSymbolsPublisher().convertOutputToResult() }
+            .combineLatest(sortingMethodAndOrder, searchText)
+            .map { result, sortingMethodAndOrder, searchText in
+                
+                result.map { dictionary in
+                    BaseCurrencySelectionModel.convertDataThenPopulateTableView(
+                        currencyCodeDescriptionDictionary: dictionary,
+                        sortingMethod: sortingMethodAndOrder.method,
+                        sortingOrder: sortingMethodAndOrder.order,
+                        searchText: searchText
+                    )
+                }
+            }
             .eraseToAnyPublisher()
+        
+        currencyCodeDescriptionDictionary = [:]
         
         // initialization completes
         
