@@ -1,7 +1,9 @@
 import Foundation
 import Combine
 
-final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
+final class BaseCurrencySelectionModel: ReactiveCurrencySelectionModel {
+    var state: AnyPublisher<Result<[ResponseDataModel.CurrencyCode : String], Error>, Never>
+    
     let title: String
     
     private let baseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
@@ -14,6 +16,8 @@ final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
     
     private let searchText: CurrentValueSubject<String?, Never>
     
+    private let fetchSubject: PassthroughSubject<Void, Never>
+    
     init(baseCurrencyCode: String,
          selectedBaseCurrencyCode: AnySubscriber<ResponseDataModel.CurrencyCode, Never>) {
         
@@ -23,6 +27,13 @@ final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
         sortingMethodAndOrder = CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>((method: .currencyName, order: .ascending))
         
         searchText = CurrentValueSubject<String?, Never>(nil)
+        
+        fetchSubject = PassthroughSubject<Void, Never>()
+        
+        state = fetchSubject
+            .flatMap { AppUtility.supportedSymbolsPublisher().convertOutputToResult() }
+            .eraseToAnyPublisher()
+        
         // initialization completes
         
         self.baseCurrencyCode
@@ -49,4 +60,6 @@ final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
     func set(searchText: String?) { self.searchText.send(searchText) }
     
     func getSearchText() -> String? { searchText.value }
+    
+    func fetch() { fetchSubject.send() }
 }

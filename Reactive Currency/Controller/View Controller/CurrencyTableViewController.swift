@@ -9,9 +9,13 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     
     private var anyCancellableSet: Set<AnyCancellable>
     
+    private let reactiveCurrencySelectionModel: ReactiveCurrencySelectionModel
+    
     // MARK: - life cycle
-    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
+    required init?(coder: NSCoder, currencySelectionModel: ReactiveCurrencySelectionModel) {
         triggerRefreshControlSubject = PassthroughSubject<Void, Never>()
+        
+        reactiveCurrencySelectionModel = currencySelectionModel
         
         isFirstTimePopulate = true
         
@@ -36,8 +40,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
 //                }
 //                .store(in: &anyCancellableSet)
             
-            let symbolsResult = triggerRefreshControlSubject
-                .flatMap { _ in AppUtility.supportedSymbolsPublisher().convertOutputToResult() }
+            let symbolsResult = reactiveCurrencySelectionModel.state
                 .share()
             
             symbolsResult
@@ -79,7 +82,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     }
     
     override func triggerRefreshControl() {
-        triggerRefreshControlSubject.send()
+        reactiveCurrencySelectionModel.fetch()
     }
 }
 

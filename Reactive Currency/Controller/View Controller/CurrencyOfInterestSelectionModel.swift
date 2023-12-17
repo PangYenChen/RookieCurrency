@@ -1,8 +1,14 @@
 import Foundation
 import Combine
 
-final class CurrencyOfInterestSelectionModel: CurrencySelectionModelProtocol {
+final class CurrencyOfInterestSelectionModel: ReactiveCurrencySelectionModel {
+    var state: AnyPublisher<Result<[ResponseDataModel.CurrencyCode: String], Error>, Never>
+    
 #warning("還沒實作")
+    func fetch() {
+        fatalError()
+    }
+    
     func set(searchText: String?) {
         fatalError()
     }
@@ -37,6 +43,7 @@ final class CurrencyOfInterestSelectionModel: CurrencySelectionModelProtocol {
         title = R.string.share.currencyOfInterest()
         self.currencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyCodeOfInterest)
         allowsMultipleSelection = true
+        state = Empty().eraseToAnyPublisher()
             // initialization completes
         
         self.currencyCodeOfInterest
