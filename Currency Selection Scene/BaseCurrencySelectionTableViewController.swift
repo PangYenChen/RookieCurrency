@@ -93,13 +93,9 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
         do {
             
             let currencyNameMenu: UIMenu
-            
-            let ascendingAction: UIAction
-            
             do {
-                ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
+                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
                                            image: UIImage(systemSymbol: .arrowUpRight),
-                                           state: .on,
                                            handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .ascending) })
                 
                 let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
@@ -142,6 +138,26 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                 children.append(currencyZhuyinMenu)
             }
             
+            // set up the initial state
+            do {
+                let sortingMethodIndex: Int = switch currencySelectionModel.getSortingMethod() {
+                case .currencyName: 0
+                case .currencyCode: 1
+                case .currencyNameZhuyin: 2
+                }
+                
+                let sortingOrderIndex: Int = switch currencySelectionModel.initialSortingOrder {
+                case .ascending: 0
+                case .descending: 1
+                }
+                
+                let initialChild = children[sortingMethodIndex]
+                (initialChild.children[sortingOrderIndex] as? UIAction)?.state = .on
+                
+                updateSortingLocalizedStringFor(method: currencySelectionModel.getSortingMethod(),
+                                                andOrder: currencySelectionModel.initialSortingOrder)
+            }
+            
             let sortMenu = UIMenu(title: R.string.share.sortedBy(),
                                   image: UIImage(systemSymbol: .arrowUpArrowDown),
                                   options: .singleSelection,
@@ -151,12 +167,6 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                                             options: .singleSelection,
                                             children: [sortMenu])
             
-            // set up the initial state
-            do {
-                ascendingAction.state = .on
-                // action state 的初始值只能在這裡設定，但不能用程式模擬使用者點擊 action，為了確保初始值一致，必須在這裡設定一次 sorting method 跟 sorting order
-                set(sortingMethod: .currencyName, sortingOrder: .ascending)
-            }
         }
         
         // table view refresh controller
@@ -170,15 +180,15 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
             tableView.refreshControl?.sendActions(for: .primaryActionTriggered)
         }
     }
-    
-    // MARK: - Hook methods
-    func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
-        fatalError("set(sortingMethod:sortingOrder:) has not been implemented")
-    }
 }
 
 // MARK: - helper method
 extension BaseCurrencySelectionTableViewController {
+    final func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
+        updateSortingLocalizedStringFor(method: sortingMethod, andOrder: sortingOrder)
+        
+        currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
+    }
     
     final func populateTableViewWith(_ array: [ResponseDataModel.CurrencyCode], shouldScrollToFirstSelectedItem: Bool) {
         var snapshot = Snapshot()
@@ -198,7 +208,7 @@ extension BaseCurrencySelectionTableViewController {
                 selectedIndexPath
                     .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
                 
-                    // scroll to first selected index path when first time receiving data
+                // scroll to first selected index path when first time receiving data
                 if shouldScrollToFirstSelectedItem {
                     
                     if let firstSelectedIndexPath = selectedIndexPath.min() {
@@ -210,6 +220,14 @@ extension BaseCurrencySelectionTableViewController {
                 }
             }
         }
+    }
+}
+
+// MARK: - private method
+private extension BaseCurrencySelectionTableViewController {
+    final func updateSortingLocalizedStringFor(method sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder) {
+        sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName,
+                                                                                             sortingOrder.localizedName)
     }
 }
 

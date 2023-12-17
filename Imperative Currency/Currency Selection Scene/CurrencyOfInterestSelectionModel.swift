@@ -1,6 +1,8 @@
 import Foundation
 
 final class CurrencyOfInterestSelectionModel: ImperativeCurrencySelectionModelProtocol {
+    var initialSortingOrder: SortingOrder
+    
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
     
 #warning("還沒實作")
@@ -47,6 +49,7 @@ final class CurrencyOfInterestSelectionModel: ImperativeCurrencySelectionModelPr
         allowsMultipleSelection = true
         self.completionHandler = completionHandler
         currencyCodeDescriptionDictionary = [:]
+        initialSortingOrder = .ascending
     }
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {

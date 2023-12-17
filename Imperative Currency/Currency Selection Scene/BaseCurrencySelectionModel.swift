@@ -1,7 +1,6 @@
 import Foundation
 
 final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol {
-    
     var stateHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
     
     let title: String
@@ -20,7 +19,9 @@ final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
     
     private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
     
-    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode : String]
+    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
+    
+    let initialSortingOrder: SortingOrder
     
     init(baseCurrencyCode: String, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
         title = R.string.share.baseCurrency()
@@ -32,11 +33,10 @@ final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
         sortingOrder = .ascending
         searchText = nil
         currencyCodeDescriptionDictionary = [:]
-        
+        initialSortingOrder = .ascending
     }
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-        
         completionHandler(selectedCurrencyCode)
         baseCurrencyCode = selectedCurrencyCode
     }
@@ -58,7 +58,7 @@ final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
         self.searchText = searchText
     }
     
-    func getSearchText() -> String? { self.searchText }
+    func getSearchText() -> String? { searchText }
     
     func fetch() {
         AppUtility.fetchSupportedSymbols { [weak self] result in
@@ -68,7 +68,7 @@ final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
             }
             
             let newResult = result.map { currencyCodeDescriptionDictionary in
-                self.convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
+                Self.convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
                                                       sortingMethod: self.getSortingMethod(),
                                                       sortingOrder: self.getSortingOrder(),
                                                       searchText: self.getSearchText())

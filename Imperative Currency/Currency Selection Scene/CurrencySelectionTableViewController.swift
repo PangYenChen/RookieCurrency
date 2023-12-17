@@ -38,15 +38,6 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
         
         super.viewDidLoad()
     }
-    
-    // MARK: - Hook methods
-    override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
-        sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
-        
-        currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
-        
-//        populateTableViewIfPossible()
-    }
 }
 
 // MARK: - private method

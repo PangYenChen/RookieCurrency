@@ -24,10 +24,12 @@ protocol CurrencySelectionModelProtocol {
     @available(*, deprecated, message: "邏輯全部搬到 model 後，要刪掉這個 method")
     func getSearchText() -> String?
     
-    func fetch()
+    func fetch() // TODO: think a good name
     
     @available(*, deprecated, message: "邏輯全部搬到 model 後，要刪掉這個屬性")
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String] { get }
+    
+    var initialSortingOrder: SortingOrder { get }
 }
 
 extension CurrencySelectionModelProtocol {
