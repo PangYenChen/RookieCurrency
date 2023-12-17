@@ -23,6 +23,12 @@ protocol CurrencySelectionModelProtocol {
     
     @available(*, deprecated, message: "邏輯全部搬到 model 後，要刪掉這個 method")
     func getSearchText() -> String?
+    
+    func fetch()
+}
+
+protocol ImperativeCurrencySelectionModelProtocol: CurrencySelectionModelProtocol {
+    var stateHandler: ((Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void)? { get set }
 }
 
     // TODO: 要做出一個 name space

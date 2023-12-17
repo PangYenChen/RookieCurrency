@@ -1,7 +1,13 @@
 import Foundation
 
-final class CurrencyOfInterestSelectionModel: CurrencySelectionModelProtocol {
+final class CurrencyOfInterestSelectionModel: ImperativeCurrencySelectionModelProtocol {
 #warning("還沒實作")
+    func fetch() {
+        fatalError()
+    }
+    
+    var stateHandler: ((Result<[ResponseDataModel.CurrencyCode : String], Error>) -> Void)?
+    
     func getSearchText() -> String? {
         fatalError()
     }

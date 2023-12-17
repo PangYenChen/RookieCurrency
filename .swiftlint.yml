@@ -8,9 +8,12 @@ custom_rules:
 
 # default rules
 disabled_rules:
-      - large_tuple
-      - nesting
-      - void_function_in_ternary
+    - large_tuple
+    - nesting
+    - void_function_in_ternary
+    
+function_body_length:
+    error: 200
 
 identifier_name:
     max_length:
@@ -35,4 +38,23 @@ type_body_length:
 # opt-in rules
 opt_in_rules:
     - anonymous_argument_in_multiline_closure
+    - array_init
+    - attributes
+    - balanced_xctest_lifecycle
+    - closure_body_length
+    - closure_end_indentation
+    - closure_spacing
     - discouraged_optional_collection
+
+attributes:
+    always_on_same_line:
+        - "@IBAction"
+        - "@IBOutlet"
+        - "@IBSegueAction"
+        - "@escaping"
+        - "@autoclosure"
+        - "@Sendable"
+        - "@testable"
+    always_on_line_above:
+        - "@discardableResult"
+        - "@MainActor"

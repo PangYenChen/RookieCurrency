@@ -1,6 +1,7 @@
 import Foundation
 
-final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
+final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol {
+    var stateHandler: ((Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void)?
     
     let title: String
     
@@ -54,4 +55,8 @@ final class BaseCurrencySelectionModel: CurrencySelectionModelProtocol {
     }
     
     func getSearchText() -> String? { self.searchText }
+    
+    func fetch() {
+        AppUtility.fetchSupportedSymbols { [weak self] result in self?.stateHandler?(result) }
+    }
 }

@@ -13,7 +13,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]?
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
+    init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
         
         self.currencySelectionModel = currencySelectionModel
         

@@ -4,9 +4,12 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     // MARK: - private properties
     private var isFirstTimePopulate: Bool
     
+    private var imperativeCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
+    
     // MARK: - life cycle
-    required init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
+    init?(coder: NSCoder, currencySelectionModel: ImperativeCurrencySelectionModelProtocol) {
         isFirstTimePopulate = true
+        imperativeCurrencySelectionModel = currencySelectionModel
         
         super.init(coder: coder, currencySelectionModel: currencySelectionModel)
     }
@@ -15,18 +18,8 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
         fatalError("init(coder:) has not been implemented")
     }
     
-    // MARK: - Hook methods
-    
-    override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
-        sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
-        
-        currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
-        
-        populateTableViewIfPossible()
-    }
-    
-    override func triggerRefreshControl() {
-        AppUtility.fetchSupportedSymbols { [weak self] result in
+    override func viewDidLoad() {
+        imperativeCurrencySelectionModel.stateHandler = { [weak self] result in
             guard let self else { return }
             
             DispatchQueue.main.async { [weak self] in
@@ -44,6 +37,21 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
                 }
             }
         }
+        
+        super.viewDidLoad()
+    }
+    
+    // MARK: - Hook methods
+    override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
+        sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName, sortingOrder.localizedName)
+        
+        currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
+        
+        populateTableViewIfPossible()
+    }
+    
+    override func triggerRefreshControl() {
+        imperativeCurrencySelectionModel.fetch()
     }
 }
 
