@@ -12,7 +12,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     private let reactiveCurrencySelectionModel: ReactiveCurrencySelectionModel
     
     // MARK: - life cycle
-    required init?(coder: NSCoder, currencySelectionModel: ReactiveCurrencySelectionModel) {
+    init?(coder: NSCoder, currencySelectionModel: ReactiveCurrencySelectionModel) {
         triggerRefreshControlSubject = PassthroughSubject<Void, Never>()
         
         reactiveCurrencySelectionModel = currencySelectionModel
@@ -79,10 +79,6 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     // MARK: - Hook methods
     override func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
         currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
-    }
-    
-    override func triggerRefreshControl() {
-        reactiveCurrencySelectionModel.fetch()
     }
 }
 

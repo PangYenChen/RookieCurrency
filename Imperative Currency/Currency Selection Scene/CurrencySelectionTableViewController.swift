@@ -49,10 +49,6 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
         
         populateTableViewIfPossible()
     }
-    
-    override func triggerRefreshControl() {
-        imperativeCurrencySelectionModel.fetch()
-    }
 }
 
 // MARK: - private method

@@ -170,7 +170,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
         do {
             tableView.refreshControl = UIRefreshControl()
             
-            let action = UIAction { [unowned self] _ in triggerRefreshControl() }
+            let action = UIAction { [unowned self] _ in currencySelectionModel.fetch() }
             tableView.refreshControl?.addAction(action, for: .primaryActionTriggered)
             
             tableView.refreshControl?.beginRefreshing()
@@ -181,10 +181,6 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     // MARK: - Hook methods
     func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
         fatalError("set(sortingMethod:sortingOrder:) has not been implemented")
-    }
-    
-    func triggerRefreshControl() {
-        fatalError("triggerRefreshControl() has not been implemented")
     }
 }
 
