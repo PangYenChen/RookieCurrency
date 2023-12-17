@@ -1,5 +1,5 @@
 import Foundation
 
 protocol ImperativeCurrencySelectionModelProtocol: CurrencySelectionModelProtocol {
-    var stateHandler: ((Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void)? { get set }
+    var stateHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)? { get set }
 }

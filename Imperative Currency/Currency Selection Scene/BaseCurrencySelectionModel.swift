@@ -1,7 +1,8 @@
 import Foundation
 
 final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol {
-    var stateHandler: ((Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void)?
+    
+    var stateHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
     
     let title: String
     
@@ -19,6 +20,8 @@ final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
     
     private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
     
+    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode : String]
+    
     init(baseCurrencyCode: String, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
         title = R.string.share.baseCurrency()
         self.baseCurrencyCode = baseCurrencyCode
@@ -28,6 +31,7 @@ final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
         sortingMethod = .currencyName
         sortingOrder = .ascending
         searchText = nil
+        currencyCodeDescriptionDictionary = [:]
         
     }
     
@@ -57,6 +61,20 @@ final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
     func getSearchText() -> String? { self.searchText }
     
     func fetch() {
-        AppUtility.fetchSupportedSymbols { [weak self] result in self?.stateHandler?(result) }
+        AppUtility.fetchSupportedSymbols { [weak self] result in
+            guard let self else { return }
+            if let currencyCodeDescriptionDictionary = try? result.get() {
+                self.currencyCodeDescriptionDictionary = currencyCodeDescriptionDictionary
+            }
+            
+            let newResult = result.map { currencyCodeDescriptionDictionary in
+                self.convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
+                                                      sortingMethod: self.getSortingMethod(),
+                                                      sortingOrder: self.getSortingOrder(),
+                                                      searchText: self.getSearchText())
+            }
+            
+            stateHandler?(newResult)
+        }
     }
 }

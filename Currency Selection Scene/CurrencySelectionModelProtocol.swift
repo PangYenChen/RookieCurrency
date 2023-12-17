@@ -25,6 +25,9 @@ protocol CurrencySelectionModelProtocol {
     func getSearchText() -> String?
     
     func fetch()
+    
+    @available(*, deprecated, message: "邏輯全部搬到 model 後，要刪掉這個屬性")
+    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String] { get }
 }
 
 extension CurrencySelectionModelProtocol {

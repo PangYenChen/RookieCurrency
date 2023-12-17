@@ -27,10 +27,8 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
             }
             
             switch result {
-            case .success(let supportedSymbols):
-                currencyCodeDescriptionDictionary = supportedSymbols
-                
-                populateTableViewIfPossible()
+            case .success(let sortArray):
+                populateTableViewWith(sortArray)
             case .failure(let failure):
                 DispatchQueue.main.async { [weak self] in
                     self?.presentAlert(error: failure)
@@ -47,22 +45,15 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
         
         currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
         
-        populateTableViewIfPossible()
+//        populateTableViewIfPossible()
     }
 }
 
 // MARK: - private method
 private extension CurrencySelectionTableViewController {
-    func populateTableViewIfPossible() {
-        guard let currencyCodeDescriptionDictionary else {
-            return
-        }
+    func populateTableViewWith(_ array: [ResponseDataModel.CurrencyCode]) {
+        populateTableViewWith(array, shouldScrollToFirstSelectedItem: isFirstTimePopulate)
         
-        convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
-                                         sortingMethod: currencySelectionModel.getSortingMethod(),
-                                         sortingOrder: currencySelectionModel.getSortingOrder(),
-                                         searchText: currencySelectionModel.getSearchText() ?? "", // TODO: 改成 optional
-                                         isFirstTimePopulate: isFirstTimePopulate)
         if isFirstTimePopulate {
             isFirstTimePopulate = false
         }
@@ -74,12 +65,12 @@ extension CurrencySelectionTableViewController {
     final func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         currencySelectionModel.set(searchText: searchText)
    
-        populateTableViewIfPossible()
+//        populateTableViewIfPossible()
     }
     
     final func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         currencySelectionModel.set(searchText: nil)
         
-        populateTableViewIfPossible()
+//        populateTableViewIfPossible()
     }
 }

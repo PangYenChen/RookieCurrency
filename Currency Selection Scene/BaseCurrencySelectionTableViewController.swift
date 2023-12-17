@@ -10,14 +10,10 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     
     private var dataSource: DataSource!
     
-    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]?
-    
     // MARK: - life cycle
     init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
         
         self.currencySelectionModel = currencySelectionModel
-        
-        currencyCodeDescriptionDictionary = nil
         
         super.init(coder: coder)
         
@@ -53,11 +49,8 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                     // content
                     do {
                         let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
-                        guard let currencyCodeDescriptionDictionary else {
-                            assertionFailure("###, \(self), \(#function), 這段是 dead code，因為會進到這裡的 currency code 都是從 currencyCodeDescriptionDictionary 中 filter 剩下的。")
-                            return
-                        }
-                        let serverCurrencyDescription = currencyCodeDescriptionDictionary[currencyCode]
+                        
+                        let serverCurrencyDescription = currencySelectionModel.currencyCodeDescriptionDictionary[currencyCode]
                         
                         let currencyDescription = localizedCurrencyDescription ?? serverCurrencyDescription
                         
@@ -186,21 +179,53 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
 
 // MARK: - helper method
 extension BaseCurrencySelectionTableViewController {
-    final func convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],
-                                                sortingMethod: SortingMethod,
-                                                sortingOrder: SortingOrder,
-                                                searchText: String,
-                                                isFirstTimePopulate: Bool) {
+//    final func convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],
+//                                                sortingMethod: SortingMethod,
+//                                                sortingOrder: SortingOrder,
+//                                                searchText: String,
+//                                                isFirstTimePopulate: Bool) {
+//        var snapshot = Snapshot()
+//        snapshot.appendSections([.main])
+//          
+//        let filteredCurrencyCode = currencySelectionModel
+//            .convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
+//                                              sortingMethod: sortingMethod,
+//                                              sortingOrder: sortingOrder,
+//                                              searchText: searchText)
+//        
+//        snapshot.appendItems(filteredCurrencyCode)
+//        snapshot.reloadSections([.main])
+//        
+//        DispatchQueue.main.async { [weak self] in
+//            
+//            self?.dataSource.apply(snapshot) { [weak self] in
+//                guard let self else { return }
+//                
+//                let selectedIndexPath = currencySelectionModel.selectedCurrencyCode
+//                    .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
+//                
+//                selectedIndexPath
+//                    .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
+//                
+//                // scroll to first selected index path when first time receiving data
+//                if isFirstTimePopulate {
+//                    
+//                    if let firstSelectedIndexPath = selectedIndexPath.min() {
+//                        tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
+//                    }
+//                    else {
+//                        presentAlert(message: R.string.currencyScene.currencyNotSupported())
+//                    }
+//                }
+//            }
+//        }
+//    }
+    
+    final func populateTableViewWith(_ array: [ResponseDataModel.CurrencyCode], shouldScrollToFirstSelectedItem: Bool) {
         var snapshot = Snapshot()
         snapshot.appendSections([.main])
-          
-        let filteredCurrencyCode = currencySelectionModel
-            .convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
-                                              sortingMethod: sortingMethod,
-                                              sortingOrder: sortingOrder,
-                                              searchText: searchText)
         
-        snapshot.appendItems(filteredCurrencyCode)
+        snapshot.appendItems(array)
         snapshot.reloadSections([.main])
         
         DispatchQueue.main.async { [weak self] in
@@ -214,8 +239,8 @@ extension BaseCurrencySelectionTableViewController {
                 selectedIndexPath
                     .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
                 
-                // scroll to first selected index path when first time receiving data
-                if isFirstTimePopulate {
+                    // scroll to first selected index path when first time receiving data
+                if shouldScrollToFirstSelectedItem {
                     
                     if let firstSelectedIndexPath = selectedIndexPath.min() {
                         tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)

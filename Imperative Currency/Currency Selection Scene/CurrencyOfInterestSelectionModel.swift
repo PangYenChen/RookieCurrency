@@ -1,12 +1,14 @@
 import Foundation
 
 final class CurrencyOfInterestSelectionModel: ImperativeCurrencySelectionModelProtocol {
+    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
+    
 #warning("還沒實作")
     func fetch() {
         fatalError()
     }
     
-    var stateHandler: ((Result<[ResponseDataModel.CurrencyCode : String], Error>) -> Void)?
+    var stateHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
     
     func getSearchText() -> String? {
         fatalError()
@@ -44,6 +46,7 @@ final class CurrencyOfInterestSelectionModel: ImperativeCurrencySelectionModelPr
         self.currencyCodeOfInterest = currencyCodeOfInterest
         allowsMultipleSelection = true
         self.completionHandler = completionHandler
+        currencyCodeDescriptionDictionary = [:]
     }
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
