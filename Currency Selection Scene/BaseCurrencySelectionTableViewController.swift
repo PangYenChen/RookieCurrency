@@ -2,11 +2,12 @@ import UIKit
 
 /// 這裡的 base 是 base class 的意思，不是基準貨幣
 class BaseCurrencySelectionTableViewController: UITableViewController {
-    
     // MARK: - property
     @IBOutlet var sortBarButtonItem: UIBarButtonItem!
     
     let currencySelectionModel: CurrencySelectionModelProtocol
+    
+    private var isFirstTimePopulateTableView: Bool
     
     private var dataSource: DataSource!
     
@@ -14,6 +15,8 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
         
         self.currencySelectionModel = currencySelectionModel
+        
+        isFirstTimePopulateTableView = true
         
         super.init(coder: coder)
         
@@ -190,34 +193,74 @@ extension BaseCurrencySelectionTableViewController {
         currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
     }
     
-    final func populateTableViewWith(_ array: [ResponseDataModel.CurrencyCode], shouldScrollToFirstSelectedItem: Bool) {
-        var snapshot = Snapshot()
-        snapshot.appendSections([.main])
-        
-        snapshot.appendItems(array)
-        snapshot.reloadSections([.main])
-        
+//    final func populateTableViewWith(_ array: [ResponseDataModel.CurrencyCode], shouldScrollToFirstSelectedItem: Bool) {
+//        var snapshot = Snapshot()
+//        snapshot.appendSections([.main])
+//        
+//        snapshot.appendItems(array)
+//        snapshot.reloadSections([.main])
+//        
+//        DispatchQueue.main.async { [weak self] in
+//            
+//            self?.dataSource.apply(snapshot) { [weak self] in
+//                guard let self else { return }
+//                
+//                let selectedIndexPath = currencySelectionModel.selectedCurrencyCode
+//                    .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
+//                
+//                selectedIndexPath
+//                    .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
+//                
+//                // scroll to first selected index path when first time receiving data
+//                if shouldScrollToFirstSelectedItem {
+//                    
+//                    if let firstSelectedIndexPath = selectedIndexPath.min() {
+//                        tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
+//                    }
+//                    else {
+//                        presentAlert(message: R.string.currencyScene.currencyNotSupported())
+//                    }
+//                }
+//            }
+//        }
+//    }
+    
+    final func updateUIFor(result: Result<[ResponseDataModel.CurrencyCode], Error>) {
         DispatchQueue.main.async { [weak self] in
+            guard let self else { return }
+            tableView.refreshControl?.endRefreshing()
             
-            self?.dataSource.apply(snapshot) { [weak self] in
-                guard let self else { return }
+            switch result {
+            case .success(let sortArray):
+                var snapshot = Snapshot()
+                snapshot.appendSections([.main])
                 
-                let selectedIndexPath = currencySelectionModel.selectedCurrencyCode
-                    .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
+                snapshot.appendItems(sortArray)
+                snapshot.reloadSections([.main])
                 
-                selectedIndexPath
-                    .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
-                
-                // scroll to first selected index path when first time receiving data
-                if shouldScrollToFirstSelectedItem {
+                dataSource.apply(snapshot) { [weak self] in
+                    guard let self else { return }
                     
-                    if let firstSelectedIndexPath = selectedIndexPath.min() {
-                        tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
-                    }
-                    else {
-                        presentAlert(message: R.string.currencyScene.currencyNotSupported())
+                    let selectedIndexPath = currencySelectionModel.selectedCurrencyCode
+                        .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
+                    
+                    selectedIndexPath
+                        .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
+                    
+                    // scroll to first selected index path when first time receiving data
+                    if isFirstTimePopulateTableView {
+                        if let firstSelectedIndexPath = selectedIndexPath.min() {
+                            tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
+                        }
+                        else {
+                            presentAlert(message: R.string.currencyScene.currencyNotSupported())
+                        }
+                        isFirstTimePopulateTableView = false
                     }
                 }
+                
+            case .failure(let failure):
+                presentAlert(error: failure)
             }
         }
     }

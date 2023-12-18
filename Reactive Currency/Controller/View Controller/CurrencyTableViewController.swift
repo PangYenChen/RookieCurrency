@@ -2,8 +2,6 @@ import UIKit
 import Combine
 
 final class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
-    // TODO: 看這個能不能用 publisher 之類的取代，型的話就抽到super class
-    private var isFirstTimePopulate: Bool
     
     private var anyCancellableSet: Set<AnyCancellable>
     
@@ -26,7 +24,6 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     }
 
     override func viewDidLoad() {
-
         // subscribe
         do {
             let symbolsResult = reactiveCurrencySelectionModel.state
