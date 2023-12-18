@@ -3,7 +3,7 @@ import Foundation
 final class BaseCurrencySelectionModel: CurrencySelectionModel, ImperativeCurrencySelectionModelProtocol {
     private var baseCurrencyCode: ResponseDataModel.CurrencyCode
     
-    var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode] }
+    private var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode] }
     
     let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
     
@@ -24,5 +24,9 @@ final class BaseCurrencySelectionModel: CurrencySelectionModel, ImperativeCurren
     func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
         // 呼叫這個 delegate method 的唯一時機是其他 cell 被選取了，table view deselect 原本被選取的 cell
         // 此時不需回應
+    }
+    
+    func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
+        currencyCode == baseCurrencyCode
     }
 }

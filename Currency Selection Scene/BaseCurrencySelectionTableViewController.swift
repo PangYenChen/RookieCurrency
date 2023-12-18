@@ -209,8 +209,9 @@ extension BaseCurrencySelectionTableViewController {
                 dataSource.apply(snapshot) { [weak self] in
                     guard let self else { return }
                     
-                    let selectedIndexPath = currencySelectionModel.selectedCurrencyCode
-                        .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
+                    let selectedIndexPath = currencyCodeArray
+                        .filter(currencySelectionModel.isCurrencyCodeSelected(_:))
+                        .compactMap(dataSource.indexPath(for:))
                     
                     selectedIndexPath
                         .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }

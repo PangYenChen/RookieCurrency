@@ -3,7 +3,7 @@ import Foundation
 final class CurrencyOfInterestSelectionModel: CurrencySelectionModel, ImperativeCurrencySelectionModelProtocol {
     private var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
-    var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest }
+    private var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest }
     
     private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
     
@@ -24,5 +24,9 @@ final class CurrencyOfInterestSelectionModel: CurrencySelectionModel, Imperative
     func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
         currencyCodeOfInterest.remove(deselectedCurrencyCode)
         completionHandler(currencyCodeOfInterest)
+    }
+    
+    func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
+        currencyCodeOfInterest.contains(currencyCode)
     }
 }

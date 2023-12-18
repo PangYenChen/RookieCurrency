@@ -3,8 +3,6 @@ import Foundation
 protocol CurrencySelectionModelProtocol {
     var title: String { get }
     
-    var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { get }
-    
     var allowsMultipleSelection: Bool { get }
     
     var initialSortingOrder: SortingOrder { get }
@@ -14,6 +12,8 @@ protocol CurrencySelectionModelProtocol {
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode)
     
     func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode)
+    
+    func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool
     
     func getSortingMethod() -> SortingMethod
     
