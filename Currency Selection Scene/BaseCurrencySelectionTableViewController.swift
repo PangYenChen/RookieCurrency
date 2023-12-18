@@ -193,49 +193,17 @@ extension BaseCurrencySelectionTableViewController {
         currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
     }
     
-//    final func populateTableViewWith(_ array: [ResponseDataModel.CurrencyCode], shouldScrollToFirstSelectedItem: Bool) {
-//        var snapshot = Snapshot()
-//        snapshot.appendSections([.main])
-//        
-//        snapshot.appendItems(array)
-//        snapshot.reloadSections([.main])
-//        
-//        DispatchQueue.main.async { [weak self] in
-//            
-//            self?.dataSource.apply(snapshot) { [weak self] in
-//                guard let self else { return }
-//                
-//                let selectedIndexPath = currencySelectionModel.selectedCurrencyCode
-//                    .compactMap { [weak self] selectedCurrencyCode in self?.dataSource.indexPath(for: selectedCurrencyCode) }
-//                
-//                selectedIndexPath
-//                    .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
-//                
-//                // scroll to first selected index path when first time receiving data
-//                if shouldScrollToFirstSelectedItem {
-//                    
-//                    if let firstSelectedIndexPath = selectedIndexPath.min() {
-//                        tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
-//                    }
-//                    else {
-//                        presentAlert(message: R.string.currencyScene.currencyNotSupported())
-//                    }
-//                }
-//            }
-//        }
-//    }
-    
     final func updateUIFor(result: Result<[ResponseDataModel.CurrencyCode], Error>) {
         DispatchQueue.main.async { [weak self] in
             guard let self else { return }
             tableView.refreshControl?.endRefreshing()
             
             switch result {
-            case .success(let sortArray):
+            case .success(let currencyCodeArray):
                 var snapshot = Snapshot()
                 snapshot.appendSections([.main])
                 
-                snapshot.appendItems(sortArray)
+                snapshot.appendItems(currencyCodeArray)
                 snapshot.reloadSections([.main])
                 
                 dataSource.apply(snapshot) { [weak self] in
@@ -286,11 +254,11 @@ extension BaseCurrencySelectionTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
-        
         guard let deselectedCurrencyCode = dataSource.itemIdentifier(for: indexPath) else {
             assertionFailure("###, \(self), \(#function), 取消選取的 item 不在 data source 中，這不可能發生。")
             return
         }
+        
         currencySelectionModel.deselect(currencyCode: deselectedCurrencyCode)
     }
 }

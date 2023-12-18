@@ -12,8 +12,6 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
         
         reactiveCurrencySelectionModel = currencySelectionModel
         
-        isFirstTimePopulate = true
-        
         anyCancellableSet = Set<AnyCancellable>()
         
         super.init(coder: coder, currencySelectionModel: currencySelectionModel)
@@ -24,33 +22,9 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     }
 
     override func viewDidLoad() {
-        // subscribe
-        do {
-            let symbolsResult = reactiveCurrencySelectionModel.state
-                .share()
-            
-            symbolsResult
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] _ in self?.tableView.refreshControl?.endRefreshing() }
-                .store(in: &anyCancellableSet)
-            
-            symbolsResult.resultFailure()
-                .receive(on: DispatchQueue.main)
-                .sink { [weak self] error in self?.presentAlert(error: error) }
-                .store(in: &anyCancellableSet)
-            
-            // TODO: 注意下面的邏輯 應該有漏
-            symbolsResult.resultSuccess()
-                .sink { [unowned self] array in
-                    
-                    populateTableViewWith(array, shouldScrollToFirstSelectedItem: isFirstTimePopulate)
-                    
-                    if isFirstTimePopulate {
-                        isFirstTimePopulate = false
-                    }
-                }
-                .store(in: &anyCancellableSet)
-        }
+        reactiveCurrencySelectionModel.state
+            .sink(receiveValue: self.updateUIFor(result:))
+            .store(in: &anyCancellableSet)
         
         // super 的 viewDidLoad 給初始值，所以要在最後 call
         super.viewDidLoad()
