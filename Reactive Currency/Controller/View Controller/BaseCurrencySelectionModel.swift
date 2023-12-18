@@ -6,7 +6,7 @@ final class BaseCurrencySelectionModel: ReactiveCurrencySelectionModel {
     
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
     
-    var state: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never>
+    var result: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never>
     
     let title: String
     
@@ -36,7 +36,7 @@ final class BaseCurrencySelectionModel: ReactiveCurrencySelectionModel {
         
         initialSortingOrder = .ascending
         
-        state = fetchSubject
+        result = fetchSubject
             .flatMap { AppUtility.supportedSymbolsPublisher().convertOutputToResult() }
             .combineLatest(sortingMethodAndOrder, searchText)
             .map { result, sortingMethodAndOrder, searchText in
@@ -75,11 +75,7 @@ final class BaseCurrencySelectionModel: ReactiveCurrencySelectionModel {
         sortingMethodAndOrder.send((method: sortingMethod, order: sortingOrder))
     }
     
-    func getSortingOrder() -> SortingOrder { sortingMethodAndOrder.value.order }
-    
     func set(searchText: String?) { self.searchText.send(searchText) }
     
-    func getSearchText() -> String? { searchText.value }
-    
-    func fetch() { fetchSubject.send() }
+    func update() { fetchSubject.send() }
 }

@@ -1,8 +1,6 @@
 import Foundation
 
 final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol {
-    var stateHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
-    
     let title: String
     
     private var baseCurrencyCode: String
@@ -13,27 +11,30 @@ final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
     
     private var sortingMethod: SortingMethod
     
+    let initialSortingOrder: SortingOrder
+    
     private var sortingOrder: SortingOrder
     
     private var searchText: String?
-    
-    private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
-    
+
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
     
-    let initialSortingOrder: SortingOrder
+    var resultHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
+    
+    private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
     
     init(baseCurrencyCode: String, completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
         title = R.string.share.baseCurrency()
         self.baseCurrencyCode = baseCurrencyCode
         allowsMultipleSelection = false
-        self.completionHandler = completionHandler
         
         sortingMethod = .currencyName
+        initialSortingOrder = .ascending
         sortingOrder = .ascending
         searchText = nil
         currencyCodeDescriptionDictionary = [:]
-        initialSortingOrder = .ascending
+        
+        self.completionHandler = completionHandler
     }
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
@@ -42,7 +43,7 @@ final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
     }
     
     func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-            // allowsMultipleSelection = false，會呼叫這個 delegate method 的唯一時機是其他 cell 被選取了，table view deselect 原本被選取的 cell
+    // allowsMultipleSelection = false，會呼叫這個 delegate method 的唯一時機是其他 cell 被選取了，table view deselect 原本被選取的 cell
     }
     
     func getSortingMethod() -> SortingMethod { sortingMethod }
@@ -53,16 +54,12 @@ final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
         helper() // TODO: 要改成不重拿
     }
     
-    func getSortingOrder() -> SortingOrder { sortingOrder }
-    
     func set(searchText: String?) {
         self.searchText = searchText
         helper() // TODO: 要改成不重拿
     }
     
-    func getSearchText() -> String? { searchText }
-    
-    func fetch() {
+    func update() {
         helper()
     }
 }
@@ -78,11 +75,11 @@ private extension BaseCurrencySelectionModel {
             let newResult = result.map { currencyCodeDescriptionDictionary in
                 Self.convertDataThenPopulateTableView(currencyCodeDescriptionDictionary: currencyCodeDescriptionDictionary,
                                                       sortingMethod: self.getSortingMethod(),
-                                                      sortingOrder: self.getSortingOrder(),
-                                                      searchText: self.getSearchText())
+                                                      sortingOrder: self.sortingOrder,
+                                                      searchText: self.searchText)
             }
             
-            stateHandler?(newResult)
+            resultHandler?(newResult)
         }
     }
 }

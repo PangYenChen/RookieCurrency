@@ -176,7 +176,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
         do {
             tableView.refreshControl = UIRefreshControl()
             
-            let action = UIAction { [unowned self] _ in currencySelectionModel.fetch() }
+            let action = UIAction { [unowned self] _ in currencySelectionModel.update() }
             tableView.refreshControl?.addAction(action, for: .primaryActionTriggered)
             
             tableView.refreshControl?.beginRefreshing()

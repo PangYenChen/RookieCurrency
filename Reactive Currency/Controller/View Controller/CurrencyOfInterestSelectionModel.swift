@@ -6,22 +6,14 @@ final class CurrencyOfInterestSelectionModel: ReactiveCurrencySelectionModel {
     
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
 
-    var state: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never>
+    var result: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never>
 
     #warning("還沒實作")
-    func fetch() {
+    func update() {
         fatalError()
     }
     
     func set(searchText: String?) {
-        fatalError()
-    }
-    
-    func getSearchText() -> String? {
-        fatalError()
-    }
-    
-    func getSortingOrder() -> SortingOrder {
         fatalError()
     }
     
@@ -47,7 +39,7 @@ final class CurrencyOfInterestSelectionModel: ReactiveCurrencySelectionModel {
         title = R.string.share.currencyOfInterest()
         self.currencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyCodeOfInterest)
         allowsMultipleSelection = true
-        state = Empty().eraseToAnyPublisher()
+        result = Empty().eraseToAnyPublisher()
         currencyCodeDescriptionDictionary = [:]
         initialSortingOrder = .ascending
             // initialization completes

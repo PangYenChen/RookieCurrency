@@ -22,7 +22,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     }
 
     override func viewDidLoad() {
-        reactiveCurrencySelectionModel.state
+        reactiveCurrencySelectionModel.result
             .sink(receiveValue: self.updateUIFor(result:))
             .store(in: &anyCancellableSet)
         

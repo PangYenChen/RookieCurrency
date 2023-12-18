@@ -16,7 +16,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     }
     
     override func viewDidLoad() {
-        imperativeCurrencySelectionModel.stateHandler = updateUIFor(result:)
+        imperativeCurrencySelectionModel.resultHandler = updateUIFor(result:)
         
         super.viewDidLoad()
     }

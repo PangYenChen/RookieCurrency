@@ -6,21 +6,13 @@ final class CurrencyOfInterestSelectionModel: ImperativeCurrencySelectionModelPr
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
     
 #warning("還沒實作")
-    func fetch() {
+    func update() {
         fatalError()
     }
     
-    var stateHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
-    
-    func getSearchText() -> String? {
-        fatalError()
-    }
+    var resultHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
     
     func set(searchText: String?) {
-        fatalError()
-    }
-    
-    func getSortingOrder() -> SortingOrder {
         fatalError()
     }
     
