@@ -1,49 +1,21 @@
 import Foundation
 import Combine
 
-final class CurrencyOfInterestSelectionModel: ReactiveCurrencySelectionModel {
-    var initialSortingOrder: SortingOrder
-    
-    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
-
-    var result: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never>
-
-    #warning("還沒實作")
-    func update() {
-        fatalError()
-    }
-    
-    func set(searchText: String?) {
-        fatalError()
-    }
-    
-    func getSortingMethod() -> SortingMethod {
-        fatalError()
-    }
-    
-    func set(sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder) {
-        fatalError()
-    }
-    
-    let title: String
+final class CurrencyOfInterestSelectionModel: CurrencySelectionModel, ReactiveCurrencySelectionModel {
     
     private let currencyCodeOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
     
     var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest.value }
     
-    let allowsMultipleSelection: Bool
-    
     init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
          selectedCurrencyCodeOfInterest: AnySubscriber<Set<ResponseDataModel.CurrencyCode>, Never>) {
         
-        title = R.string.share.currencyOfInterest()
         self.currencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyCodeOfInterest)
-        allowsMultipleSelection = true
-        result = Empty().eraseToAnyPublisher()
-        currencyCodeDescriptionDictionary = [:]
-        initialSortingOrder = .ascending
-            // initialization completes
         
+        super.init(title: R.string.share.currencyOfInterest(),
+                   allowsMultipleSelection: true)
+    
+        // initialization completes
         self.currencyCodeOfInterest
             .dropFirst()
             .subscribe(selectedCurrencyCodeOfInterest)

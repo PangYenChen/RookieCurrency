@@ -1,7 +1,6 @@
 import Foundation
 
 protocol CurrencySelectionModelProtocol {
-    
     var title: String { get }
     
     var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { get }
