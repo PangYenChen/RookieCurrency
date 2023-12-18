@@ -1,47 +1,19 @@
 import Foundation
 
-final class CurrencyOfInterestSelectionModel: ImperativeCurrencySelectionModelProtocol {
-    var initialSortingOrder: SortingOrder
-    
-    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
-    
-#warning("還沒實作")
-    func update() {
-        fatalError()
-    }
-    
-    var resultHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
-    
-    func set(searchText: String?) {
-        fatalError()
-    }
-    
-    func getSortingMethod() -> SortingMethod {
-        fatalError()
-    }
-    
-    func set(sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder) {
-        fatalError()
-    }
-    
-    let title: String
-    
+final class CurrencyOfInterestSelectionModel: CurrencySelectionModel, ImperativeCurrencySelectionModelProtocol {
     private var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
     var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest }
-    
-    let allowsMultipleSelection: Bool
     
     private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
     
     init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
          completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
-        title = R.string.share.currencyOfInterest()
         self.currencyCodeOfInterest = currencyCodeOfInterest
-        allowsMultipleSelection = true
         self.completionHandler = completionHandler
-        currencyCodeDescriptionDictionary = [:]
-        initialSortingOrder = .ascending
+        
+        super.init(title: R.string.share.currencyOfInterest(),
+                   allowsMultipleSelection: true)
     }
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
