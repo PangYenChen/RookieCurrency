@@ -253,7 +253,15 @@ extension BaseCurrencySelectionTableViewController {
 }
 
 // MARK: - Search Bar Delegate
-extension BaseCurrencySelectionTableViewController: UISearchBarDelegate {}
+extension BaseCurrencySelectionTableViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        currencySelectionModel.set(searchText: searchText)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        currencySelectionModel.set(searchText: nil)
+    }
+}
 
 // MARK: - private name space
 extension BaseCurrencySelectionTableViewController {

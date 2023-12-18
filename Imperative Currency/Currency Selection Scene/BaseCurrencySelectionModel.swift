@@ -50,17 +50,25 @@ final class BaseCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
     func set(sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder) {
         self.sortingMethod = sortingMethod
         self.sortingOrder = sortingOrder
+        helper() // TODO: 要改成不重拿
     }
     
     func getSortingOrder() -> SortingOrder { sortingOrder }
     
     func set(searchText: String?) {
         self.searchText = searchText
+        helper() // TODO: 要改成不重拿
     }
     
     func getSearchText() -> String? { searchText }
     
     func fetch() {
+        helper()
+    }
+}
+
+private extension BaseCurrencySelectionModel {
+    func helper() {
         AppUtility.fetchSupportedSymbols { [weak self] result in
             guard let self else { return }
             if let currencyCodeDescriptionDictionary = try? result.get() {

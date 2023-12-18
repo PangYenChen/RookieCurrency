@@ -2,6 +2,8 @@ import Foundation
 import Combine
 
 final class CurrencyOfInterestSelectionModel: ReactiveCurrencySelectionModel {
+    var initialSortingOrder: SortingOrder
+    
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
 
     var state: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never>
@@ -47,6 +49,7 @@ final class CurrencyOfInterestSelectionModel: ReactiveCurrencySelectionModel {
         allowsMultipleSelection = true
         state = Empty().eraseToAnyPublisher()
         currencyCodeDescriptionDictionary = [:]
+        initialSortingOrder = .ascending
             // initialization completes
         
         self.currencyCodeOfInterest

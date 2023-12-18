@@ -2,7 +2,9 @@ import Foundation
 import Combine
 
 final class BaseCurrencySelectionModel: ReactiveCurrencySelectionModel {
-    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode : String]
+    var initialSortingOrder: SortingOrder
+    
+    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
     
     var state: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never>
     
@@ -31,6 +33,8 @@ final class BaseCurrencySelectionModel: ReactiveCurrencySelectionModel {
         searchText = CurrentValueSubject<String?, Never>(nil)
         
         fetchSubject = PassthroughSubject<Void, Never>()
+        
+        initialSortingOrder = .ascending
         
         state = fetchSubject
             .flatMap { AppUtility.supportedSymbolsPublisher().convertOutputToResult() }

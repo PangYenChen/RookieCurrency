@@ -50,18 +50,3 @@ private extension CurrencySelectionTableViewController {
         }
     }
 }
-
-// MARK: - search bar delegate
-extension CurrencySelectionTableViewController {
-    final func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        currencySelectionModel.set(searchText: searchText)
-   
-//        populateTableViewIfPossible()
-    }
-    
-    final func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        currencySelectionModel.set(searchText: nil)
-        
-//        populateTableViewIfPossible()
-    }
-}
