@@ -40,10 +40,10 @@ class CurrencySelectionModel {
             .combineLatest(sortingMethodAndOrder, searchText)
             .map { result, sortingMethodAndOrder, searchText in
                 result.map { currencyCodeDescriptionDictionary in
-                    sort(currencyCodeDescriptionDictionary,
-                         bySortingMethod: sortingMethodAndOrder.method,
-                         andSortingOrder: sortingMethodAndOrder.order,
-                         thenFilterIfNeedBySearchTextBy: searchText)
+                    Self.sort(currencyCodeDescriptionDictionary,
+                              bySortingMethod: sortingMethodAndOrder.method,
+                              andSortingOrder: sortingMethodAndOrder.order,
+                              thenFilterIfNeedBySearchTextBy: searchText)
                 }
             }
             .eraseToAnyPublisher()

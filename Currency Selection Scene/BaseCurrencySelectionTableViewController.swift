@@ -97,29 +97,37 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
             
             let currencyNameMenu: UIMenu
             do {
-                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
-                                           image: UIImage(systemSymbol: .arrowUpRight),
-                                           handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .ascending) })
+                let ascendingAction = UIAction(
+                    title: CurrencySelectionModel.SortingOrder.ascending.localizedName,
+                    image: UIImage(systemSymbol: .arrowUpRight),
+                    handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .ascending) }
+                )
                 
-                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
-                                                image: UIImage(systemSymbol: .arrowDownRight),
-                                                handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .descending) })
+                let descendingAction = UIAction(
+                    title: CurrencySelectionModel.SortingOrder.descending.localizedName,
+                    image: UIImage(systemSymbol: .arrowDownRight),
+                    handler: { [unowned self] _ in set(sortingMethod: .currencyName, sortingOrder: .descending) }
+                )
                 
-                currencyNameMenu = UIMenu(title: SortingMethod.currencyName.localizedName,
+                currencyNameMenu = UIMenu(title: CurrencySelectionModel.SortingMethod.currencyName.localizedName,
                                           children: [ascendingAction, descendingAction])
             }
             
             let currencyCodeMenu: UIMenu
             do {
-                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
-                                               image: UIImage(systemSymbol: .arrowUpRight),
-                                               handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .ascending) })
+                let ascendingAction = UIAction(
+                    title: CurrencySelectionModel.SortingOrder.ascending.localizedName,
+                    image: UIImage(systemSymbol: .arrowUpRight),
+                    handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .ascending) }
+                )
                 
-                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
-                                                image: UIImage(systemSymbol: .arrowDownRight),
-                                                handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .descending) })
+                let descendingAction = UIAction(
+                    title: CurrencySelectionModel.SortingOrder.descending.localizedName,
+                    image: UIImage(systemSymbol: .arrowDownRight),
+                    handler: { [unowned self] _ in set(sortingMethod: .currencyCode, sortingOrder: .descending) }
+                )
                 
-                currencyCodeMenu = UIMenu(title: SortingMethod.currencyCode.localizedName,
+                currencyCodeMenu = UIMenu(title: CurrencySelectionModel.SortingMethod.currencyCode.localizedName,
                                           children: [ascendingAction, descendingAction])
             }
             
@@ -127,15 +135,19 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
             
             // 注音
             if Bundle.main.preferredLocalizations.first == "zh-Hant" {
-                let ascendingAction = UIAction(title: SortingOrder.ascending.localizedName,
-                                               image: UIImage(systemSymbol: .arrowUpRight),
-                                               handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .ascending) })
+                let ascendingAction = UIAction(
+                    title: CurrencySelectionModel.SortingOrder.ascending.localizedName,
+                    image: UIImage(systemSymbol: .arrowUpRight),
+                    handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .ascending) }
+                )
                 
-                let descendingAction = UIAction(title: SortingOrder.descending.localizedName,
-                                                image: UIImage(systemSymbol: .arrowDownRight),
-                                                handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .descending) })
+                let descendingAction = UIAction(
+                    title: CurrencySelectionModel.SortingOrder.descending.localizedName,
+                    image: UIImage(systemSymbol: .arrowDownRight),
+                    handler: { [unowned self] _ in set(sortingMethod: .currencyNameZhuyin, sortingOrder: .descending) }
+                )
                 
-                let currencyZhuyinMenu = UIMenu(title: SortingMethod.currencyNameZhuyin.localizedName,
+                let currencyZhuyinMenu = UIMenu(title: CurrencySelectionModel.SortingMethod.currencyNameZhuyin.localizedName,
                                                 children: [ascendingAction, descendingAction])
                 
                 children.append(currencyZhuyinMenu)
@@ -187,7 +199,8 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
 
 // MARK: - helper method
 extension BaseCurrencySelectionTableViewController {
-    final func set(sortingMethod: SortingMethod, sortingOrder: SortingOrder) {
+    final func set(sortingMethod: CurrencySelectionModel.SortingMethod,
+                   sortingOrder: CurrencySelectionModel.SortingOrder) {
         updateSortingLocalizedStringFor(method: sortingMethod, andOrder: sortingOrder)
         
         currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
@@ -237,7 +250,8 @@ extension BaseCurrencySelectionTableViewController {
 
 // MARK: - private method
 private extension BaseCurrencySelectionTableViewController {
-    final func updateSortingLocalizedStringFor(method sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder) {
+    final func updateSortingLocalizedStringFor(method sortingMethod: CurrencySelectionModel.SortingMethod,
+                                               andOrder sortingOrder: CurrencySelectionModel.SortingOrder) {
         sortBarButtonItem.menu?.children.first?.subtitle = R.string.currencyScene.sortingWay(sortingMethod.localizedName,
                                                                                              sortingOrder.localizedName)
     }

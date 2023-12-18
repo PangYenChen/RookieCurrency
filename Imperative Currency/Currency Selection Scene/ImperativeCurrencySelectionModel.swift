@@ -60,10 +60,10 @@ private extension CurrencySelectionModel {
             }
             
             let newResult = result.map { currencyCodeDescriptionDictionary in
-                sort(currencyCodeDescriptionDictionary,
-                     bySortingMethod: self.sortingMethod,
-                     andSortingOrder: self.sortingOrder,
-                     thenFilterIfNeedBySearchTextBy: self.searchText)
+                Self.sort(currencyCodeDescriptionDictionary,
+                          bySortingMethod: self.sortingMethod,
+                          andSortingOrder: self.sortingOrder,
+                          thenFilterIfNeedBySearchTextBy: self.searchText)
             }
             
             resultHandler?(newResult)
