@@ -2,11 +2,11 @@ import UIKit
 
 final class CurrencySelectionTableViewController: BaseCurrencySelectionTableViewController {
     // MARK: - private properties
-    private var imperativeCurrencySelectionModel: ImperativeCurrencySelectionModelProtocol
+    private let currencySelectionModel: CurrencySelectionModel
     
     // MARK: - life cycle
-    init?(coder: NSCoder, currencySelectionModel: ImperativeCurrencySelectionModelProtocol) {
-        imperativeCurrencySelectionModel = currencySelectionModel
+    init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModel) {
+        self.currencySelectionModel = currencySelectionModel
         
         super.init(coder: coder, currencySelectionModel: currencySelectionModel)
     }
@@ -16,7 +16,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     }
     
     override func viewDidLoad() {
-        imperativeCurrencySelectionModel.resultHandler = updateUIFor(result:)
+        currencySelectionModel.resultHandler = updateUIFor(result:)
         
         super.viewDidLoad()
     }

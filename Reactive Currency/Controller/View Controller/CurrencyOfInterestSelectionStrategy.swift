@@ -1,20 +1,20 @@
 import Foundation
 import Combine
 
-final class CurrencyOfInterestSelectionModel: CurrencySelectionModel, ReactiveCurrencySelectionModel {
+final class CurrencyOfInterestSelectionStrategy: CurrencySelectionStrategy {
+    let title: String
+    
+    let allowsMultipleSelection: Bool
     
     private let currencyCodeOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
     
-    var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest.value }
-    
     init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
          selectedCurrencyCodeOfInterest: AnySubscriber<Set<ResponseDataModel.CurrencyCode>, Never>) {
+        title = R.string.share.currencyOfInterest()
+        allowsMultipleSelection = true
         
         self.currencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(currencyCodeOfInterest)
         
-        super.init(title: R.string.share.currencyOfInterest(),
-                   allowsMultipleSelection: true)
-    
         // initialization completes
         self.currencyCodeOfInterest
             .dropFirst()
@@ -27,5 +27,9 @@ final class CurrencyOfInterestSelectionModel: CurrencySelectionModel, ReactiveCu
     
     func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
         currencyCodeOfInterest.value.remove(deselectedCurrencyCode)
+    }
+    
+    func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
+        currencyCodeOfInterest.value.contains(currencyCode)
     }
 }

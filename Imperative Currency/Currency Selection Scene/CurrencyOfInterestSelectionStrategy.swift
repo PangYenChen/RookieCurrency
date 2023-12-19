@@ -1,19 +1,21 @@
 import Foundation
 
-final class CurrencyOfInterestSelectionModel: CurrencySelectionModel, ImperativeCurrencySelectionModelProtocol {
-    private var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
+final class CurrencyOfInterestSelectionStrategy: CurrencySelectionStrategy {
+    let title: String
     
-    var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterest }
+    let allowsMultipleSelection: Bool
+    
+    private var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
     private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
     
     init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
          completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
+        title = R.string.share.currencyOfInterest()
+        allowsMultipleSelection = true
+        
         self.currencyCodeOfInterest = currencyCodeOfInterest
         self.completionHandler = completionHandler
-        
-        super.init(title: R.string.share.currencyOfInterest(),
-                   allowsMultipleSelection: true)
     }
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
@@ -24,5 +26,9 @@ final class CurrencyOfInterestSelectionModel: CurrencySelectionModel, Imperative
     func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
         currencyCodeOfInterest.remove(deselectedCurrencyCode)
         completionHandler(currencyCodeOfInterest)
+    }
+    
+    func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
+        currencyCodeOfInterest.contains(currencyCode)
     }
 }

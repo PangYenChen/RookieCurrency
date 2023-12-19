@@ -63,16 +63,24 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - Navigation
     override func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        let baseCurrencySelectionModel = BaseCurrencySelectionModel(baseCurrencyCode: model.editedBaseCurrencyCode.value,
+        // TODO: 應該可以抽到 super class 中，而且產生 currency selection model 的 code 應該在 setting model 中
+        let baseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(baseCurrencyCode: model.editedBaseCurrencyCode.value,
                                            selectedBaseCurrencyCode: AnySubscriber(model.editedBaseCurrencyCode))
         
-        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: baseCurrencySelectionModel)
+        let currencySelectionModel = CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy)
+        
+        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: currencySelectionModel)
     }
     
     override func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        let currencyOfInterestSelectionModel = CurrencyOfInterestSelectionModel(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest.value,
-                                                 selectedCurrencyCodeOfInterest: AnySubscriber(model.editedCurrencyCodeOfInterest))
         
-        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: currencyOfInterestSelectionModel)
+        let currencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
+            currencyCodeOfInterest: model.editedCurrencyCodeOfInterest.value,
+            selectedCurrencyCodeOfInterest: AnySubscriber(model.editedCurrencyCodeOfInterest)
+        )
+        
+        let currencySelectionModel = CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
+        
+        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: currencySelectionModel)
     }
 }

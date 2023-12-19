@@ -1,11 +1,7 @@
 import Foundation
 import Combine
-// TODO: protocol 名字要想一下
-protocol ReactiveCurrencySelectionModel: CurrencySelectionModelProtocol {
-    var result: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never> { get }
-}
 
-class CurrencySelectionModel {
+class CurrencySelectionModel: CurrencySelectionModelProtocol {
     let title: String
     
     let allowsMultipleSelection: Bool
@@ -22,10 +18,13 @@ class CurrencySelectionModel {
     
     private let fetchSubject: PassthroughSubject<Void, Never>
     
-    init(title: String, allowsMultipleSelection: Bool) {
+    private let currencySelectionStrategy: CurrencySelectionStrategy
+    
+    init(currencySelectionStrategy: CurrencySelectionStrategy) {
         
-        self.title = title
-        self.allowsMultipleSelection = allowsMultipleSelection
+        self.title = currencySelectionStrategy.title
+        self.allowsMultipleSelection = currencySelectionStrategy.allowsMultipleSelection
+        self.currencySelectionStrategy = currencySelectionStrategy
         
         initialSortingOrder = .ascending
         sortingMethodAndOrder = CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>((method: .currencyName, order: .ascending))
@@ -40,10 +39,11 @@ class CurrencySelectionModel {
             .combineLatest(sortingMethodAndOrder, searchText)
             .map { result, sortingMethodAndOrder, searchText in
                 result.map { currencyCodeDescriptionDictionary in
-                    sort(currencyCodeDescriptionDictionary,
-                         bySortingMethod: sortingMethodAndOrder.method,
-                         andSortingOrder: sortingMethodAndOrder.order,
-                         thenFilterIfNeedBySearchTextBy: searchText)
+                    // FIXME: "這裡應該要記住 currencyCodeDescriptionDictionary，但之後要改成抽出固定的 method 來轉換 currency code 跟顯示用的文字，所以乾脆先不記住了")
+                    Self.sort(currencyCodeDescriptionDictionary,
+                              bySortingMethod: sortingMethodAndOrder.method,
+                              andSortingOrder: sortingMethodAndOrder.order,
+                              thenFilterIfNeedBySearchTextBy: searchText)
                 }
             }
             .eraseToAnyPublisher()
@@ -59,4 +59,16 @@ class CurrencySelectionModel {
     func set(searchText: String?) { self.searchText.send(searchText) }
     
     func update() { fetchSubject.send() }
+    
+    func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+        currencySelectionStrategy.select(currencyCode: selectedCurrencyCode)
+    }
+    
+    func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+        currencySelectionStrategy.deselect(currencyCode: deselectedCurrencyCode)
+    }
+    
+    func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
+        currencySelectionStrategy.isCurrencyCodeSelected(currencyCode)
+    }
 }
