@@ -20,11 +20,16 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     
     private let currencySelectionStrategy: CurrencySelectionStrategy
     
-    init(currencySelectionStrategy: CurrencySelectionStrategy) {
+    let supportedCurrencyManager: SupportedCurrencyManager
+    
+    init(currencySelectionStrategy: CurrencySelectionStrategy,
+         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
         
         self.title = currencySelectionStrategy.title
         self.allowsMultipleSelection = currencySelectionStrategy.allowsMultipleSelection
         self.currencySelectionStrategy = currencySelectionStrategy
+        
+        self.supportedCurrencyManager = supportedCurrencyManager
         
         initialSortingOrder = .ascending
         sortingMethodAndOrder = CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>((method: .currencyName, order: .ascending))
@@ -35,11 +40,10 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
         currencyCodeDescriptionDictionary = [:]
         
         result = fetchSubject
-            .flatMap { AppUtility.supportedSymbolsPublisher().convertOutputToResult() }
+            .flatMap { supportedCurrencyManager.supportedCurrency().convertOutputToResult() }
             .combineLatest(sortingMethodAndOrder, searchText)
             .map { result, sortingMethodAndOrder, searchText in
                 result.map { currencyCodeDescriptionDictionary in
-                    // FIXME: "這裡應該要記住 currencyCodeDescriptionDictionary，但之後要改成抽出固定的 method 來轉換 currency code 跟顯示用的文字，所以乾脆先不記住了")
                     Self.sort(currencyCodeDescriptionDictionary,
                               bySortingMethod: sortingMethodAndOrder.method,
                               andSortingOrder: sortingMethodAndOrder.order,

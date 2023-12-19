@@ -54,7 +54,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                         // TODO: 把 currency code 轉換成顯示用的文字的邏輯，在 setting scene 也有，要抽出來，放在 support symbol manager 之類的地方
                         let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
                         
-                        let serverCurrencyDescription = baseModel.currencyCodeDescriptionDictionary[currencyCode]
+                        let serverCurrencyDescription = baseModel.displayStringFor(currencyCode: currencyCode)
                         
                         let currencyDescription = localizedCurrencyDescription ?? serverCurrencyDescription
                         

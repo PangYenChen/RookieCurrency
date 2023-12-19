@@ -24,6 +24,7 @@
 		512495612B31DB0C00FD86D9 /* SupportedCurrencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512495602B31DB0C00FD86D9 /* SupportedCurrencyManager.swift */; };
 		512495642B31E1B400FD86D9 /* SupportedCurrencyManagerHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512495632B31E1B400FD86D9 /* SupportedCurrencyManagerHolder.swift */; };
 		512495652B31E1B400FD86D9 /* SupportedCurrencyManagerHolder.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512495632B31E1B400FD86D9 /* SupportedCurrencyManagerHolder.swift */; };
+		512495692B31E89C00FD86D9 /* SupportedCurrencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512495682B31E89C00FD86D9 /* SupportedCurrencyManager.swift */; };
 		5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */; };
 		51362E2629B4CF3F00E3CE89 /* Rate Instance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51362E2529B4CF3F00E3CE89 /* Rate Instance.swift */; };
 		51362E4F29B4D93500E3CE89 /* Rate Instance.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51362E2529B4CF3F00E3CE89 /* Rate Instance.swift */; };
@@ -48,7 +49,6 @@
 		514C4D0B29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514C4D0929A0D9FA0049E192 /* BaseSettingTableViewController.swift */; };
 		514C4D0D29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514C4D0C29A3416A0049E192 /* BaseResultTableViewController.swift */; };
 		514C4D0E29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514C4D0C29A3416A0049E192 /* BaseResultTableViewController.swift */; };
-		514D69442A70270C0030138A /* AppUtility + Reactive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514D69432A70270C0030138A /* AppUtility + Reactive.swift */; };
 		514E459E2B2EACF400E1F3EC /* CurrencySelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514E459D2B2EACF400E1F3EC /* CurrencySelectionModel.swift */; };
 		514E45A12B2EADBE00E1F3EC /* CurrencySelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514E459F2B2EAD2300E1F3EC /* CurrencySelectionModel.swift */; };
 		514F17162B312EA300C806E3 /* CurrencySelectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514F17152B312EA300C806E3 /* CurrencySelectionStrategy.swift */; };
@@ -163,6 +163,7 @@
 		5124955C2B31CACF00FD86D9 /* BaseSupportedCurrencyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSupportedCurrencyManager.swift; sourceTree = "<group>"; };
 		512495602B31DB0C00FD86D9 /* SupportedCurrencyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedCurrencyManager.swift; sourceTree = "<group>"; };
 		512495632B31E1B400FD86D9 /* SupportedCurrencyManagerHolder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedCurrencyManagerHolder.swift; sourceTree = "<group>"; };
+		512495682B31E89C00FD86D9 /* SupportedCurrencyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedCurrencyManager.swift; sourceTree = "<group>"; };
 		5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 		51362E2529B4CF3F00E3CE89 /* Rate Instance.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Rate Instance.swift"; sourceTree = "<group>"; };
 		513803212998746A00D54E46 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
@@ -177,7 +178,6 @@
 		514C4D0429A0D6570049E192 /* BaseCurrencySelectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCurrencySelectionTableViewController.swift; sourceTree = "<group>"; };
 		514C4D0929A0D9FA0049E192 /* BaseSettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSettingTableViewController.swift; sourceTree = "<group>"; };
 		514C4D0C29A3416A0049E192 /* BaseResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResultTableViewController.swift; sourceTree = "<group>"; };
-		514D69432A70270C0030138A /* AppUtility + Reactive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppUtility + Reactive.swift"; sourceTree = "<group>"; };
 		514E459D2B2EACF400E1F3EC /* CurrencySelectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySelectionModel.swift; sourceTree = "<group>"; };
 		514E459F2B2EAD2300E1F3EC /* CurrencySelectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySelectionModel.swift; sourceTree = "<group>"; };
 		514F17152B312EA300C806E3 /* CurrencySelectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySelectionStrategy.swift; sourceTree = "<group>"; };
@@ -311,7 +311,7 @@
 			children = (
 				512087AF29A9F858005ED87A /* RateController + Reactive.swift */,
 				512087AD29A9F4A7005ED87A /* Fetcher + Reactive.swift */,
-				514D69432A70270C0030138A /* AppUtility + Reactive.swift */,
+				512495682B31E89C00FD86D9 /* SupportedCurrencyManager.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -947,7 +947,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				514D69442A70270C0030138A /* AppUtility + Reactive.swift in Sources */,
 				512087AE29A9F4A7005ED87A /* Fetcher + Reactive.swift in Sources */,
 				5120879929A8DC71005ED87A /* DebugInfoViewController.swift in Sources */,
 				51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */,
@@ -976,6 +975,7 @@
 				514C4CFF29A07A7B0049E192 /* Publisher + Helper.swift in Sources */,
 				51D6CA492B1C8A7C003F9D13 /* CurrencySelectionModelProtocol.swift in Sources */,
 				51E1B4C929AE488900D75669 /* Endpoints.swift in Sources */,
+				512495692B31E89C00FD86D9 /* SupportedCurrencyManager.swift in Sources */,
 				E1FB993C24FF45250096FE2C /* Analyst.swift in Sources */,
 				514C4D0629A0D6570049E192 /* BaseCurrencySelectionTableViewController.swift in Sources */,
 				515D3D8829ED8C7400B84F4B /* SupportedSymbols.swift in Sources */,

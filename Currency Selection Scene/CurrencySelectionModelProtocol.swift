@@ -1,14 +1,11 @@
 import Foundation
 
-protocol CurrencySelectionModelProtocol {
+protocol CurrencySelectionModelProtocol: SupportedCurrencyManagerHolder {
     var title: String { get }
     
     var allowsMultipleSelection: Bool { get }
     
     var initialSortingOrder: CurrencySelectionModel.SortingOrder { get }
-    
-    @available(*, deprecated, message: "把 currency code 轉換成顯示用的文字的邏輯，在 setting scene 也有，要抽出來，放在 support symbol manager 之類的地方")
-    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String] { get }
 
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode)
     

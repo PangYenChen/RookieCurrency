@@ -13,8 +13,6 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     
     private var searchText: String?
     
-    private(set) var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
-    
     var resultHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
     
     private let currencySelectionStrategy: CurrencySelectionStrategy
@@ -33,7 +31,6 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
         self.initialSortingOrder = .ascending
         self.sortingOrder = initialSortingOrder
         self.searchText = nil
-        self.currencyCodeDescriptionDictionary = [:]
     }
     
     func getSortingMethod() -> SortingMethod { sortingMethod }
@@ -70,9 +67,6 @@ private extension CurrencySelectionModel {
     func helper() { // TODO: think a good name
         supportedCurrencyManager.fetchSupportedCurrency { [weak self] result in
             guard let self else { return }
-            if let currencyCodeDescriptionDictionary = try? result.get() {
-                self.currencyCodeDescriptionDictionary = currencyCodeDescriptionDictionary
-            }
             
             let newResult = result.map { currencyCodeDescriptionDictionary in
                 Self.sort(currencyCodeDescriptionDictionary,
