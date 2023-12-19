@@ -18,8 +18,8 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         stepper.value = Double(model.editedNumberOfDays)
         
-        isModalInPresentation = model.hasChange
-        hasChangesToSave = model.hasChange
+        isModalInPresentation = model.hasChangeToSave
+        hasChangesToSave = model.hasChangeToSave
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -27,26 +27,15 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        updateForModelHasChangesToSaveIfNeeded(model.hasChange)
+        updateForModelHasChangesToSaveIfNeeded(model.hasChangeToSave)
         reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: model.editedBaseCurrencyCode)
         reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest)
     }
     
     // MARK: - hook methods
     override func stepperValueDidChange() {
-        updateForModelHasChangesToSaveIfNeeded(model.hasChange)
+        updateForModelHasChangesToSaveIfNeeded(model.hasChangeToSave)
         
         updateNumberOfDaysRow(for: model.editedNumberOfDays)
-    }
-    
-    // MARK: - Navigation
-    override func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        CurrencySelectionTableViewController(coder: coder,
-                                             currencySelectionModel: model.makeBaseCurrencySelectionModel())
-    }
-    
-    override func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        CurrencySelectionTableViewController(coder: coder,
-                                             currencySelectionModel: model.makeCurrencyOfInterestSelectionModel())
     }
 }

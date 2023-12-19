@@ -62,4 +62,22 @@ extension SettingModel: BaseSettingModel {
     func save() {
         saveSubject.send()
     }
+    
+    func makeBaseCurrencySelectionModel() -> CurrencySelectionModel {
+        let baseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
+            baseCurrencyCode: editedBaseCurrencyCode.value,
+            selectedBaseCurrencyCode: AnySubscriber(editedBaseCurrencyCode)
+        )
+        
+        return CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy)
+    }
+    
+    func makeCurrencyOfInterestSelectionModel() -> CurrencySelectionModel {
+        let currencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
+            currencyCodeOfInterest: editedCurrencyCodeOfInterest.value,
+            selectedCurrencyCodeOfInterest: AnySubscriber(editedCurrencyCodeOfInterest)
+        )
+        
+        return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
+    }
 }

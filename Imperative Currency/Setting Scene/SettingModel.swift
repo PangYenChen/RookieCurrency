@@ -8,7 +8,7 @@ class SettingModel {
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
-    var hasChange: Bool {
+    var hasChangeToSave: Bool {
         originalNumberOfDays != editedNumberOfDays ||
         originalBaseCurrencyCode != editedBaseCurrencyCode ||
         originalCurrencyCodeOfInterest != editedCurrencyCodeOfInterest
