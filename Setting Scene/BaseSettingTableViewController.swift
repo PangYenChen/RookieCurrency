@@ -311,7 +311,7 @@ extension BaseSettingTableViewController {
             tableView.deselectRow(at: indexPath, animated: true)
             
         case .removeFile:
-            RateController.shared.removeCachedAndStoredData()
+            RateManager.shared.removeCachedAndStoredData()
             presentAlert(message: R.string.settingScene.dataHaveBeenRemoved())
             tableView.deselectRow(at: indexPath, animated: true)
 #if DEBUG

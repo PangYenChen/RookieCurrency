@@ -1,16 +1,16 @@
 import XCTest
 @testable import ImperativeCurrency
 
-final class ImperativeRateControllerTests: XCTestCase {
+final class ImperativeRateManagerTests: XCTestCase {
 
-    var sut: RateController!
+    var sut: RateManager!
     
     override func tearDown() {
         sut = nil
         TestDouble.SpyArchiver.reset()
     }
     
-    // TODO: `RateController` 的 method 太長了，不好測試。等 method 拆解好之後再來寫測試。
+    // TODO: `RateManager` 的 method 太長了，不好測試。等 method 拆解好之後再來寫測試。
     
     func testNoCacheAndDiskData() throws {
         // arrange
@@ -18,7 +18,7 @@ final class ImperativeRateControllerTests: XCTestCase {
         let spyArchiver = TestDouble.SpyArchiver.self
         let concurrentQueue = DispatchQueue(label: "testing queue", attributes: .concurrent)
         
-        sut = RateController(fetcher: stubFetcher,
+        sut = RateManager(fetcher: stubFetcher,
                              archiver: spyArchiver,
                              concurrentQueue: concurrentQueue)
         
@@ -59,7 +59,7 @@ final class ImperativeRateControllerTests: XCTestCase {
 //        // arrange
 //        let stubFetcher = StubFetcher()
 //        let spyArchiver = TestDouble.SpyArchiver.self
-//        sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
+//        sut = RateManager(fetcher: stubFetcher, archiver: spyArchiver)
 //        
 //        let expectation = expectation(description: "should receive rate")
 //        let dummyStartingDate = Date(timeIntervalSince1970: 0)

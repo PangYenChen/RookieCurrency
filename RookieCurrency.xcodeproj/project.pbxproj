@@ -120,13 +120,13 @@
 		E15BA6C524FCA66900CA5B1B /* FetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */; };
 		E1CE96AA248555680029ED73 /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96A9248555680029ED73 /* Fetcher.swift */; };
 		E1CE96AC248555C30029ED73 /* Analyst.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AB248555C30029ED73 /* Analyst.swift */; };
-		E1CE96AE248555E10029ED73 /* RateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AD248555E10029ED73 /* RateController.swift */; };
+		E1CE96AE248555E10029ED73 /* RateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AD248555E10029ED73 /* RateManager.swift */; };
 		E1FB993524FCDC270096FE2C /* Response Data Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B276824758BCB00E0A07D /* Response Data Model.swift */; };
 		E1FB993C24FF45250096FE2C /* Analyst.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AB248555C30029ED73 /* Analyst.swift */; };
 		E1FB993F24FF554C0096FE2C /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FB993E24FF554C0096FE2C /* ResultTableViewController.swift */; };
 		E1FB994124FF9DCD0096FE2C /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96A9248555680029ED73 /* Fetcher.swift */; };
 		E1FB9943250083BE0096FE2C /* Archiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1133334248A924D00B8E67F /* Archiver.swift */; };
-		E1FB9944250084760096FE2C /* RateController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AD248555E10029ED73 /* RateController.swift */; };
+		E1FB9944250084760096FE2C /* RateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AD248555E10029ED73 /* RateManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -231,7 +231,7 @@
 		E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherTests.swift; sourceTree = "<group>"; };
 		E1CE96A9248555680029ED73 /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
 		E1CE96AB248555C30029ED73 /* Analyst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyst.swift; sourceTree = "<group>"; };
-		E1CE96AD248555E10029ED73 /* RateController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateController.swift; sourceTree = "<group>"; };
+		E1CE96AD248555E10029ED73 /* RateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateManager.swift; sourceTree = "<group>"; };
 		E1FB993E24FF554C0096FE2C /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -285,7 +285,7 @@
 				51E1B4BF29AE3CB000D75669 /* Fetcher */,
 				E1CE96AB248555C30029ED73 /* Analyst.swift */,
 				514F72FD29AB682D0080DD8B /* AppUtility.swift */,
-				E1CE96AD248555E10029ED73 /* RateController.swift */,
+				E1CE96AD248555E10029ED73 /* RateManager.swift */,
 				E1133334248A924D00B8E67F /* Archiver.swift */,
 			);
 			path = Model;
@@ -874,7 +874,7 @@
 				513803222998746A00D54E46 /* SettingTableViewController.swift in Sources */,
 				514F72FE29AB682D0080DD8B /* AppUtility.swift in Sources */,
 				E1133335248A924D00B8E67F /* Archiver.swift in Sources */,
-				E1CE96AE248555E10029ED73 /* RateController.swift in Sources */,
+				E1CE96AE248555E10029ED73 /* RateManager.swift in Sources */,
 				5149A1AC2B08E2B2005D2B04 /* SettingModel.swift in Sources */,
 				515D3D8F29EEE81000B84F4B /* Supported Symbols.swift in Sources */,
 				E13B276924758BCB00E0A07D /* Response Data Model.swift in Sources */,
@@ -934,7 +934,7 @@
 				5120879929A8DC71005ED87A /* DebugInfoViewController.swift in Sources */,
 				51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */,
 				E1FB993F24FF554C0096FE2C /* ResultTableViewController.swift in Sources */,
-				E1FB9944250084760096FE2C /* RateController.swift in Sources */,
+				E1FB9944250084760096FE2C /* RateManager.swift in Sources */,
 				518F310E2AD58CFE00146818 /* ResultModel.swift in Sources */,
 				E1FB993524FCDC270096FE2C /* Response Data Model.swift in Sources */,
 				51E0DEB5299FD4980046652B /* PresentWithNavigationController.swift in Sources */,

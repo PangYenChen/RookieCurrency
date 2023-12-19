@@ -3,14 +3,14 @@ import Combine
 
 class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - private properties
-    private let model: SettingModel
+    private let settingModel: SettingModel
     
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - methods
     required init?(coder: NSCoder,
                    model: SettingModel) {
-        self.model = model
+        self.settingModel = model
         
         anyCancellableSet = Set<AnyCancellable>()
         
@@ -22,7 +22,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        model.editedNumberOfDays
+        settingModel.editedNumberOfDays
             .dropFirst()
             .sink { [unowned self] numberOfDays in
                 self.updateNumberOfDaysRow(for: numberOfDays)
@@ -30,7 +30,7 @@ class SettingTableViewController: BaseSettingTableViewController {
             }
             .store(in: &anyCancellableSet)
         
-        model.editedNumberOfDays
+        settingModel.editedNumberOfDays
             .first()
             .sink { [unowned self] numberOfDays in
                 self.editedNumberOfDays = numberOfDays
@@ -40,20 +40,20 @@ class SettingTableViewController: BaseSettingTableViewController {
             }
             .store(in: &anyCancellableSet)
         
-        model.editedBaseCurrencyCode
+        settingModel.editedBaseCurrencyCode
             .sink(receiveValue: self.reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode:))
             .store(in: &anyCancellableSet)
         
-        model.editedCurrencyCodeOfInterest
+        settingModel.editedCurrencyCodeOfInterest
             .sink(receiveValue: self.reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest:))
             .store(in: &anyCancellableSet)
         
-        model.hasChangesToSave
+        settingModel.hasChangesToSave
             .sink(receiveValue: self.updateForModelHasChangesToSaveIfNeeded(_:))
             .store(in: &anyCancellableSet)
     }
     
     override func stepperValueDidChange() {
-        model.editedNumberOfDays.send(Int(stepper.value))
+        settingModel.editedNumberOfDays.send(Int(stepper.value))
     }
 }

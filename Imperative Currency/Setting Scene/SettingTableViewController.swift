@@ -2,13 +2,13 @@ import UIKit
 
 class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - private property
-    private let model: SettingModel
+    private let settingModel: SettingModel
     
     // MARK: - methods
     required init?(coder: NSCoder,
                    model: SettingModel) {
         
-        self.model = model
+        self.settingModel = model
         
         super.init(coder: coder, baseSettingModel: model)
         
@@ -27,15 +27,15 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        updateForModelHasChangesToSaveIfNeeded(model.hasChangeToSave)
-        reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: model.editedBaseCurrencyCode)
-        reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest)
+        updateForModelHasChangesToSaveIfNeeded(settingModel.hasChangeToSave)
+        reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: settingModel.editedBaseCurrencyCode)
+        reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: settingModel.editedCurrencyCodeOfInterest)
     }
     
     // MARK: - hook methods
     override func stepperValueDidChange() {
-        updateForModelHasChangesToSaveIfNeeded(model.hasChangeToSave)
+        updateForModelHasChangesToSaveIfNeeded(settingModel.hasChangeToSave)
         
-        updateNumberOfDaysRow(for: model.editedNumberOfDays)
+        updateNumberOfDaysRow(for: settingModel.editedNumberOfDays)
     }
 }

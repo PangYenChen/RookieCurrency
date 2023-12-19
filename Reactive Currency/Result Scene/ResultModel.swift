@@ -69,7 +69,7 @@ class ResultModel: BaseResultModel {
             
             let analyzedResult = update.withLatestFrom(setting)
                 .flatMap { _, setting in
-                    RateController.shared
+                    RateManager.shared
                         .ratePublisher(numberOfDays: setting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in

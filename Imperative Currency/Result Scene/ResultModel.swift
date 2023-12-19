@@ -105,7 +105,7 @@ private extension ResultModel {
     func analyzedDataFor(setting: Setting) {
         stateHandler?(.updating)
         
-        RateController.shared.getRateFor(numberOfDays: setting.numberOfDays) { [unowned self] result in
+        RateManager.shared.getRateFor(numberOfDays: setting.numberOfDays) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 let analyzedResult = Analyst

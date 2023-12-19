@@ -10,7 +10,7 @@ class SettingModel {
     
     let hasChangesToSave: AnyPublisher<Bool, Never>
     
-        // MARK: - properties used to communicate with `ResultModel`
+    // MARK: - properties used to communicate with `ResultModel`
     private let cancelSubject: PassthroughSubject<Void, Never>
     
     private let saveSubject: PassthroughSubject<Void, Never>
@@ -24,7 +24,7 @@ class SettingModel {
         
         editedCurrencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(setting.currencyCodeOfInterest)
         
-            // has changes
+        // has changes
         do {
             let numberOfDaysHasChanges = editedNumberOfDays.map { $0 != setting.numberOfDays }
             let baseCurrencyCodeHasChanges = editedBaseCurrencyCode.map { $0 != setting.baseCurrencyCode }
@@ -38,8 +38,7 @@ class SettingModel {
         
         saveSubject = PassthroughSubject<Void, Never>()
         
-            // finish initialization
-        
+        // finish initialization
         saveSubject
             .withLatestFrom(editedNumberOfDays)
             .map { $1 }
