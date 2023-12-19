@@ -8,7 +8,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      // swiftlint:disable:next discouraged_optional_collection
                      launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
-        AppUtility.start()
+        SupportedCurrencyManager.shared.prefetchSupportedCurrency()
         
         return true
     }

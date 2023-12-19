@@ -178,9 +178,7 @@ extension BaseSettingTableViewController {
     }
     
     final func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
-        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ??
-        AppUtility.supportedSymbols?[currencyCode] ??
-        currencyCode
+        baseSettingModel.displayStringFor(currencyCode: currencyCode)
     }
     
     final func updateForModelHasChangesToSaveIfNeeded(_ modelHasChangesToSave: Bool) {

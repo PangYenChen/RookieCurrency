@@ -8,6 +8,8 @@ class SettingModel {
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
+    let supportedCurrencyManager: SupportedCurrencyManager
+    
     var hasChangeToSave: Bool {
         originalNumberOfDays != editedNumberOfDays ||
         originalBaseCurrencyCode != editedBaseCurrencyCode ||
@@ -27,7 +29,8 @@ class SettingModel {
     
     init(setting: BaseResultModel.Setting,
          saveCompletionHandler: @escaping SaveHandler,
-         cancelCompletionHandler: @escaping CancelHandler) {
+         cancelCompletionHandler: @escaping CancelHandler,
+         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
         originalNumberOfDays = setting.numberOfDays
         editedNumberOfDays = setting.numberOfDays
         
@@ -39,6 +42,8 @@ class SettingModel {
         
         self.saveCompletionHandler = saveCompletionHandler
         self.cancelCompletionHandler = cancelCompletionHandler
+        
+        self.supportedCurrencyManager = supportedCurrencyManager
     }
 }
 

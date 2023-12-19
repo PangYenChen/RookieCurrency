@@ -19,8 +19,8 @@ final class ImperativeRateManagerTests: XCTestCase {
         let concurrentQueue = DispatchQueue(label: "testing queue", attributes: .concurrent)
         
         sut = RateManager(fetcher: stubFetcher,
-                             archiver: spyArchiver,
-                             concurrentQueue: concurrentQueue)
+                          archiver: spyArchiver,
+                          concurrentQueue: concurrentQueue)
         
         var expectedResult: Result<(latestRate: ResponseDataModel.LatestRate,
                                     historicalRateSet: Set<ResponseDataModel.HistoricalRate>),

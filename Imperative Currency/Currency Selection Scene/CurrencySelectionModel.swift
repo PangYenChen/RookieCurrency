@@ -18,11 +18,16 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     var resultHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
     
     private let currencySelectionStrategy: CurrencySelectionStrategy
+    
+    let supportedCurrencyManager: SupportedCurrencyManager
 
-    init(currencySelectionStrategy: CurrencySelectionStrategy) {
+    init(currencySelectionStrategy: CurrencySelectionStrategy,
+         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
         self.title = currencySelectionStrategy.title
         self.allowsMultipleSelection = currencySelectionStrategy.allowsMultipleSelection
         self.currencySelectionStrategy = currencySelectionStrategy
+        
+        self.supportedCurrencyManager = supportedCurrencyManager
         
         self.sortingMethod = .currencyName
         self.initialSortingOrder = .ascending
@@ -63,7 +68,7 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
 
 private extension CurrencySelectionModel {
     func helper() { // TODO: think a good name
-        AppUtility.fetchSupportedSymbols { [weak self] result in
+        supportedCurrencyManager.fetchSupportedCurrency { [weak self] result in
             guard let self else { return }
             if let currencyCodeDescriptionDictionary = try? result.get() {
                 self.currencyCodeDescriptionDictionary = currencyCodeDescriptionDictionary
@@ -80,3 +85,5 @@ private extension CurrencySelectionModel {
         }
     }
 }
+
+extension CurrencySelectionModel: SupportedCurrencyManagerHolder {}
