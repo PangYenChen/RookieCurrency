@@ -38,16 +38,16 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     func set(sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder) {
         self.sortingMethod = sortingMethod
         self.sortingOrder = sortingOrder
-        helper() // TODO: 要改成不重拿
+        fetchSupportedCurrency()
     }
     
     func set(searchText: String?) {
         self.searchText = searchText
-        helper() // TODO: 要改成不重拿
+        fetchSupportedCurrency()
     }
     
     func update() {
-        helper()
+        fetchSupportedCurrency()
     }
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
@@ -64,7 +64,7 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
 }
 
 private extension CurrencySelectionModel {
-    func helper() { // TODO: think a good name
+    func fetchSupportedCurrency() {
         supportedCurrencyManager.fetchSupportedCurrency { [weak self] result in
             guard let self else { return }
             

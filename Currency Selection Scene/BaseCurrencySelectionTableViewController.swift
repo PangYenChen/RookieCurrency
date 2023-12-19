@@ -51,20 +51,13 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                     
                     // content
                     do {
-                        // TODO: 把 currency code 轉換成顯示用的文字的邏輯，在 setting scene 也有，要抽出來，放在 support symbol manager 之類的地方
-                        let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
-                        
-                        let serverCurrencyDescription = baseModel.displayStringFor(currencyCode: currencyCode)
-                        
-                        let currencyDescription = localizedCurrencyDescription ?? serverCurrencyDescription
-                        
                         switch baseModel.getSortingMethod() {
                         case .currencyName, .currencyNameZhuyin:
-                            contentConfiguration.text = currencyDescription
+                            contentConfiguration.text = baseModel.displayStringFor(currencyCode: currencyCode)
                             contentConfiguration.secondaryText = currencyCode
                         case .currencyCode:
                             contentConfiguration.text = currencyCode
-                            contentConfiguration.secondaryText = currencyDescription
+                            contentConfiguration.secondaryText = baseModel.displayStringFor(currencyCode: currencyCode)
                         }
                     }
                     
