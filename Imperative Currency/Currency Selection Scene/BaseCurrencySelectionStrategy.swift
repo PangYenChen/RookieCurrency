@@ -1,19 +1,21 @@
 import Foundation
 
-final class BaseCurrencySelectionModel: CurrencySelectionModel, ImperativeCurrencySelectionModelProtocol {
+class BaseCurrencySelectionStrategy: CurrencySelectionStrategy {
+    var title: String
+    
+    var allowsMultipleSelection: Bool
+    
     private var baseCurrencyCode: ResponseDataModel.CurrencyCode
     
-    private var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode] }
-    
-    let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
+    private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
     
     init(baseCurrencyCode: ResponseDataModel.CurrencyCode,
          completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
+        title = R.string.share.baseCurrency()
+        allowsMultipleSelection = false
+        
         self.baseCurrencyCode = baseCurrencyCode
         self.completionHandler = completionHandler
-        
-        super.init(title: R.string.share.baseCurrency(),
-                   allowsMultipleSelection: false)
     }
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {

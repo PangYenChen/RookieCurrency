@@ -1,10 +1,6 @@
 import Foundation
-// TODO: protocol 名字要想一下
-protocol ImperativeCurrencySelectionModelProtocol: CurrencySelectionModelProtocol {
-    var resultHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)? { get set }
-}
 
-class CurrencySelectionModel {
+class CurrencySelectionModel: CurrencySelectionModelProtocol {
     let title: String
     
     let allowsMultipleSelection: Bool
@@ -20,11 +16,13 @@ class CurrencySelectionModel {
     private(set) var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]
     
     var resultHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
+    
+    private let currencySelectionStrategy: CurrencySelectionStrategy
 
-    init(title: String,
-         allowsMultipleSelection: Bool) {
-        self.title = title
-        self.allowsMultipleSelection = allowsMultipleSelection
+    init(currencySelectionStrategy: CurrencySelectionStrategy) {
+        self.title = currencySelectionStrategy.title
+        self.allowsMultipleSelection = currencySelectionStrategy.allowsMultipleSelection
+        self.currencySelectionStrategy = currencySelectionStrategy
         
         self.sortingMethod = .currencyName
         self.initialSortingOrder = .ascending
@@ -49,6 +47,18 @@ class CurrencySelectionModel {
     func update() {
         helper()
     }
+    
+    func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+        currencySelectionStrategy.select(currencyCode: selectedCurrencyCode)
+    }
+    
+    func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+        currencySelectionStrategy.deselect(currencyCode: deselectedCurrencyCode)
+    }
+    
+    func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
+        currencySelectionStrategy.isCurrencyCodeSelected(currencyCode)
+    }
 }
 
 private extension CurrencySelectionModel {
@@ -70,4 +80,3 @@ private extension CurrencySelectionModel {
         }
     }
 }
-

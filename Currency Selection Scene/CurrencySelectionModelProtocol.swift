@@ -124,4 +124,3 @@ extension CurrencySelectionModel {
         return filteredCurrencyCodes
     }
 }
-

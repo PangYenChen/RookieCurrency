@@ -5,7 +5,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     // MARK: - property
     @IBOutlet var sortBarButtonItem: UIBarButtonItem!
     
-    let currencySelectionModel: CurrencySelectionModelProtocol
+    let baseModel: CurrencySelectionModelProtocol
     
     private var isFirstTimePopulateTableView: Bool
     
@@ -14,7 +14,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     // MARK: - life cycle
     init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
         
-        self.currencySelectionModel = currencySelectionModel
+        self.baseModel = currencySelectionModel
         
         isFirstTimePopulateTableView = true
         
@@ -37,7 +37,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        tableView.allowsMultipleSelection = currencySelectionModel.allowsMultipleSelection
+        tableView.allowsMultipleSelection = baseModel.allowsMultipleSelection
         
         // table view data source and delegate
         do {
@@ -53,11 +53,11 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                     do {
                         let localizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)
                         
-                        let serverCurrencyDescription = currencySelectionModel.currencyCodeDescriptionDictionary[currencyCode]
+                        let serverCurrencyDescription = baseModel.currencyCodeDescriptionDictionary[currencyCode]
                         
                         let currencyDescription = localizedCurrencyDescription ?? serverCurrencyDescription
                         
-                        switch currencySelectionModel.getSortingMethod() {
+                        switch baseModel.getSortingMethod() {
                         case .currencyName, .currencyNameZhuyin:
                             contentConfiguration.text = currencyDescription
                             contentConfiguration.secondaryText = currencyCode
@@ -155,13 +155,13 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
             
             // set up the initial state
             do {
-                let sortingMethodIndex: Int = switch currencySelectionModel.getSortingMethod() {
+                let sortingMethodIndex: Int = switch baseModel.getSortingMethod() {
                 case .currencyName: 0
                 case .currencyCode: 1
                 case .currencyNameZhuyin: 2
                 }
                 
-                let sortingOrderIndex: Int = switch currencySelectionModel.initialSortingOrder {
+                let sortingOrderIndex: Int = switch baseModel.initialSortingOrder {
                 case .ascending: 0
                 case .descending: 1
                 }
@@ -169,8 +169,8 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                 let initialChild = children[sortingMethodIndex]
                 (initialChild.children[sortingOrderIndex] as? UIAction)?.state = .on
                 
-                updateSortingLocalizedStringFor(method: currencySelectionModel.getSortingMethod(),
-                                                andOrder: currencySelectionModel.initialSortingOrder)
+                updateSortingLocalizedStringFor(method: baseModel.getSortingMethod(),
+                                                andOrder: baseModel.initialSortingOrder)
             }
             
             let sortMenu = UIMenu(title: R.string.share.sortedBy(),
@@ -188,7 +188,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
         do {
             tableView.refreshControl = UIRefreshControl()
             
-            let action = UIAction { [unowned self] _ in currencySelectionModel.update() }
+            let action = UIAction { [unowned self] _ in baseModel.update() }
             tableView.refreshControl?.addAction(action, for: .primaryActionTriggered)
             
             tableView.refreshControl?.beginRefreshing()
@@ -203,7 +203,7 @@ extension BaseCurrencySelectionTableViewController {
                    sortingOrder: CurrencySelectionModel.SortingOrder) {
         updateSortingLocalizedStringFor(method: sortingMethod, andOrder: sortingOrder)
         
-        currencySelectionModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
+        baseModel.set(sortingMethod: sortingMethod, andOrder: sortingOrder)
     }
     
     final func updateUIFor(result: Result<[ResponseDataModel.CurrencyCode], Error>) {
@@ -223,7 +223,7 @@ extension BaseCurrencySelectionTableViewController {
                     guard let self else { return }
                     
                     let selectedIndexPath = currencyCodeArray
-                        .filter(currencySelectionModel.isCurrencyCodeSelected(_:))
+                        .filter(baseModel.isCurrencyCodeSelected(_:))
                         .compactMap(dataSource.indexPath(for:))
                     
                     selectedIndexPath
@@ -265,7 +265,7 @@ extension BaseCurrencySelectionTableViewController {
             return
         }
         
-        currencySelectionModel.select(currencyCode: selectedCurrencyCode)
+        baseModel.select(currencyCode: selectedCurrencyCode)
     }
     
     override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
@@ -274,18 +274,18 @@ extension BaseCurrencySelectionTableViewController {
             return
         }
         
-        currencySelectionModel.deselect(currencyCode: deselectedCurrencyCode)
+        baseModel.deselect(currencyCode: deselectedCurrencyCode)
     }
 }
 
 // MARK: - Search Bar Delegate
 extension BaseCurrencySelectionTableViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        currencySelectionModel.set(searchText: searchText)
+        baseModel.set(searchText: searchText)
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        currencySelectionModel.set(searchText: nil)
+        baseModel.set(searchText: nil)
     }
 }
 
