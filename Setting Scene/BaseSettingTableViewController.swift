@@ -77,17 +77,6 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         }
     }
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        
-//        let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
-//        let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
-//        DispatchQueue.main.async { [unowned self] in
-//            tableView.reloadRows(at: [baseCurrencyIndexPath, currencyOfInterestIndexPath], with: .automatic)
-//        }
-//    }
-    // TODO: 要確認從下一頁回來沒問題
-    
     // MARK: - hook methods
     func stepperValueDidChange() {
         fatalError("stepperValueDidChange() has not been implemented")
@@ -190,6 +179,14 @@ extension BaseSettingTableViewController {
         Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ??
         AppUtility.supportedSymbols?[currencyCode] ??
         currencyCode
+    }
+    
+    final func updateForModelHasChangesToSaveIfNeeded(_ modelHasChangesToSave: Bool) {
+        guard hasChangesToSave != modelHasChangesToSave else { return }
+        
+        hasChangesToSave = modelHasChangesToSave
+        saveButton.isEnabled = hasChangesToSave
+        isModalInPresentation = hasChangesToSave
     }
 }
 

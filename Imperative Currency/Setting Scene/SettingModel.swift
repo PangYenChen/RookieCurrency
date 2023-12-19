@@ -54,6 +54,27 @@ extension SettingModel: BaseSettingModel {
     func cancel() {
         cancelCompletionHandler()
     }
+    
+    func makeBaseCurrencySelectionModel() -> CurrencySelectionModel {
+        let baseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
+            baseCurrencyCode: editedBaseCurrencyCode
+        ) { [unowned self] selectedBaseCurrencyCode in
+            editedBaseCurrencyCode = selectedBaseCurrencyCode
+        }
+        
+        return CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy)
+    }
+    
+    func makeCurrencyOfInterestSelectionModel() -> CurrencySelectionModel {
+        let currencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
+            currencyCodeOfInterest: editedCurrencyCodeOfInterest
+        ) { [unowned self] selectedCurrencyCodeOfInterest in
+            editedCurrencyCodeOfInterest = selectedCurrencyCodeOfInterest
+        }
+        
+        return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
+    }
+    
 }
 
 // MARK: - name space
