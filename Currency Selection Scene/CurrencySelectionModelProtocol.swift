@@ -7,6 +7,7 @@ protocol CurrencySelectionModelProtocol {
     
     var initialSortingOrder: CurrencySelectionModel.SortingOrder { get }
     
+    @available(*, deprecated, message: "把 currency code 轉換成顯示用的文字的邏輯，在 setting scene 也有，要抽出來，放在 support symbol manager 之類的地方")
     var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String] { get }
 
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode)
@@ -25,7 +26,7 @@ protocol CurrencySelectionModelProtocol {
     func update()
 }
 
-// TODO: 要做出一個 name space
+// MARK: - name space
 extension CurrencySelectionModel {
     enum SortingMethod {
         case currencyName

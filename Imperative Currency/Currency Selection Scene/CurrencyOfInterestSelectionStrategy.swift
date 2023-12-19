@@ -1,9 +1,9 @@
 import Foundation
 
-class CurrencyOfInterestSelectionStrategy: CurrencySelectionStrategy {
-    var title: String
+final class CurrencyOfInterestSelectionStrategy: CurrencySelectionStrategy {
+    let title: String
     
-    var allowsMultipleSelection: Bool
+    let allowsMultipleSelection: Bool
     
     private var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     

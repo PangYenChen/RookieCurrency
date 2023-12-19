@@ -1,17 +1,19 @@
 import Foundation
 import Combine
 
-final class BaseCurrencySelectionModel: CurrencySelectionModel, ReactiveCurrencySelectionModel {
-    private let baseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
+final class BaseCurrencySelectionStrategy: CurrencySelectionStrategy {
+    let title: String
     
-    private var selectedCurrencyCode: Set<ResponseDataModel.CurrencyCode> { [baseCurrencyCode.value] }
+    let allowsMultipleSelection: Bool
+    
+    private let baseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
     
     init(baseCurrencyCode: String,
          selectedBaseCurrencyCode: AnySubscriber<ResponseDataModel.CurrencyCode, Never>) {
-        self.baseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(baseCurrencyCode)
+        title = R.string.share.baseCurrency()
+        allowsMultipleSelection = false
         
-        super.init(title: R.string.share.baseCurrency(),
-                   allowsMultipleSelection: false)
+        self.baseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(baseCurrencyCode)
         
         // initialization completes
         self.baseCurrencyCode

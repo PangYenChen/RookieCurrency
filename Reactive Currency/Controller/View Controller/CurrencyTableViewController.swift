@@ -5,12 +5,11 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     
     private var anyCancellableSet: Set<AnyCancellable>
     
-    private let reactiveCurrencySelectionModel: ReactiveCurrencySelectionModel
+    private let currencySelectionModel: CurrencySelectionModel
     
     // MARK: - life cycle
-    init?(coder: NSCoder, currencySelectionModel: ReactiveCurrencySelectionModel) {
-        
-        reactiveCurrencySelectionModel = currencySelectionModel
+    init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModel) {
+        self.currencySelectionModel = currencySelectionModel
         
         anyCancellableSet = Set<AnyCancellable>()
         
@@ -22,7 +21,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     }
 
     override func viewDidLoad() {
-        reactiveCurrencySelectionModel.result
+        currencySelectionModel.result
             .sink(receiveValue: self.updateUIFor(result:))
             .store(in: &anyCancellableSet)
         

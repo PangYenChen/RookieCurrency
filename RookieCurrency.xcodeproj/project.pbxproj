@@ -51,10 +51,10 @@
 		514F17172B312EA300C806E3 /* CurrencySelectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514F17152B312EA300C806E3 /* CurrencySelectionStrategy.swift */; };
 		514F171B2B312F3A00C806E3 /* BaseCurrencySelectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514F171A2B312F3A00C806E3 /* BaseCurrencySelectionStrategy.swift */; };
 		514F171D2B3131B700C806E3 /* CurrencyOfInterestSelectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514F171C2B3131B700C806E3 /* CurrencyOfInterestSelectionStrategy.swift */; };
+		514F17242B313C0600C806E3 /* BaseCurrencySelectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514F17202B313C0000C806E3 /* BaseCurrencySelectionStrategy.swift */; };
+		514F17262B313D8B00C806E3 /* CurrencyOfInterestSelectionStrategy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514F17252B313D8B00C806E3 /* CurrencyOfInterestSelectionStrategy.swift */; };
 		514F72FE29AB682D0080DD8B /* AppUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514F72FD29AB682D0080DD8B /* AppUtility.swift */; };
 		514F72FF29AB682D0080DD8B /* AppUtility.swift in Sources */ = {isa = PBXBuildFile; fileRef = 514F72FD29AB682D0080DD8B /* AppUtility.swift */; };
-		51504C962B2D95ED007007EB /* BaseCurrencySelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51504C952B2D95ED007007EB /* BaseCurrencySelectionModel.swift */; };
-		51504C9A2B2D9616007007EB /* CurrencyOfInterestSelectionModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51504C992B2D9616007007EB /* CurrencyOfInterestSelectionModel.swift */; };
 		51578B7129A85A1000BE890F /* Git Commit Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51578B7029A85A1000BE890F /* Git Commit Info.swift */; };
 		51578B7229A85A1000BE890F /* Git Commit Info.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51578B7029A85A1000BE890F /* Git Commit Info.swift */; };
 		515D3D8729ED8C7400B84F4B /* SupportedSymbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515D3D8629ED8C7400B84F4B /* SupportedSymbols.swift */; };
@@ -177,9 +177,9 @@
 		514F17152B312EA300C806E3 /* CurrencySelectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySelectionStrategy.swift; sourceTree = "<group>"; };
 		514F171A2B312F3A00C806E3 /* BaseCurrencySelectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCurrencySelectionStrategy.swift; sourceTree = "<group>"; };
 		514F171C2B3131B700C806E3 /* CurrencyOfInterestSelectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyOfInterestSelectionStrategy.swift; sourceTree = "<group>"; };
+		514F17202B313C0000C806E3 /* BaseCurrencySelectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCurrencySelectionStrategy.swift; sourceTree = "<group>"; };
+		514F17252B313D8B00C806E3 /* CurrencyOfInterestSelectionStrategy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyOfInterestSelectionStrategy.swift; sourceTree = "<group>"; };
 		514F72FD29AB682D0080DD8B /* AppUtility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppUtility.swift; sourceTree = "<group>"; };
-		51504C952B2D95ED007007EB /* BaseCurrencySelectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseCurrencySelectionModel.swift; sourceTree = "<group>"; };
-		51504C992B2D9616007007EB /* CurrencyOfInterestSelectionModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyOfInterestSelectionModel.swift; sourceTree = "<group>"; };
 		51578B7029A85A1000BE890F /* Git Commit Info.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Git Commit Info.swift"; sourceTree = "<group>"; };
 		515D3D8629ED8C7400B84F4B /* SupportedSymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedSymbols.swift; sourceTree = "<group>"; };
 		515D3D8E29EEE81000B84F4B /* Supported Symbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Supported Symbols.swift"; sourceTree = "<group>"; };
@@ -625,8 +625,8 @@
 			children = (
 				51DF9169299FD0C100CEA5A6 /* CurrencyTableViewController.swift */,
 				514E459F2B2EAD2300E1F3EC /* ReactiveCurrencySelectionModel.swift */,
-				51504C952B2D95ED007007EB /* BaseCurrencySelectionModel.swift */,
-				51504C992B2D9616007007EB /* CurrencyOfInterestSelectionModel.swift */,
+				514F17202B313C0000C806E3 /* BaseCurrencySelectionStrategy.swift */,
+				514F17252B313D8B00C806E3 /* CurrencyOfInterestSelectionStrategy.swift */,
 			);
 			path = "View Controller";
 			sourceTree = "<group>";
@@ -948,10 +948,10 @@
 				519BD8AB29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */,
 				514C4D0B29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */,
 				514E45A12B2EADBE00E1F3EC /* ReactiveCurrencySelectionModel.swift in Sources */,
+				514F17262B313D8B00C806E3 /* CurrencyOfInterestSelectionStrategy.swift in Sources */,
 				513E106529F424D0000E1A87 /* AlertPresenter.swift in Sources */,
 				51D67ED42975922D008B8928 /* SceneDelegate.swift in Sources */,
 				51E1B4CF29AE4C7100D75669 /* Historical.swift in Sources */,
-				51504C962B2D95ED007007EB /* BaseCurrencySelectionModel.swift in Sources */,
 				51578B7229A85A1000BE890F /* Git Commit Info.swift in Sources */,
 				514C4CFF29A07A7B0049E192 /* Publisher + Helper.swift in Sources */,
 				51D6CA492B1C8A7C003F9D13 /* CurrencySelectionModelProtocol.swift in Sources */,
@@ -965,8 +965,8 @@
 				E1FB9943250083BE0096FE2C /* Archiver.swift in Sources */,
 				512087B029A9F858005ED87A /* RateController + Reactive.swift in Sources */,
 				5149A1B02B09A3D6005D2B04 /* BaseSettingModel.swift in Sources */,
-				51504C9A2B2D9616007007EB /* CurrencyOfInterestSelectionModel.swift in Sources */,
 				511E4B322AC6938A007EA1DE /* BaseResultModel.swift in Sources */,
+				514F17242B313C0600C806E3 /* BaseCurrencySelectionStrategy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
