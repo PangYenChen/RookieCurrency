@@ -15,7 +15,7 @@ class ResultModel: BaseResultModel {
     // MARK: output
     let state: AnyPublisher<State, Never>
     
-    override init() {
+    init(analyzedDataSorter: AnalyzedDataSorter = .shared) {
         // input
         do {
             setting = CurrentValueSubject((AppUtility.numberOfDays,
@@ -99,9 +99,9 @@ class ResultModel: BaseResultModel {
             
             let updatedStatePublisher = analyzedSuccessTuple.withLatestFrom(orderAndSearchText)
                 .map { analyzedSuccessTuple, orderAndSearchText in
-                    let analyzedSortedDataArray = Self.sort(analyzedSuccessTuple.analyzedDataArray,
-                                                            by: orderAndSearchText.order,
-                                                            filteredIfNeededBy: orderAndSearchText.searchText)
+                    let analyzedSortedDataArray = analyzedDataSorter.sort(analyzedSuccessTuple.analyzedDataArray,
+                                                                          by: orderAndSearchText.order,
+                                                                          filteredIfNeededBy: orderAndSearchText.searchText)
                     return State.updated(timestamp: analyzedSuccessTuple.latestUpdateTime,
                                          analyzedSortedDataArray: analyzedSortedDataArray)
                 }
@@ -109,9 +109,9 @@ class ResultModel: BaseResultModel {
             
             let sortedStatePublisher = orderAndSearchText.withLatestFrom(analyzedSuccessTuple)
                 .map { (orderAndSearchText, analyzedSuccessTuple) in
-                    let analyzedSortedDataArray = Self.sort(analyzedSuccessTuple.analyzedDataArray,
-                                                            by: orderAndSearchText.order,
-                                                            filteredIfNeededBy: orderAndSearchText.searchText)
+                    let analyzedSortedDataArray = analyzedDataSorter.sort(analyzedSuccessTuple.analyzedDataArray,
+                                                                          by: orderAndSearchText.order,
+                                                                          filteredIfNeededBy: orderAndSearchText.searchText)
                     return State.sorted(analyzedSortedDataArray: analyzedSortedDataArray)
                 }
                 .eraseToAnyPublisher()

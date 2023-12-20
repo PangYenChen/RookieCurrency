@@ -1,9 +1,12 @@
 import Foundation
 
-class BaseResultModel {
+class BaseResultModel: SupportedCurrencyManagerHolder {
     let initialOrder: Order
     
-    init() {
+    let supportedCurrencyManager: SupportedCurrencyManager
+    
+    init(supportedCurrencyManager: SupportedCurrencyManager = .shared) {
+        self.supportedCurrencyManager = supportedCurrencyManager
         initialOrder = AppUtility.order
     }
     
@@ -22,31 +25,6 @@ class BaseResultModel {
     
     func settingModel() -> SettingModel {
         fatalError("settingModel() has not been implemented")
-    }
-}
-
-// MARK: - helper method
-extension BaseResultModel {
-    static func sort(_ analyzedDataArray: [AnalyzedData],
-                     by order: Order,
-                     filteredIfNeededBy searchText: String?) -> [AnalyzedData] {
-        analyzedDataArray
-            .sorted { lhs, rhs in
-                switch order {
-                case .increasing:
-                    return lhs.deviation < rhs.deviation
-                case .decreasing:
-                    return lhs.deviation > rhs.deviation
-                }
-            }
-            .filter { analyzedData in
-                guard let searchText, !searchText.isEmpty else { return true }
-                
-                return [analyzedData.currencyCode,
-                        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: analyzedData.currencyCode)]
-                    .compactMap { $0 }
-                    .contains { text in text.localizedStandardContains(searchText) }
-            }
     }
 }
 
@@ -82,5 +60,37 @@ extension BaseResultModel {
         let latest: Decimal
         let mean: Decimal
         let deviation: Decimal
+    }
+    
+    class AnalyzedDataSorter: SupportedCurrencyManagerHolder {
+        static let shared: AnalyzedDataSorter = AnalyzedDataSorter()
+        
+        let supportedCurrencyManager: SupportedCurrencyManager
+        
+        init(supportedCurrencyManager: SupportedCurrencyManager = .shared) {
+            self.supportedCurrencyManager = supportedCurrencyManager
+        }
+        
+        func sort(_ analyzedDataArray: [AnalyzedData],
+                  by order: Order,
+                  filteredIfNeededBy searchText: String?) -> [AnalyzedData] {
+            analyzedDataArray
+                .sorted { lhs, rhs in
+                    switch order {
+                    case .increasing:
+                        return lhs.deviation < rhs.deviation
+                    case .decreasing:
+                        return lhs.deviation > rhs.deviation
+                    }
+                }
+                .filter { analyzedData in
+                    guard let searchText, !searchText.isEmpty else { return true }
+                    
+                    return [analyzedData.currencyCode,
+                            displayStringFor(currencyCode: analyzedData.currencyCode)]
+                        .compactMap { $0 }
+                        .contains { text in text.localizedStandardContains(searchText) }
+                }
+        }
     }
 }

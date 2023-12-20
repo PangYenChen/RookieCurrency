@@ -65,7 +65,7 @@ class BaseResultTableViewController: UITableViewController {
         
         // table view data source
         do {
-            dataSource = DataSource(tableView: tableView) { tableView, indexPath, analyzedData in
+            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, analyzedData in
                 let reusedIdentifier = R.reuseIdentifier.currencyCell.identifier
                 let cell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
                 
@@ -78,9 +78,11 @@ class BaseResultTableViewController: UITableViewController {
                     let deviationString = analyzedData.deviation.formatted()
                     let fluctuationString = R.string.resultScene.fluctuation(deviationString)
                     
-                    contentConfiguration.text = [analyzedData.currencyCode,
-                                                 Locale.autoupdatingCurrent.localizedString(forCurrencyCode: analyzedData.currencyCode),
-                                                 fluctuationString]
+                    contentConfiguration.text = [
+                        analyzedData.currencyCode,
+                        baseResultModel.displayStringFor(currencyCode: analyzedData.currencyCode),
+                        fluctuationString
+                    ]
                         .compactMap { $0 }
                         .joined(separator: ", ")
                     
