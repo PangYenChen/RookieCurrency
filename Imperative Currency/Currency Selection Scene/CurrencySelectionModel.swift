@@ -18,14 +18,18 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     private let currencySelectionStrategy: CurrencySelectionStrategy
     
     let supportedCurrencyManager: SupportedCurrencyManager
+    
+    private let currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter
 
     init(currencySelectionStrategy: CurrencySelectionStrategy,
-         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
+         supportedCurrencyManager: SupportedCurrencyManager = .shared,
+         currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter = .shared) {
         self.title = currencySelectionStrategy.title
         self.allowsMultipleSelection = currencySelectionStrategy.allowsMultipleSelection
         self.currencySelectionStrategy = currencySelectionStrategy
         
         self.supportedCurrencyManager = supportedCurrencyManager
+        self.currencyCodeDescriptionDictionarySorter = currencyCodeDescriptionDictionarySorter
         
         self.sortingMethod = .currencyName
         self.initialSortingOrder = .ascending
@@ -69,10 +73,10 @@ private extension CurrencySelectionModel {
             guard let self else { return }
             
             let newResult = result.map { currencyCodeDescriptionDictionary in
-                Self.sort(currencyCodeDescriptionDictionary,
-                          bySortingMethod: self.sortingMethod,
-                          andSortingOrder: self.sortingOrder,
-                          thenFilterIfNeedBySearchTextBy: self.searchText)
+                self.currencyCodeDescriptionDictionarySorter.sort(currencyCodeDescriptionDictionary,
+                                                                  bySortingMethod: self.sortingMethod,
+                                                                  andSortingOrder: self.sortingOrder,
+                                                                  thenFilterIfNeedBySearchTextBy: self.searchText)
             }
             
             resultHandler?(newResult)

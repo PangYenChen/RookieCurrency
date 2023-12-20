@@ -23,7 +23,8 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     let supportedCurrencyManager: SupportedCurrencyManager
     
     init(currencySelectionStrategy: CurrencySelectionStrategy,
-         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
+         supportedCurrencyManager: SupportedCurrencyManager = .shared,
+         currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter = .shared) {
         
         self.title = currencySelectionStrategy.title
         self.allowsMultipleSelection = currencySelectionStrategy.allowsMultipleSelection
@@ -44,10 +45,10 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
             .combineLatest(sortingMethodAndOrder, searchText)
             .map { result, sortingMethodAndOrder, searchText in
                 result.map { currencyCodeDescriptionDictionary in
-                    Self.sort(currencyCodeDescriptionDictionary,
-                              bySortingMethod: sortingMethodAndOrder.method,
-                              andSortingOrder: sortingMethodAndOrder.order,
-                              thenFilterIfNeedBySearchTextBy: searchText)
+                    currencyCodeDescriptionDictionarySorter.sort(currencyCodeDescriptionDictionary,
+                                                                 bySortingMethod: sortingMethodAndOrder.method,
+                                                                 andSortingOrder: sortingMethodAndOrder.order,
+                                                                 thenFilterIfNeedBySearchTextBy: searchText)
                 }
             }
             .eraseToAnyPublisher()
