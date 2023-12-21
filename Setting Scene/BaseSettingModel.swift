@@ -1,6 +1,6 @@
 import Foundation
 
-protocol BaseSettingModel: SupportedCurrencyManagerHolder {
+protocol BaseSettingModel: CurrencyDescriberHolder {
     func save()
     
     func cancel()

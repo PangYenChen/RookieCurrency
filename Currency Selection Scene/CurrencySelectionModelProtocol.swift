@@ -1,6 +1,6 @@
 import Foundation
 
-protocol CurrencySelectionModelProtocol: SupportedCurrencyManagerHolder {
+protocol CurrencySelectionModelProtocol: CurrencyDescriberHolder {
     var title: String { get }
     
     var allowsMultipleSelection: Bool { get }
@@ -51,13 +51,13 @@ extension CurrencySelectionModel {
         }
     }
     
-    class CurrencyCodeDescriptionDictionarySorter: SupportedCurrencyManagerHolder {
+    class CurrencyCodeDescriptionDictionarySorter: CurrencyDescriberHolder {
         static let shared: CurrencyCodeDescriptionDictionarySorter = CurrencyCodeDescriptionDictionarySorter()
         
-        let supportedCurrencyManager: SupportedCurrencyManager
+        var currencyDescriber: CurrencyDescriber
         
-        init(supportedCurrencyManager: SupportedCurrencyManager = .shared) {
-            self.supportedCurrencyManager = supportedCurrencyManager
+        init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+            self.currencyDescriber = currencyDescriber
         }
         
         func sort(_ currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],

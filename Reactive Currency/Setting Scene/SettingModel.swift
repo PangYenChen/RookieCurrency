@@ -10,7 +10,7 @@ class SettingModel {
     
     let hasChangesToSave: AnyPublisher<Bool, Never>
     
-    let supportedCurrencyManager: SupportedCurrencyManager
+    let currencyDescriber: CurrencyDescriber
     
     // MARK: - properties used to communicate with `ResultModel`
     private let cancelSubject: PassthroughSubject<Void, Never>
@@ -20,14 +20,13 @@ class SettingModel {
     init(setting: BaseResultModel.Setting,
          settingSubscriber: AnySubscriber<BaseResultModel.Setting, Never>,
          cancelSubscriber: AnySubscriber<Void, Never>,
-         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
+         currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+        self.currencyDescriber = currencyDescriber
         editedNumberOfDays = CurrentValueSubject<Int, Never>(setting.numberOfDays)
         
         editedBaseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(setting.baseCurrencyCode)
         
         editedCurrencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(setting.currencyCodeOfInterest)
-        
-        self.supportedCurrencyManager = supportedCurrencyManager
         
         // has changes
         do {

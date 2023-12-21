@@ -1,12 +1,12 @@
 import Foundation
 
-class BaseResultModel: SupportedCurrencyManagerHolder {
+class BaseResultModel: CurrencyDescriberHolder {
     let initialOrder: Order
     
-    let supportedCurrencyManager: SupportedCurrencyManager
+    let currencyDescriber: CurrencyDescriber
     
-    init(supportedCurrencyManager: SupportedCurrencyManager = .shared) {
-        self.supportedCurrencyManager = supportedCurrencyManager
+    init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+        self.currencyDescriber = currencyDescriber
         initialOrder = AppUtility.order
     }
     
@@ -62,13 +62,13 @@ extension BaseResultModel {
         let deviation: Decimal
     }
     
-    class AnalyzedDataSorter: SupportedCurrencyManagerHolder {
+    class AnalyzedDataSorter: CurrencyDescriberHolder {
         static let shared: AnalyzedDataSorter = AnalyzedDataSorter()
         
-        let supportedCurrencyManager: SupportedCurrencyManager
+        let currencyDescriber: CurrencyDescriber
         
-        init(supportedCurrencyManager: SupportedCurrencyManager = .shared) {
-            self.supportedCurrencyManager = supportedCurrencyManager
+        init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+            self.currencyDescriber = currencyDescriber
         }
         
         func sort(_ analyzedDataArray: [AnalyzedData],

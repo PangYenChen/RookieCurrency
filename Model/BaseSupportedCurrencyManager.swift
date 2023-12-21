@@ -1,5 +1,9 @@
 import Foundation
 
+protocol CurrencyDescriber {
+    func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String
+}
+
 class BaseSupportedCurrencyManager {
     let fetcher: FetcherProtocol
     
@@ -13,7 +17,9 @@ class BaseSupportedCurrencyManager {
         self.fetcher = fetcher
         self.locale = locale
     }
-    
+}
+
+extension BaseSupportedCurrencyManager: CurrencyDescriber {
     func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
         locale.localizedString(forCurrencyCode: currencyCode) ??
         supportedCurrencyDescriptionDictionary?[currencyCode] ??

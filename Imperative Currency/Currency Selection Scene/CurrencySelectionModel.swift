@@ -17,8 +17,10 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     
     private let currencySelectionStrategy: CurrencySelectionStrategy
     
-    let supportedCurrencyManager: SupportedCurrencyManager
+    private let supportedCurrencyManager: SupportedCurrencyManager
     
+    var currencyDescriber: CurrencyDescriber { supportedCurrencyManager }
+
     private let currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter
 
     init(currencySelectionStrategy: CurrencySelectionStrategy,
@@ -83,5 +85,3 @@ private extension CurrencySelectionModel {
         }
     }
 }
-
-extension CurrencySelectionModel: SupportedCurrencyManagerHolder {}

@@ -22,6 +22,8 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     
     let supportedCurrencyManager: SupportedCurrencyManager
     
+    var currencyDescriber: CurrencyDescriber { supportedCurrencyManager }
+    
     init(currencySelectionStrategy: CurrencySelectionStrategy,
          supportedCurrencyManager: SupportedCurrencyManager = .shared,
          currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter = .shared) {
