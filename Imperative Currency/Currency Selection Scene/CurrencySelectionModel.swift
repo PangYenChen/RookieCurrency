@@ -1,10 +1,6 @@
 import Foundation
 
 class CurrencySelectionModel: CurrencySelectionModelProtocol {
-    let title: String
-    
-    let allowsMultipleSelection: Bool
-    
     private var sortingMethod: SortingMethod
     
     let initialSortingOrder: SortingOrder
@@ -15,19 +11,15 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     
     var resultHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
     
-    private let currencySelectionStrategy: CurrencySelectionStrategy
+    let currencySelectionStrategy: CurrencySelectionStrategy
     
-    private let supportedCurrencyManager: SupportedCurrencyManager
+    let supportedCurrencyManager: SupportedCurrencyManager
     
-    var currencyDescriber: CurrencyDescriber { supportedCurrencyManager }
-
     private let currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter
 
     init(currencySelectionStrategy: CurrencySelectionStrategy,
          supportedCurrencyManager: SupportedCurrencyManager = .shared,
          currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter = .shared) {
-        self.title = currencySelectionStrategy.title
-        self.allowsMultipleSelection = currencySelectionStrategy.allowsMultipleSelection
         self.currencySelectionStrategy = currencySelectionStrategy
         
         self.supportedCurrencyManager = supportedCurrencyManager
@@ -54,18 +46,6 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     
     func update() {
         fetchSupportedCurrency()
-    }
-    
-    func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-        currencySelectionStrategy.select(currencyCode: selectedCurrencyCode)
-    }
-    
-    func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
-        currencySelectionStrategy.deselect(currencyCode: deselectedCurrencyCode)
-    }
-    
-    func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
-        currencySelectionStrategy.isCurrencyCodeSelected(currencyCode)
     }
 }
 

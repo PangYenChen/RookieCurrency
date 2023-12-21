@@ -5,14 +5,14 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     // MARK: - property
     @IBOutlet var sortBarButtonItem: UIBarButtonItem!
     
-    let baseModel: CurrencySelectionModelProtocol
+    let baseModel: BaseCurrencySelectionModelProtocol
     
     private var isFirstTimePopulateTableView: Bool
     
     private var dataSource: DataSource!
     
     // MARK: - life cycle
-    init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModelProtocol) {
+    init?(coder: NSCoder, currencySelectionModel: BaseCurrencySelectionModelProtocol) {
         
         self.baseModel = currencySelectionModel
         
