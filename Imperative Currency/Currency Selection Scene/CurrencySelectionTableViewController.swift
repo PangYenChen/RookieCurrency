@@ -8,7 +8,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     init?(coder: NSCoder, currencySelectionModel: CurrencySelectionModel) {
         self.currencySelectionModel = currencySelectionModel
         
-        super.init(coder: coder, currencySelectionModel: currencySelectionModel)
+        super.init(coder: coder, baseCurrencySelectionModel: currencySelectionModel)
     }
     
     required init?(coder: NSCoder) {
