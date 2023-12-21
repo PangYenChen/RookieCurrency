@@ -23,8 +23,8 @@ class ResultModel: BaseResultModel {
         }
     }
     // MARK: - life cycle
-    init(analyzedDataSorter: BaseResultModel.AnalyzedDataSorter = .shared) {
-        self.analyzedDataSorter = analyzedDataSorter
+    override init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+        self.analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
         
         setting = (numberOfDays: AppUtility.numberOfDays,
                    baseCurrencyCode: AppUtility.baseCurrencyCode,

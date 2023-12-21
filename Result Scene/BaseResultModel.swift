@@ -63,11 +63,9 @@ extension BaseResultModel {
     }
     
     class AnalyzedDataSorter: CurrencyDescriberHolder {
-        static let shared: AnalyzedDataSorter = AnalyzedDataSorter()
-        
         let currencyDescriber: CurrencyDescriber
         
-        init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+        init(currencyDescriber: CurrencyDescriber) {
             self.currencyDescriber = currencyDescriber
         }
         

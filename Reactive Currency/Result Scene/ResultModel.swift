@@ -15,7 +15,7 @@ class ResultModel: BaseResultModel {
     // MARK: output
     let state: AnyPublisher<State, Never>
     
-    init(analyzedDataSorter: AnalyzedDataSorter = .shared) {
+    override init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
         // input
         do {
             setting = CurrentValueSubject((AppUtility.numberOfDays,
@@ -96,6 +96,8 @@ class ResultModel: BaseResultModel {
 
             let orderAndSearchText = Publishers.CombineLatest(order, searchText)
                 .map { (order: $0, searchText: $1) }
+            
+            let analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
             
             let updatedStatePublisher = analyzedSuccessTuple.withLatestFrom(orderAndSearchText)
                 .map { analyzedSuccessTuple, orderAndSearchText in

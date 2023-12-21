@@ -17,8 +17,7 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     let supportedCurrencyManager: SupportedCurrencyManager
     
     init(currencySelectionStrategy: CurrencySelectionStrategy,
-         supportedCurrencyManager: SupportedCurrencyManager = .shared,
-         currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter = .shared) {
+         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
         
         self.currencySelectionStrategy = currencySelectionStrategy
         
@@ -29,6 +28,8 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
         searchText = CurrentValueSubject<String?, Never>(nil)
         
         fetchSubject = PassthroughSubject<Void, Never>()
+        
+        let currencyCodeDescriptionDictionarySorter = CurrencyCodeDescriptionDictionarySorter(currencyDescriber: supportedCurrencyManager)
         
         result = fetchSubject
             .flatMap { supportedCurrencyManager.supportedCurrency().convertOutputToResult() }

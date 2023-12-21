@@ -18,12 +18,11 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     private let currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter
 
     init(currencySelectionStrategy: CurrencySelectionStrategy,
-         supportedCurrencyManager: SupportedCurrencyManager = .shared,
-         currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter = .shared) {
+         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
         self.currencySelectionStrategy = currencySelectionStrategy
         
         self.supportedCurrencyManager = supportedCurrencyManager
-        self.currencyCodeDescriptionDictionarySorter = currencyCodeDescriptionDictionarySorter
+        self.currencyCodeDescriptionDictionarySorter = CurrencyCodeDescriptionDictionarySorter(currencyDescriber: supportedCurrencyManager)
         
         self.sortingMethod = .currencyName
         self.initialSortingOrder = .ascending
