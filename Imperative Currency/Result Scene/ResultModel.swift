@@ -1,6 +1,12 @@
 import Foundation
 
 class ResultModel: BaseResultModel {
+    // MARK: dependencies
+    private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
+    
+    private let rateManager: RateManagerProtocol
+    // TODO: 把 app utility 存 user default 的部分獨立出來成為一個 class
+    
     // MARK: - private properties
     private var setting: Setting
     
@@ -14,8 +20,6 @@ class ResultModel: BaseResultModel {
     
     private var state: State
     
-    private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
-    
     // MARK: - internal property
     var stateHandler: StateHandler? {
         didSet {
@@ -23,8 +27,10 @@ class ResultModel: BaseResultModel {
         }
     }
     // MARK: - life cycle
-    override init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+    init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared,
+         rateManager: RateManagerProtocol = RateManager.shared) {
         self.analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
+        self.rateManager = rateManager
         
         setting = (numberOfDays: AppUtility.numberOfDays,
                    baseCurrencyCode: AppUtility.baseCurrencyCode,
@@ -109,7 +115,7 @@ private extension ResultModel {
     func analyzedDataFor(setting: Setting) {
         stateHandler?(.updating)
         
-        RateManager.shared.getRateFor(numberOfDays: setting.numberOfDays) { [unowned self] result in
+        rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 let analyzedResult = Analyst

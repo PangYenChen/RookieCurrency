@@ -17,9 +17,7 @@ class RateManager {
     
     init(fetcher: FetcherProtocol = Fetcher.shared,
          archiver: ArchiverProtocol.Type = Archiver.self,
-         concurrentQueue: DispatchQueue = DispatchQueue(label: "rate controller concurrent queue", attributes: .concurrent)
-         
-    ) {
+         concurrentQueue: DispatchQueue = DispatchQueue(label: "rate controller concurrent queue", attributes: .concurrent)) {
         self.fetcher = fetcher
         self.archiver = archiver
         self.concurrentQueue = concurrentQueue

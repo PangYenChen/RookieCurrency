@@ -15,7 +15,8 @@ class ResultModel: BaseResultModel {
     // MARK: output
     let state: AnyPublisher<State, Never>
     
-    override init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+    init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared,
+         rateManager: RateManagerProtocol = RateManager.shared) {
         // input
         do {
             setting = CurrentValueSubject((AppUtility.numberOfDays,
@@ -69,7 +70,7 @@ class ResultModel: BaseResultModel {
             
             let analyzedResult = update.withLatestFrom(setting)
                 .flatMap { _, setting in
-                    RateManager.shared
+                    rateManager
                         .ratePublisher(numberOfDays: setting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in
