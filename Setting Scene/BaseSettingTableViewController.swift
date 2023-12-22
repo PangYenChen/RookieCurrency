@@ -77,17 +77,6 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         }
     }
     
-//    override func viewDidAppear(_ animated: Bool) {
-//        super.viewDidAppear(animated)
-//        
-//        let baseCurrencyIndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
-//        let currencyOfInterestIndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
-//        DispatchQueue.main.async { [unowned self] in
-//            tableView.reloadRows(at: [baseCurrencyIndexPath, currencyOfInterestIndexPath], with: .automatic)
-//        }
-//    }
-    // TODO: 要確認從下一頁回來沒問題
-    
     // MARK: - hook methods
     func stepperValueDidChange() {
         fatalError("stepperValueDidChange() has not been implemented")
@@ -95,11 +84,13 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     
     // MARK: - Navigation
     @IBSegueAction func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        fatalError("showBaseCurrencySelectionTableViewController(_:) has not been implemented")
+        CurrencySelectionTableViewController(coder: coder,
+                                             currencySelectionModel: baseSettingModel.makeBaseCurrencySelectionModel())
     }
     
     @IBSegueAction func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        fatalError("showCurrencyOfInterestSelectionTableViewController(_:) has not been implemented")
+        CurrencySelectionTableViewController(coder: coder,
+                                             currencySelectionModel: baseSettingModel.makeCurrencyOfInterestSelectionModel())
     }
 }
 
@@ -187,9 +178,15 @@ extension BaseSettingTableViewController {
     }
     
     final func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
-        Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode) ??
-        AppUtility.supportedSymbols?[currencyCode] ??
-        currencyCode
+        baseSettingModel.displayStringFor(currencyCode: currencyCode)
+    }
+    
+    final func updateForModelHasChangesToSaveIfNeeded(_ modelHasChangesToSave: Bool) {
+        guard hasChangesToSave != modelHasChangesToSave else { return }
+        
+        hasChangesToSave = modelHasChangesToSave
+        saveButton.isEnabled = hasChangesToSave
+        isModalInPresentation = hasChangesToSave
     }
 }
 
@@ -312,7 +309,7 @@ extension BaseSettingTableViewController {
             tableView.deselectRow(at: indexPath, animated: true)
             
         case .removeFile:
-            RateController.shared.removeCachedAndStoredData()
+            RateManager.shared.removeCachedAndStoredData()
             presentAlert(message: R.string.settingScene.dataHaveBeenRemoved())
             tableView.deselectRow(at: indexPath, animated: true)
 #if DEBUG

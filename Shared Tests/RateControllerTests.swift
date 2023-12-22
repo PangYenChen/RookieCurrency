@@ -8,15 +8,15 @@ import XCTest
 
 /// 這個 test case 測試 rate controller 跟 fetcher 無關的 method
 /// 即時間計算的 method
-final class RateControllerTests: XCTestCase {
+final class RateManagerTests: XCTestCase {
     
-    var sut: RateController!
+    var sut: RateManager!
     
     var fakeFetcher: FakeFetcher!
     
     override func setUp() {
         fakeFetcher = FakeFetcher()
-        sut = RateController(fetcher: fakeFetcher)
+        sut = RateManager(fetcher: fakeFetcher)
     }
     
     override func tearDown() {
@@ -24,7 +24,7 @@ final class RateControllerTests: XCTestCase {
         fakeFetcher = nil
     }
     
-    /// 測試 RateController.historicalRateDateStrings(numberOfDaysAgo:from:) method
+    /// 測試 RateManager.historicalRateDateStrings(numberOfDaysAgo:from:) method
     /// 模擬從執行當下的時間往前計算日期字串
     func testHistoricalRateDateStrings() throws {
         // arrange

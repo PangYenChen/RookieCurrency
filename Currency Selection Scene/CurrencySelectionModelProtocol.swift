@@ -1,29 +1,30 @@
 import Foundation
 
-protocol CurrencySelectionModelProtocol {
-    var title: String { get }
-    
-    var allowsMultipleSelection: Bool { get }
-    
-    var initialSortingOrder: CurrencySelectionModel.SortingOrder { get }
-    
-    @available(*, deprecated, message: "把 currency code 轉換成顯示用的文字的邏輯，在 setting scene 也有，要抽出來，放在 support symbol manager 之類的地方")
-    var currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String] { get }
+protocol CurrencySelectionModelProtocol: BaseCurrencySelectionModelProtocol {
+    var currencySelectionStrategy: CurrencySelectionStrategy { get }
+    var supportedCurrencyManager: SupportedCurrencyManager { get }
+}
 
-    func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode)
+extension CurrencySelectionModelProtocol {
+    var title: String { currencySelectionStrategy.title }
     
-    func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode)
+    var allowsMultipleSelection: Bool { currencySelectionStrategy.allowsMultipleSelection }
     
-    func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool
+    func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+        currencySelectionStrategy.select(currencyCode: selectedCurrencyCode)
+    }
     
-    func getSortingMethod() -> CurrencySelectionModel.SortingMethod
+    func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode) {
+        currencySelectionStrategy.deselect(currencyCode: deselectedCurrencyCode)
+    }
     
-    func set(sortingMethod: CurrencySelectionModel.SortingMethod,
-             andOrder sortingOrder: CurrencySelectionModel.SortingOrder)
-    
-    func set(searchText: String?)
-    
-    func update()
+    func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
+        currencySelectionStrategy.isCurrencyCodeSelected(currencyCode)
+    }
+}
+
+extension CurrencySelectionModelProtocol {
+    var currencyDescriber: CurrencyDescriber { supportedCurrencyManager }
 }
 
 // MARK: - name space
@@ -54,74 +55,71 @@ extension CurrencySelectionModel {
         }
     }
     
-    static func sort(_ currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],
-                     bySortingMethod sortingMethod: SortingMethod,
-                     andSortingOrder sortingOrder: SortingOrder,
-                     thenFilterIfNeedBySearchTextBy searchText: String?) -> [ResponseDataModel.CurrencyCode] {
+    class CurrencyCodeDescriptionDictionarySorter: CurrencyDescriberHolder {
+        let currencyDescriber: CurrencyDescriber
         
-        let currencyCodes = currencyCodeDescriptionDictionary.keys
+        init(currencyDescriber: CurrencyDescriber) {
+            self.currencyDescriber = currencyDescriber
+        }
         
-        let sortedCurrencyCodes = currencyCodes.sorted { lhs, rhs in
+        func sort(_ currencyCodeDescriptionDictionary: [ResponseDataModel.CurrencyCode: String],
+                  bySortingMethod sortingMethod: SortingMethod,
+                  andSortingOrder sortingOrder: SortingOrder,
+                  thenFilterIfNeedBySearchTextBy searchText: String?) -> [ResponseDataModel.CurrencyCode] {
             
-            switch sortingMethod {
-            case .currencyName, .currencyNameZhuyin:
-                let lhsString: String
-                do {
-                    let lhsLocalizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: lhs)
-                    let lhsServerCurrencyDescription = currencyCodeDescriptionDictionary[lhs]
-                    lhsString = lhsLocalizedCurrencyDescription ?? lhsServerCurrencyDescription ?? lhs
-                }
+            let currencyCodes = currencyCodeDescriptionDictionary.keys
+            
+            let sortedCurrencyCodes = currencyCodes.sorted { lhs, rhs in
                 
-                let rhsString: String
-                do {
-                    let rhsLocalizedCurrencyDescription = Locale.autoupdatingCurrent.localizedString(forCurrencyCode: rhs)
-                    let rhsServerCurrencyDescription = currencyCodeDescriptionDictionary[rhs]
-                    rhsString = rhsLocalizedCurrencyDescription ?? rhsServerCurrencyDescription ?? rhs
-                }
-                
-                if sortingMethod == .currencyName {
+                switch sortingMethod {
+                case .currencyName, .currencyNameZhuyin:
+                    let lhsString: String = displayStringFor(currencyCode: lhs)
+                    let rhsString: String = displayStringFor(currencyCode: rhs)
+                    
+                    if sortingMethod == .currencyName {
+                        switch sortingOrder {
+                        case .ascending:
+                            return lhsString.localizedStandardCompare(rhsString) == .orderedAscending
+                        case .descending:
+                            return lhsString.localizedStandardCompare(rhsString) == .orderedDescending
+                        }
+                    }
+                    else if sortingMethod == .currencyNameZhuyin {
+                        let zhuyinLocale = Locale(identifier: "zh@collation=zhuyin")
+                        switch sortingOrder {
+                        case .ascending:
+                            return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedAscending
+                        case .descending:
+                            return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedDescending
+                        }
+                    }
+                    else {
+                        assertionFailure("###, \(#function), 這段是 dead code")
+                        return false
+                    }
+                    
+                case .currencyCode:
                     switch sortingOrder {
                     case .ascending:
-                        return lhsString.localizedStandardCompare(rhsString) == .orderedAscending
+                        return lhs.localizedStandardCompare(rhs) == .orderedAscending
                     case .descending:
-                        return lhsString.localizedStandardCompare(rhsString) == .orderedDescending
+                        return lhs.localizedStandardCompare(rhs) == .orderedDescending
                     }
-                }
-                else if sortingMethod == .currencyNameZhuyin {
-                    let zhuyinLocale = Locale(identifier: "zh@collation=zhuyin")
-                    switch sortingOrder {
-                    case .ascending:
-                        return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedAscending
-                    case .descending:
-                        return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedDescending
-                    }
-                }
-                else {
-                    assertionFailure("###, \(#function), 這段是 dead code")
-                    return false
-                }
-                
-            case .currencyCode:
-                switch sortingOrder {
-                case .ascending:
-                    return lhs.localizedStandardCompare(rhs) == .orderedAscending
-                case .descending:
-                    return lhs.localizedStandardCompare(rhs) == .orderedDescending
                 }
             }
+            
+            var filteredCurrencyCodes = sortedCurrencyCodes
+            
+            if let searchText, !searchText.isEmpty {
+                filteredCurrencyCodes = sortedCurrencyCodes
+                    .filter { currencyCode in
+                        [currencyCode, displayStringFor(currencyCode: currencyCode)]
+                            .compactMap { $0 }
+                            .contains { text in text.localizedStandardContains(searchText) }
+                    }
+            }
+            
+            return filteredCurrencyCodes
         }
-        
-        var filteredCurrencyCodes = sortedCurrencyCodes
-        
-        if let searchText, !searchText.isEmpty {
-            filteredCurrencyCodes = sortedCurrencyCodes
-                .filter { currencyCode in
-                    [currencyCode, Locale.autoupdatingCurrent.localizedString(forCurrencyCode: currencyCode)]
-                        .compactMap { $0 }
-                        .contains { text in text.localizedStandardContains(searchText) }
-                }
-        }
-        
-        return filteredCurrencyCodes
     }
 }

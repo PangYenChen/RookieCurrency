@@ -2,13 +2,13 @@ import UIKit
 
 class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - private property
-    private let model: SettingModel
+    private let settingModel: SettingModel
     
     // MARK: - methods
     required init?(coder: NSCoder,
                    model: SettingModel) {
         
-        self.model = model
+        self.settingModel = model
         
         super.init(coder: coder, baseSettingModel: model)
         
@@ -18,8 +18,8 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         stepper.value = Double(model.editedNumberOfDays)
         
-        isModalInPresentation = model.hasChange
-        hasChangesToSave = model.hasChange
+        isModalInPresentation = model.hasChangeToSave
+        hasChangesToSave = model.hasChangeToSave
     }
     
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
@@ -27,49 +27,15 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        hasChangesToSave = model.hasChange
-        
-        reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: model.editedBaseCurrencyCode)
-        reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: model.editedCurrencyCodeOfInterest)
+        updateForModelHasChangesToSaveIfNeeded(settingModel.hasChangeToSave)
+        reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: settingModel.editedBaseCurrencyCode)
+        reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: settingModel.editedCurrencyCodeOfInterest)
     }
     
     // MARK: - hook methods
     override func stepperValueDidChange() {
-        model.editedNumberOfDays = Int(stepper.value)
+        updateForModelHasChangesToSaveIfNeeded(settingModel.hasChangeToSave)
         
-        hasChangesToSave = model.hasChange
-        saveButton.isEnabled = model.hasChange
-        isModalInPresentation = model.hasChange
-        
-        updateNumberOfDaysRow(for: model.editedNumberOfDays)
-    }
-    
-    // MARK: - Navigation
-    override func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        let baseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
-            baseCurrencyCode: model.editedBaseCurrencyCode
-        ) { [unowned self] selectedBaseCurrencyCode in
-            model.editedBaseCurrencyCode = selectedBaseCurrencyCode
-            saveButton.isEnabled = model.hasChange
-            isModalInPresentation = model.hasChange
-        }
-        
-        let currencySelectionModel = CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy)
-        
-        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: currencySelectionModel)
-    }
-    
-    override func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        let currencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
-            currencyCodeOfInterest: model.editedCurrencyCodeOfInterest
-        ) { [unowned self] selectedCurrencyCodeOfInterest in
-            model.editedCurrencyCodeOfInterest = selectedCurrencyCodeOfInterest
-            saveButton.isEnabled = model.hasChange
-            isModalInPresentation = model.hasChange
-        }
-        
-        let currencyOfInterestSelectionModel = CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
-
-        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: currencyOfInterestSelectionModel)
+        updateNumberOfDaysRow(for: settingModel.editedNumberOfDays)
     }
 }

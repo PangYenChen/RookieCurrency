@@ -3,14 +3,14 @@ import Combine
 
 class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - private properties
-    private let model: SettingModel
+    private let settingModel: SettingModel
     
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - methods
     required init?(coder: NSCoder,
                    model: SettingModel) {
-        self.model = model
+        self.settingModel = model
         
         anyCancellableSet = Set<AnyCancellable>()
         
@@ -22,7 +22,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        model.editedNumberOfDays
+        settingModel.editedNumberOfDays
             .dropFirst()
             .sink { [unowned self] numberOfDays in
                 self.updateNumberOfDaysRow(for: numberOfDays)
@@ -30,7 +30,7 @@ class SettingTableViewController: BaseSettingTableViewController {
             }
             .store(in: &anyCancellableSet)
         
-        model.editedNumberOfDays
+        settingModel.editedNumberOfDays
             .first()
             .sink { [unowned self] numberOfDays in
                 self.editedNumberOfDays = numberOfDays
@@ -40,47 +40,20 @@ class SettingTableViewController: BaseSettingTableViewController {
             }
             .store(in: &anyCancellableSet)
         
-        model.editedBaseCurrencyCode
+        settingModel.editedBaseCurrencyCode
             .sink(receiveValue: self.reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode:))
             .store(in: &anyCancellableSet)
         
-        model.editedCurrencyCodeOfInterest
+        settingModel.editedCurrencyCodeOfInterest
             .sink(receiveValue: self.reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest:))
             .store(in: &anyCancellableSet)
         
-        model.hasChangesToSave
-            .sink { [unowned self] hasChangesToSave in
-                self.hasChangesToSave = hasChangesToSave
-                saveButton.isEnabled = hasChangesToSave
-                isModalInPresentation = hasChangesToSave
-            }
+        settingModel.hasChangesToSave
+            .sink(receiveValue: self.updateForModelHasChangesToSaveIfNeeded(_:))
             .store(in: &anyCancellableSet)
     }
     
     override func stepperValueDidChange() {
-        model.editedNumberOfDays.send(Int(stepper.value))
-    }
-    
-    // MARK: - Navigation
-    override func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        // TODO: 應該可以抽到 super class 中，而且產生 currency selection model 的 code 應該在 setting model 中
-        let baseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(baseCurrencyCode: model.editedBaseCurrencyCode.value,
-                                           selectedBaseCurrencyCode: AnySubscriber(model.editedBaseCurrencyCode))
-        
-        let currencySelectionModel = CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy)
-        
-        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: currencySelectionModel)
-    }
-    
-    override func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
-        
-        let currencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
-            currencyCodeOfInterest: model.editedCurrencyCodeOfInterest.value,
-            selectedCurrencyCodeOfInterest: AnySubscriber(model.editedCurrencyCodeOfInterest)
-        )
-        
-        let currencySelectionModel = CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
-        
-        return CurrencySelectionTableViewController(coder: coder, currencySelectionModel: currencySelectionModel)
+        settingModel.editedNumberOfDays.send(Int(stepper.value))
     }
 }

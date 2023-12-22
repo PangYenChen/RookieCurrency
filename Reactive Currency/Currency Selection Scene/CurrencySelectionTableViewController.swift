@@ -13,7 +13,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
         
         anyCancellableSet = Set<AnyCancellable>()
         
-        super.init(coder: coder, currencySelectionModel: currencySelectionModel)
+        super.init(coder: coder, baseCurrencySelectionModel: currencySelectionModel)
     }
     
     required init?(coder: NSCoder) {

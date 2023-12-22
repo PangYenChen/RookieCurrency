@@ -15,7 +15,7 @@ class ResultModel: BaseResultModel {
     // MARK: output
     let state: AnyPublisher<State, Never>
     
-    override init() {
+    override init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
         // input
         do {
             setting = CurrentValueSubject((AppUtility.numberOfDays,
@@ -69,7 +69,7 @@ class ResultModel: BaseResultModel {
             
             let analyzedResult = update.withLatestFrom(setting)
                 .flatMap { _, setting in
-                    RateController.shared
+                    RateManager.shared
                         .ratePublisher(numberOfDays: setting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in
@@ -97,11 +97,13 @@ class ResultModel: BaseResultModel {
             let orderAndSearchText = Publishers.CombineLatest(order, searchText)
                 .map { (order: $0, searchText: $1) }
             
+            let analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
+            
             let updatedStatePublisher = analyzedSuccessTuple.withLatestFrom(orderAndSearchText)
                 .map { analyzedSuccessTuple, orderAndSearchText in
-                    let analyzedSortedDataArray = Self.sort(analyzedSuccessTuple.analyzedDataArray,
-                                                            by: orderAndSearchText.order,
-                                                            filteredIfNeededBy: orderAndSearchText.searchText)
+                    let analyzedSortedDataArray = analyzedDataSorter.sort(analyzedSuccessTuple.analyzedDataArray,
+                                                                          by: orderAndSearchText.order,
+                                                                          filteredIfNeededBy: orderAndSearchText.searchText)
                     return State.updated(timestamp: analyzedSuccessTuple.latestUpdateTime,
                                          analyzedSortedDataArray: analyzedSortedDataArray)
                 }
@@ -109,9 +111,9 @@ class ResultModel: BaseResultModel {
             
             let sortedStatePublisher = orderAndSearchText.withLatestFrom(analyzedSuccessTuple)
                 .map { (orderAndSearchText, analyzedSuccessTuple) in
-                    let analyzedSortedDataArray = Self.sort(analyzedSuccessTuple.analyzedDataArray,
-                                                            by: orderAndSearchText.order,
-                                                            filteredIfNeededBy: orderAndSearchText.searchText)
+                    let analyzedSortedDataArray = analyzedDataSorter.sort(analyzedSuccessTuple.analyzedDataArray,
+                                                                          by: orderAndSearchText.order,
+                                                                          filteredIfNeededBy: orderAndSearchText.searchText)
                     return State.sorted(analyzedSortedDataArray: analyzedSortedDataArray)
                 }
                 .eraseToAnyPublisher()

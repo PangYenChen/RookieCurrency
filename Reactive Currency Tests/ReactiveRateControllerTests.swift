@@ -2,11 +2,11 @@ import XCTest
 import Combine
 @testable import ReactiveCurrency
 
-final class ReactiveRateControllerTests: XCTestCase {
+final class ReactiveRateManagerTests: XCTestCase {
 
-    // TODO: "`RateController` 的 method 太長了，不好測試。等 method 拆解好之後再來寫測試。
+    // TODO: "`RateManager` 的 method 太長了，不好測試。等 method 拆解好之後再來寫測試。
     
-    var sut: RateController!
+    var sut: RateManager!
     
     var anyCancellableSet: Set<AnyCancellable> = []
     
@@ -21,7 +21,7 @@ final class ReactiveRateControllerTests: XCTestCase {
 //        // arrange
 //        let stubFetcher = StubFetcher()
 //        let spyArchiver = TestDouble.SpyArchiver.self
-//        sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
+//        sut = RateManager(fetcher: stubFetcher, archiver: spyArchiver)
 //        
 //        let dummyStartingDate = Date(timeIntervalSince1970: 0)
 //        let numberOfDays = 3
@@ -63,7 +63,7 @@ final class ReactiveRateControllerTests: XCTestCase {
 //        // arrange
 //        let stubFetcher = StubFetcher()
 //        let spyArchiver = TestDouble.SpyArchiver.self
-//        sut = RateController(fetcher: stubFetcher, archiver: spyArchiver)
+//        sut = RateManager(fetcher: stubFetcher, archiver: spyArchiver)
 //        
 //        let dummyStartingDate = Date(timeIntervalSince1970: 0)
 //        let numberOfDays = 3

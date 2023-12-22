@@ -8,7 +8,9 @@ class SettingModel {
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
-    var hasChange: Bool {
+    let currencyDescriber: CurrencyDescriber
+    
+    var hasChangeToSave: Bool {
         originalNumberOfDays != editedNumberOfDays ||
         originalBaseCurrencyCode != editedBaseCurrencyCode ||
         originalCurrencyCodeOfInterest != editedCurrencyCodeOfInterest
@@ -27,7 +29,8 @@ class SettingModel {
     
     init(setting: BaseResultModel.Setting,
          saveCompletionHandler: @escaping SaveHandler,
-         cancelCompletionHandler: @escaping CancelHandler) {
+         cancelCompletionHandler: @escaping CancelHandler,
+         currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
         originalNumberOfDays = setting.numberOfDays
         editedNumberOfDays = setting.numberOfDays
         
@@ -39,6 +42,8 @@ class SettingModel {
         
         self.saveCompletionHandler = saveCompletionHandler
         self.cancelCompletionHandler = cancelCompletionHandler
+        
+        self.currencyDescriber = currencyDescriber
     }
 }
 
@@ -54,6 +59,27 @@ extension SettingModel: BaseSettingModel {
     func cancel() {
         cancelCompletionHandler()
     }
+    
+    func makeBaseCurrencySelectionModel() -> CurrencySelectionModel {
+        let baseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
+            baseCurrencyCode: editedBaseCurrencyCode
+        ) { [unowned self] selectedBaseCurrencyCode in
+            editedBaseCurrencyCode = selectedBaseCurrencyCode
+        }
+        
+        return CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy)
+    }
+    
+    func makeCurrencyOfInterestSelectionModel() -> CurrencySelectionModel {
+        let currencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
+            currencyCodeOfInterest: editedCurrencyCodeOfInterest
+        ) { [unowned self] selectedCurrencyCodeOfInterest in
+            editedCurrencyCodeOfInterest = selectedCurrencyCodeOfInterest
+        }
+        
+        return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
+    }
+    
 }
 
 // MARK: - name space

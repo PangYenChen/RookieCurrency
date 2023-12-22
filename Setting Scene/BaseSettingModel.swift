@@ -1,7 +1,11 @@
 import Foundation
 
-protocol BaseSettingModel {
+protocol BaseSettingModel: CurrencyDescriberHolder {
     func save()
     
     func cancel()
+    
+    func makeBaseCurrencySelectionModel() -> CurrencySelectionModel
+    
+    func makeCurrencyOfInterestSelectionModel() -> CurrencySelectionModel
 }

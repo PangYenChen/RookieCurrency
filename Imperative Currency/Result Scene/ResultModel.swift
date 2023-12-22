@@ -14,6 +14,8 @@ class ResultModel: BaseResultModel {
     
     private var state: State
     
+    private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
+    
     // MARK: - internal property
     var stateHandler: StateHandler? {
         didSet {
@@ -21,7 +23,9 @@ class ResultModel: BaseResultModel {
         }
     }
     // MARK: - life cycle
-    override init() {
+    override init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+        self.analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
+        
         setting = (numberOfDays: AppUtility.numberOfDays,
                    baseCurrencyCode: AppUtility.baseCurrencyCode,
                    currencyCodeOfInterest: AppUtility.currencyCodeOfInterest)
@@ -49,9 +53,9 @@ class ResultModel: BaseResultModel {
         AppUtility.order = order
         self.order = order
         
-        analyzedSortedDataArray = Self.sort(self.analyzedSortedDataArray,
-                                            by: self.order,
-                                            filteredIfNeededBy: self.searchText)
+        analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,
+                                                          by: self.order,
+                                                          filteredIfNeededBy: self.searchText)
         
         state = .sorted(analyzedSortedDataArray: analyzedSortedDataArray)
         
@@ -61,9 +65,9 @@ class ResultModel: BaseResultModel {
     override func setSearchText(_ searchText: String?) {
         self.searchText = searchText
         
-        analyzedSortedDataArray = Self.sort(self.analyzedSortedDataArray,
-                                            by: self.order,
-                                            filteredIfNeededBy: self.searchText)
+        analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,
+                                                          by: self.order,
+                                                          filteredIfNeededBy: self.searchText)
         
         state = .sorted(analyzedSortedDataArray: analyzedSortedDataArray)
         
@@ -105,7 +109,7 @@ private extension ResultModel {
     func analyzedDataFor(setting: Setting) {
         stateHandler?(.updating)
         
-        RateController.shared.getRateFor(numberOfDays: setting.numberOfDays) { [unowned self] result in
+        RateManager.shared.getRateFor(numberOfDays: setting.numberOfDays) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 let analyzedResult = Analyst
@@ -133,9 +137,9 @@ private extension ResultModel {
                         AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                     }
                 
-                analyzedSortedDataArray = Self.sort(self.analyzedSortedDataArray,
-                                                    by: self.order,
-                                                    filteredIfNeededBy: self.searchText)
+                analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,
+                                                                  by: self.order,
+                                                                  filteredIfNeededBy: self.searchText)
                 
                 state = .updated(timestamp: latestRate.timestamp, analyzedSortedDataArray: analyzedSortedDataArray)
                 stateHandler?(state)

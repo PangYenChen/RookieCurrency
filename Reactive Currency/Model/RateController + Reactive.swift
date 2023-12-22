@@ -11,7 +11,7 @@ extension Fetcher: FetcherProtocol {}
 
 // TODO: 這裡的 method 好長 看能不能拆開
 
-extension RateController {
+extension RateManager {
     
     func ratePublisher(numberOfDays: Int, from start: Date = .now)
     -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> {
