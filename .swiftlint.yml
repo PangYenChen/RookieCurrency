@@ -44,6 +44,7 @@ opt_in_rules:
     - closure_body_length
     - closure_end_indentation
     - closure_spacing
+    - collection_alignment
     - discouraged_optional_collection
 
 attributes:
