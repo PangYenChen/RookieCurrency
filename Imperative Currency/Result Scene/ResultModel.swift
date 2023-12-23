@@ -2,11 +2,11 @@ import Foundation
 
 class ResultModel: BaseResultModel {
     // MARK: dependencies
-    private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
+    private var userSettingManager: UserSettingManagerProtocol
     
     private let rateManager: RateManagerProtocol
     
-    private var userSettingManager: UserSettingManagerProtocol
+    private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
     
     // MARK: - private properties
     private var setting: Setting
