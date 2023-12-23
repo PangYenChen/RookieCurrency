@@ -5,9 +5,10 @@ class BaseResultModel: CurrencyDescriberHolder {
     
     let currencyDescriber: CurrencyDescriber
     
-    init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+    init(currencyDescriber: CurrencyDescriber,
+         userSettingManager: UserSettingManagerProtocol) {
         self.currencyDescriber = currencyDescriber
-        initialOrder = AppUtility.order
+        initialOrder = userSettingManager.resultOrder
     }
     
     // MARK: - hook methods

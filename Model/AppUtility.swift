@@ -3,68 +3,6 @@ import Foundation
 /// 整個 App 通用的東西。
 enum AppUtility {}
 
-// MARK: - user setting storage, including some specific fallback logic
-extension AppUtility {
-    private enum Key: String {
-        case numberOfDays
-        case baseCurrencyCode
-        case order
-        case currencyCodeOfInterest
-    }
-    
-    static var numberOfDays: Int {
-        get {
-            let numberOfDaysInUserDefaults = UserDefaults.standard.integer(forKey: Key.numberOfDays.rawValue)
-            return numberOfDaysInUserDefaults > 0 ? numberOfDaysInUserDefaults : 3
-        }
-        set { UserDefaults.standard.set(newValue, forKey: Key.numberOfDays.rawValue) }
-    }
-    
-    static var baseCurrencyCode: ResponseDataModel.CurrencyCode {
-        get {
-            if let baseCurrencyCode = UserDefaults.standard.string(forKey: Key.baseCurrencyCode.rawValue) {
-                return baseCurrencyCode
-            }
-            else {
-                return "TWD"
-            }
-        }
-        set {
-            UserDefaults.standard.set(newValue, forKey: Key.baseCurrencyCode.rawValue)
-        }
-    }
-    
-    static var order: BaseResultModel.Order {
-        get {
-            if let orderString = UserDefaults.standard.string(forKey: Key.order.rawValue),
-               let order = BaseResultModel.Order(rawValue: orderString) {
-                return order
-            }
-            else {
-                return .increasing
-            }
-        }
-        set {
-            UserDefaults.standard.set(newValue.rawValue, forKey: Key.order.rawValue)
-        }
-    }
-    
-    static var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
-        get {
-            if let currencyCodeOfInterest = UserDefaults.standard.stringArray(forKey: Key.currencyCodeOfInterest.rawValue) {
-                return Set(currencyCodeOfInterest)
-            }
-            else {
-                // 預設值為強勢貨幣(Hard Currency)
-                return ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
-            }
-        }
-        set {
-            UserDefaults.standard.setValue(newValue.sorted(), forKey: Key.currencyCodeOfInterest.rawValue)
-        }
-    }
-}
-
 // MARK: - formatter
 extension AppUtility {
     /// 能回傳 API 需要的日期格式的 date formatter

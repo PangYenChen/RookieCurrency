@@ -5,7 +5,8 @@ class ResultModel: BaseResultModel {
     private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
     
     private let rateManager: RateManagerProtocol
-    // TODO: 把 app utility 存 user default 的部分獨立出來成為一個 class
+    
+    private var userSettingManager: UserSettingManagerProtocol
     
     // MARK: - private properties
     private var setting: Setting
@@ -28,15 +29,17 @@ class ResultModel: BaseResultModel {
     }
     // MARK: - life cycle
     init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared,
-         rateManager: RateManagerProtocol = RateManager.shared) {
+         rateManager: RateManagerProtocol = RateManager.shared,
+         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared) {
         self.analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
         self.rateManager = rateManager
+        self.userSettingManager = userSettingManager
         
-        setting = (numberOfDays: AppUtility.numberOfDays,
-                   baseCurrencyCode: AppUtility.baseCurrencyCode,
-                   currencyCodeOfInterest: AppUtility.currencyCodeOfInterest)
+        setting = (numberOfDays: userSettingManager.numberOfDays,
+                   baseCurrencyCode: userSettingManager.baseCurrencyCode,
+                   currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest)
         
-        order = AppUtility.order
+        order = userSettingManager.resultOrder
         
         searchText = nil
         analyzedSortedDataArray = []
@@ -45,7 +48,8 @@ class ResultModel: BaseResultModel {
         
         state = .updating
         
-        super.init()
+        super.init(currencyDescriber: currencyDescriber,
+                   userSettingManager: userSettingManager)
         
         resumeAutoUpdatingState()
     }
@@ -56,7 +60,7 @@ class ResultModel: BaseResultModel {
     }
     
     override func setOrder(_ order: BaseResultModel.Order) {
-        AppUtility.order = order
+        userSettingManager.resultOrder = order
         self.order = order
         
         analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,
@@ -86,9 +90,9 @@ class ResultModel: BaseResultModel {
         return SettingModel(setting: setting) { [unowned self] setting in
             self.setting = setting
             
-            AppUtility.numberOfDays = setting.numberOfDays
-            AppUtility.baseCurrencyCode = setting.baseCurrencyCode
-            AppUtility.currencyCodeOfInterest = setting.currencyCodeOfInterest
+            userSettingManager.numberOfDays = setting.numberOfDays
+            userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
+            userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
             
             self.resumeAutoUpdatingState()
         } cancelCompletionHandler: { [unowned self] in

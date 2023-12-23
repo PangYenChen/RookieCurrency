@@ -16,18 +16,21 @@ class ResultModel: BaseResultModel {
     let state: AnyPublisher<State, Never>
     
     init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared,
-         rateManager: RateManagerProtocol = RateManager.shared) {
+         rateManager: RateManagerProtocol = RateManager.shared,
+         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared) {
+        var userSettingManager = userSettingManager
+        
         // input
         do {
-            setting = CurrentValueSubject((AppUtility.numberOfDays,
-                                           AppUtility.baseCurrencyCode,
-                                           AppUtility.currencyCodeOfInterest))
+            setting = CurrentValueSubject((userSettingManager.numberOfDays,
+                                           userSettingManager.baseCurrencyCode,
+                                           userSettingManager.currencyCodeOfInterest))
             
             updateTriggerByUser = PassthroughSubject<Void, Never>()
             
             searchText = CurrentValueSubject<String?, Never>(nil)
             
-            order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
+            order = CurrentValueSubject<BaseResultModel.Order, Never>(userSettingManager.resultOrder)
             
             enableAutoUpdate = CurrentValueSubject<Void, Never>(())
             
@@ -130,21 +133,22 @@ class ResultModel: BaseResultModel {
         
         anyCancellableSet = Set<AnyCancellable>()
         
-        super.init()
+        super.init(currencyDescriber: currencyDescriber,
+                   userSettingManager: userSettingManager)
         
         // subscribe
         do {
             settingFromSettingModel
                 .sink { setting in
-                    AppUtility.baseCurrencyCode = setting.baseCurrencyCode
-                    AppUtility.currencyCodeOfInterest = setting.currencyCodeOfInterest
-                    AppUtility.numberOfDays = setting.numberOfDays
+                    userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
+                    userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
+                    userSettingManager.numberOfDays = setting.numberOfDays
                 }
                 .store(in: &anyCancellableSet)
             
             order
                 .dropFirst()
-                .sink { order in AppUtility.order = order }
+                .sink { order in userSettingManager.resultOrder = order }
                 .store(in: &anyCancellableSet)
         }
     }
