@@ -123,10 +123,10 @@ class ResultModel: BaseResultModel {
                 .eraseToAnyPublisher()
             
             state = Publishers
-                .Merge4(updatingStatePublisher,
-                        updatedStatePublisher,
-                        sortedStatePublisher,
-                        failureStatePublisher)
+                .Merge4(updatingStatePublisher.print("#### updating state"),
+                        updatedStatePublisher.print("#### updated state"),
+                        sortedStatePublisher.print("#### sorted state"),
+                        failureStatePublisher.print("#### failure"))
                 .eraseToAnyPublisher()
             
         }
