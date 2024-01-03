@@ -9,7 +9,6 @@ class BaseSupportedCurrencyManager {
     
     private let locale: Locale
     
-    // swiftlint:disable:next discouraged_optional_collection
     var supportedCurrencyDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]?
     
     init(fetcher: FetcherProtocol = Fetcher.shared,
