@@ -4,15 +4,15 @@ import XCTest
 final class ResultModelTest: XCTestCase {
     func testPassNumberOfDaysToRateManager() throws {
         // arrange
-        let currencyDescriberStub: CurrencyDescriberStub = CurrencyDescriberStub()
+        let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         
-        let userSettingManagerStub: UserSettingManagerStub
+        let userSettingManagerStub: UserSettingManagerProtocol
         let numberOfDays = Int.random(in: 1...10)
         do {
             let dummyBaseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
             let dummyResultOrder: BaseResultModel.Order = .increasing
             let dummyCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD"]
-            userSettingManagerStub = UserSettingManagerStub(
+            userSettingManagerStub = TestDouble.UserSettingManager(
                 numberOfDays: numberOfDays,
                 baseCurrencyCode: dummyBaseCurrencyCode,
                 resultOrder: dummyResultOrder,
@@ -20,12 +20,12 @@ final class ResultModelTest: XCTestCase {
             )
         }
         
-        let rateManagerSpy: RateManagerSpy
+        let rateManagerSpy: TestDouble.RateManager
         do {
             let dummyLatestRate = try TestingData.Instance.latestRate()
             let dummyHistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
             let dummyResult: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
-            rateManagerSpy = RateManagerSpy(result: dummyResult)
+            rateManagerSpy = TestDouble.RateManager(result: dummyResult)
         }
         
         // act

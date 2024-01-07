@@ -1,7 +1,7 @@
 import Foundation
 
-protocol CurrencyDescriberHolder: CurrencyDescriber {
-    var currencyDescriber: CurrencyDescriber { get }
+protocol CurrencyDescriberHolder: CurrencyDescriberProtocol {
+    var currencyDescriber: CurrencyDescriberProtocol { get }
 }
 
 extension CurrencyDescriberHolder {

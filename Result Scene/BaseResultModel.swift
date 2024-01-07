@@ -3,9 +3,9 @@ import Foundation
 class BaseResultModel: CurrencyDescriberHolder {
     let initialOrder: Order
     
-    let currencyDescriber: CurrencyDescriber
+    let currencyDescriber: CurrencyDescriberProtocol
     
-    init(currencyDescriber: CurrencyDescriber,
+    init(currencyDescriber: CurrencyDescriberProtocol,
          userSettingManager: UserSettingManagerProtocol) {
         self.currencyDescriber = currencyDescriber
         initialOrder = userSettingManager.resultOrder
@@ -64,9 +64,9 @@ extension BaseResultModel {
     }
     
     class AnalyzedDataSorter: CurrencyDescriberHolder {
-        let currencyDescriber: CurrencyDescriber
+        let currencyDescriber: CurrencyDescriberProtocol
         
-        init(currencyDescriber: CurrencyDescriber) {
+        init(currencyDescriber: CurrencyDescriberProtocol) {
             self.currencyDescriber = currencyDescriber
         }
         

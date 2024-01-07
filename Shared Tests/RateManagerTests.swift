@@ -12,10 +12,10 @@ final class RateManagerTests: XCTestCase {
     
     var sut: RateManager!
     
-    var fakeFetcher: FakeFetcher!
+    var fakeFetcher: TestDouble.Fetcher!
     
     override func setUp() {
-        fakeFetcher = FakeFetcher()
+        fakeFetcher = TestDouble.Fetcher()
         sut = RateManager(fetcher: fakeFetcher)
     }
     

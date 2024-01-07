@@ -7,8 +7,10 @@ import Foundation
 @testable import ReactiveCurrency // dead code
 #endif
 
-class CurrencyDescriberStub: CurrencyDescriber {
-    func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
-        currencyCode
+extension TestDouble {
+    class CurrencyDescriber: CurrencyDescriberProtocol {
+        func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
+            currencyCode
+        }
     }
 }

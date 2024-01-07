@@ -28,7 +28,7 @@ class ResultModel: BaseResultModel {
         }
     }
     // MARK: - life cycle
-    init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared,
+    init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
          rateManager: RateManagerProtocol = RateManager.shared,
          userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared) {
         self.analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
