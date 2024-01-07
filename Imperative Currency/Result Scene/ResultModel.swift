@@ -1,6 +1,13 @@
 import Foundation
 
 class ResultModel: BaseResultModel {
+    // MARK: dependencies
+    private var userSettingManager: UserSettingManagerProtocol
+    
+    private let rateManager: RateManagerProtocol
+    
+    private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
+    
     // MARK: - private properties
     private var setting: Setting
     
@@ -14,8 +21,6 @@ class ResultModel: BaseResultModel {
     
     private var state: State
     
-    private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
-    
     // MARK: - internal property
     var stateHandler: StateHandler? {
         didSet {
@@ -23,14 +28,18 @@ class ResultModel: BaseResultModel {
         }
     }
     // MARK: - life cycle
-    override init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+    init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
+         rateManager: RateManagerProtocol = RateManager.shared,
+         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared) {
         self.analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
+        self.rateManager = rateManager
+        self.userSettingManager = userSettingManager
         
-        setting = (numberOfDays: AppUtility.numberOfDays,
-                   baseCurrencyCode: AppUtility.baseCurrencyCode,
-                   currencyCodeOfInterest: AppUtility.currencyCodeOfInterest)
+        setting = (numberOfDays: userSettingManager.numberOfDays,
+                   baseCurrencyCode: userSettingManager.baseCurrencyCode,
+                   currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest)
         
-        order = AppUtility.order
+        order = userSettingManager.resultOrder
         
         searchText = nil
         analyzedSortedDataArray = []
@@ -39,7 +48,8 @@ class ResultModel: BaseResultModel {
         
         state = .updating
         
-        super.init()
+        super.init(currencyDescriber: currencyDescriber,
+                   userSettingManager: userSettingManager)
         
         resumeAutoUpdatingState()
     }
@@ -50,7 +60,7 @@ class ResultModel: BaseResultModel {
     }
     
     override func setOrder(_ order: BaseResultModel.Order) {
-        AppUtility.order = order
+        userSettingManager.resultOrder = order
         self.order = order
         
         analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,
@@ -80,9 +90,9 @@ class ResultModel: BaseResultModel {
         return SettingModel(setting: setting) { [unowned self] setting in
             self.setting = setting
             
-            AppUtility.numberOfDays = setting.numberOfDays
-            AppUtility.baseCurrencyCode = setting.baseCurrencyCode
-            AppUtility.currencyCodeOfInterest = setting.currencyCodeOfInterest
+            userSettingManager.numberOfDays = setting.numberOfDays
+            userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
+            userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
             
             self.resumeAutoUpdatingState()
         } cancelCompletionHandler: { [unowned self] in
@@ -109,7 +119,7 @@ private extension ResultModel {
     func analyzedDataFor(setting: Setting) {
         stateHandler?(.updating)
         
-        RateManager.shared.getRateFor(numberOfDays: setting.numberOfDays) { [unowned self] result in
+        rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
             case .success(let (latestRate, historicalRateSet)):
                 let analyzedResult = Analyst

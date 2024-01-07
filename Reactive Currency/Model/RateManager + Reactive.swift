@@ -1,19 +1,20 @@
 import Foundation
 import Combine
 
-// MARK: - Fetcher Protocol
-protocol FetcherProtocol {
-    func publisher<Endpoint: EndpointProtocol>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error>
+protocol RateManagerProtocol {
+    func ratePublisher(numberOfDays: Int)
+    -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error>
 }
-
-// MARK: - make Fetcher confirm FetcherProtocol
-extension Fetcher: FetcherProtocol {}
 
 // TODO: 這裡的 method 好長 看能不能拆開
 
-extension RateManager {
+extension RateManager: RateManagerProtocol {
     
-    func ratePublisher(numberOfDays: Int, from start: Date = .now)
+    func ratePublisher(numberOfDays: Int) -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> {
+        ratePublisher(numberOfDays: numberOfDays, from: .now)
+    }
+    
+    func ratePublisher(numberOfDays: Int, from start: Date)
     -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> {
         historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .publisher

@@ -3,11 +3,12 @@ import Foundation
 class BaseResultModel: CurrencyDescriberHolder {
     let initialOrder: Order
     
-    let currencyDescriber: CurrencyDescriber
+    let currencyDescriber: CurrencyDescriberProtocol
     
-    init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+    init(currencyDescriber: CurrencyDescriberProtocol,
+         userSettingManager: UserSettingManagerProtocol) {
         self.currencyDescriber = currencyDescriber
-        initialOrder = AppUtility.order
+        initialOrder = userSettingManager.resultOrder
     }
     
     // MARK: - hook methods
@@ -63,9 +64,9 @@ extension BaseResultModel {
     }
     
     class AnalyzedDataSorter: CurrencyDescriberHolder {
-        let currencyDescriber: CurrencyDescriber
+        let currencyDescriber: CurrencyDescriberProtocol
         
-        init(currencyDescriber: CurrencyDescriber) {
+        init(currencyDescriber: CurrencyDescriberProtocol) {
             self.currencyDescriber = currencyDescriber
         }
         

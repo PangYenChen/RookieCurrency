@@ -5,7 +5,6 @@ import SFSafeSymbols
 class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication,
                      didFinishLaunchingWithOptions
-                     // swiftlint:disable:next discouraged_optional_collection
                      launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         SupportedCurrencyManager.shared.prefetchSupportedCurrency()

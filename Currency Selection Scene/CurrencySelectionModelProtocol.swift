@@ -24,7 +24,7 @@ extension CurrencySelectionModelProtocol {
 }
 
 extension CurrencySelectionModelProtocol {
-    var currencyDescriber: CurrencyDescriber { supportedCurrencyManager }
+    var currencyDescriber: CurrencyDescriberProtocol { supportedCurrencyManager }
 }
 
 // MARK: - name space
@@ -56,9 +56,9 @@ extension CurrencySelectionModel {
     }
     
     class CurrencyCodeDescriptionDictionarySorter: CurrencyDescriberHolder {
-        let currencyDescriber: CurrencyDescriber
+        let currencyDescriber: CurrencyDescriberProtocol
         
-        init(currencyDescriber: CurrencyDescriber) {
+        init(currencyDescriber: CurrencyDescriberProtocol) {
             self.currencyDescriber = currencyDescriber
         }
         

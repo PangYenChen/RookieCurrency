@@ -3,8 +3,10 @@ import XCTest
 
 #if IMPERATIVE_CURRENCY_TESTS
 @testable import ImperativeCurrency
-#else
+#elseif REACTIVE_CURRENCY_TESTS
 @testable import ReactiveCurrency
+#else
+@testable import ReactiveCurrency // dead code
 #endif
 
 extension TestingData {

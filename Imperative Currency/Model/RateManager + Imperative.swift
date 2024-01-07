@@ -1,23 +1,34 @@
 import Foundation
 
-// MARK: - Fetcher Protocol
-protocol FetcherProtocol {
-    func fetch<Endpoint: EndpointProtocol>(
-        _ endpoint: Endpoint,
-        completionHandler: @escaping (Result<Endpoint.ResponseType, Swift.Error>) -> Void
+protocol RateManagerProtocol {
+    func getRateFor(
+        numberOfDays: Int,
+        completionHandlerQueue: DispatchQueue,
+        completionHandler: @escaping (Result<(latestRate: ResponseDataModel.LatestRate,
+                                              historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
+                                      Error>) -> Void
     )
 }
 
-// MARK: - make Fetcher confirm FetcherProtocol
-extension Fetcher: FetcherProtocol {}
-
 // TODO: 這裡的 method 好長 看能不能拆開"
-extension RateManager {
+extension RateManager: RateManagerProtocol {
     
     func getRateFor(
         numberOfDays: Int,
-        from start: Date = .now,
-        completionHandlerQueue: DispatchQueue = .main,
+        completionHandlerQueue: DispatchQueue,
+        completionHandler: @escaping (Result<(latestRate: ResponseDataModel.LatestRate,
+                                              historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
+                                      Error>) -> Void) {
+        getRateFor(numberOfDays: numberOfDays,
+                   from: Date.now,
+                   completionHandlerQueue: completionHandlerQueue,
+                   completionHandler: completionHandler)
+    }
+    
+    func getRateFor(
+        numberOfDays: Int,
+        from start: Date,
+        completionHandlerQueue: DispatchQueue,
         completionHandler: @escaping (Result<(latestRate: ResponseDataModel.LatestRate,
                                               historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
                                       Error>) -> Void

@@ -15,18 +15,22 @@ class ResultModel: BaseResultModel {
     // MARK: output
     let state: AnyPublisher<State, Never>
     
-    override init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared) {
+    init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
+         rateManager: RateManagerProtocol = RateManager.shared,
+         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared) {
+        var userSettingManager = userSettingManager
+        
         // input
         do {
-            setting = CurrentValueSubject((AppUtility.numberOfDays,
-                                           AppUtility.baseCurrencyCode,
-                                           AppUtility.currencyCodeOfInterest))
+            setting = CurrentValueSubject((userSettingManager.numberOfDays,
+                                           userSettingManager.baseCurrencyCode,
+                                           userSettingManager.currencyCodeOfInterest))
             
             updateTriggerByUser = PassthroughSubject<Void, Never>()
             
             searchText = CurrentValueSubject<String?, Never>(nil)
             
-            order = CurrentValueSubject<BaseResultModel.Order, Never>(AppUtility.order)
+            order = CurrentValueSubject<BaseResultModel.Order, Never>(userSettingManager.resultOrder)
             
             enableAutoUpdate = CurrentValueSubject<Void, Never>(())
             
@@ -69,7 +73,7 @@ class ResultModel: BaseResultModel {
             
             let analyzedResult = update.withLatestFrom(setting)
                 .flatMap { _, setting in
-                    RateManager.shared
+                    rateManager
                         .ratePublisher(numberOfDays: setting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in
@@ -119,31 +123,32 @@ class ResultModel: BaseResultModel {
                 .eraseToAnyPublisher()
             
             state = Publishers
-                .Merge4(updatingStatePublisher,
-                        updatedStatePublisher,
-                        sortedStatePublisher,
-                        failureStatePublisher)
+                .Merge4(updatingStatePublisher.print("#### updating state"),
+                        updatedStatePublisher.print("#### updated state"),
+                        sortedStatePublisher.print("#### sorted state"),
+                        failureStatePublisher.print("#### failure"))
                 .eraseToAnyPublisher()
             
         }
         
         anyCancellableSet = Set<AnyCancellable>()
         
-        super.init()
+        super.init(currencyDescriber: currencyDescriber,
+                   userSettingManager: userSettingManager)
         
         // subscribe
         do {
             settingFromSettingModel
                 .sink { setting in
-                    AppUtility.baseCurrencyCode = setting.baseCurrencyCode
-                    AppUtility.currencyCodeOfInterest = setting.currencyCodeOfInterest
-                    AppUtility.numberOfDays = setting.numberOfDays
+                    userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
+                    userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
+                    userSettingManager.numberOfDays = setting.numberOfDays
                 }
                 .store(in: &anyCancellableSet)
             
             order
                 .dropFirst()
-                .sink { order in AppUtility.order = order }
+                .sink { order in userSettingManager.resultOrder = order }
                 .store(in: &anyCancellableSet)
         }
     }

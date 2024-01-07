@@ -1,6 +1,6 @@
 import Foundation
 
-protocol CurrencyDescriber {
+protocol CurrencyDescriberProtocol {
     func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String
 }
 
@@ -9,7 +9,6 @@ class BaseSupportedCurrencyManager {
     
     private let locale: Locale
     
-    // swiftlint:disable:next discouraged_optional_collection
     var supportedCurrencyDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]?
     
     init(fetcher: FetcherProtocol = Fetcher.shared,
@@ -19,7 +18,7 @@ class BaseSupportedCurrencyManager {
     }
 }
 
-extension BaseSupportedCurrencyManager: CurrencyDescriber {
+extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {
     func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
         locale.localizedString(forCurrencyCode: currencyCode) ??
         supportedCurrencyDescriptionDictionary?[currencyCode] ??
