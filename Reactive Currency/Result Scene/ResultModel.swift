@@ -15,7 +15,7 @@ class ResultModel: BaseResultModel {
     // MARK: output
     let state: AnyPublisher<State, Never>
     
-    init(currencyDescriber: CurrencyDescriber = SupportedCurrencyManager.shared,
+    init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
          rateManager: RateManagerProtocol = RateManager.shared,
          userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared) {
         var userSettingManager = userSettingManager

@@ -9,7 +9,7 @@ extension TestDouble {
             _ endpoint: Endpoint,
             completionHandler: @escaping (Result<Endpoint.ResponseType, Swift.Error>) -> Void
         ) {
-                // This is a fake instance, and any of it's method should not be called.
+            // TODO: to be implemented
             
             numberOfMethodCall += 1
         }
