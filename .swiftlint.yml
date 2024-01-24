@@ -104,6 +104,30 @@ opt_in_rules:
     - private_action
     - private_outlet
     - private_subject
+    - reduce_into
+    - redundant_nil_coalescing
+    - redundant_self_in_closure
+    - return_value_from_void_function
+    - self_binding
+    - shorthand_optional_binding
+    - single_test_class
+    - sorted_first_last
+    - static_operator
+    - strong_iboutlet
+    - superfluous_else
+    - test_case_accessibility
+    - toggle_bool
+    - trailing_closure
+    - type_contents_order # 可以調整參數
+    - unavailable_function
+    - unhandled_throwing_task
+    - unneeded_parentheses_in_closure_argument
+    - untyped_error_in_catch
+    - unused_capture_list
+    - vertical_parameter_alignment_on_call
+    - vertical_whitespace_closing_braces
+    - vertical_whitespace_opening_braces
+    - xct_specific_matcher
 
 attributes:
     always_on_same_line:
