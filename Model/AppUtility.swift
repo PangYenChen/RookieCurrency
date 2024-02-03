@@ -10,7 +10,7 @@ extension AppUtility {
     /// 因為會有伺服器接受的只有到日期，沒有到分秒，
     /// 所以如果使用 Date 的 instance 的話，會有誤差。
     static let requestDateFormatter: DateFormatter = {
-        let dateFormatter = DateFormatter()
+        let dateFormatter: DateFormatter = DateFormatter()
         dateFormatter.timeZone = TimeZone(identifier: "UTC") // server time zone
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter
@@ -24,7 +24,7 @@ extension AppUtility {
     static func prettyPrint(_ data: Data) {
         if let jsonObject = try? JSONSerialization.jsonObject(with: data),
            let jsonData = try? JSONSerialization.data(withJSONObject: jsonObject, options: .prettyPrinted) {
-            let jsonString = String(decoding: jsonData, as: UTF8.self)
+            let jsonString: String = String(decoding: jsonData, as: UTF8.self)
             print("###", self, #function, "拿到 json:\n", jsonString)
         }
         else {
