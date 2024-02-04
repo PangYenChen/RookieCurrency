@@ -1,15 +1,15 @@
 import Foundation
 
 class BaseResultModel: CurrencyDescriberHolder {
-    let initialOrder: Order
-    
-    let currencyDescriber: CurrencyDescriberProtocol
-    
     init(currencyDescriber: CurrencyDescriberProtocol,
          userSettingManager: UserSettingManagerProtocol) {
         self.currencyDescriber = currencyDescriber
         initialOrder = userSettingManager.resultOrder
     }
+    
+    let initialOrder: Order
+    
+    let currencyDescriber: CurrencyDescriberProtocol
     
     // MARK: - hook methods
     func updateState() {
@@ -31,8 +31,12 @@ class BaseResultModel: CurrencyDescriberHolder {
 
 // MARK: - name space
 extension BaseResultModel {
-    /// 資料的排序方式。
-    /// 因為要儲存在 UserDefaults，所以 access control 不能是 private。
+    typealias Setting = (numberOfDays: Int,
+                         baseCurrencyCode: ResponseDataModel.CurrencyCode,
+                         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>)
+    
+        /// 資料的排序方式。
+        /// 因為要儲存在 UserDefaults，所以 access control 不能是 private。
     enum Order: String {
         case increasing
         case decreasing
@@ -44,10 +48,6 @@ extension BaseResultModel {
             }
         }
     }
-    
-    typealias Setting = (numberOfDays: Int,
-                         baseCurrencyCode: ResponseDataModel.CurrencyCode,
-                         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>)
 
     enum State {
         case updating

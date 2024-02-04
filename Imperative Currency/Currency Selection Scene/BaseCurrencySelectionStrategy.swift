@@ -1,14 +1,6 @@
 import Foundation
 
 final class BaseCurrencySelectionStrategy: CurrencySelectionStrategy {
-    let title: String
-    
-    let allowsMultipleSelection: Bool
-    
-    private var baseCurrencyCode: ResponseDataModel.CurrencyCode
-    
-    private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
-    
     init(baseCurrencyCode: ResponseDataModel.CurrencyCode,
          completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
         title = R.string.share.baseCurrency()
@@ -17,6 +9,14 @@ final class BaseCurrencySelectionStrategy: CurrencySelectionStrategy {
         self.baseCurrencyCode = baseCurrencyCode
         self.completionHandler = completionHandler
     }
+    
+    let title: String
+    
+    let allowsMultipleSelection: Bool
+    
+    private var baseCurrencyCode: ResponseDataModel.CurrencyCode
+    
+    private let completionHandler: (ResponseDataModel.CurrencyCode) -> Void
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
         baseCurrencyCode = selectedCurrencyCode

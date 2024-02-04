@@ -278,9 +278,10 @@ extension BaseCurrencySelectionTableViewController: UISearchBarDelegate {
     }
 }
 
-// MARK: - private name space
+// MARK: - name space
 extension BaseCurrencySelectionTableViewController {
     typealias DataSource = UITableViewDiffableDataSource<Section, ResponseDataModel.CurrencyCode>
+
     typealias Snapshot = NSDiffableDataSourceSnapshot<Section, ResponseDataModel.CurrencyCode>
     
     enum Section {

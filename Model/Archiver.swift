@@ -11,19 +11,7 @@ protocol ArchiverProtocol {
 }
 
 /// 讀寫 Historical Rate 的類別
-enum Archiver {
-    /// app 的路徑
-    private static let documentsDirectory: URL = URL.documentsDirectory
-    
-    /// 共用的 decoder
-    private static let jsonDecoder: JSONDecoder = ResponseDataModel.jsonDecoder
-    
-    /// 共用的 encoder
-    private static let jsonEncoder: JSONEncoder = ResponseDataModel.jsonEncoder
-    
-    /// 儲存的檔案的副檔名
-    private static let jsonPathExtension: String = "json"
-}
+enum Archiver {}
 
 extension Archiver: ArchiverProtocol {
     /// 寫入資料
@@ -80,4 +68,18 @@ extension Archiver: ArchiverProtocol {
             .filter { fileURL in fileURL.pathExtension == jsonPathExtension }
             .forEach { fileURL in try FileManager.default.removeItem(at: fileURL) }
     }
+}
+
+private extension Archiver {
+    /// app 的路徑
+    static let documentsDirectory: URL = URL.documentsDirectory
+    
+    /// 共用的 decoder
+    static let jsonDecoder: JSONDecoder = ResponseDataModel.jsonDecoder
+    
+    /// 共用的 encoder
+    static let jsonEncoder: JSONEncoder = ResponseDataModel.jsonEncoder
+    
+    /// 儲存的檔案的副檔名
+    static let jsonPathExtension: String = "json"
 }
