@@ -73,7 +73,7 @@ opt_in_rules:
     - force_unwrapping
     - identical_operands
     - implicit_return
-    - indentation_width
+#    - indentation_width 好像有 bug，暫時先關掉
     - joined_default_parameter
     - last_where
     - legacy_multiple

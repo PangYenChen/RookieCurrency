@@ -1,5 +1,5 @@
 // 這個檔案是用 run script 產生的
 extension AppUtility {
-    static let gitHash = "5c3052a"
-    static let commitTimestamp = 1706947617
+    static let gitHash: String = "c029e7e"
+    static let commitTimestamp: Int = 1707016582
 }

@@ -7,11 +7,9 @@ protocol AlertPresenter {
 }
 
 extension AlertPresenter where Self: UIViewController {
-    func presentAlert(
-        title: String = R.string.share.alertTitle(),
-        message: String,
-        handler: ((UIAlertAction) -> Void)? = nil
-    ) {
+    func presentAlert(title: String = R.string.share.alertTitle(),
+                      message: String,
+                      handler: ((UIAlertAction) -> Void)? = nil) {
         let alertController: UIAlertController
         
         // alert controller
@@ -31,11 +29,9 @@ extension AlertPresenter where Self: UIViewController {
         present(alertController, animated: true)
     }
     
-    func presentAlert(
-        title: String = R.string.share.alertTitleForError(),
-        error: Error,
-        handler: ((UIAlertAction) -> Void)? = nil
-    ) {
+    func presentAlert(title: String = R.string.share.alertTitleForError(),
+                      error: Error,
+                      handler: ((UIAlertAction) -> Void)? = nil) {
         presentAlert(title: title, message: error.localizedDescription, handler: handler)
     }
 }

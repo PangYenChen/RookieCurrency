@@ -863,7 +863,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "gitHash=$(git log -1 --pretty=format:%h)\ncommitTimestamp=$(git log -1 --pretty=format:%ct)\n\nfileContent=\"// 這個檔案是用 run script 產生的\\nextension AppUtility {\\n    static let gitHash = \\\"$gitHash\\\"\\n    static let commitTimestamp = $commitTimestamp\\n}\"\n\necho \"$fileContent\" > ${SOURCE_ROOT}/Supporting\\ Files/Git\\ Commit\\ Info.swift\n";
+			shellScript = "gitHash=$(git log -1 --pretty=format:%h)\ncommitTimestamp=$(git log -1 --pretty=format:%ct)\n\nfileContent=\"// 這個檔案是用 run script 產生的\\nextension AppUtility {\\n    static let gitHash: String = \\\"$gitHash\\\"\\n    static let commitTimestamp: Int = $commitTimestamp\\n}\"\n\necho \"$fileContent\" > ${SOURCE_ROOT}/Supporting\\ Files/Git\\ Commit\\ Info.swift\n";
 		};
 		516F363029BC15E400357FB2 /* Get Git Commit Info */ = {
 			isa = PBXShellScriptBuildPhase;
@@ -882,7 +882,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "gitHash=$(git log -1 --pretty=format:%h)\ncommitTimestamp=$(git log -1 --pretty=format:%ct)\n\nfileContent=\"// 這個檔案是用 run script 產生的\\nextension AppUtility {\\n    static let gitHash = \\\"$gitHash\\\"\\n    static let commitTimestamp = $commitTimestamp\\n}\"\n\necho \"$fileContent\" > ${SOURCE_ROOT}/Supporting\\ Files/Git\\ Commit\\ Info.swift\n";
+			shellScript = "gitHash=$(git log -1 --pretty=format:%h)\ncommitTimestamp=$(git log -1 --pretty=format:%ct)\n\nfileContent=\"// 這個檔案是用 run script 產生的\\nextension AppUtility {\\n    static let gitHash: String = \\\"$gitHash\\\"\\n    static let commitTimestamp: Int = $commitTimestamp\\n}\"\n\necho \"$fileContent\" > ${SOURCE_ROOT}/Supporting\\ Files/Git\\ Commit\\ Info.swift\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

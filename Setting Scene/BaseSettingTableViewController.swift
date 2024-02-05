@@ -1,6 +1,61 @@
 import UIKit
 
 class BaseSettingTableViewController: UITableViewController, AlertPresenter {
+    // MARK: - initializer
+    init?(coder: NSCoder, baseSettingModel: BaseSettingModel) {
+        editedNumberOfDays = -1
+        
+        editedBaseCurrencyCode = ""
+        
+        editedCurrencyCodeOfInterest = Set<ResponseDataModel.CurrencyCode>()
+        
+        hasChangesToSave = false
+        
+        stepper = UIStepper()
+        
+        self.baseSettingModel = baseSettingModel
+        
+        super.init(coder: coder)
+        
+        // stepper
+        do {
+            let handler: UIAction = UIAction { [unowned self] _ in stepperValueDidChange() }
+            stepper.addAction(handler, for: .primaryActionTriggered)
+        }
+        
+        title = R.string.settingScene.setting()
+    }
+    
+    @available(*, unavailable)
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    // MARK: - life cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        do {
+            versionLabel.font = UIFont.preferredFont(forTextStyle: .callout)
+            versionLabel.textColor = UIColor.secondaryLabel
+            versionLabel.adjustsFontForContentSizeCategory = true
+            let appVersionString: String? = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
+            versionLabel.text = R.string.settingScene.version(appVersionString ?? "", AppUtility.gitHash)
+        }
+        
+        do {
+            dateLabel.font = UIFont.preferredFont(forTextStyle: .callout)
+            dateLabel.textColor = UIColor.secondaryLabel
+            dateLabel.adjustsFontForContentSizeCategory = true
+            let commitDate = Date(timeIntervalSince1970: Double(AppUtility.commitTimestamp))
+            let dateString = commitDate.formatted(date: .numeric, time: .complete)
+            
+            dateLabel.text = R.string.settingScene.versionDate(dateString)
+        }
+    }
+    
+    
+    
     // MARK: - properties
     var editedNumberOfDays: Int
     
@@ -25,57 +80,8 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     
     private let baseSettingModel: BaseSettingModel
     
-    // MARK: - methods
-    init?(coder: NSCoder, baseSettingModel: BaseSettingModel) {
-        
-        editedNumberOfDays = -1
-        
-        editedBaseCurrencyCode = ""
-        
-        editedCurrencyCodeOfInterest = Set<ResponseDataModel.CurrencyCode>()
-        
-        hasChangesToSave = false
-        
-        stepper = UIStepper()
-        
-        self.baseSettingModel = baseSettingModel
-        
-        super.init(coder: coder)
-        
-        // stepper
-        do {
-            let handler = UIAction { [unowned self] _ in stepperValueDidChange() }
-            stepper.addAction(handler, for: .primaryActionTriggered)
-        }
-        
-        title = R.string.settingScene.setting()
-    }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        do {
-            versionLabel.font = UIFont.preferredFont(forTextStyle: .callout)
-            versionLabel.textColor = UIColor.secondaryLabel
-            versionLabel.adjustsFontForContentSizeCategory = true
-            let appVersionString = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String
-            versionLabel.text = R.string.settingScene.version(appVersionString ?? "", AppUtility.gitHash)
-        }
-        
-        do {
-            dateLabel.font = UIFont.preferredFont(forTextStyle: .callout)
-            dateLabel.textColor = UIColor.secondaryLabel
-            dateLabel.adjustsFontForContentSizeCategory = true
-            let commitDate = Date(timeIntervalSince1970: Double(AppUtility.commitTimestamp))
-            let dateString = commitDate.formatted(date: .numeric, time: .complete)
-            
-            dateLabel.text = R.string.settingScene.versionDate(dateString)
-        }
-    }
     
     // MARK: - hook methods
     func stepperValueDidChange() {
