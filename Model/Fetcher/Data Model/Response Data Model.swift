@@ -5,10 +5,10 @@ enum ResponseDataModel {}
 
 // MARK: - JSONDecoder and JSONEncoder
 extension ResponseDataModel {
-    static let jsonDecoder = JSONDecoder()
+    static let jsonDecoder: JSONDecoder = JSONDecoder()
     
     static let jsonEncoder: JSONEncoder = {
-        let jsonEncoder = JSONEncoder()
+        let jsonEncoder: JSONEncoder = JSONEncoder()
         jsonEncoder.outputFormatting = .prettyPrinted
         return jsonEncoder
     }()

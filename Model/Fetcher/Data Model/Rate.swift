@@ -7,7 +7,6 @@ extension ResponseDataModel {
 protocol RateCategoryProtocol {}
 
 extension ResponseDataModel {
-    
     /// 用來區別 latest 跟 historical 的 phantom type
     enum Category {
         enum Latest: RateCategoryProtocol {}
@@ -57,24 +56,6 @@ extension ResponseDataModel {
 // MARK: - Decodable
 // latest 跟 historical 都要 decodable
 extension ResponseDataModel.Rate: Decodable {
-    /// 表示伺服器回傳的日期字串無效的錯誤
-    enum ServerDateError: LocalizedError {
-        /// 伺服器給的日期字串無效，dateString 為該字串
-        case serverDateInvalid(dateString: String)
-        
-        var localizedDescription: String {
-            switch self {
-            case .serverDateInvalid(let dateString):
-                return R.string.share.serverDateStringError(dateString)
-            }
-        }
-        
-        var errorDescription: String? {
-            localizedDescription
-        }
-        
-    }
-    
     /// Creates a new instance by decoding from the given decoder.
     /// - Parameter decoder: The decoder to read data from.
     init(from decoder: Decoder) throws {
@@ -90,6 +71,23 @@ extension ResponseDataModel.Rate: Decodable {
         timestamp = try container.decode(Int.self, forKey: .timestamp)
         
         rates = try container.decode([String: Decimal].self, forKey: .rates)
+    }
+    
+    /// 表示伺服器回傳的日期字串無效的錯誤
+    enum ServerDateError: LocalizedError {
+        /// 伺服器給的日期字串無效，dateString 為該字串
+        case serverDateInvalid(dateString: String)
+        
+        var localizedDescription: String {
+            switch self {
+            case .serverDateInvalid(let dateString):
+                return R.string.share.serverDateStringError(dateString)
+            }
+        }
+        
+        var errorDescription: String? {
+            localizedDescription
+        }
     }
 }
 
