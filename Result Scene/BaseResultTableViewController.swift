@@ -109,10 +109,8 @@ class BaseResultTableViewController: UITableViewController {
             ) { [unowned self] _ in baseResultModel.setOrder(.decreasing) }
             
             switch baseResultModel.initialOrder {
-            case .increasing:
-                increasingAction.state = .on
-            case .decreasing:
-                decreasingAction.state = .on
+                case .increasing: increasingAction.state = .on
+                case .decreasing: decreasingAction.state = .on
             }
             
             let sortMenu: UIMenu = UIMenu(title: R.string.share.sortedBy(),
@@ -152,25 +150,25 @@ private extension BaseResultTableViewController {
 extension BaseResultTableViewController {
     final func updateUIFor(_ state: BaseResultModel.State) {
         switch state {
-        case .updating:
-            dismissAlertIfPresented()
-            updatingStatusBarButtonItem.title = R.string.resultScene.updating()
-            
-        case let .updated(timestamp, analyzedDataArray):
-            self.latestUpdateTime = timestamp
-            
-            populateTableViewWith(analyzedDataArray)
-            endRefreshingRefreshControlIfStarted()
-            populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
-            
-        case .sorted(let analyzedDataArray):
-            populateTableViewWith(analyzedDataArray)
-            
-        case .failure(let error):
-            endRefreshingRefreshControlIfStarted()
-            dismissAlertIfPresented()
-            presentAlert(error: error)
-            populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+            case .updating:
+                dismissAlertIfPresented()
+                updatingStatusBarButtonItem.title = R.string.resultScene.updating()
+                
+            case let .updated(timestamp, analyzedDataArray):
+                self.latestUpdateTime = timestamp
+                
+                populateTableViewWith(analyzedDataArray)
+                endRefreshingRefreshControlIfStarted()
+                populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
+                
+            case .sorted(let analyzedDataArray):
+                populateTableViewWith(analyzedDataArray)
+                
+            case .failure(let error):
+                endRefreshingRefreshControlIfStarted()
+                dismissAlertIfPresented()
+                presentAlert(error: error)
+                populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
         }
     }
 }

@@ -29,6 +29,9 @@ redundant_void_return:
 statement_position:
     statement_mode: uncuddled_else
     
+switch_case_alignment:
+    indented_cases: true
+    
 trailing_whitespace:
     ignores_empty_lines: true
     

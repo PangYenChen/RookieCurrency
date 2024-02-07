@@ -43,8 +43,8 @@ extension BaseResultModel {
         
         var localizedName: String {
             switch self {
-            case .increasing: return R.string.resultScene.increasing()
-            case .decreasing: return R.string.resultScene.decreasing()
+                case .increasing: R.string.resultScene.increasing()
+                case .decreasing: R.string.resultScene.decreasing()
             }
         }
     }
@@ -76,10 +76,8 @@ extension BaseResultModel {
             analyzedDataArray
                 .sorted { lhs, rhs in
                     switch order {
-                    case .increasing:
-                        return lhs.deviation < rhs.deviation
-                    case .decreasing:
-                        return lhs.deviation > rhs.deviation
+                        case .increasing: lhs.deviation < rhs.deviation
+                        case .decreasing: lhs.deviation > rhs.deviation
                     }
                 }
                 .filter { analyzedData in

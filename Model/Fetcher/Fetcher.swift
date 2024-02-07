@@ -111,12 +111,9 @@ extension Fetcher {
         
         var localizedDescription: String {
             switch self {
-            case .unknownError:
-                return R.string.share.noDataNoError()
-            case .tooManyRequest:
-                return R.string.share.tooManyRequest()
-            case .invalidAPIKey:
-                return R.string.share.invalidAPIKey()
+                case .unknownError: R.string.share.noDataNoError()
+                case .tooManyRequest: R.string.share.tooManyRequest()
+                case .invalidAPIKey: R.string.share.invalidAPIKey()
             }
         }
         

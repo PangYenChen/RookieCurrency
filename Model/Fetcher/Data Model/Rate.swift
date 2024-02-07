@@ -80,8 +80,7 @@ extension ResponseDataModel.Rate: Decodable {
         
         var localizedDescription: String {
             switch self {
-            case .serverDateInvalid(let dateString):
-                return R.string.share.serverDateStringError(dateString)
+                case .serverDateInvalid(let dateString): R.string.share.serverDateStringError(dateString)
             }
         }
         
