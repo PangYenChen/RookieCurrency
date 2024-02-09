@@ -1,7 +1,6 @@
 import Foundation
 
 protocol CurrencySelectionStrategy {
-    
     var title: String { get }
     
     var allowsMultipleSelection: Bool { get }

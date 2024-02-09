@@ -36,9 +36,9 @@ extension CurrencySelectionModel {
         
         var localizedName: String {
             switch self {
-            case .currencyName: return R.string.currencyScene.currencyName()
-            case .currencyCode: return R.string.currencyScene.currencyCode()
-            case .currencyNameZhuyin: return R.string.currencyScene.currencyZhuyin()
+                case .currencyName: return R.string.currencyScene.currencyName()
+                case .currencyCode: return R.string.currencyScene.currencyCode()
+                case .currencyNameZhuyin: return R.string.currencyScene.currencyZhuyin()
             }
         }
     }
@@ -49,8 +49,8 @@ extension CurrencySelectionModel {
         
         var localizedName: String {
             switch self {
-            case .ascending: return R.string.currencyScene.ascending()
-            case .descending: return R.string.currencyScene.descending()
+                case .ascending: return R.string.currencyScene.ascending()
+                case .descending: return R.string.currencyScene.descending()
             }
         }
     }
@@ -66,49 +66,47 @@ extension CurrencySelectionModel {
                   bySortingMethod sortingMethod: SortingMethod,
                   andSortingOrder sortingOrder: SortingOrder,
                   thenFilterIfNeedBySearchTextBy searchText: String?) -> [ResponseDataModel.CurrencyCode] {
+            let currencyCodes: Dictionary<ResponseDataModel.CurrencyCode, String>.Keys = currencyCodeDescriptionDictionary.keys
             
-            let currencyCodes = currencyCodeDescriptionDictionary.keys
-            
-            let sortedCurrencyCodes = currencyCodes.sorted { lhs, rhs in
-                
+            let sortedCurrencyCodes: [ResponseDataModel.CurrencyCode] = currencyCodes.sorted { lhs, rhs in
                 switch sortingMethod {
-                case .currencyName, .currencyNameZhuyin:
-                    let lhsString: String = displayStringFor(currencyCode: lhs)
-                    let rhsString: String = displayStringFor(currencyCode: rhs)
-                    
-                    if sortingMethod == .currencyName {
-                        switch sortingOrder {
-                        case .ascending:
-                            return lhsString.localizedStandardCompare(rhsString) == .orderedAscending
-                        case .descending:
-                            return lhsString.localizedStandardCompare(rhsString) == .orderedDescending
+                    case .currencyName, .currencyNameZhuyin:
+                        let lhsString: String = displayStringFor(currencyCode: lhs)
+                        let rhsString: String = displayStringFor(currencyCode: rhs)
+                        
+                        if sortingMethod == .currencyName {
+                            switch sortingOrder {
+                                case .ascending:
+                                    return lhsString.localizedStandardCompare(rhsString) == .orderedAscending
+                                case .descending:
+                                    return lhsString.localizedStandardCompare(rhsString) == .orderedDescending
+                            }
                         }
-                    }
-                    else if sortingMethod == .currencyNameZhuyin {
-                        let zhuyinLocale = Locale(identifier: "zh@collation=zhuyin")
-                        switch sortingOrder {
-                        case .ascending:
-                            return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedAscending
-                        case .descending:
-                            return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedDescending
+                        else if sortingMethod == .currencyNameZhuyin {
+                            let zhuyinLocale: Locale = Locale(identifier: "zh@collation=zhuyin")
+                            switch sortingOrder {
+                                case .ascending:
+                                    return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedAscending
+                                case .descending:
+                                    return lhsString.compare(rhsString, locale: zhuyinLocale) == .orderedDescending
+                            }
                         }
-                    }
-                    else {
-                        assertionFailure("###, \(#function), 這段是 dead code")
-                        return false
-                    }
-                    
-                case .currencyCode:
-                    switch sortingOrder {
-                    case .ascending:
-                        return lhs.localizedStandardCompare(rhs) == .orderedAscending
-                    case .descending:
-                        return lhs.localizedStandardCompare(rhs) == .orderedDescending
-                    }
+                        else {
+                            assertionFailure("###, \(#function), 這段是 dead code")
+                            return false
+                        }
+                        
+                    case .currencyCode:
+                        switch sortingOrder {
+                            case .ascending:
+                                return lhs.localizedStandardCompare(rhs) == .orderedAscending
+                            case .descending:
+                                return lhs.localizedStandardCompare(rhs) == .orderedDescending
+                        }
                 }
             }
             
-            var filteredCurrencyCodes = sortedCurrencyCodes
+            var filteredCurrencyCodes: [ResponseDataModel.CurrencyCode] = sortedCurrencyCodes
             
             if let searchText, !searchText.isEmpty {
                 filteredCurrencyCodes = sortedCurrencyCodes

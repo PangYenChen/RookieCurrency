@@ -43,12 +43,12 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                     // content
                     do {
                         switch baseCurrencySelectionModel.getSortingMethod() {
-                        case .currencyName, .currencyNameZhuyin:
-                            contentConfiguration.text = baseCurrencySelectionModel.displayStringFor(currencyCode: currencyCode)
-                            contentConfiguration.secondaryText = currencyCode
-                        case .currencyCode:
-                            contentConfiguration.text = currencyCode
-                            contentConfiguration.secondaryText = baseCurrencySelectionModel.displayStringFor(currencyCode: currencyCode)
+                            case .currencyName, .currencyNameZhuyin:
+                                contentConfiguration.text = baseCurrencySelectionModel.displayStringFor(currencyCode: currencyCode)
+                                contentConfiguration.secondaryText = currencyCode
+                            case .currencyCode:
+                                contentConfiguration.text = currencyCode
+                                contentConfiguration.secondaryText = baseCurrencySelectionModel.displayStringFor(currencyCode: currencyCode)
                         }
                     }
                     
@@ -134,14 +134,14 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
             // set up the initial state
             do {
                 let sortingMethodIndex: Int = switch baseCurrencySelectionModel.getSortingMethod() {
-                case .currencyName: 0
-                case .currencyCode: 1
-                case .currencyNameZhuyin: 2
+                    case .currencyName: 0
+                    case .currencyCode: 1
+                    case .currencyNameZhuyin: 2
                 }
                 
                 let sortingOrderIndex: Int = switch baseCurrencySelectionModel.initialSortingOrder {
-                case .ascending: 0
-                case .descending: 1
+                    case .ascending: 0
+                    case .descending: 1
                 }
                 
                 let initialChild: UIMenu = children[sortingMethodIndex]
@@ -199,37 +199,37 @@ extension BaseCurrencySelectionTableViewController {
             tableView.refreshControl?.endRefreshing()
             
             switch result {
-            case .success(let currencyCodeArray):
-                var snapshot: Snapshot = Snapshot()
-                snapshot.appendSections([.main])
-                
-                snapshot.appendItems(currencyCodeArray)
-                snapshot.reloadSections([.main])
-                
-                dataSource.apply(snapshot) { [weak self] in
-                    guard let self else { return }
+                case .success(let currencyCodeArray):
+                    var snapshot: Snapshot = Snapshot()
+                    snapshot.appendSections([.main])
                     
-                    let selectedIndexPaths: [IndexPath] = currencyCodeArray
-                        .filter(baseCurrencySelectionModel.isCurrencyCodeSelected(_:))
-                        .compactMap(dataSource.indexPath(for:))
+                    snapshot.appendItems(currencyCodeArray)
+                    snapshot.reloadSections([.main])
                     
-                    selectedIndexPaths
-                        .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
-                    
-                    // scroll to first selected index path when first time receiving data
-                    if isFirstTimePopulateTableView {
-                        if let firstSelectedIndexPath = selectedIndexPaths.min() {
-                            tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
+                    dataSource.apply(snapshot) { [weak self] in
+                        guard let self else { return }
+                        
+                        let selectedIndexPaths: [IndexPath] = currencyCodeArray
+                            .filter(baseCurrencySelectionModel.isCurrencyCodeSelected(_:))
+                            .compactMap(dataSource.indexPath(for:))
+                        
+                        selectedIndexPaths
+                            .forEach { [weak self] indexPath in self?.tableView.selectRow(at: indexPath, animated: false, scrollPosition: .none) }
+                        
+                        // scroll to first selected index path when first time receiving data
+                        if isFirstTimePopulateTableView {
+                            if let firstSelectedIndexPath = selectedIndexPaths.min() {
+                                tableView.scrollToRow(at: firstSelectedIndexPath, at: .top, animated: true)
+                            }
+                            else {
+                                presentAlert(message: R.string.currencyScene.currencyNotSupported())
+                            }
+                            isFirstTimePopulateTableView = false
                         }
-                        else {
-                            presentAlert(message: R.string.currencyScene.currencyNotSupported())
-                        }
-                        isFirstTimePopulateTableView = false
                     }
-                }
-                
-            case .failure(let failure):
-                presentAlert(error: failure)
+                    
+                case .failure(let failure):
+                    presentAlert(error: failure)
             }
         }
     }
