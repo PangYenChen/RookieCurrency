@@ -27,9 +27,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     }
     
     @available(*, unavailable)
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     // MARK: - life cycle
     override func viewDidLoad() {

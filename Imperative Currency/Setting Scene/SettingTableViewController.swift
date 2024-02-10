@@ -1,13 +1,9 @@
 import UIKit
 
 class SettingTableViewController: BaseSettingTableViewController {
-    // MARK: - private property
-    private let settingModel: SettingModel
-    
-    // MARK: - methods
-    required init?(coder: NSCoder,
-                   model: SettingModel) {
-        
+    // MARK: - initializer
+    init?(coder: NSCoder,
+          model: SettingModel) {
         self.settingModel = model
         
         super.init(coder: coder, baseSettingModel: model)
@@ -22,8 +18,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         hasChangesToSave = model.hasChangeToSave
     }
     
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
-    
+    // MARK: - life cycle
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -31,6 +26,9 @@ class SettingTableViewController: BaseSettingTableViewController {
         reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: settingModel.editedBaseCurrencyCode)
         reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: settingModel.editedCurrencyCodeOfInterest)
     }
+    
+    // MARK: - private property
+    private let settingModel: SettingModel
     
     // MARK: - hook methods
     override func stepperValueDidChange() {

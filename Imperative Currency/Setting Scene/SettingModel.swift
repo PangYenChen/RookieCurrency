@@ -1,6 +1,25 @@
 import Foundation
 
 class SettingModel {
+    // MARK: - initializer
+    init(setting: BaseResultModel.Setting,
+         saveCompletionHandler: @escaping SaveHandler,
+         cancelCompletionHandler: @escaping CancelHandler,
+         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
+        originalNumberOfDays = setting.numberOfDays
+        editedNumberOfDays = setting.numberOfDays
+        
+        originalBaseCurrencyCode = setting.baseCurrencyCode
+        editedBaseCurrencyCode = setting.baseCurrencyCode
+        
+        originalCurrencyCodeOfInterest = setting.currencyCodeOfInterest
+        editedCurrencyCodeOfInterest = setting.currencyCodeOfInterest
+        
+        self.saveCompletionHandler = saveCompletionHandler
+        self.cancelCompletionHandler = cancelCompletionHandler
+        
+        self.currencyDescriber = currencyDescriber
+    }
     // MARK: - internal properties
     var editedNumberOfDays: Int
     
@@ -26,25 +45,6 @@ class SettingModel {
     private let saveCompletionHandler: SaveHandler
     
     private let cancelCompletionHandler: CancelHandler
-    
-    init(setting: BaseResultModel.Setting,
-         saveCompletionHandler: @escaping SaveHandler,
-         cancelCompletionHandler: @escaping CancelHandler,
-         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
-        originalNumberOfDays = setting.numberOfDays
-        editedNumberOfDays = setting.numberOfDays
-        
-        originalBaseCurrencyCode = setting.baseCurrencyCode
-        editedBaseCurrencyCode = setting.baseCurrencyCode
-        
-        originalCurrencyCodeOfInterest = setting.currencyCodeOfInterest
-        editedCurrencyCodeOfInterest = setting.currencyCodeOfInterest
-        
-        self.saveCompletionHandler = saveCompletionHandler
-        self.cancelCompletionHandler = cancelCompletionHandler
-        
-        self.currencyDescriber = currencyDescriber
-    }
 }
 
 // MARK: - Confirming BaseSettingModel
@@ -79,7 +79,6 @@ extension SettingModel: BaseSettingModel {
         
         return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
     }
-    
 }
 
 // MARK: - name space

@@ -16,10 +16,6 @@ class ResultTableViewController: BaseResultTableViewController {
         super.init(coder: coder, baseResultModel: resultModel)
     }
     
-    required init?(coder: NSCoder, baseResultModel: BaseResultModel) {
-        fatalError("init(coder:baseResultModel:) has not been implemented")
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         

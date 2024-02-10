@@ -8,16 +8,14 @@ class SettingTableViewController: BaseSettingTableViewController {
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - methods
-    required init?(coder: NSCoder,
-                   model: SettingModel) {
+    init?(coder: NSCoder,
+          model: SettingModel) {
         self.settingModel = model
         
         anyCancellableSet = Set<AnyCancellable>()
         
         super.init(coder: coder, baseSettingModel: model)
     }
-    
-    required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     override func viewDidLoad() {
         super.viewDidLoad()

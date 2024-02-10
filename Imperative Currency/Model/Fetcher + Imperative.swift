@@ -17,8 +17,8 @@ extension Fetcher: FetcherProtocol {
         _ endpoint: Endpoint,
         completionHandler: @escaping (Result<Endpoint.ResponseType, Swift.Error>) -> Void
     ) {
-        let apiKey = getUsingAPIKey()
-        let urlRequest = createRequest(url: endpoint.url, withAPIKey: apiKey)
+        let apiKey: String = getUsingAPIKey()
+        let urlRequest: URLRequest = createRequest(url: endpoint.url, withAPIKey: apiKey)
         
         rateSession.rateDataTask(with: urlRequest) { [unowned self] data, response, error in
             if let httpURLResponse = response as? HTTPURLResponse, let data {
