@@ -2,7 +2,6 @@ import Foundation
 import Combine
 
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
-    static let shared: SupportedCurrencyManager = SupportedCurrencyManager()
     // TODO: 這裡應該會有同時性問題，等我讀完 concurrency 之後再處理
     private var wrappedSupportedSymbols: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error>?
     
@@ -17,7 +16,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
                 return wrappedSupportedSymbols
             }
             else {
-                let wrappedSupportedSymbols = Fetcher.shared.publisher(for: Endpoints.SupportedSymbols())
+                let wrappedSupportedSymbols: AnyPublisher<[ResponseDataModel.CurrencyCode : String], Error> = Fetcher.shared.publisher(for: Endpoints.SupportedSymbols())
                     .map { $0.symbols }
                     .handleEvents(
                         receiveOutput: { supportedCurrencyDescriptionDictionary in
@@ -40,4 +39,9 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
         supportedCurrency()
             .subscribe(Subscribers.Sink(receiveCompletion: { _ in }, receiveValue: { _ in }))
     }
+}
+
+// MARK: - static property
+extension SupportedCurrencyManager {
+    static let shared: SupportedCurrencyManager = SupportedCurrencyManager()
 }

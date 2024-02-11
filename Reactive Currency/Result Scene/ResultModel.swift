@@ -2,22 +2,12 @@ import Foundation
 import Combine
 
 class ResultModel: BaseResultModel {
-    // MARK: - input
-    private let setting: CurrentValueSubject<BaseResultModel.Setting, Never>
-    private let updateTriggerByUser: PassthroughSubject<Void, Never>
-    private let order: CurrentValueSubject<Order, Never>
-    private let searchText: CurrentValueSubject<String?, Never>
-    private let enableAutoUpdate: CurrentValueSubject<Void, Never>
-    private let disableAutoUpdate: PassthroughSubject<Void, Never>
-    
-    private var anyCancellableSet: Set<AnyCancellable>
-    
-    // MARK: output
-    let state: AnyPublisher<State, Never>
-    
-    init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
-         rateManager: RateManagerProtocol = RateManager.shared,
-         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared) {
+    // MARK: - initializer
+    init(
+        currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
+        rateManager: RateManagerProtocol = RateManager.shared,
+        userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared
+    ) {
         var userSettingManager = userSettingManager
         
         // input
@@ -45,7 +35,7 @@ class ResultModel: BaseResultModel {
             
             do {
                 let autoUpdate: AnyPublisher<Void, Never>
-
+                
                 do {
                     let autoUpdateTimeInterval: TimeInterval = 5
                     
@@ -84,7 +74,7 @@ class ResultModel: BaseResultModel {
                                              historicalRateSet: rateTuple.historicalRateSet,
                                              baseCurrencyCode: setting.baseCurrencyCode)
                                     .compactMapValues { result in try? result.get() }
-                                    // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
+                                // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
                                     .map { tuple in
                                         AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                                     }
@@ -97,7 +87,7 @@ class ResultModel: BaseResultModel {
             let failureStatePublisher = analyzedResult.resultFailure().map { error in State.failure(error) }
             
             let analyzedSuccessTuple = analyzedResult.resultSuccess()
-
+            
             let orderAndSearchText = Publishers.CombineLatest(order, searchText)
                 .map { (order: $0, searchText: $1) }
             
@@ -128,7 +118,6 @@ class ResultModel: BaseResultModel {
                         sortedStatePublisher.print("#### sorted state"),
                         failureStatePublisher.print("#### failure"))
                 .eraseToAnyPublisher()
-            
         }
         
         anyCancellableSet = Set<AnyCancellable>()
@@ -152,6 +141,19 @@ class ResultModel: BaseResultModel {
                 .store(in: &anyCancellableSet)
         }
     }
+    
+    // MARK: - input
+    private let setting: CurrentValueSubject<BaseResultModel.Setting, Never>
+    private let updateTriggerByUser: PassthroughSubject<Void, Never>
+    private let order: CurrentValueSubject<Order, Never>
+    private let searchText: CurrentValueSubject<String?, Never>
+    private let enableAutoUpdate: CurrentValueSubject<Void, Never>
+    private let disableAutoUpdate: PassthroughSubject<Void, Never>
+    
+    private var anyCancellableSet: Set<AnyCancellable>
+    
+    // MARK: output
+    let state: AnyPublisher<State, Never>
     
     // MARK: - hook methods
     override func updateState() {

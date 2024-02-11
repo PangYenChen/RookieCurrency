@@ -11,11 +11,10 @@ protocol PartialPathProvider: EndpointProtocol {
 }
 
 extension PartialPathProvider {
-    
     var url: URL { (urlComponents?.url)! }
     
     var urlComponents: URLComponents? {
-        var urlComponents = Fetcher.urlComponents
+        var urlComponents: URLComponents? = Fetcher.urlComponents
         urlComponents?.path += partialPath
         return urlComponents
     }
@@ -25,7 +24,7 @@ protocol BaseOnTWD: PartialPathProvider {}
 
 extension BaseOnTWD {
     var url: URL {
-        var urlComponents = urlComponents
+        var urlComponents: URLComponents? = urlComponents
         urlComponents?.queryItems = [URLQueryItem(name: "base", value: "TWD")]
         
         return (urlComponents?.url)!

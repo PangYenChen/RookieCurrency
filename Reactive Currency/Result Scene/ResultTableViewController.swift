@@ -2,12 +2,7 @@ import UIKit
 import Combine
 
 class ResultTableViewController: BaseResultTableViewController {
-    // MARK: - private properties
-    private let resultModel: ResultModel
-    
-    private var anyCancellableSet: Set<AnyCancellable>
-    
-    // MARK: - life cycle
+    // MARK: - initializer
     required init?(coder: NSCoder) {
         resultModel = ResultModel()
         
@@ -16,10 +11,7 @@ class ResultTableViewController: BaseResultTableViewController {
         super.init(coder: coder, baseResultModel: resultModel)
     }
     
-    required init?(coder: NSCoder, baseResultModel: BaseResultModel) {
-        fatalError("init(coder:baseResultModel:) has not been implemented")
-    }
-    
+    // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -27,6 +19,10 @@ class ResultTableViewController: BaseResultTableViewController {
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: self.updateUIFor(_:))
             .store(in: &anyCancellableSet)
-        
     }
+    
+    // MARK: - private properties
+    private let resultModel: ResultModel
+    
+    private var anyCancellableSet: Set<AnyCancellable>
 }

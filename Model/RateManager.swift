@@ -2,19 +2,7 @@ import Foundation
 
 /// 用來獲得各貨幣匯率資料的類別
 class RateManager {
-    static let shared: RateManager = .init()
-    
-    let fetcher: FetcherProtocol
-    
-    let archiver: ArchiverProtocol.Type
-    
-    /// 用來
-    /// - 同時讀寫 historicalRateDictionary、
-    /// - archive 和 unarchive 檔案
-    let concurrentQueue: DispatchQueue
-    
-    var historicalRateDictionary: [String: ResponseDataModel.HistoricalRate]
-    
+    // MARK: - initializer
     init(fetcher: FetcherProtocol = Fetcher.shared,
          archiver: ArchiverProtocol.Type = Archiver.self,
          concurrentQueue: DispatchQueue = DispatchQueue(label: "rate controller concurrent queue", attributes: .concurrent)) {
@@ -25,6 +13,21 @@ class RateManager {
         historicalRateDictionary = [:]
     }
     
+    // MARK: - instance properties
+    let fetcher: FetcherProtocol
+    
+    let archiver: ArchiverProtocol.Type
+    
+    /// 用來
+    /// - 同時讀寫 historicalRateDictionary、
+    /// - archive 和 unarchive 檔案
+    let concurrentQueue: DispatchQueue
+    
+    var historicalRateDictionary: [String: ResponseDataModel.HistoricalRate]
+}
+
+// MARK: - instance method
+extension RateManager {
     func historicalRateDateStrings(numberOfDaysAgo: Int, from start: Date) -> Set<String> {
         Set(
             (1...numberOfDaysAgo)
@@ -40,4 +43,9 @@ class RateManager {
         concurrentQueue.async(qos: .background, flags: .barrier) { [unowned self] in historicalRateDictionary = [:] }
         try? archiver.removeAllStoredFile()
     }
+}
+
+// MARK: - static property
+extension RateManager {
+    static let shared: RateManager = .init()
 }

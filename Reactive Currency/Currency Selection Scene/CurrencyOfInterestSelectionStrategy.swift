@@ -2,12 +2,7 @@ import Foundation
 import Combine
 
 final class CurrencyOfInterestSelectionStrategy: CurrencySelectionStrategy {
-    let title: String
-    
-    let allowsMultipleSelection: Bool
-    
-    private let currencyCodeOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
-    
+    // MARK: - initializer
     init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
          selectedCurrencyCodeOfInterest: AnySubscriber<Set<ResponseDataModel.CurrencyCode>, Never>) {
         title = R.string.share.currencyOfInterest()
@@ -20,6 +15,12 @@ final class CurrencyOfInterestSelectionStrategy: CurrencySelectionStrategy {
             .dropFirst()
             .subscribe(selectedCurrencyCodeOfInterest)
     }
+    
+    let title: String
+    
+    let allowsMultipleSelection: Bool
+    
+    private let currencyCodeOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
     
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
         currencyCodeOfInterest.value.insert(selectedCurrencyCode)

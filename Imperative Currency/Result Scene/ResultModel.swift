@@ -1,32 +1,6 @@
 import Foundation
 
 class ResultModel: BaseResultModel {
-    // MARK: dependencies
-    private var userSettingManager: UserSettingManagerProtocol
-    
-    private let rateManager: RateManagerProtocol
-    
-    private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
-    
-    // MARK: - private properties
-    private var setting: Setting
-    
-    private var order: Order
-    
-    private var searchText: String?
-    
-    private var analyzedSortedDataArray: [AnalyzedData]
-    
-    private var timer: Timer?
-    
-    private var state: State
-    
-    // MARK: - internal property
-    var stateHandler: StateHandler? {
-        didSet {
-            stateHandler?(state)
-        }
-    }
     // MARK: - life cycle
     init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
          rateManager: RateManagerProtocol = RateManager.shared,
@@ -52,6 +26,33 @@ class ResultModel: BaseResultModel {
                    userSettingManager: userSettingManager)
         
         resumeAutoUpdatingState()
+    }
+    
+    // MARK: dependencies
+    private var userSettingManager: UserSettingManagerProtocol
+    
+    private let rateManager: RateManagerProtocol
+    
+    private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
+    
+    // MARK: - private properties
+    private var setting: Setting
+    
+    private var order: Order
+    
+    private var searchText: String?
+    
+    private var analyzedSortedDataArray: [AnalyzedData]
+    
+    private var timer: Timer?
+    
+    private var state: State
+    
+    // MARK: - internal property
+    var stateHandler: StateHandler? {
+        didSet {
+            stateHandler?(state)
+        }
     }
     
     // MARK: - hook methods
@@ -94,9 +95,9 @@ class ResultModel: BaseResultModel {
             userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
             userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
             
-            self.resumeAutoUpdatingState()
+            resumeAutoUpdatingState()
         } cancelCompletionHandler: { [unowned self] in
-            self.resumeAutoUpdatingState()
+            resumeAutoUpdatingState()
         }
     }
 }
@@ -121,42 +122,42 @@ private extension ResultModel {
         
         rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
-            case .success(let (latestRate, historicalRateSet)):
-                let analyzedResult = Analyst
-                    .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
-                             latestRate: latestRate,
-                             historicalRateSet: historicalRateSet,
-                             baseCurrencyCode: setting.baseCurrencyCode)
-                
-                let analyzedFailure = analyzedResult
-                    .filter { _, result in
-                        switch result {
-                        case .failure: return true
-                        case .success: return false
+                case .success(let (latestRate, historicalRateSet)):
+                    let analyzedResult: [ResponseDataModel.CurrencyCode: Result<Analyst.AnalyzedData, Analyst.AnalyzedError>] = Analyst
+                        .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
+                                 latestRate: latestRate,
+                                 historicalRateSet: historicalRateSet,
+                                 baseCurrencyCode: setting.baseCurrencyCode)
+                    
+                    let analyzedFailure: [ResponseDataModel.CurrencyCode: Result<Analyst.AnalyzedData, Analyst.AnalyzedError>] = analyzedResult
+                        .filter { _, result in
+                            switch result {
+                                case .failure: return true
+                                case .success: return false
+                            }
                         }
+                    
+                    guard analyzedFailure.isEmpty else {
+                        // TODO: 還沒處理錯誤"
+                        return
                     }
-                
-                guard analyzedFailure.isEmpty else {
-                    // TODO: 還沒處理錯誤"
-                    return
-                }
-                
-                analyzedSortedDataArray = analyzedResult
-                    .compactMapValues { result in try? result.get() }
-                    .map { tuple in
-                        AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
-                    }
-                
-                analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,
-                                                                  by: self.order,
-                                                                  filteredIfNeededBy: self.searchText)
-                
-                state = .updated(timestamp: latestRate.timestamp, analyzedSortedDataArray: analyzedSortedDataArray)
-                stateHandler?(state)
-                
-            case .failure(let error):
-                state = .failure(error)
-                stateHandler?(state)
+                    
+                    analyzedSortedDataArray = analyzedResult
+                        .compactMapValues { result in try? result.get() }
+                        .map { tuple in
+                            AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
+                        }
+                    
+                    analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,
+                                                                      by: self.order,
+                                                                      filteredIfNeededBy: self.searchText)
+                    
+                    state = .updated(timestamp: latestRate.timestamp, analyzedSortedDataArray: analyzedSortedDataArray)
+                    stateHandler?(state)
+                    
+                case .failure(let error):
+                    state = .failure(error)
+                    stateHandler?(state)
             }
         }
     }

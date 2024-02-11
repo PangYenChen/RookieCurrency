@@ -5,17 +5,19 @@ protocol CurrencyDescriberProtocol {
 }
 
 class BaseSupportedCurrencyManager {
-    let fetcher: FetcherProtocol
-    
-    private let locale: Locale
-    
-    var supportedCurrencyDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]?
-    
+    // MARK: - initializer
     init(fetcher: FetcherProtocol = Fetcher.shared,
          locale: Locale = Locale.autoupdatingCurrent) {
         self.fetcher = fetcher
         self.locale = locale
     }
+
+    // MARK: - instance properties
+    let fetcher: FetcherProtocol
+    
+    private let locale: Locale
+    
+    var supportedCurrencyDescriptionDictionary: [ResponseDataModel.CurrencyCode: String]?
 }
 
 extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {

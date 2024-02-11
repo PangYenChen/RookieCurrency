@@ -2,21 +2,7 @@ import Foundation
 import Combine
 
 class SettingModel {
-    let editedNumberOfDays: CurrentValueSubject<Int, Never>
-    
-    let editedBaseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
-    
-    let editedCurrencyCodeOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
-    
-    let hasChangesToSave: AnyPublisher<Bool, Never>
-    
-    let currencyDescriber: CurrencyDescriberProtocol
-    
-    // MARK: - properties used to communicate with `ResultModel`
-    private let cancelSubject: PassthroughSubject<Void, Never>
-    
-    private let saveSubject: PassthroughSubject<Void, Never>
-    
+    // MARK: - initializer
     init(setting: BaseResultModel.Setting,
          settingSubscriber: AnySubscriber<BaseResultModel.Setting, Never>,
          cancelSubscriber: AnySubscriber<Void, Never>,
@@ -54,6 +40,21 @@ class SettingModel {
         cancelSubject
             .subscribe(cancelSubscriber)
     }
+    
+    let editedNumberOfDays: CurrentValueSubject<Int, Never>
+    
+    let editedBaseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
+    
+    let editedCurrencyCodeOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
+    
+    let hasChangesToSave: AnyPublisher<Bool, Never>
+    
+    let currencyDescriber: CurrencyDescriberProtocol
+    
+    // MARK: - properties used to communicate with `ResultModel`
+    private let cancelSubject: PassthroughSubject<Void, Never>
+    
+    private let saveSubject: PassthroughSubject<Void, Never>
 }
 
 // MARK: - Confirming BaseSettingModel
@@ -67,7 +68,7 @@ extension SettingModel: BaseSettingModel {
     }
     
     func makeBaseCurrencySelectionModel() -> CurrencySelectionModel {
-        let baseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
+        let baseCurrencySelectionStrategy: BaseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
             baseCurrencyCode: editedBaseCurrencyCode.value,
             selectedBaseCurrencyCode: AnySubscriber(editedBaseCurrencyCode)
         )
@@ -76,7 +77,7 @@ extension SettingModel: BaseSettingModel {
     }
     
     func makeCurrencyOfInterestSelectionModel() -> CurrencySelectionModel {
-        let currencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
+        let currencyOfInterestSelectionStrategy: CurrencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
             currencyCodeOfInterest: editedCurrencyCodeOfInterest.value,
             selectedCurrencyCodeOfInterest: AnySubscriber(editedCurrencyCodeOfInterest)
         )

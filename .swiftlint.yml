@@ -29,6 +29,9 @@ redundant_void_return:
 statement_position:
     statement_mode: uncuddled_else
     
+switch_case_alignment:
+    indented_cases: true
+    
 trailing_whitespace:
     ignores_empty_lines: true
     
@@ -62,6 +65,67 @@ opt_in_rules:
     - empty_xctest_method
     - expiring_todo
     - explicit_init
+    - explicit_type_interface
+    - extension_access_modifier
+    - fallthrough
+    - fatal_error_message
+    - file_types_order
+    - final_test_case
+    - first_where
+    - flatmap_over_map_reduce
+    - force_unwrapping
+    - identical_operands
+    - implicit_return
+#    - indentation_width 好像有 bug，暫時先關掉
+    - joined_default_parameter
+    - last_where
+    - legacy_multiple
+    - legacy_objc_type
+    - literal_expression_end_indentation
+    - local_doc_comment
+    - lower_acl_than_parent
+    - modifier_order
+    - multiline_arguments
+    - multiline_function_chains
+    - multiline_parameters
+    - no_magic_numbers
+    - non_overridable_class_declaration
+    - nslocalizedstring_key
+    - nslocalizedstring_require_bundle
+    - one_declaration_per_file
+    - operator_usage_whitespace
+    - optional_enum_case_matching
+    - pattern_matching_keywords
+    - period_spacing
+    - prefer_self_in_static_references
+    - prefer_self_type_over_type_of_self
+    - prefer_zero_over_explicit_init
+    - private_action
+    - private_outlet
+    - private_subject
+    - reduce_into
+    - redundant_nil_coalescing
+    - redundant_self_in_closure
+    - return_value_from_void_function
+    - self_binding
+    - shorthand_optional_binding
+    - single_test_class
+    - sorted_first_last
+    - static_operator
+    - strong_iboutlet
+    - superfluous_else
+    - test_case_accessibility
+    - toggle_bool
+    - trailing_closure
+    - type_contents_order
+    - unavailable_function
+    - unhandled_throwing_task
+    - unneeded_parentheses_in_closure_argument
+    - untyped_error_in_catch
+    - vertical_parameter_alignment_on_call
+    - vertical_whitespace_closing_braces
+    - vertical_whitespace_opening_braces
+    - xct_specific_matcher
 
 attributes:
     always_on_same_line:
@@ -79,3 +143,5 @@ attributes:
 expiring_todo:
     date_format: "yyyy/MM/dd"
     
+type_contents_order:
+    order: [[case], [initializer], [deinitializer], [view_life_cycle_method], [instance_property], [ib_inspectable], [ib_outlet], [other_method], [ib_action], [subscript], [type_alias], [associated_type], [subtype], [type_method], [type_property]]

@@ -1,10 +1,8 @@
 import Foundation
 
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
-    static let shared: SupportedCurrencyManager = SupportedCurrencyManager()
     // TODO: 這裡應該會有同時性問題，等我讀完 concurrency 之後再處理
-    private var completionHandlers: [(Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void]
-    
+    // MARK: - life cycle
     override init(fetcher: FetcherProtocol = Fetcher.shared,
                   locale: Locale = Locale.autoupdatingCurrent) {
         completionHandlers = []
@@ -12,8 +10,9 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
         super.init(fetcher: fetcher, locale: locale)
     }
     
+    private var completionHandlers: [(Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void]
+    
     func fetchSupportedCurrency(completionHandler: @escaping (Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void) {
-        
         if let supportedCurrencyDescriptionDictionary {
             completionHandler(.success(supportedCurrencyDescriptionDictionary))
         }
@@ -24,9 +23,9 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
             
             fetcher.fetch(Endpoints.SupportedSymbols()) { [unowned self] result in
                 if case .success(let supportedSymbols) = result {
-                    self.supportedCurrencyDescriptionDictionary = supportedSymbols.symbols
+                    supportedCurrencyDescriptionDictionary = supportedSymbols.symbols
                 }
-                while let completionHandler = self.completionHandlers.popLast() {
+                while let completionHandler = completionHandlers.popLast() {
                     completionHandler(result.map { $0.symbols })
                 }
             }
@@ -36,4 +35,9 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     func prefetchSupportedCurrency() {
         fetchSupportedCurrency { _ in }
     }
+}
+
+// MARK: - static property
+extension SupportedCurrencyManager {
+    static let shared: SupportedCurrencyManager = SupportedCurrencyManager()
 }

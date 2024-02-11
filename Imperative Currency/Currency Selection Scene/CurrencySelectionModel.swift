@@ -1,6 +1,21 @@
 import Foundation
 
 class CurrencySelectionModel: CurrencySelectionModelProtocol {
+    // MARK: - initializer
+    init(currencySelectionStrategy: CurrencySelectionStrategy,
+         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
+        self.currencySelectionStrategy = currencySelectionStrategy
+        
+        self.supportedCurrencyManager = supportedCurrencyManager
+        self.currencyCodeDescriptionDictionarySorter = CurrencyCodeDescriptionDictionarySorter(currencyDescriber: supportedCurrencyManager)
+        
+        self.sortingMethod = .currencyName
+        self.initialSortingOrder = .ascending
+        self.sortingOrder = initialSortingOrder
+        self.searchText = nil
+    }
+    
+    // MARK: - instance properties
     private var sortingMethod: SortingMethod
     
     let initialSortingOrder: SortingOrder
@@ -16,20 +31,10 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     let supportedCurrencyManager: SupportedCurrencyManager
     
     private let currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter
+}
 
-    init(currencySelectionStrategy: CurrencySelectionStrategy,
-         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
-        self.currencySelectionStrategy = currencySelectionStrategy
-        
-        self.supportedCurrencyManager = supportedCurrencyManager
-        self.currencyCodeDescriptionDictionarySorter = CurrencyCodeDescriptionDictionarySorter(currencyDescriber: supportedCurrencyManager)
-        
-        self.sortingMethod = .currencyName
-        self.initialSortingOrder = .ascending
-        self.sortingOrder = initialSortingOrder
-        self.searchText = nil
-    }
-    
+// MARK: - instance methods
+extension CurrencySelectionModel {
     func getSortingMethod() -> SortingMethod { sortingMethod }
     
     func set(sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder) {

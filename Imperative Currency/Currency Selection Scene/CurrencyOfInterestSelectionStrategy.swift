@@ -1,14 +1,7 @@
 import Foundation
 
 final class CurrencyOfInterestSelectionStrategy: CurrencySelectionStrategy {
-    let title: String
-    
-    let allowsMultipleSelection: Bool
-    
-    private var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
-    
-    private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
-    
+    // MARK: - initializer
     init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
          completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
         title = R.string.share.currencyOfInterest()
@@ -18,6 +11,18 @@ final class CurrencyOfInterestSelectionStrategy: CurrencySelectionStrategy {
         self.completionHandler = completionHandler
     }
     
+    // MARK: - instance properties
+    let title: String
+    
+    let allowsMultipleSelection: Bool
+    
+    private var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
+    
+    private let completionHandler: (Set<ResponseDataModel.CurrencyCode>) -> Void
+}
+
+// MARK: - instance methods
+extension CurrencyOfInterestSelectionStrategy {
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode) {
         currencyCodeOfInterest.insert(selectedCurrencyCode)
         completionHandler(currencyCodeOfInterest)

@@ -7,7 +7,7 @@ protocol BaseCurrencySelectionModelProtocol: CurrencyDescriberHolder {
     var allowsMultipleSelection: Bool { get }
     
     var initialSortingOrder: CurrencySelectionModel.SortingOrder { get }
-
+    
     func select(currencyCode selectedCurrencyCode: ResponseDataModel.CurrencyCode)
     
     func deselect(currencyCode deselectedCurrencyCode: ResponseDataModel.CurrencyCode)
@@ -16,8 +16,10 @@ protocol BaseCurrencySelectionModelProtocol: CurrencyDescriberHolder {
     
     func getSortingMethod() -> CurrencySelectionModel.SortingMethod
     
-    func set(sortingMethod: CurrencySelectionModel.SortingMethod,
-             andOrder sortingOrder: CurrencySelectionModel.SortingOrder)
+    func set(
+        sortingMethod: CurrencySelectionModel.SortingMethod,
+        andOrder sortingOrder: CurrencySelectionModel.SortingOrder
+    )
     
     func set(searchText: String?)
     

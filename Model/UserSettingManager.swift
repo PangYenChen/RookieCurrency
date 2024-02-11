@@ -12,17 +12,20 @@ protocol UserSettingManagerProtocol {
 
 // MARK: - user setting storage, including some specific fallback logic
 class UserSettingManager: UserSettingManagerProtocol {
-    static let shared: UserSettingManager = UserSettingManager()
-    
-    private let userDefaults: UserDefaults
-    
+    // MARK: - initializer
     init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
     }
     
+    // MARK: - instance property
+    private let userDefaults: UserDefaults
+}
+
+// MARK: - instance computed properties
+extension UserSettingManager {
     var numberOfDays: Int {
         get {
-            let numberOfDaysInUserDefaults = userDefaults.integer(forKey: Key.numberOfDays.rawValue)
+            let numberOfDaysInUserDefaults: Int = userDefaults.integer(forKey: Key.numberOfDays.rawValue)
             return numberOfDaysInUserDefaults > 0 ? numberOfDaysInUserDefaults : 3
         }
         set { userDefaults.set(newValue, forKey: Key.numberOfDays.rawValue) }
@@ -73,6 +76,12 @@ class UserSettingManager: UserSettingManagerProtocol {
     }
 }
 
+// MARK: - static property
+extension UserSettingManager {
+    static let shared: UserSettingManager = UserSettingManager()
+}
+
+// MARK: - name space
 extension UserSettingManager {
     private enum Key: String {
         case numberOfDays

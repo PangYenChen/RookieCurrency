@@ -1,12 +1,12 @@
 import UIKit
 
+@MainActor 
 protocol AlertPresenter {
     func presentAlert(title: String, error: Error, handler: ((UIAlertAction) -> Void)?)
     func presentAlert(title: String, message: String, handler: ((UIAlertAction) -> Void)?)
 }
 
 extension AlertPresenter where Self: UIViewController {
-    
     func presentAlert(title: String = R.string.share.alertTitle(),
                       message: String,
                       handler: ((UIAlertAction) -> Void)? = nil) {
@@ -21,8 +21,8 @@ extension AlertPresenter where Self: UIViewController {
         
         // alert action
         do {
-            let alertActionTitle = R.string.share.alertActionTitle()
-            let alertAction = UIAlertAction(title: alertActionTitle, style: .cancel, handler: handler)
+            let alertActionTitle: String = R.string.share.alertActionTitle()
+            let alertAction: UIAlertAction = UIAlertAction(title: alertActionTitle, style: .cancel, handler: handler)
             alertController.addAction(alertAction)
         }
         
