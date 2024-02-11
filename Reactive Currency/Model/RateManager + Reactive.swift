@@ -7,9 +7,7 @@ protocol RateManagerProtocol {
 }
 
 // TODO: 這裡的 method 好長 看能不能拆開
-
 extension RateManager: RateManagerProtocol {
-    
     func ratePublisher(numberOfDays: Int) -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> {
         ratePublisher(numberOfDays: numberOfDays, from: .now)
     }
@@ -28,7 +26,7 @@ extension RateManager: RateManagerProtocol {
                     return Future<ResponseDataModel.HistoricalRate, Error> { [unowned self] promise in
                         concurrentQueue.async(qos: .userInitiated) { [unowned self] in
                             do {
-                                let unarchivedHistoricalRate = try archiver.unarchive(historicalRateDateString: dateString)
+                                let unarchivedHistoricalRate: ResponseDataModel.HistoricalRate = try archiver.unarchive(historicalRateDateString: dateString)
                                 concurrentQueue.async(qos: .userInitiated, flags: .barrier) { [unowned self] in
                                     historicalRateDictionary[unarchivedHistoricalRate.dateString] = unarchivedHistoricalRate
                                 }

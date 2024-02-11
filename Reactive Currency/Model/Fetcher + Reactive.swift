@@ -11,9 +11,8 @@ extension Fetcher: FetcherProtocol {
     /// - Parameter endPoint: The end point to be retrieved.
     /// - Returns: The publisher publishes decoded instance when the task completes, or terminates if the task fails with an error.
     func publisher<Endpoint: EndpointProtocol>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error> {
-        
         func dataTaskPublisherWithLimitHandling(for endpoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> {
-            let apiKey = getUsingAPIKey()
+            let apiKey: String = getUsingAPIKey()
             
             return rateSession.rateDataTaskPublisher(for: createRequest(url: endpoint.url, withAPIKey: apiKey))
                 .mapError { $0 }

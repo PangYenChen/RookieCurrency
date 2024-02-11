@@ -2,23 +2,11 @@ import Foundation
 import Combine
 
 class CurrencySelectionModel: CurrencySelectionModelProtocol {
-    var initialSortingOrder: SortingOrder
-    
-    var result: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never>
-    
-    private let sortingMethodAndOrder: CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>
-    
-    private let searchText: CurrentValueSubject<String?, Never>
-    
-    private let fetchSubject: PassthroughSubject<Void, Never>
-    
-    let currencySelectionStrategy: CurrencySelectionStrategy
-    
-    let supportedCurrencyManager: SupportedCurrencyManager
-    
-    init(currencySelectionStrategy: CurrencySelectionStrategy,
-         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
-        
+    // MARK: - initializer
+    init(
+        currencySelectionStrategy: CurrencySelectionStrategy,
+        supportedCurrencyManager: SupportedCurrencyManager = .shared
+    ) {
         self.currencySelectionStrategy = currencySelectionStrategy
         
         self.supportedCurrencyManager = supportedCurrencyManager
@@ -29,7 +17,9 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
         
         fetchSubject = PassthroughSubject<Void, Never>()
         
-        let currencyCodeDescriptionDictionarySorter = CurrencyCodeDescriptionDictionarySorter(currencyDescriber: supportedCurrencyManager)
+        let currencyCodeDescriptionDictionarySorter: CurrencyCodeDescriptionDictionarySorter = CurrencyCodeDescriptionDictionarySorter(
+            currencyDescriber: supportedCurrencyManager
+        )
         
         result = fetchSubject
             .flatMap { supportedCurrencyManager.supportedCurrency().convertOutputToResult() }
@@ -43,9 +33,25 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
                 }
             }
             .eraseToAnyPublisher()
-        
     }
     
+    var initialSortingOrder: SortingOrder
+    
+    var result: AnyPublisher<Result<[ResponseDataModel.CurrencyCode], Error>, Never>
+    
+    private let sortingMethodAndOrder: CurrentValueSubject<(method: SortingMethod, order: SortingOrder), Never>
+    
+    private let searchText: CurrentValueSubject<String?, Never>
+    
+    private let fetchSubject: PassthroughSubject<Void, Never>
+    
+    let currencySelectionStrategy: CurrencySelectionStrategy
+    
+    let supportedCurrencyManager: SupportedCurrencyManager
+}
+
+// MARK: - other methods
+extension CurrencySelectionModel {
     func getSortingMethod() -> SortingMethod { sortingMethodAndOrder.value.method }
     
     func set(sortingMethod: SortingMethod, andOrder sortingOrder: SortingOrder) {

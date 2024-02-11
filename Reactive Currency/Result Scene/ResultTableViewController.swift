@@ -2,13 +2,8 @@ import UIKit
 import Combine
 
 class ResultTableViewController: BaseResultTableViewController {
-    // MARK: - private properties
-    private let resultModel: ResultModel
-    
-    private var anyCancellableSet: Set<AnyCancellable>
-    
-    // MARK: - life cycle
-    required init?(coder: NSCoder) {
+    // MARK: - initializer
+    init?(coder: NSCoder) {
         resultModel = ResultModel()
         
         anyCancellableSet = Set<AnyCancellable>()
@@ -16,6 +11,7 @@ class ResultTableViewController: BaseResultTableViewController {
         super.init(coder: coder, baseResultModel: resultModel)
     }
     
+    // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -23,6 +19,10 @@ class ResultTableViewController: BaseResultTableViewController {
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: self.updateUIFor(_:))
             .store(in: &anyCancellableSet)
-        
     }
+    
+    // MARK: - private properties
+    private let resultModel: ResultModel
+    
+    private var anyCancellableSet: Set<AnyCancellable>
 }
