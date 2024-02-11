@@ -3,7 +3,7 @@ import Combine
 
 class ResultTableViewController: BaseResultTableViewController {
     // MARK: - initializer
-    init?(coder: NSCoder) {
+    required init?(coder: NSCoder) {
         resultModel = ResultModel()
         
         anyCancellableSet = Set<AnyCancellable>()

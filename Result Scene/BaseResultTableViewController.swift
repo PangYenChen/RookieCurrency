@@ -31,7 +31,8 @@ class BaseResultTableViewController: UITableViewController {
         }
     }
     
-    @available(*, unavailable)
+    // 在 storyboard 的 initial view controller 的 init?(coder:) 加上 @available(*, unavailable) 的話，系統不知為何會呼叫這個 initializer
+    // swiftlint:disable:next unavailable_function
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
     // MARK: - life cycle
