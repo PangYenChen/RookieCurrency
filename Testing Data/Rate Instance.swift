@@ -10,15 +10,14 @@ import XCTest
 #endif
 
 extension TestingData {
-    
     enum Instance {
         static func historicalRateFor(dateString: String) throws -> ResponseDataModel.HistoricalRate {
-            let historicalRateData = try XCTUnwrap(TestingData.historicalRateDataFor(dateString: dateString))
+            let historicalRateData: Data = try XCTUnwrap(TestingData.historicalRateDataFor(dateString: dateString))
             return try ResponseDataModel.jsonDecoder.decode(ResponseDataModel.HistoricalRate.self, from: historicalRateData)
         }
         
         static func latestRate() throws -> ResponseDataModel.LatestRate {
-            let latestRateData = try XCTUnwrap(TestingData.latestData)
+            let latestRateData: Data = try XCTUnwrap(TestingData.latestData)
             return try ResponseDataModel.jsonDecoder.decode(ResponseDataModel.LatestRate.self, from: latestRateData)
         }
     }

@@ -4,38 +4,36 @@ import XCTest
 extension TestingData {
     enum SessionData {
         static func latestRate() throws -> (data: Data?, response: URLResponse?, error: Error?) {
-            let data = TestingData.latestData
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let data: Data? = TestingData.latestData
+            let url: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             
-            let response = HTTPURLResponse(url: url,
-                                           statusCode: 200,
-                                           httpVersion: nil,
-                                           headerFields: nil)
+            let response: HTTPURLResponse? = HTTPURLResponse(url: url,
+                                                             statusCode: 200,
+                                                             httpVersion: nil,
+                                                             headerFields: nil)
             return (data, response, nil)
         }
         
         static func historicalRate(dateString: String) throws -> (data: Data?, response: URLResponse?, error: Error?) {
+            let data: Data? = TestingData.historicalRateDataFor(dateString: dateString)
             
-            let data = TestingData.historicalRateDataFor(dateString: dateString)
-            
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = HTTPURLResponse(url: url,
-                                           statusCode: 200,
-                                           httpVersion: nil,
-                                           headerFields: nil)
+            let url: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response: HTTPURLResponse? = HTTPURLResponse(url: url,
+                                                             statusCode: 200,
+                                                             httpVersion: nil,
+                                                             headerFields: nil)
             
             return (data, response, nil)
         }
         
         static func noContent() throws -> (data: Data?, response: URLResponse?, error: Error?) {
+            let data: Data = Data()
             
-            let data = Data()
-            
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = HTTPURLResponse(url: url,
-                                           statusCode: 204,
-                                           httpVersion: nil,
-                                           headerFields: nil)
+            let url: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response: HTTPURLResponse? = HTTPURLResponse(url: url,
+                                                             statusCode: 204,
+                                                             httpVersion: nil,
+                                                             headerFields: nil)
             return (data, response, nil)
         }
         
@@ -44,34 +42,34 @@ extension TestingData {
         }
         
         static func tooManyRequest() throws -> (data: Data?, response: URLResponse?, error: Error?) {
-            let data = TestingData.tooManyRequestData
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = HTTPURLResponse(url: url,
-                                           statusCode: 429,
-                                           httpVersion: nil,
-                                           headerFields: nil)
+            let data: Data? = TestingData.tooManyRequestData
+            let url: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response: HTTPURLResponse? = HTTPURLResponse(url: url,
+                                                             statusCode: 429,
+                                                             httpVersion: nil,
+                                                             headerFields: nil)
             
             return (data: data, response: response, error: nil)
         }
         
         static func invalidAPIKey() throws -> (data: Data?, response: URLResponse?, error: Error?) {
-            let data = TestingData.invalidAPIKeyData
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = HTTPURLResponse(url: url,
-                                           statusCode: 401,
-                                           httpVersion: nil,
-                                           headerFields: nil)
+            let data: Data? = TestingData.invalidAPIKeyData
+            let url: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response: HTTPURLResponse? = HTTPURLResponse(url: url,
+                                                             statusCode: 401,
+                                                             httpVersion: nil,
+                                                             headerFields: nil)
             
             return (data: data, response: response, error: nil)
         }
         
         static func supportedSymbols() throws -> (data: Data?, response: URLResponse?, error: Error?) {
-            let data = TestingData.supportedSymbols
-            let url = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            let response = HTTPURLResponse(url: url,
-                                           statusCode: 200,
-                                           httpVersion: nil,
-                                           headerFields: nil)
+            let data: Data? = TestingData.supportedSymbols
+            let url: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let response: HTTPURLResponse? = HTTPURLResponse(url: url,
+                                                             statusCode: 200,
+                                                             httpVersion: nil,
+                                                             headerFields: nil)
             
             return (data: data, response: response, error: nil)
         }

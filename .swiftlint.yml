@@ -144,4 +144,4 @@ expiring_todo:
     date_format: "yyyy/MM/dd"
     
 type_contents_order:
-    order: [[case], [initializer], [deinitializer], [view_life_cycle_method], [instance_property], [ib_inspectable], [ib_outlet], [other_method], [ib_action], [subscript], [type_alias], [associated_type], [subtype], [type_method], [type_property]]
+    order: [[case], [initializer], [deinitializer], [view_life_cycle_method], [instance_property], [ib_inspectable], [ib_outlet], [other_method], [ib_action], [subscript], [type_alias], [associated_type], [subtype], [type_property], [type_method]]

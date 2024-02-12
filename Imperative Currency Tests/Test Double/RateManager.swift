@@ -19,5 +19,6 @@ extension TestDouble {
                 self.numberOfDays = numberOfDays
                 completionHandler(result)
             }
+        // TODO: completion handler 要用 typealias 跟 argument label
     }
 }

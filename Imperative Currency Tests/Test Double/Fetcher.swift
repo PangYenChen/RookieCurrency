@@ -2,8 +2,7 @@
 
 extension TestDouble {
     final class Fetcher: FetcherProtocol {
-        
-        private(set) var numberOfMethodCall = 0
+        private(set) var numberOfMethodCall: Int = 0
         
         func fetch<Endpoint: EndpointProtocol>(
             _ endpoint: Endpoint,
@@ -13,5 +12,5 @@ extension TestDouble {
             
             numberOfMethodCall += 1
         }
-    }    
+    }
 }

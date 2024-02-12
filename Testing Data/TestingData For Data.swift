@@ -11,12 +11,9 @@ import Foundation
 // swiftlint:disable function_body_length file_length
 
 extension TestingData {
-    
     /// 用來放`Data`型別的測試資料的 name space
     enum TestingData {
-        
         static func historicalRateDataFor(dateString: String) -> Data? {
-            
             guard let timestamp = AppUtility.requestDateFormatter.date(from: dateString)
                 .map({ Int($0.timeIntervalSince1970) })
                 .map(String.init(describing:)) else { return nil }
@@ -205,7 +202,7 @@ extension TestingData {
 """.data(using: .utf8)
         }
         
-        static let latestData = """
+        static let latestData: Data? = """
 {
   "base": "USD",
   "date": "2023-03-11",
@@ -397,7 +394,7 @@ extension TestingData {
 Invalid authentication credentials
 """.data(using: .utf8)
         
-        static let supportedSymbols: Foundation.Data? = """
+        static let supportedSymbols: Data? = """
 {
   "success" : true,
   "symbols" : {
