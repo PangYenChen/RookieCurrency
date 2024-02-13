@@ -2,7 +2,6 @@ import XCTest
 @testable import ImperativeCurrency
 
 final class FetcherTests: XCTestCase {
-    
     private var sut: Fetcher!
     
     private var stubRateSession: StubRateSession!
@@ -19,7 +18,6 @@ final class FetcherTests: XCTestCase {
     
     /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `LatestRate` instance
     func testFetchLatestRate() throws {
-        
         // arrange
         var expectedLatestRateResult: Result<ResponseDataModel.LatestRate, Error>?
         
@@ -32,27 +30,26 @@ final class FetcherTests: XCTestCase {
         
         // assert
         do {
-            let expectedLatestRateResult = try XCTUnwrap(expectedLatestRateResult)
+            let expectedLatestRateResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedLatestRateResult)
             
             switch expectedLatestRateResult {
-            case .success(let latestRate):
-                XCTAssertFalse(latestRate.rates.isEmpty)
-                
-                let dummyCurrencyCode = "TWD"
-                XCTAssertNotNil(latestRate[currencyCode: dummyCurrencyCode])
-            case .failure(let error):
-                XCTFail("不應該發生錯誤，卻收到\(error)")
+                case .success(let latestRate):
+                    XCTAssertFalse(latestRate.rates.isEmpty)
+                    
+                    let dummyCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
+                    XCTAssertNotNil(latestRate[currencyCode: dummyCurrencyCode])
+                case .failure(let error):
+                    XCTFail("不應該發生錯誤，卻收到\(error)")
             }
         }
     }
     
     /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `HistoricalRate` instance
     func testFetchHistoricalRate() throws {
-        
         // arrange
         var expectedHistoricalRateResult: Result<ResponseDataModel.HistoricalRate, Error>?
         
-        let dummyDateString = "1970-01-01"
+        let dummyDateString: ResponseDataModel.CurrencyCode = "1970-01-01"
         
         do {
             stubRateSession.tuple = try TestingData.SessionData.historicalRate(dateString: dummyDateString)
@@ -63,17 +60,17 @@ final class FetcherTests: XCTestCase {
         
         // assert
         do {
-            let expectedHistoricalRateResult = try XCTUnwrap(expectedHistoricalRateResult)
+            let expectedHistoricalRateResult: Result<ResponseDataModel.HistoricalRate, Error> = try XCTUnwrap(expectedHistoricalRateResult)
             
             switch expectedHistoricalRateResult {
-            case .success(let historicalRate):
-                XCTAssertFalse(historicalRate.rates.isEmpty)
-                
-                let dummyCurrencyCode = "TWD"
-                XCTAssertNotNil(historicalRate[currencyCode: dummyCurrencyCode])
-                
-            case .failure(let error):
-                XCTFail("不應該收到錯誤，卻收到\(error)")
+                case .success(let historicalRate):
+                    XCTAssertFalse(historicalRate.rates.isEmpty)
+                    
+                    let dummyCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
+                    XCTAssertNotNil(historicalRate[currencyCode: dummyCurrencyCode])
+                    
+                case .failure(let error):
+                    XCTFail("不應該收到錯誤，卻收到\(error)")
             }
         }
     }
@@ -83,7 +80,7 @@ final class FetcherTests: XCTestCase {
         // arrange
         var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
         
-        let dummyEndpoint = Endpoints.Latest()
+        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         do {
             stubRateSession.tuple = try TestingData.SessionData.noContent()
         }
@@ -93,16 +90,15 @@ final class FetcherTests: XCTestCase {
         
         // assert
         do {
-            let expectedResult = try XCTUnwrap(expectedResult)
+            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
             
             switch expectedResult {
-            
-            case .success:
-                XCTFail("should fail to decode")
-            case .failure(let error):
-                if !(error is DecodingError) {
-                    XCTFail("get an error other than decoding error: \(error)")
-                }
+                case .success:
+                    XCTFail("should fail to decode")
+                case .failure(let error):
+                    if !(error is DecodingError) {
+                        XCTFail("get an error other than decoding error: \(error)")
+                    }
             }
         }
     }
@@ -112,7 +108,7 @@ final class FetcherTests: XCTestCase {
         // arrange
         var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
         
-        let dummyEndpoint = Endpoints.Latest()
+        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
         do {
             stubRateSession.tuple = try TestingData.SessionData.timeout()
@@ -123,20 +119,20 @@ final class FetcherTests: XCTestCase {
         
         // assert
         do {
-            let expectedResult = try XCTUnwrap(expectedResult)
+            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
             switch expectedResult {
-            case .success:
-                XCTFail("should time out")
-            case .failure(let error):
-                guard let urlError = error as? URLError else {
-                    XCTFail("應該要是 URLError，而不是其他 Error，例如 DecodingError。")
-                    return
-                }
-                
-                guard urlError.code.rawValue == URLError.timedOut.rawValue else {
-                    XCTFail("get an error other than timedOut: \(error)")
-                    return
-                }
+                case .success:
+                    XCTFail("should time out")
+                case .failure(let error):
+                    guard let urlError = error as? URLError else {
+                        XCTFail("應該要是 URLError，而不是其他 Error，例如 DecodingError。")
+                        return
+                    }
+                    
+                    guard urlError.code.rawValue == URLError.timedOut.rawValue else {
+                        XCTFail("get an error other than timedOut: \(error)")
+                        return
+                    }
             }
         }
     }
@@ -146,37 +142,37 @@ final class FetcherTests: XCTestCase {
     /// 且新的 api key 尚有額度，session 正常回應。
     func testTooManyRequestRecovery() throws {
         // arrange
-        let spyRateSession = SpyRateSession()
+        let spyRateSession: SpyRateSession = SpyRateSession()
         sut = Fetcher(rateSession: spyRateSession)
         
         var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
         
-        let dummyEndpoint = Endpoints.Latest()
+        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
         do {
             // first response
-            let tooManyRequestTuple = try TestingData.SessionData.tooManyRequest()
+            let tooManyRequestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.tooManyRequest()
             spyRateSession.outputs.append(tooManyRequestTuple)
         }
-
+        
         do {
             // second response
-            let latestTuple = try TestingData.SessionData.latestRate()
+            let latestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.latestRate()
             spyRateSession.outputs.append(latestTuple)
         }
-
+        
         // act
         sut.fetch(dummyEndpoint) { result in expectedResult = result }
         
         // assert
         do {
-            let expectedResult = try XCTUnwrap(expectedResult)
+            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
             
             switch expectedResult {
-            case .success:
-                XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
-            case .failure:
-                XCTFail("should not get any error")
+                case .success:
+                    XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
+                case .failure:
+                    XCTFail("should not get any error")
             }
         }
     }
@@ -189,7 +185,7 @@ final class FetcherTests: XCTestCase {
         // arrange
         var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
         
-        let dummyEndpoint = Endpoints.Latest()
+        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         do {
             stubRateSession.tuple = try TestingData.SessionData.tooManyRequest()
         }
@@ -199,21 +195,21 @@ final class FetcherTests: XCTestCase {
         
         // assert
         do {
-            let expectedResult = try XCTUnwrap(expectedResult)
+            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
             
             switch expectedResult {
-            case .success:
-                XCTFail("should not receive any instance")
-            case .failure(let error):
-                guard let fetcherError = error as? Fetcher.Error else {
-                    XCTFail("應該要收到 Fetcher.Error")
-                    return
-                }
-                
-                guard fetcherError == Fetcher.Error.tooManyRequest else {
-                    XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
-                    return
-                }
+                case .success:
+                    XCTFail("should not receive any instance")
+                case .failure(let error):
+                    guard let fetcherError = error as? Fetcher.Error else {
+                        XCTFail("應該要收到 Fetcher.Error")
+                        return
+                    }
+                    
+                    guard fetcherError == Fetcher.Error.tooManyRequest else {
+                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                        return
+                    }
             }
         }
     }
@@ -223,42 +219,42 @@ final class FetcherTests: XCTestCase {
     /// 新的 api key 有效， session 回應正常資料。
     func testInvalidAPIKeyRecovery() throws {
         // arrange
-        let spyRateSession = SpyRateSession()
+        let spyRateSession: SpyRateSession = SpyRateSession()
         sut = Fetcher(rateSession: spyRateSession)
-
+        
         var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
         
-        let dummyEndpoint = Endpoints.Latest()
-
+        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
+        
         do {
             // first response
-            let invalidAPIKeyTuple = try TestingData.SessionData.invalidAPIKey()
+            let invalidAPIKeyTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.invalidAPIKey()
             spyRateSession.outputs.append(invalidAPIKeyTuple)
         }
-
+        
         do {
             // second response
-            let latestTuple = try TestingData.SessionData.latestRate()
+            let latestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.latestRate()
             spyRateSession.outputs.append(latestTuple)
         }
-
+        
         // act
         sut.fetch(dummyEndpoint) { result in expectedResult = result
         }
-
+        
         // assert
         do {
-            let expectedResult = try XCTUnwrap(expectedResult)
+            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
             
             switch expectedResult {
-            case .success:
-                XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
-            case .failure:
-                XCTFail("should not receive any error")
+                case .success:
+                    XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
+                case .failure:
+                    XCTFail("should not receive any error")
             }
         }
     }
-
+    
     /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
     /// fetcher 更換新的 api key 後再次 call session 的 method，
     /// 後續的 api key 全都無效，fetcher 能回傳 api key 無效的 error。
@@ -266,7 +262,7 @@ final class FetcherTests: XCTestCase {
         // arrange
         var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
         
-        let dummyEndpoint = Endpoints.Latest()
+        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
         do {
             stubRateSession.tuple = try TestingData.SessionData.invalidAPIKey()
@@ -277,70 +273,70 @@ final class FetcherTests: XCTestCase {
         
         // assert
         do {
-            let expectedResult = try XCTUnwrap(expectedResult)
+            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
             
             switch expectedResult {
-            case .success:
-                XCTFail("should not receive any instance")
-            case .failure(let error):
-                guard let fetcherError = error as? Fetcher.Error else {
-                    XCTFail("should receive Fetcher.Error")
-                    return
-                }
-                
-                guard fetcherError == Fetcher.Error.invalidAPIKey else {
-                    XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
-                    return
-                }
+                case .success:
+                    XCTFail("should not receive any instance")
+                case .failure(let error):
+                    guard let fetcherError = error as? Fetcher.Error else {
+                        XCTFail("should receive Fetcher.Error")
+                        return
+                    }
+                    
+                    guard fetcherError == Fetcher.Error.invalidAPIKey else {
+                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                        return
+                    }
             }
         }
     }
-
+    
     /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `SupportedSymbols` instance
     func testFetchSupportedSymbols() throws {
         // arrange
         var expectedResult: Result<ResponseDataModel.SupportedSymbols, Error>?
-
+        
         do {
             stubRateSession.tuple = try TestingData.SessionData.supportedSymbols()
         }
-
+        
         // act
         sut.fetch(Endpoints.SupportedSymbols()) { result in expectedResult = result }
-
+        
         // assert
         do {
-            let expectedResult = try XCTUnwrap(expectedResult)
-
+            let expectedResult: Result<ResponseDataModel.SupportedSymbols, Error> = try XCTUnwrap(expectedResult)
+            
             switch expectedResult {
-            case .success(let supportedSymbols):
-                XCTAssertFalse(supportedSymbols.symbols.isEmpty)
-            case .failure(let failure):
-                XCTFail("should not receive any failure, but receive: \(failure)")
+                case .success(let supportedSymbols):
+                    XCTAssertFalse(supportedSymbols.symbols.isEmpty)
+                case .failure(let failure):
+                    XCTFail("should not receive any failure, but receive: \(failure)")
             }
         }
     }
-
+    
     /// 同時 call 兩次 session 的 method，
     /// 都回應 api key 的額度用罄，
     /// fetcher 要只更新 api key 一次。
     func testTooManyRequestSimultaneously() throws {
         // arrange
-
-        let spyAPIKeySession = SpyAPIKeyRateSession()
+        
+        let spyAPIKeySession: SpyAPIKeyRateSession = SpyAPIKeyRateSession()
         sut = Fetcher(rateSession: spyAPIKeySession)
         
-        let dummyEndpoint = Endpoints.Latest()
+        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
         var firstExpectedResult: Result<ResponseDataModel.LatestRate, Error>?
         var secondExpectedResult: Result<ResponseDataModel.LatestRate, Error>?
-
+        
         // act
         sut.fetch(dummyEndpoint) { result in firstExpectedResult = result }
         sut.fetch(dummyEndpoint) { result in secondExpectedResult = result }
-
+        
         do {
-            let tooManyRequestTuple = try TestingData.SessionData.tooManyRequest()
+            let tooManyRequestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.tooManyRequest()
             
             // session 執行第一個 completion handler
             if let firstFetcherCompletionHandler = spyAPIKeySession.completionHandlers.first {
@@ -349,10 +345,10 @@ final class FetcherTests: XCTestCase {
             else {
                 XCTFail("arrange 失誤，第一次 call `sut.fetch(:)` 應該會給 spy api key session 一個 completion handler")
             }
-
+            
             // session 執行第二個 completion handler
             if spyAPIKeySession.completionHandlers.count >= 2 {
-                let secondFetcherCompletionHandler = spyAPIKeySession.completionHandlers[1]
+                let secondFetcherCompletionHandler: (Data?, URLResponse?, Error?) -> Void = spyAPIKeySession.completionHandlers[1]
                 secondFetcherCompletionHandler(tooManyRequestTuple.data, tooManyRequestTuple.response, tooManyRequestTuple.error)
             }
             else {
@@ -363,13 +359,13 @@ final class FetcherTests: XCTestCase {
             XCTAssertNil(firstExpectedResult)
             XCTAssertNil(secondExpectedResult)
         }
-
+        
         do {
-            let latestTuple = try TestingData.SessionData.latestRate()
+            let latestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.latestRate()
             
             // session 執行第三個 completion handler
             if spyAPIKeySession.completionHandlers.count >= 3 {
-                let thirdFetcherCompletionHandler = spyAPIKeySession.completionHandlers[2]
+                let thirdFetcherCompletionHandler: (Data?, URLResponse?, Error?) -> Void = spyAPIKeySession.completionHandlers[2]
                 thirdFetcherCompletionHandler(latestTuple.data, latestTuple.response, latestTuple.error)
             }
             else {
@@ -378,14 +374,14 @@ final class FetcherTests: XCTestCase {
             
             // session 執行第四個 completion handler
             if spyAPIKeySession.completionHandlers.count >= 4 {
-                let fourthFetcherCompletionHandler = spyAPIKeySession.completionHandlers[3]
+                let fourthFetcherCompletionHandler: (Data?, URLResponse?, Error?) -> Void = spyAPIKeySession.completionHandlers[3]
                 fourthFetcherCompletionHandler(latestTuple.data, latestTuple.response, latestTuple.error)
             }
             else {
                 XCTFail("arrange 失誤，spy api key session 對於第二個 call 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 call 一次 session 的 method，此時 spy api key session 會收到第四個 completion handler")
             }
         }
-
+        
         // assert
         if spyAPIKeySession.receivedAPIKeys.count == 4 {
             XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[0], spyAPIKeySession.receivedAPIKeys[1])
@@ -400,57 +396,62 @@ final class FetcherTests: XCTestCase {
     }
 }
 
-// MARK: - test double
-private final class StubRateSession: RateSession {
+// MARK: - name space: test double
+extension FetcherTests {
+    private final class StubRateSession: RateSession {
+        var tuple: (data: Data?, response: URLResponse?, error: Error?)
+        
+        func rateDataTask(with request: URLRequest,
+                          completionHandler: (Data?, URLResponse?, Error?) -> Void) {
+            completionHandler(tuple.data, tuple.response, tuple.error)
+        }
+    }
     
-    var tuple: (data: Data?, response: URLResponse?, error: Error?)
+    private final class SpyRateSession: RateSession {
+        // MARK: - initializer
+        init() {
+            outputs = []
+            receivedAPIKeys = []
+        }
+        
+        // MARK: - instance properties
+        var outputs: [(data: Data?, response: URLResponse?, error: Error?)]
+        
+        private(set) var receivedAPIKeys: [String]
+        
+        // MARK: - instance method
+        func rateDataTask(with request: URLRequest,
+                          completionHandler: (Data?, URLResponse?, Error?) -> Void) {
+            if let receivedAPIKey = request.value(forHTTPHeaderField: "apikey") {
+                receivedAPIKeys.append(receivedAPIKey)
+            }
+            
+            guard !(outputs.isEmpty) else { return }
+            
+            let output: (data: Data?, response: URLResponse?, error: Error?) = outputs.removeFirst()
+            completionHandler(output.data, output.response, output.error)
+        }
+    }
     
-    func rateDataTask(with request: URLRequest,
-                      completionHandler: (Data?, URLResponse?, Error?) -> Void) {
-        completionHandler(tuple.data, tuple.response, tuple.error)
+    private final class SpyAPIKeyRateSession: RateSession {
+        // MARK: - initializer
+        init() {
+            completionHandlers = []
+            receivedAPIKeys = []
+        }
+        
+        // MARK: - instance properties
+        private(set) var completionHandlers: [(Data?, URLResponse?, Error?) -> Void]
+        
+        private(set) var receivedAPIKeys: [String]
+        
+        // MARK: - instance method
+        func rateDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
+            completionHandlers.append(completionHandler)
+            if let receivedAPIKey = request.value(forHTTPHeaderField: "apikey") {
+                receivedAPIKeys.append(receivedAPIKey)
+            }
+        }
     }
 }
 
-private final class SpyRateSession: RateSession {
-    
-    var outputs: [(data: Data?, response: URLResponse?, error: Error?)]
-    
-    private(set) var receivedAPIKeys: [String]
-    
-    init() {
-        outputs = []
-        receivedAPIKeys = []
-    }
-    
-    func rateDataTask(with request: URLRequest,
-                      completionHandler: (Data?, URLResponse?, Error?) -> Void) {
-        
-        if let receivedAPIKey = request.value(forHTTPHeaderField: "apikey") {
-            receivedAPIKeys.append(receivedAPIKey)
-        }
-        
-        guard !(outputs.isEmpty) else { return }
-        
-        let output = outputs.removeFirst()
-        completionHandler(output.data, output.response, output.error)
-    }
-}
-
-private final class SpyAPIKeyRateSession: RateSession {
-    
-    private(set) var completionHandlers: [(Data?, URLResponse?, Error?) -> Void]
-    
-    private(set) var receivedAPIKeys: [String]
-    
-    init() {
-        completionHandlers = []
-        receivedAPIKeys = []
-    }
-    
-    func rateDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
-        completionHandlers.append(completionHandler)
-        if let receivedAPIKey = request.value(forHTTPHeaderField: "apikey") {
-            receivedAPIKeys.append(receivedAPIKey)
-        }
-    }
-}
