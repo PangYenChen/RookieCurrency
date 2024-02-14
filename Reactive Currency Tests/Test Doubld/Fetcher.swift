@@ -3,8 +3,7 @@ import Combine
 
 extension TestDouble {
     final class Fetcher: FetcherProtocol {
-        
-        private(set) var numberOfMethodCall = 0
+        private(set) var numberOfMethodCall: Int = 0
         
         func publisher<Endpoint>(for endPoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> where Endpoint: ReactiveCurrency.EndpointProtocol {
             // TODO: to be implemented
@@ -13,5 +12,5 @@ extension TestDouble {
             
             return Empty().eraseToAnyPublisher()
         }
-    }    
+    }
 }

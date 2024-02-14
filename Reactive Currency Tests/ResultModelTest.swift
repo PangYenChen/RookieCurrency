@@ -8,7 +8,7 @@ class ResultModelTest: XCTestCase {
         let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         
         let userSettingManagerStub: UserSettingManagerProtocol
-        let numberOfDays = Int.random(in: 1...10)
+        let numberOfDays: Int = Int.random(in: 1...10)
         do {
             let dummyBaseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
             let dummyResultOrder: BaseResultModel.Order = .increasing
@@ -23,8 +23,8 @@ class ResultModelTest: XCTestCase {
         
         let rateManagerSpy: TestDouble.RateManager
         do {
-            let dummyLatestRate = try TestingData.Instance.latestRate()
-            let dummyHistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
+            let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
+            let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
             let dummyResult: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
             rateManagerSpy = TestDouble.RateManager(result: dummyResult)
         }
