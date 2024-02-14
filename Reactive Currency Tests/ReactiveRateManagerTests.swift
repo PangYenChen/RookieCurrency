@@ -3,12 +3,11 @@ import Combine
 @testable import ReactiveCurrency
 
 final class ReactiveRateManagerTests: XCTestCase {
-
     // TODO: "`RateManager` 的 method 太長了，不好測試。等 method 拆解好之後再來寫測試。
     
-    var sut: RateManager!
+    private var sut: RateManager!
     
-    var anyCancellableSet: Set<AnyCancellable> = []
+    private var anyCancellableSet: Set<AnyCancellable> = []
     
     override func tearDown() {
         sut = nil
@@ -104,48 +103,48 @@ final class ReactiveRateManagerTests: XCTestCase {
 //    }
 }
 
-final class StubFetcher: FetcherProtocol {
-    
-    private(set) var numberOfLatestEndpointCall = 0
-    
-    private(set) var dateStringOfHistoricalEndpointCall: Set<String> = []
-    
-    func publisher<Endpoint>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> where Endpoint: EndpointProtocol {
-        if endpoint.url.path.contains("latest") {
-            do {
-                let latestRate = try XCTUnwrap(TestingData.Instance.latestRate() as? Endpoint.ResponseType)
-                numberOfLatestEndpointCall += 1
-                
-                return Just(latestRate)
-                    .setFailureType(to: Error.self)
-                    .eraseToAnyPublisher()
-                
-            }
-            catch {
-                return Fail(error: error)
-                    .eraseToAnyPublisher()
-            }
-        }
-        else {
-            let dateString = endpoint.url.lastPathComponent
-            do {
-                if AppUtility.requestDateFormatter.date(from: dateString) != nil,
-                   let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dateString) as? Endpoint.ResponseType {
+// MARK: - name space: test double
+extension ReactiveRateManagerTests {
+    final class StubFetcher: FetcherProtocol {
+        private(set) var numberOfLatestEndpointCall: Int = 0
+        
+        private(set) var dateStringOfHistoricalEndpointCall: Set<String> = []
+        
+        func publisher<Endpoint>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Error> where Endpoint: EndpointProtocol {
+            if endpoint.url.path.contains("latest") {
+                do {
+                    let latestRate: Endpoint.ResponseType = try XCTUnwrap(TestingData.Instance.latestRate() as? Endpoint.ResponseType)
+                    numberOfLatestEndpointCall += 1
                     
-                    dateStringOfHistoricalEndpointCall.insert(dateString)
-                    
-                    return Just(historicalRate)
+                    return Just(latestRate)
                         .setFailureType(to: Error.self)
                         .eraseToAnyPublisher()
                 }
+                catch {
+                    return Fail(error: error)
+                        .eraseToAnyPublisher()
+                }
             }
-            catch {
-                return Fail(error: error).eraseToAnyPublisher()
+            else {
+                let dateString: String = endpoint.url.lastPathComponent
+                do {
+                    if AppUtility.requestDateFormatter.date(from: dateString) != nil,
+                       let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dateString) as? Endpoint.ResponseType {
+                        dateStringOfHistoricalEndpointCall.insert(dateString)
+                        
+                        return Just(historicalRate)
+                            .setFailureType(to: Error.self)
+                            .eraseToAnyPublisher()
+                    }
+                }
+                catch {
+                    return Fail(error: error).eraseToAnyPublisher()
+                }
             }
+            
+            // the following should be dead code, which purely make compiler silent
+            return Fail(error: Fetcher.Error.unknownError)
+                .eraseToAnyPublisher()
         }
-        
-        // the following should be dead code, which purely make compiler silent
-        return Fail(error: Fetcher.Error.unknownError)
-            .eraseToAnyPublisher()
     }
 }

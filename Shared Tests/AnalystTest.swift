@@ -6,41 +6,41 @@ import XCTest
 #endif
 
 final class AnalystTest: XCTestCase {
-    
     /// 測試一切正常運作的 test method
     func testSimpleAnalyze() throws {
         // arrange
         
         // 使用的 currency of interest 就是強勢貨幣，但就這個 test method 的測試目的來說，只要 currency of interest 包含於測試資料中即可
         let currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
-        let dummyDateString = "1970-01-01"
-        let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
-        let latestRate = try TestingData.Instance.latestRate()
-        let baseCurrencyCode = "USD"
+        let dummyDateString: String = "1970-01-01"
+        let historicalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
+        let latestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
+        let baseCurrencyCode: ResponseDataModel.CurrencyCode = "USD"
         
         // act
-        let analyzedData = Analyst.analyze(currencyCodeOfInterest: currencyCodeOfInterest,
-                                           latestRate: latestRate,
-                                           historicalRateSet: [historicalRate],
-                                           baseCurrencyCode: baseCurrencyCode)
+        let analyzedData: [ResponseDataModel.CurrencyCode: Result<Analyst.AnalyzedData, Analyst.AnalyzedError>] = Analyst
+            .analyze(currencyCodeOfInterest: currencyCodeOfInterest,
+                     latestRate: latestRate,
+                     historicalRateSet: [historicalRate],
+                     baseCurrencyCode: baseCurrencyCode)
         
         // assert
         // 檢查回傳資料沒有遺漏
         XCTAssertEqual(Set(analyzedData.keys), currencyCodeOfInterest)
         
         // 每個 currency 都成功分析
-        let isAnalyzedDataContainsFailure = analyzedData.values
+        let isAnalyzedDataContainsFailure: Bool = analyzedData.values
             .contains { result in
                 switch result {
-                case .success: return false
-                case .failure: return true
+                    case .success: return false
+                    case .failure: return true
                 }
             }
         
         XCTAssertFalse(isAnalyzedDataContainsFailure)
         
-        let analyzedResultRelativeToUSD = try XCTUnwrap(analyzedData["USD"])
-        let analyzedDataRelativeToUSD = try analyzedResultRelativeToUSD.get()
+        let analyzedResultRelativeToUSD: Result<Analyst.AnalyzedData, Analyst.AnalyzedError> = try XCTUnwrap(analyzedData["USD"])
+        let analyzedDataRelativeToUSD: Analyst.AnalyzedData = try analyzedResultRelativeToUSD.get()
         
         // 美金同時是 base currency 也是 currency of interest 時會有的性質
         XCTAssertEqual(analyzedDataRelativeToUSD.latest, 1)
@@ -50,61 +50,59 @@ final class AnalystTest: XCTestCase {
     
     func testHistoricalRateLossACurrency() throws {
         // arrange
-        let currencyLossInHistoricalRate = "FakeCurrencyInLatestRate"
+        let currencyLossInHistoricalRate: String = "FakeCurrencyInLatestRate"
         let currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF", currencyLossInHistoricalRate]
         
-        let dummyDateString = "1970-01-01"
-        let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
+        let dummyDateString: String = "1970-01-01"
+        let historicalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
         XCTAssertNil(historicalRate[currencyCode: currencyLossInHistoricalRate])
-        let latestRate = try TestingData.Instance.latestRate()
+        let latestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
         XCTAssertNotNil(latestRate[currencyCode: currencyLossInHistoricalRate])
-        let baseCurrencyCode = "USD"
+        let baseCurrencyCode: ResponseDataModel.CurrencyCode = "USD"
         
         // act
-        var analyzedData = Analyst.analyze(currencyCodeOfInterest: currencyCodeOfInterest,
-                                           latestRate: latestRate,
-                                           historicalRateSet: [historicalRate],
-                                           baseCurrencyCode: baseCurrencyCode)
+        var analyzedData: [ResponseDataModel.CurrencyCode: Result<Analyst.AnalyzedData, Analyst.AnalyzedError>] = Analyst
+            .analyze(currencyCodeOfInterest: currencyCodeOfInterest,
+                     latestRate: latestRate,
+                     historicalRateSet: [historicalRate],
+                     baseCurrencyCode: baseCurrencyCode)
         
         // assert
         // 檢查 currencyLossInHistoricalRate 確實分析失敗
-        let analyzedResultForLossCurrency = try XCTUnwrap(analyzedData.removeValue(forKey: currencyLossInHistoricalRate))
+        let analyzedResultForLossCurrency: Result<Analyst.AnalyzedData, Analyst.AnalyzedError> = try XCTUnwrap(analyzedData.removeValue(forKey: currencyLossInHistoricalRate))
         
         switch analyzedResultForLossCurrency {
-        case .success:
-            XCTFail("不應該是 success，這表示測試資料安排錯了。")
-        case .failure:
-            break
+            case .success: XCTFail("不應該是 success，這表示測試資料安排錯了。")
+            case .failure: break
         }
     }
     
     func testLatestRateLossACurrency() throws {
         // arrange
-        let currencyLossInLatestRate = "FakeCurrencyInHistoricalRate"
+        let currencyLossInLatestRate: String = "FakeCurrencyInHistoricalRate"
         let currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF", currencyLossInLatestRate]
         
-        let dummyDateString = "1970-01-01"
-        let historicalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
+        let dummyDateString: String = "1970-01-01"
+        let historicalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
         XCTAssertNotNil(historicalRate[currencyCode: currencyLossInLatestRate])
-        let latestRate = try TestingData.Instance.latestRate()
+        let latestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
         XCTAssertNil(latestRate[currencyCode: currencyLossInLatestRate])
-        let baseCurrencyCode = "USD"
+        let baseCurrencyCode: ResponseDataModel.CurrencyCode = "USD"
         
         // act
-        var analyzedData = Analyst.analyze(currencyCodeOfInterest: currencyCodeOfInterest,
-                                           latestRate: latestRate,
-                                           historicalRateSet: [historicalRate],
-                                           baseCurrencyCode: baseCurrencyCode)
+        var analyzedData: [ResponseDataModel.CurrencyCode: Result<Analyst.AnalyzedData, Analyst.AnalyzedError>] = Analyst
+            .analyze(currencyCodeOfInterest: currencyCodeOfInterest,
+                     latestRate: latestRate,
+                     historicalRateSet: [historicalRate],
+                     baseCurrencyCode: baseCurrencyCode)
         
         // assert
         // 檢查 currencyLossInLatestRate 確實分析失敗
-        let analyzedResultForLossCurrency = try XCTUnwrap(analyzedData.removeValue(forKey: currencyLossInLatestRate))
+        let analyzedResultForLossCurrency: Result<Analyst.AnalyzedData, Analyst.AnalyzedError> = try XCTUnwrap(analyzedData.removeValue(forKey: currencyLossInLatestRate))
         
         switch analyzedResultForLossCurrency {
-        case .success:
-            XCTFail("不應該是 success，這表示測試資料安排錯了。")
-        case .failure:
-            break
+            case .success: XCTFail("不應該是 success，這表示測試資料安排錯了。")
+            case .failure: break
         }
     }
 }

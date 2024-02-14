@@ -10,12 +10,11 @@ import Foundation
 
 extension TestDouble {
     enum SpyArchiver: ArchiverProtocol {
+        private(set) static var numberOfArchiveCall: Int = 0
         
-        static private(set) var numberOfArchiveCall = 0
+        private(set) static var numberOfUnarchiveCall: Int = 0
         
-        static private(set) var numberOfUnarchiveCall = 0
-        
-        static private var archivedFileNames: [String] = []
+        private static var archivedFileNames: [String] = []
         
         static func reset() {
             numberOfArchiveCall = 0
