@@ -35,8 +35,8 @@ extension BaseResultModel {
                          baseCurrencyCode: ResponseDataModel.CurrencyCode,
                          currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>)
     
-        /// 資料的排序方式。
-        /// 因為要儲存在 UserDefaults，所以 access control 不能是 private。
+    /// 資料的排序方式。
+    /// 因為要儲存在 UserDefaults，所以 access control 不能是 private。
     enum Order: String {
         case increasing
         case decreasing
@@ -48,7 +48,7 @@ extension BaseResultModel {
             }
         }
     }
-
+    
     enum State {
         case updating
         case updated(timestamp: Int, analyzedSortedDataArray: [AnalyzedData])
