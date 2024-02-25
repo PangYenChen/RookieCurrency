@@ -119,16 +119,16 @@ class BaseResultTableViewController: UITableViewController {
     }
     
     // MARK: - store properties
-    private var dataSource: DataSource!
+    @ViewLoading private var dataSource: DataSource
     
     private let baseResultModel: BaseResultModel
     
-    private var latestUpdateTime: Int?
+    private var latestUpdateTime: Int? // TODO: 搬到 model
     
-    // MARK: - IBOutlet
-    @IBOutlet private var updatingStatusBarButtonItem: UIBarButtonItem!
+    // MARK: - view
+    @ViewLoading @IBOutlet private var updatingStatusBarButtonItem: UIBarButtonItem
     
-    @IBOutlet private var sortingBarButtonItem: UIBarButtonItem!
+    @ViewLoading @IBOutlet private var sortingBarButtonItem: UIBarButtonItem
 }
 
 // MARK: - private method

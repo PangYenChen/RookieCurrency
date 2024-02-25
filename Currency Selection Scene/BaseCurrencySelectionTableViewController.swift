@@ -175,9 +175,9 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     
     private var isFirstTimePopulateTableView: Bool
     
-    private var dataSource: DataSource!
+    @ViewLoading private var dataSource: DataSource
     
-    @IBOutlet var sortBarButtonItem: UIBarButtonItem! // swiftlint:disable:this private_outlet
+    @ViewLoading @IBOutlet var sortBarButtonItem: UIBarButtonItem // TODO: 這邊應該要擋起來，只開需要的 method 給 subclass
 }
 
 // MARK: - helper method
