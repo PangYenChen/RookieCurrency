@@ -160,7 +160,7 @@ class ResultModel: BaseResultModel {
         updateTriggerByUser.send()
     }
     
-    override func setOrder(_ order: BaseResultModel.Order) {
+    func setOrder(_ order: BaseResultModel.Order) {
         self.order.send(order)
     }
     

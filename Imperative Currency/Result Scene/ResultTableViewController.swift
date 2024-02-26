@@ -22,4 +22,8 @@ class ResultTableViewController: BaseResultTableViewController {
     override func updateStatus() {
         resultModel.updateState()
     }
+    
+    override func setOrder(_ order: BaseResultModel.Order) {
+        resultModel.setOrder(order)
+    }
 }

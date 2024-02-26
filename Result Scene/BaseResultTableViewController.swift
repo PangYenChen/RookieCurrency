@@ -88,12 +88,12 @@ class BaseResultTableViewController: UITableViewController {
             let increasingAction: UIAction = UIAction(
                 title: BaseResultModel.Order.increasing.localizedName,
                 image: UIImage(systemSymbol: .arrowUpRight)
-            ) { [unowned self] _ in baseResultModel.setOrder(.increasing) }
+            ) { [unowned self] _ in setOrder(.increasing) }
             
             let decreasingAction: UIAction = UIAction(
                 title: BaseResultModel.Order.decreasing.localizedName,
                 image: UIImage(systemSymbol: .arrowDownRight)
-            ) { [unowned self] _ in baseResultModel.setOrder(.decreasing) }
+            ) { [unowned self] _ in setOrder(.decreasing) }
             
             switch baseResultModel.initialOrder {
                 case .increasing: increasingAction.state = .on
@@ -133,8 +133,11 @@ class BaseResultTableViewController: UITableViewController {
     // MARK: - kind of abstract method
     // 這樣做的原因是想把兩個 target 共用的 code（設定 `UIAction`）寫在一起。
     
-    // swiftlint:disable:next unavailable_function
+    // swiftlint:disable:unavailable_function
     func updateStatus() { fatalError("updateStatus() has not been implemented") }
+    
+    func setOrder(_ order: BaseResultModel.Order) { fatalError("setOrder() has not been implemented")}
+    // swiftlint:enable:unavailable_function
 }
 
 // MARK: - private method

@@ -12,10 +12,6 @@ class BaseResultModel: CurrencyDescriberHolder {
     let currencyDescriber: CurrencyDescriberProtocol
     
     // MARK: - hook methods
-    func setOrder(_ order: Order) {
-        fatalError("setOrder(_:) has not been implemented")
-    }
-    
     func setSearchText(_ searchText: String?) {
         fatalError("setSearchText(_:) has not been implemented")
     }

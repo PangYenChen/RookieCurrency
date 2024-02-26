@@ -60,7 +60,7 @@ class ResultModel: BaseResultModel {
         analyzedDataFor(setting: setting)
     }
     
-    override func setOrder(_ order: BaseResultModel.Order) {
+    func setOrder(_ order: BaseResultModel.Order) {
         userSettingManager.resultOrder = order
         self.order = order
         
