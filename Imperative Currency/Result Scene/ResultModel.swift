@@ -28,7 +28,7 @@ class ResultModel: BaseResultModel {
         resumeAutoUpdatingState()
     }
     
-    // MARK: dependencies
+    // MARK: - dependencies
     private var userSettingManager: UserSettingManagerProtocol
     
     private let rateManager: RateManagerProtocol
@@ -54,8 +54,10 @@ class ResultModel: BaseResultModel {
             stateHandler?(state)
         }
     }
-    
-    // MARK: - hook methods
+}
+
+// MARK: - methods
+extension ResultModel {
     func updateState() {
         analyzedDataFor(setting: setting)
     }
@@ -84,8 +86,11 @@ class ResultModel: BaseResultModel {
         
         stateHandler?(state)
     }
-    
-    override func settingModel() -> SettingModel {
+}
+
+// MARK: - SettingModelFactory
+extension ResultModel {
+    func makeSettingModel() -> SettingModel {
         suspendAutoUpdatingState()
         
         return SettingModel(setting: setting) { [unowned self] setting in

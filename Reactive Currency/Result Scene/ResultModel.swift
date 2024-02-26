@@ -113,10 +113,10 @@ class ResultModel: BaseResultModel {
                 .eraseToAnyPublisher()
             
             state = Publishers
-                .Merge4(updatingStatePublisher.print("#### updating state"),
-                        updatedStatePublisher.print("#### updated state"),
-                        sortedStatePublisher.print("#### sorted state"),
-                        failureStatePublisher.print("#### failure"))
+                .Merge4(updatingStatePublisher,
+                        updatedStatePublisher,
+                        sortedStatePublisher,
+                        failureStatePublisher)
                 .eraseToAnyPublisher()
         }
         
@@ -154,8 +154,10 @@ class ResultModel: BaseResultModel {
     
     // MARK: output
     let state: AnyPublisher<State, Never>
-    
-    // MARK: - hook methods
+}
+
+// MARK: - methods
+extension ResultModel {
     func updateState() {
         updateTriggerByUser.send()
     }
@@ -167,8 +169,11 @@ class ResultModel: BaseResultModel {
     func setSearchText(_ searchText: String?) {
         self.searchText.send(searchText)
     }
-    
-    override func settingModel() -> SettingModel {
+}
+
+// MARK: - SettingModelFactory
+extension ResultModel {
+    func makeSettingModel() -> SettingModel {
         disableAutoUpdate.send()
         return SettingModel(setting: setting.value,
                             settingSubscriber: AnySubscriber(setting),

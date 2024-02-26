@@ -49,8 +49,8 @@ class BaseResultTableViewController: UITableViewController {
                 let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
                 
                 var contentConfiguration: UIListContentConfiguration = cell.defaultContentConfiguration()
-                contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-                contentConfiguration.textToSecondaryTextVerticalPadding = 4
+                contentConfiguration.directionalLayoutMargins = UIConfiguration.TableView.cellContentDirectionalLayoutMargins
+                contentConfiguration.textToSecondaryTextVerticalPadding = UIConfiguration.TableView.cellContentTextToSecondaryTextVerticalPadding
                 
                 do /*configure text*/ {
                     let deviationString: String = analyzedData.deviation.formatted()
@@ -133,17 +133,17 @@ class BaseResultTableViewController: UITableViewController {
     // MARK: - kind of abstract method
     // 這樣做的原因是想把兩個 target 共用的 code（設定 `UIAction`）寫在一起。
     
-    // swiftlint:disable:unavailable_function
+    // swiftlint:disable unavailable_function
     func updateStatus() { fatalError("updateStatus() has not been implemented") }
     
     func setOrder(_ order: BaseResultModel.Order) { fatalError("setOrder() has not been implemented")}
-    // swiftlint:enable:unavailable_function
+    // swiftlint:enable unavailable_function
 }
 
 // MARK: - private method
 private extension BaseResultTableViewController {
     @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        SettingTableViewController(coder: coder, model: baseResultModel.settingModel())
+        SettingTableViewController(coder: coder, model: baseResultModel.makeSettingModel())
     }
 }
 
