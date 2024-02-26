@@ -142,6 +142,9 @@ attributes:
         - "@discardableResult"
         - "@MainActor"
 
+closure_body_length:
+    warning: 100
+
 expiring_todo:
     date_format: "yyyy/MM/dd"
     

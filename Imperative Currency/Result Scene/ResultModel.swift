@@ -22,6 +22,8 @@ class ResultModel: BaseResultModel {
         
         super.init(currencyDescriber: currencyDescriber,
                    userSettingManager: userSettingManager)
+        
+        resumeAutoRefreshing()
     }
     
     // MARK: - dependencies
@@ -45,7 +47,11 @@ class ResultModel: BaseResultModel {
     
     private var analyzedDataArray: [AnalyzedData]
     
-    var completionHandler: CompletionHandler?
+    var analyzedDataArrayHandler: AnalyzedDataArrayHandlebar?
+    
+    var updatingStatusHandler: UpdatingStatusHandlebar?
+    
+    var errorHandler: ErrorHandler?
     
     private var timer: Timer?
 }
@@ -53,6 +59,8 @@ class ResultModel: BaseResultModel {
 // MARK: - methods
 extension ResultModel {
     func refresh() {
+        updatingStatusHandler?(.process)
+        
         rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
                 case .success(let (latestRate, historicalRateSet)):
@@ -84,15 +92,15 @@ extension ResultModel {
                     let sortedAnalyzedDataArray: [QuasiBaseResultModel.AnalyzedData] = analyzedDataSorter.sort(self.analyzedDataArray,
                                                                                                                by: self.order,
                                                                                                                filteredIfNeededBy: self.searchText)
+                    analyzedDataArrayHandler?(sortedAnalyzedDataArray)
                     
                     latestUpdateTimestamp = latestRate.timestamp
-                    
-                    let success: Success = (updatedTimestamp: latestRate.timestamp, sortedAnalyzedDataArray: sortedAnalyzedDataArray)
-                    completionHandler?(.success(success))
+                    updatingStatusHandler?(.idle(latestUpdateTimestamp: latestRate.timestamp))
                     
                 case .failure(let error):
-                    let failure: Failure = Failure(latestUpdateTimestamp: latestUpdateTimestamp, underlyingError: error)
-                    completionHandler?(.failure(failure))
+                    errorHandler?(error)
+                    
+                    updatingStatusHandler?(.idle(latestUpdateTimestamp: latestUpdateTimestamp))
             }
         }
     }
@@ -115,27 +123,45 @@ extension ResultModel {
     }
 }
 
+// MARK: - private methods: auto refreshing
+private extension ResultModel {
+    func resumeAutoRefreshing() {
+        timer = Timer.scheduledTimer(withTimeInterval: autoRefreshingTimeInterval, repeats: true) { [unowned self] _ in
+            refresh()
+        }
+        timer?.fire()
+    }
+    
+    func suspendAutoRefreshing() {
+        timer?.invalidate()
+        timer = nil
+    }
+}
+
 // MARK: - SettingModelFactory
 extension ResultModel {
     func makeSettingModel() -> SettingModel {
-        SettingModel(setting: setting) { [unowned self] setting in
+        suspendAutoRefreshing()
+        
+        return SettingModel(setting: setting) { [unowned self] setting in
             self.setting = setting
             
             userSettingManager.numberOfDays = setting.numberOfDays
             userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
             userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
-        } cancelCompletionHandler: { }
+            
+            resumeAutoRefreshing()
+        } cancelCompletionHandler: { [unowned self] in
+            resumeAutoRefreshing()
+        }
     }
 }
 
 // MARK: - name space
 extension ResultModel {
-    typealias Success = (updatedTimestamp: Int, sortedAnalyzedDataArray: [AnalyzedData])
+    typealias AnalyzedDataArrayHandlebar = (_ analyzedData: [QuasiBaseResultModel.AnalyzedData]) -> Void
     
-    struct Failure: Error {
-        let latestUpdateTimestamp: Int?
-        let underlyingError: Error
-    }
+    typealias UpdatingStatusHandlebar = (_ updatingStatus: QuasiBaseResultModel.UpdatingStatus) -> Void
     
-    typealias CompletionHandler = (_ result: Result<Success, Failure>) -> Void
+    typealias ErrorHandler = (_ error: Error) -> Void
 }

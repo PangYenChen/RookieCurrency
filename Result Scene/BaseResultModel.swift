@@ -4,4 +4,8 @@ protocol SettingModelFactory {
     func makeSettingModel() -> SettingModel
 }
 
-typealias BaseResultModel = QuasiBaseResultModel & SettingModelFactory
+protocol ResultRefresher {
+    func refresh()
+}
+
+typealias BaseResultModel = QuasiBaseResultModel & SettingModelFactory & ResultRefresher

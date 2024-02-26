@@ -341,7 +341,7 @@ extension BaseSettingTableViewController: UIAdaptivePresentationControllerDelega
     }
     
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        print("###, \(self), \(#function), aa,")
+        baseSettingModel.cancel()
     }
 }
 

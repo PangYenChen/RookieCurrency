@@ -39,7 +39,7 @@ class BaseResultTableViewController: UITableViewController {
         
         do /*configure refresh control*/ {
             refreshControl = UIRefreshControl()
-            let handler: UIAction = UIAction { [unowned self] _ in refresh() }
+            let handler: UIAction = UIAction { [unowned self] _ in baseResultModel.refresh() }
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
         }
         
@@ -133,28 +133,21 @@ class BaseResultTableViewController: UITableViewController {
     
     // MARK: - kind of abstract method
     // 這樣做的原因是想把兩個 target 共用的 code（設定 `UIAction`）寫在一起。
-    
-    // swiftlint:disable unavailable_function
-    func refresh() { fatalError("updateStatus() has not been implemented") }
-    
+    // swiftlint:disable:next unavailable_function
     func setOrder(_ order: QuasiBaseResultModel.Order) { fatalError("setOrder() has not been implemented") }
-    
-    func willShowSetting() { fatalError("willShowSetting() has not been implemented") }
-    // swiftlint:enable unavailable_function
 }
 
 // MARK: - segue action
 private extension BaseResultTableViewController {
     @IBSegueAction final func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        willShowSetting()
-        
-        return SettingTableViewController(coder: coder, model: baseResultModel.makeSettingModel())
+        SettingTableViewController(coder: coder, model: baseResultModel.makeSettingModel())
     }
 }
 
 // MARK: - methods
 extension BaseResultTableViewController {
-    final func updateUIFor(_ state: BaseResultModel.State) {
+    @available(*, deprecated)
+    final func updateUIFor(_ state: BaseResultModel.State) { // TODO: to be removed
         switch state {
             case .updating:
                 dismissAlertIfPresented()
@@ -193,7 +186,8 @@ extension BaseResultTableViewController {
         dataSource.apply(snapshot)
     }
     
-    final func endRefreshingRefreshControlIfBegan() {
+    @available(*, deprecated)
+    final func endRefreshingRefreshControlIfBegan() { // TODO: to be removed
         if tableView.refreshControl?.isRefreshing == true {
             tableView.refreshControl?.endRefreshing()
         }
@@ -207,15 +201,30 @@ extension BaseResultTableViewController {
         updatingStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(relativeDateString)
     }
     
-    final func updateUpdatingStatusBarButtonItemFor(status: UpdatingStatus) {
+    final func updateUpdatingStatusBarButtonItemFor(status: QuasiBaseResultModel.UpdatingStatus) {
         switch status {
             case .process:
                 updatingStatusBarButtonItem.title = R.string.resultScene.updating()
             case .idle(let latestUpdateTimestamp):
+                if tableView.refreshControl?.isRefreshing == true {
+                    tableView.refreshControl?.endRefreshing()
+                }
+                
                 let relativeDateString: String = latestUpdateTimestamp.map(Double.init)
                     .map(Date.init(timeIntervalSince1970:))?
                     .formatted(.relative(presentation: .named)) ?? "-"
                 updatingStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(relativeDateString)
+        }
+    }
+    
+    final func presentErrorAlert(error: Error) {
+        if let presentingViewController {
+            if presentingViewController is UIAlertController {
+                dismiss(animated: true) { [unowned self] in presentAlert(error: error) }
+            }
+        }
+        else {
+            presentAlert(error: error)
         }
     }
 }
@@ -233,13 +242,5 @@ private extension BaseResultTableViewController {
     
     enum Section {
         case main
-    }
-}
-
-// MARK: - internal name space
-extension BaseResultTableViewController {
-    enum UpdatingStatus {
-        case process
-        case idle(latestUpdateTimestamp: Int?)
     }
 }

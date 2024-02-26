@@ -19,7 +19,9 @@ class Fetcher {
     
     // MARK: api key 相關的 properties
     // TODO: 這三個 private properties 應該可以抽成一個物件
-    private var unusedAPIKeys: Set<String> = ["pT4L8AtpKOIWiGoE0ouiak003mdE0Wvg", "R7fbgnoWFqhDtzxrfbYNgTbRJqLcNplL"]
+    private var unusedAPIKeys: Set<String> = ["pT4L8AtpKOIWiGoE0ouiak003mdE0Wvg",
+                                              "R7fbgnoWFqhDtzxrfbYNgTbRJqLcNplL",
+                                              "02aTmnyTuDcfXXdo4AruyhfsW3vDVCD4"]
     
     private  var usingAPIKey: String = "kGm2uNHWxJ8WeubiGjTFhOG1uKs3iVsW"
     

@@ -5,11 +5,14 @@ class QuasiBaseResultModel: CurrencyDescriberHolder {
          userSettingManager: UserSettingManagerProtocol) {
         self.currencyDescriber = currencyDescriber
         initialOrder = userSettingManager.resultOrder
+        autoRefreshingTimeInterval = 5 // swiftlint:disable:this no_magic_numbers
     }
     
     let initialOrder: Order
     
     let currencyDescriber: CurrencyDescriberProtocol
+    
+    let autoRefreshingTimeInterval: TimeInterval
 }
 
 // MARK: - name space
@@ -19,7 +22,6 @@ extension QuasiBaseResultModel {
                          currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>)
     
     /// 資料的排序方式。
-    /// 因為要儲存在 UserDefaults，所以 access control 不能是 private。
     enum Order: String {
         case increasing
         case decreasing
@@ -39,7 +41,7 @@ extension QuasiBaseResultModel {
         case failure(Error)
     }
     
-    struct AnalyzedData: Hashable {
+    struct AnalyzedData: Hashable { // TODO: 名字要想一下
         let currencyCode: ResponseDataModel.CurrencyCode
         let latest: Decimal
         let mean: Decimal
@@ -72,5 +74,10 @@ extension QuasiBaseResultModel {
                         .contains { text in text.localizedStandardContains(searchText) }
                 }
         }
+    }
+    
+    enum UpdatingStatus {
+        case process
+        case idle(latestUpdateTimestamp: Int?)
     }
 }

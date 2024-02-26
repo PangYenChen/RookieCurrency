@@ -11,23 +11,9 @@ class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        resultModel.completionHandler = { [unowned self] result in
-            endRefreshingRefreshControlIfBegan()
-            
-            switch result {
-                case .success(let (updatedTimestamp, sortedAnalyzedDataArray)):
-                    dismissAlertIfPresented()
-                    
-                    populateTableViewWith(sortedAnalyzedDataArray)
-                    
-                    updateUpdatingStatusBarButtonItemFor(status: .idle(latestUpdateTimestamp: updatedTimestamp))
-                case .failure(let failure):
-                    dismissAlertIfPresented()
-                    presentAlert(error: failure.underlyingError)
-                    
-                    updateUpdatingStatusBarButtonItemFor(status: .idle(latestUpdateTimestamp: failure.latestUpdateTimestamp))
-            }
-        }
+        resultModel.analyzedDataArrayHandler = populateTableViewWith
+        resultModel.updatingStatusHandler = updateUpdatingStatusBarButtonItemFor(status:)
+        resultModel.errorHandler = presentErrorAlert(error:)
     }
     
     // MARK: - life cycle
@@ -35,7 +21,7 @@ class ResultTableViewController: BaseResultTableViewController {
         super.viewIsAppearing(animated)
         
         refreshControl?.beginRefreshing()
-        resumeAutoRefreshing()
+        resultModel.refresh()
     }
     
     // MARK: - private property
@@ -44,17 +30,8 @@ class ResultTableViewController: BaseResultTableViewController {
     private var timer: Timer?
     
     // MARK: - kind of abstract methods
-    override func refresh() {
-        updateUpdatingStatusBarButtonItemFor(status: .process)
-        resultModel.refresh()
-    }
-    
     override func setOrder(_ order: QuasiBaseResultModel.Order) {
         populateTableViewWith(resultModel.setOrder(order))
-    }
-    
-    override func willShowSetting() {
-        suspendAutoRefreshing()
     }
 }
 
@@ -66,21 +43,5 @@ extension ResultTableViewController {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         populateTableViewWith(resultModel.setSearchText(nil))
-    }
-}
-
-// MARK: - private methods: auto refreshing
-private extension ResultTableViewController {
-    func resumeAutoRefreshing() {
-        let autoRefreshTimeInterval: TimeInterval = 5
-        timer = Timer.scheduledTimer(withTimeInterval: autoRefreshTimeInterval, repeats: true) { [unowned self] _ in
-            refresh()
-        }
-        timer?.fire()
-    }
-    
-    func suspendAutoRefreshing() {
-        timer?.invalidate()
-        timer = nil
     }
 }
