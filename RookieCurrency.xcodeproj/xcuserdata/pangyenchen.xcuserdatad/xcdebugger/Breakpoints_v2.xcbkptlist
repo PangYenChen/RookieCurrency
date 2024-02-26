@@ -14,8 +14,8 @@
             filePath = "Imperative Currency/Result Scene/ResultTableViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "56"
-            endingLineNumber = "56"
+            startingLineNumber = "64"
+            endingLineNumber = "64"
             landmarkName = "searchBarCancelButtonClicked(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -34,6 +34,54 @@
             endingLineNumber = "153"
             landmarkName = "updateUIFor(_:)"
             landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "2C2CA533-6717-41FF-AAA9-3947819B3822"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "Imperative Currency/Result Scene/ResultTableViewController.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "16"
+            endingLineNumber = "16"
+            landmarkName = "viewDidLoad()"
+            landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "2C2CA533-6717-41FF-AAA9-3947819B3822 - b70a3293c9e0d396"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;(updatedTimestamp: Swift.Int, sortedAnalyzedDataArray: Swift.Array&lt;ImperativeCurrency.QuasiBaseResultModel.AnalyzedData&gt;), ImperativeCurrency.ResultModel.Failure&gt;) -&gt; () in ImperativeCurrency.ResultTableViewController.viewDidLoad() -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Imperative%20Currency/Result%20Scene/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "18"
+                  endingLineNumber = "18"
+                  offsetFromSymbolStart = "132">
+               </Location>
+               <Location
+                  uuid = "2C2CA533-6717-41FF-AAA9-3947819B3822 - b70a3293c9e0d396"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.Result&lt;(updatedTimestamp: Swift.Int, sortedAnalyzedDataArray: Swift.Array&lt;ImperativeCurrency.QuasiBaseResultModel.AnalyzedData&gt;), ImperativeCurrency.ResultModel.Failure&gt;) -&gt; () in ImperativeCurrency.ResultTableViewController.viewDidLoad() -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Imperative%20Currency/Result%20Scene/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "18"
+                  endingLineNumber = "18"
+                  offsetFromSymbolStart = "212">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>

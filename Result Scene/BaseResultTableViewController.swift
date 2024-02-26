@@ -194,11 +194,24 @@ extension BaseResultTableViewController {
         }
     }
     
+    @available(*, deprecated) // TODO: to be removed
     final func populateUpdatingStatusBarButtonItemWith(_ timestamp: Int?) {
         let relativeDateString: String = timestamp.map(Double.init)
             .map(Date.init(timeIntervalSince1970:))?
             .formatted(.relative(presentation: .named)) ?? "-"
         updatingStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(relativeDateString)
+    }
+    
+    final func updateUpdatingStatusBarButtonItemFor(status: UpdatingStatus) {
+        switch status {
+            case .process:
+                updatingStatusBarButtonItem.title = R.string.resultScene.updating()
+            case .idle(let latestUpdateTimestamp):
+                let relativeDateString: String = latestUpdateTimestamp.map(Double.init)
+                    .map(Date.init(timeIntervalSince1970:))?
+                    .formatted(.relative(presentation: .named)) ?? "-"
+                updatingStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(relativeDateString)
+        }
     }
 }
 
@@ -215,5 +228,13 @@ private extension BaseResultTableViewController {
     
     enum Section {
         case main
+    }
+}
+
+// MARK: - internal name space
+extension BaseResultTableViewController {
+    enum UpdatingStatus {
+        case process
+        case idle(latestUpdateTimestamp: Int?)
     }
 }

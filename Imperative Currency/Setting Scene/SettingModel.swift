@@ -44,7 +44,7 @@ class SettingModel {
     
     private let saveCompletionHandler: SaveHandler
     
-    private let cancelCompletionHandler: CancelHandler
+    private let cancelCompletionHandler: CancelHandler // TODO: 檢查有沒有用到
 }
 
 // MARK: - Confirming BaseSettingModel

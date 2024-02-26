@@ -8,20 +8,10 @@ class ResultTableViewController: BaseResultTableViewController {
         super.init(coder: coder, baseResultModel: resultModel)
     }
     
-    // MARK: - life cycle
-    override func viewIsAppearing(_ animated: Bool) {
-        super.viewIsAppearing(animated)
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-        refreshControl?.beginRefreshing()
-        refresh()
-    }
-    
-    // MARK: - private property
-    private let resultModel: ResultModel
-    
-    // MARK: - kind of abstract methods
-    override func refresh() {
-        resultModel.refresh { [unowned self] result in
+        resultModel.completionHandler = { [unowned self] result in
             endRefreshingRefreshControlIfBegan()
             
             switch result {
@@ -30,15 +20,33 @@ class ResultTableViewController: BaseResultTableViewController {
                     
                     populateTableViewWith(sortedAnalyzedDataArray)
                     
-                    populateUpdatingStatusBarButtonItemWith(updatedTimestamp)
-                    
+                    updateUpdatingStatusBarButtonItemFor(status: .idle(latestUpdateTimestamp: updatedTimestamp))
                 case .failure(let failure):
                     dismissAlertIfPresented()
                     presentAlert(error: failure.underlyingError)
                     
-                    populateUpdatingStatusBarButtonItemWith(failure.latestUpdateTimestamp)
+                    updateUpdatingStatusBarButtonItemFor(status: .idle(latestUpdateTimestamp: failure.latestUpdateTimestamp))
             }
         }
+    }
+    
+    // MARK: - life cycle
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        
+        refreshControl?.beginRefreshing()
+        resumeAutoUpdatingState()
+    }
+    
+    // MARK: - private property
+    private let resultModel: ResultModel
+    
+    private var timer: Timer?
+    
+    // MARK: - kind of abstract methods
+    override func refresh() {
+        updateUpdatingStatusBarButtonItemFor(status: .process)
+        resultModel.refresh()
     }
     
     override func setOrder(_ order: QuasiBaseResultModel.Order) {
@@ -54,5 +62,21 @@ extension ResultTableViewController {
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
         populateTableViewWith(resultModel.setSearchText(nil))
+    }
+}
+
+// MARK: - private methods: auto refresh
+private extension ResultTableViewController {
+    func resumeAutoUpdatingState() {
+        let autoRefreshTimeInterval: TimeInterval = 5
+        timer = Timer.scheduledTimer(withTimeInterval: autoRefreshTimeInterval, repeats: true) { [unowned self] _ in
+            refresh()
+        }
+        timer?.fire()
+    }
+    
+    func suspendAutoUpdatingState() {
+        timer?.invalidate()
+        timer = nil
     }
 }

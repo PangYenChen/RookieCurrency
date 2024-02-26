@@ -22,8 +22,6 @@ class ResultModel: BaseResultModel {
         
         super.init(currencyDescriber: currencyDescriber,
                    userSettingManager: userSettingManager)
-        
-        resumeAutoUpdatingState()
     }
     
     // MARK: - dependencies
@@ -47,12 +45,14 @@ class ResultModel: BaseResultModel {
     
     private var analyzedDataArray: [AnalyzedData]
     
+    var completionHandler: CompletionHandler?
+    
     private var timer: Timer?
 }
 
 // MARK: - methods
 extension ResultModel {
-    func refresh(_ completionHandler: @escaping CompletionHandler) {
+    func refresh() {
         rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
                 case .success(let (latestRate, historicalRateSet)):
@@ -82,17 +82,17 @@ extension ResultModel {
                         }
                     
                     let sortedAnalyzedDataArray: [QuasiBaseResultModel.AnalyzedData] = analyzedDataSorter.sort(self.analyzedDataArray,
-                                                                          by: self.order,
-                                                                          filteredIfNeededBy: self.searchText)
+                                                                                                               by: self.order,
+                                                                                                               filteredIfNeededBy: self.searchText)
                     
                     latestUpdateTimestamp = latestRate.timestamp
                     
                     let success: Success = (updatedTimestamp: latestRate.timestamp, sortedAnalyzedDataArray: sortedAnalyzedDataArray)
-                    completionHandler(.success(success))
+                    completionHandler?(.success(success))
                     
                 case .failure(let error):
                     let failure: Failure = Failure(latestUpdateTimestamp: latestUpdateTimestamp, underlyingError: error)
-                    completionHandler(.failure(failure))
+                    completionHandler?(.failure(failure))
             }
         }
     }
@@ -112,48 +112,24 @@ extension ResultModel {
         return analyzedDataSorter.sort(self.analyzedDataArray,
                                        by: self.order,
                                        filteredIfNeededBy: self.searchText)
-        
     }
 }
 
 // MARK: - SettingModelFactory
 extension ResultModel {
     func makeSettingModel() -> SettingModel {
-        suspendAutoUpdatingState()
-        
-        return SettingModel(setting: setting) { [unowned self] setting in
+        SettingModel(setting: setting) { [unowned self] setting in
             self.setting = setting
             
             userSettingManager.numberOfDays = setting.numberOfDays
             userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
             userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
-            
-            resumeAutoUpdatingState()
-        } cancelCompletionHandler: { [unowned self] in
-            resumeAutoUpdatingState()
-        }
-    }
-}
-
-// MARK: - private method
-private extension ResultModel {
-    func resumeAutoUpdatingState() {
-        let autoUpdateTimeInterval: TimeInterval = 5
-        timer = Timer.scheduledTimer(withTimeInterval: autoUpdateTimeInterval, repeats: true) { [unowned self] _ in
-//            analyzedDataFor(setting: setting)
-        }
-        timer?.fire()
-    }
-    
-    func suspendAutoUpdatingState() {
-        timer?.invalidate()
-        timer = nil
+        } cancelCompletionHandler: { }
     }
 }
 
 // MARK: - name space
 extension ResultModel {
-    typealias StateHandler = (_ state: State) -> Void // TODO: to be removed
     typealias Success = (updatedTimestamp: Int, sortedAnalyzedDataArray: [AnalyzedData])
     
     struct Failure: Error {
