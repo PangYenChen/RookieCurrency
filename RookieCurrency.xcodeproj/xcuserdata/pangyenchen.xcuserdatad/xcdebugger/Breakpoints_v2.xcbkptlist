@@ -7,79 +7,62 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            uuid = "85D180E0-99FB-4139-9BF2-EA36C27F446C"
+            uuid = "F9AE2EB1-7A9A-4D0C-9B07-34AA652BA730"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "Imperative Currency/Result Scene/ResultTableViewController.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "64"
-            endingLineNumber = "64"
-            landmarkName = "searchBarCancelButtonClicked(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "6FCC0092-7045-4590-8E26-5EF15A6EFC7B"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Result Scene/BaseResultTableViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "153"
-            endingLineNumber = "153"
-            landmarkName = "updateUIFor(_:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "2C2CA533-6717-41FF-AAA9-3947819B3822"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "Imperative Currency/Result Scene/ResultTableViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "16"
-            endingLineNumber = "16"
-            landmarkName = "viewDidLoad()"
+            startingLineNumber = "77"
+            endingLineNumber = "77"
+            landmarkName = "resumeAutoRefreshing()"
             landmarkType = "7">
             <Locations>
                <Location
-                  uuid = "2C2CA533-6717-41FF-AAA9-3947819B3822 - b70a3293c9e0d396"
+                  uuid = "F9AE2EB1-7A9A-4D0C-9B07-34AA652BA730 - bcef2360613a8884"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Result&lt;(updatedTimestamp: Swift.Int, sortedAnalyzedDataArray: Swift.Array&lt;ImperativeCurrency.QuasiBaseResultModel.AnalyzedData&gt;), ImperativeCurrency.ResultModel.Failure&gt;) -&gt; () in ImperativeCurrency.ResultTableViewController.viewDidLoad() -&gt; ()"
+                  symbolName = "ImperativeCurrency.ResultTableViewController.resumeAutoRefreshing() -&gt; ()"
                   moduleName = "ImperativeCurrency"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Imperative%20Currency/Result%20Scene/ResultTableViewController.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "18"
-                  endingLineNumber = "18"
-                  offsetFromSymbolStart = "132">
+                  startingLineNumber = "78"
+                  endingLineNumber = "78"
+                  offsetFromSymbolStart = "36">
                </Location>
                <Location
-                  uuid = "2C2CA533-6717-41FF-AAA9-3947819B3822 - b70a3293c9e0d396"
+                  uuid = "F9AE2EB1-7A9A-4D0C-9B07-34AA652BA730 - c7d536147168dcb0"
                   shouldBeEnabled = "Yes"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
-                  symbolName = "closure #1 (Swift.Result&lt;(updatedTimestamp: Swift.Int, sortedAnalyzedDataArray: Swift.Array&lt;ImperativeCurrency.QuasiBaseResultModel.AnalyzedData&gt;), ImperativeCurrency.ResultModel.Failure&gt;) -&gt; () in ImperativeCurrency.ResultTableViewController.viewDidLoad() -&gt; ()"
+                  symbolName = "closure #1 @Sendable (__C.NSTimer) -&gt; () in ImperativeCurrency.ResultTableViewController.resumeAutoRefreshing() -&gt; ()"
                   moduleName = "ImperativeCurrency"
                   usesParentBreakpointCondition = "Yes"
                   urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Imperative%20Currency/Result%20Scene/ResultTableViewController.swift"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "18"
-                  endingLineNumber = "18"
-                  offsetFromSymbolStart = "212">
+                  startingLineNumber = "78"
+                  endingLineNumber = "78"
+                  offsetFromSymbolStart = "28">
+               </Location>
+               <Location
+                  uuid = "F9AE2EB1-7A9A-4D0C-9B07-34AA652BA730 - c7d536147168dcd1"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 @Sendable (__C.NSTimer) -&gt; () in ImperativeCurrency.ResultTableViewController.resumeAutoRefreshing() -&gt; ()"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Imperative%20Currency/Result%20Scene/ResultTableViewController.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "77"
+                  endingLineNumber = "77"
+                  offsetFromSymbolStart = "52">
                </Location>
             </Locations>
          </BreakpointContent>

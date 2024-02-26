@@ -35,7 +35,7 @@ class ResultTableViewController: BaseResultTableViewController {
         super.viewIsAppearing(animated)
         
         refreshControl?.beginRefreshing()
-        resumeAutoUpdatingState()
+        resumeAutoRefreshing()
     }
     
     // MARK: - private property
@@ -52,6 +52,10 @@ class ResultTableViewController: BaseResultTableViewController {
     override func setOrder(_ order: QuasiBaseResultModel.Order) {
         populateTableViewWith(resultModel.setOrder(order))
     }
+    
+    override func willShowSetting() {
+        suspendAutoRefreshing()
+    }
 }
 
 // MARK: - Search Bar Delegate
@@ -65,9 +69,9 @@ extension ResultTableViewController {
     }
 }
 
-// MARK: - private methods: auto refresh
+// MARK: - private methods: auto refreshing
 private extension ResultTableViewController {
-    func resumeAutoUpdatingState() {
+    func resumeAutoRefreshing() {
         let autoRefreshTimeInterval: TimeInterval = 5
         timer = Timer.scheduledTimer(withTimeInterval: autoRefreshTimeInterval, repeats: true) { [unowned self] _ in
             refresh()
@@ -75,7 +79,7 @@ private extension ResultTableViewController {
         timer?.fire()
     }
     
-    func suspendAutoUpdatingState() {
+    func suspendAutoRefreshing() {
         timer?.invalidate()
         timer = nil
     }

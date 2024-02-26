@@ -123,6 +123,7 @@ class BaseResultTableViewController: UITableViewController {
     
     private let baseResultModel: BaseResultModel
     
+    @available(*, deprecated)
     private var latestUpdateTime: Int? // TODO: 搬到 model
     
     // MARK: - view
@@ -136,14 +137,18 @@ class BaseResultTableViewController: UITableViewController {
     // swiftlint:disable unavailable_function
     func refresh() { fatalError("updateStatus() has not been implemented") }
     
-    func setOrder(_ order: QuasiBaseResultModel.Order) { fatalError("setOrder() has not been implemented")}
+    func setOrder(_ order: QuasiBaseResultModel.Order) { fatalError("setOrder() has not been implemented") }
+    
+    func willShowSetting() { fatalError("willShowSetting() has not been implemented") }
     // swiftlint:enable unavailable_function
 }
 
-// MARK: - private method
+// MARK: - segue action
 private extension BaseResultTableViewController {
-    @IBSegueAction func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
-        SettingTableViewController(coder: coder, model: baseResultModel.makeSettingModel())
+    @IBSegueAction final func showSetting(_ coder: NSCoder) -> SettingTableViewController? {
+        willShowSetting()
+        
+        return SettingTableViewController(coder: coder, model: baseResultModel.makeSettingModel())
     }
 }
 
