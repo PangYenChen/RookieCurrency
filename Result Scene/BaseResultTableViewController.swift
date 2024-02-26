@@ -39,7 +39,7 @@ class BaseResultTableViewController: UITableViewController {
         
         do /*configure refresh control*/ {
             refreshControl = UIRefreshControl()
-            let handler: UIAction = UIAction { [unowned self] _ in updateStatus() }
+            let handler: UIAction = UIAction { [unowned self] _ in refresh() }
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
         }
         
@@ -134,9 +134,9 @@ class BaseResultTableViewController: UITableViewController {
     // 這樣做的原因是想把兩個 target 共用的 code（設定 `UIAction`）寫在一起。
     
     // swiftlint:disable unavailable_function
-    func updateStatus() { fatalError("updateStatus() has not been implemented") }
+    func refresh() { fatalError("updateStatus() has not been implemented") }
     
-    func setOrder(_ order: BaseResultModel.Order) { fatalError("setOrder() has not been implemented")}
+    func setOrder(_ order: QuasiBaseResultModel.Order) { fatalError("setOrder() has not been implemented")}
     // swiftlint:enable unavailable_function
 }
 
@@ -147,7 +147,7 @@ private extension BaseResultTableViewController {
     }
 }
 
-// MARK: - helper methods
+// MARK: - methods
 extension BaseResultTableViewController {
     final func updateUIFor(_ state: BaseResultModel.State) {
         switch state {
@@ -159,22 +159,20 @@ extension BaseResultTableViewController {
                 self.latestUpdateTime = timestamp
                 
                 populateTableViewWith(analyzedDataArray)
-                endRefreshingRefreshControlIfStarted()
+                endRefreshingRefreshControlIfBegan()
                 populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
                 
             case .sorted(let analyzedDataArray):
                 populateTableViewWith(analyzedDataArray)
                 
             case .failure(let error):
-                endRefreshingRefreshControlIfStarted()
+                endRefreshingRefreshControlIfBegan()
                 dismissAlertIfPresented()
                 presentAlert(error: error)
                 populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
         }
     }
-}
-// MARK: - private methods
-private extension BaseResultTableViewController {
+
     final func dismissAlertIfPresented() {
         if presentingViewController is UIAlertController {
             dismiss(animated: true)
@@ -190,7 +188,7 @@ private extension BaseResultTableViewController {
         dataSource.apply(snapshot)
     }
     
-    final func endRefreshingRefreshControlIfStarted() {
+    final func endRefreshingRefreshControlIfBegan() {
         if tableView.refreshControl?.isRefreshing == true {
             tableView.refreshControl?.endRefreshing()
         }

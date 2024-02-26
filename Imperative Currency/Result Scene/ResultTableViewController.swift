@@ -9,21 +9,37 @@ class ResultTableViewController: BaseResultTableViewController {
     }
     
     // MARK: - life cycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
         
-        resultModel.stateHandler = updateUIFor(_:)
+        refreshControl?.beginRefreshing()
+        refresh()
     }
     
     // MARK: - private property
     private let resultModel: ResultModel
     
     // MARK: - kind of abstract methods
-    override func updateStatus() {
-        resultModel.updateState()
+    override func refresh() {
+        resultModel.refresh { [unowned self] result in
+            endRefreshingRefreshControlIfBegan()
+            
+            switch result {
+                case .success(let (updatedTimestamp, analyzedSortedDataArray)):
+                    populateTableViewWith(analyzedSortedDataArray)
+                    
+                    populateUpdatingStatusBarButtonItemWith(updatedTimestamp)
+                    
+                case .failure(let failure):
+                    dismissAlertIfPresented()
+                    presentAlert(error: failure.underlyingError)
+                    
+                    populateUpdatingStatusBarButtonItemWith(failure.latestUpdateTimestamp)
+            }
+        }
     }
     
-    override func setOrder(_ order: BaseResultModel.Order) {
+    override func setOrder(_ order: QuasiBaseResultModel.Order) {
         resultModel.setOrder(order)
     }
 }

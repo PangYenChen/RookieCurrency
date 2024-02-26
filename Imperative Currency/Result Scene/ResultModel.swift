@@ -36,17 +36,22 @@ class ResultModel: BaseResultModel {
     private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
     
     // MARK: - private properties
+    
+    /// 要傳遞到 setting scene 的資料，可以在那邊修改
     private var setting: Setting
     
+    /// 同樣是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這個 scene 修改
     private var order: Order
     
     private var searchText: String?
+    
+    private var latestUpdateTimestamp: Int?
     
     private var analyzedSortedDataArray: [AnalyzedData]
     
     private var timer: Timer?
     
-    private var state: State
+    private var state: State // TODO: to be removed
     
     // MARK: - internal property
     var stateHandler: StateHandler? { // TODO: to be removed
@@ -58,8 +63,54 @@ class ResultModel: BaseResultModel {
 
 // MARK: - methods
 extension ResultModel {
-    func updateState() {
-        analyzedDataFor(setting: setting)
+    func refresh(_ completionHandler: @escaping CompletionHandler) {
+        rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
+            switch result {
+                case .success(let (latestRate, historicalRateSet)):
+                    let analyzedResult: [ResponseDataModel.CurrencyCode: Result<Analyst.AnalyzedData, Analyst.AnalyzedError>] = Analyst
+                        .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
+                                 latestRate: latestRate,
+                                 historicalRateSet: historicalRateSet,
+                                 baseCurrencyCode: setting.baseCurrencyCode)
+                    
+                    let analyzedFailure: [ResponseDataModel.CurrencyCode: Result<Analyst.AnalyzedData, Analyst.AnalyzedError>] = analyzedResult
+                        .filter { _, result in
+                            switch result {
+                                case .failure: return true
+                                case .success: return false
+                            }
+                        }
+                    
+                    guard analyzedFailure.isEmpty else {
+                        // TODO: 還沒處理錯誤"
+                        return
+                    }
+                    
+                    analyzedSortedDataArray = analyzedResult
+                        .compactMapValues { result in try? result.get() }
+                        .map { tuple in
+                            AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
+                        }
+                    
+                    analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,
+                                                                      by: self.order,
+                                                                      filteredIfNeededBy: self.searchText)
+                    
+//                    state = .updated(timestamp: latestRate.timestamp, analyzedSortedDataArray: analyzedSortedDataArray)
+                    latestUpdateTimestamp = latestRate.timestamp
+                    
+                    let success: Success = (updatedTimestamp: latestRate.timestamp, analyzedSortedDataArray: analyzedSortedDataArray)
+                    completionHandler(.success(success))
+                    
+//                    stateHandler?(state)
+                    
+                case .failure(let error):
+                    let failure = Failure(latestUpdateTimestamp: latestUpdateTimestamp, underlyingError: error)
+                    completionHandler(.failure(failure))
+//                    state = .failure(error)
+//                    stateHandler?(state)
+            }
+        }
     }
     
     func setOrder(_ order: BaseResultModel.Order) {
@@ -170,5 +221,13 @@ private extension ResultModel {
 
 // MARK: - name space
 extension ResultModel {
-    typealias StateHandler = (_ state: State) -> Void
+    typealias StateHandler = (_ state: State) -> Void // TODO: to be removed
+    typealias Success = (updatedTimestamp: Int, analyzedSortedDataArray: [AnalyzedData])
+    
+    struct Failure: Error {
+        let latestUpdateTimestamp: Int?
+        let underlyingError: Error
+    }
+    
+    typealias CompletionHandler = (_ result: Result<Success, Failure>) -> Void
 }
