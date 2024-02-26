@@ -35,3 +35,14 @@ class ResultTableViewController: BaseResultTableViewController {
         resultModel.setOrder(order)
     }
 }
+
+// MARK: - Search Bar Delegate
+extension ResultTableViewController {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        resultModel.setSearchText(searchText)
+    }
+    
+    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
+        resultModel.setSearchText(nil)
+    }
+}

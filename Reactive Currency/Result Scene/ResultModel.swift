@@ -164,7 +164,7 @@ class ResultModel: BaseResultModel {
         self.order.send(order)
     }
     
-    override func setSearchText(_ searchText: String?) {
+    func setSearchText(_ searchText: String?) {
         self.searchText.send(searchText)
     }
     

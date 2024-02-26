@@ -73,7 +73,7 @@ class ResultModel: BaseResultModel {
         stateHandler?(state)
     }
     
-    override func setSearchText(_ searchText: String?) {
+    func setSearchText(_ searchText: String?) {
         self.searchText = searchText
         
         analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,

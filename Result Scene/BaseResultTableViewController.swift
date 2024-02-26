@@ -208,15 +208,7 @@ private extension BaseResultTableViewController {
 extension BaseResultTableViewController: AlertPresenter {}
 
 // MARK: - Search Bar Delegate
-extension BaseResultTableViewController: UISearchBarDelegate {
-    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        baseResultModel.setSearchText(searchText)
-    }
-    
-    func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        baseResultModel.setSearchText(nil)
-    }
-}
+extension BaseResultTableViewController: UISearchBarDelegate {}
 
 // MARK: - private name space
 private extension BaseResultTableViewController {
