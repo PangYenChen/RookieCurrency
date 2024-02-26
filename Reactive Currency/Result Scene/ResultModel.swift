@@ -158,7 +158,7 @@ class ResultModel: BaseResultModel {
 
 // MARK: - methods
 extension ResultModel {
-    func updateState() {
+    func refresh() {
         updateTriggerByUser.send()
     }
     

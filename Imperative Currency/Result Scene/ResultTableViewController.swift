@@ -25,8 +25,10 @@ class ResultTableViewController: BaseResultTableViewController {
             endRefreshingRefreshControlIfBegan()
             
             switch result {
-                case .success(let (updatedTimestamp, analyzedSortedDataArray)):
-                    populateTableViewWith(analyzedSortedDataArray)
+                case .success(let (updatedTimestamp, sortedAnalyzedDataArray)):
+                    dismissAlertIfPresented()
+                    
+                    populateTableViewWith(sortedAnalyzedDataArray)
                     
                     populateUpdatingStatusBarButtonItemWith(updatedTimestamp)
                     
@@ -40,17 +42,17 @@ class ResultTableViewController: BaseResultTableViewController {
     }
     
     override func setOrder(_ order: QuasiBaseResultModel.Order) {
-        resultModel.setOrder(order)
+        populateTableViewWith(resultModel.setOrder(order))
     }
 }
 
 // MARK: - Search Bar Delegate
 extension ResultTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        resultModel.setSearchText(searchText)
+        populateTableViewWith(resultModel.setSearchText(searchText))
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        resultModel.setSearchText(nil)
+        populateTableViewWith(resultModel.setSearchText(nil))
     }
 }

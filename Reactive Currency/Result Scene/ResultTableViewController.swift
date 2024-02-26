@@ -27,8 +27,8 @@ class ResultTableViewController: BaseResultTableViewController {
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - kind of abstract methods
-    override func updateStatus() {
-        resultModel.updateState()
+    override func refresh() {
+        resultModel.refresh()
     }
     
     override func setOrder(_ order: BaseResultModel.Order) {
