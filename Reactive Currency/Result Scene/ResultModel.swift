@@ -156,7 +156,7 @@ class ResultModel: BaseResultModel {
     let state: AnyPublisher<State, Never>
     
     // MARK: - hook methods
-    override func updateState() {
+    func updateState() {
         updateTriggerByUser.send()
     }
     

@@ -17,4 +17,9 @@ class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - private property
     private let resultModel: ResultModel
+    
+    // MARK: - kind of abstract methods
+    override func updateStatus() {
+        resultModel.updateState()
+    }
 }

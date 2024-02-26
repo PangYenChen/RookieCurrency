@@ -12,10 +12,6 @@ class BaseResultModel: CurrencyDescriberHolder {
     let currencyDescriber: CurrencyDescriberProtocol
     
     // MARK: - hook methods
-    func updateState() {
-        fatalError("updateState() has not been implemented")
-    }
-    
     func setOrder(_ order: Order) {
         fatalError("setOrder(_:) has not been implemented")
     }

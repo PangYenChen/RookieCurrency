@@ -39,7 +39,7 @@ class BaseResultTableViewController: UITableViewController {
         
         do /*configure refresh control*/ {
             refreshControl = UIRefreshControl()
-            let handler: UIAction = UIAction { [unowned self] _ in baseResultModel.updateState() }
+            let handler: UIAction = UIAction { [unowned self] _ in updateStatus() }
             refreshControl?.addAction(handler, for: .primaryActionTriggered)
         }
         
@@ -129,6 +129,12 @@ class BaseResultTableViewController: UITableViewController {
     @ViewLoading @IBOutlet private var updatingStatusBarButtonItem: UIBarButtonItem
     
     @ViewLoading @IBOutlet private var sortingBarButtonItem: UIBarButtonItem
+    
+    // MARK: - kind of abstract method
+    // 這樣做的原因是想把兩個 target 共用的 code（設定 `UIAction`）寫在一起。
+    
+    // swiftlint:disable:next unavailable_function
+    func updateStatus() { fatalError("updateStatus() has not been implemented") }
 }
 
 // MARK: - private method

@@ -25,4 +25,9 @@ class ResultTableViewController: BaseResultTableViewController {
     private let resultModel: ResultModel
     
     private var anyCancellableSet: Set<AnyCancellable>
+    
+    // MARK: - kind of abstract methods
+    override func updateStatus() {
+        resultModel.updateState()
+    }
 }

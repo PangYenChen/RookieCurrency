@@ -49,14 +49,14 @@ class ResultModel: BaseResultModel {
     private var state: State
     
     // MARK: - internal property
-    var stateHandler: StateHandler? {
+    var stateHandler: StateHandler? { // TODO: to be removed
         didSet {
             stateHandler?(state)
         }
     }
     
     // MARK: - hook methods
-    override func updateState() {
+    func updateState() {
         analyzedDataFor(setting: setting)
     }
     
