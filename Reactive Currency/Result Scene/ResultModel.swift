@@ -10,7 +10,7 @@ class ResultModel: BaseResultModel {
     ) {
         var userSettingManager: UserSettingManagerProtocol = userSettingManager
         
-        do /*initialize intout*/ {
+        do /*initialize input*/ {
             setting = CurrentValueSubject((userSettingManager.numberOfDays,
                                            userSettingManager.baseCurrencyCode,
                                            userSettingManager.currencyCodeOfInterest))
@@ -26,7 +26,7 @@ class ResultModel: BaseResultModel {
             suspendAutoRefresh = PassthroughSubject<Void, Never>()
         }
         
-        let settingFromSettingModel: AnyPublisher<Setting, Never> = setting.dropFirst().eraseToAnyPublisher() // TODO: 改成屬性
+        let settingFromSettingModel: AnyPublisher<Setting, Never> = setting.dropFirst().eraseToAnyPublisher()
         
         do /*initialize output*/ {
             let refresh: AnyPublisher<Void, Never>
