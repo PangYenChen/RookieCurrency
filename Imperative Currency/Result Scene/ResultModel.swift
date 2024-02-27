@@ -16,19 +16,17 @@ class ResultModel: BaseResultModel {
         order = userSettingManager.resultOrder
         
         searchText = nil
-        analyzedSortedDataArray = []
+        analyzedDataArray = []
         
         timer = nil
-        
-        state = .updating
         
         super.init(currencyDescriber: currencyDescriber,
                    userSettingManager: userSettingManager)
         
-        resumeAutoUpdatingState()
+        resumeAutoRefreshing()
     }
     
-    // MARK: dependencies
+    // MARK: - dependencies
     private var userSettingManager: UserSettingManagerProtocol
     
     private let rateManager: RateManagerProtocol
@@ -36,89 +34,32 @@ class ResultModel: BaseResultModel {
     private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
     
     // MARK: - private properties
+    
+    /// 是 user setting 的一部份，要傳遞到 setting scene 的資料，在那邊編輯
     private var setting: Setting
     
+    /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這個 scene 修改
     private var order: Order
     
     private var searchText: String?
     
-    private var analyzedSortedDataArray: [AnalyzedData]
+    private var latestUpdateTimestamp: Int?
+    
+    private var analyzedDataArray: [AnalyzedData]
+    
+    var analyzedDataArrayHandler: AnalyzedDataArrayHandlebar?
+    
+    var refreshStatusHandler: RefreshStatusHandlebar?
+    
+    var errorHandler: ErrorHandler?
     
     private var timer: Timer?
-    
-    private var state: State
-    
-    // MARK: - internal property
-    var stateHandler: StateHandler? {
-        didSet {
-            stateHandler?(state)
-        }
-    }
-    
-    // MARK: - hook methods
-    override func updateState() {
-        analyzedDataFor(setting: setting)
-    }
-    
-    override func setOrder(_ order: BaseResultModel.Order) {
-        userSettingManager.resultOrder = order
-        self.order = order
-        
-        analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,
-                                                          by: self.order,
-                                                          filteredIfNeededBy: self.searchText)
-        
-        state = .sorted(analyzedSortedDataArray: analyzedSortedDataArray)
-        
-        stateHandler?(state)
-    }
-    
-    override func setSearchText(_ searchText: String?) {
-        self.searchText = searchText
-        
-        analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,
-                                                          by: self.order,
-                                                          filteredIfNeededBy: self.searchText)
-        
-        state = .sorted(analyzedSortedDataArray: analyzedSortedDataArray)
-        
-        stateHandler?(state)
-    }
-    
-    override func settingModel() -> SettingModel {
-        suspendAutoUpdatingState()
-        
-        return SettingModel(setting: setting) { [unowned self] setting in
-            self.setting = setting
-            
-            userSettingManager.numberOfDays = setting.numberOfDays
-            userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
-            userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
-            
-            resumeAutoUpdatingState()
-        } cancelCompletionHandler: { [unowned self] in
-            resumeAutoUpdatingState()
-        }
-    }
 }
 
-// MARK: - private method
-private extension ResultModel {
-    func resumeAutoUpdatingState() {
-        let autoUpdateTimeInterval: TimeInterval = 5
-        timer = Timer.scheduledTimer(withTimeInterval: autoUpdateTimeInterval, repeats: true) { [unowned self] _ in
-            analyzedDataFor(setting: setting)
-        }
-        timer?.fire()
-    }
-    
-    func suspendAutoUpdatingState() {
-        timer?.invalidate()
-        timer = nil
-    }
-    
-    func analyzedDataFor(setting: Setting) {
-        stateHandler?(.updating)
+// MARK: - methods
+extension ResultModel {
+    func refresh() {
+        refreshStatusHandler?(.process)
         
         rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
@@ -142,28 +83,85 @@ private extension ResultModel {
                         return
                     }
                     
-                    analyzedSortedDataArray = analyzedResult
+                    analyzedDataArray = analyzedResult
                         .compactMapValues { result in try? result.get() }
                         .map { tuple in
                             AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                         }
                     
-                    analyzedSortedDataArray = analyzedDataSorter.sort(self.analyzedSortedDataArray,
-                                                                      by: self.order,
-                                                                      filteredIfNeededBy: self.searchText)
+                    let sortedAnalyzedDataArray: [QuasiBaseResultModel.AnalyzedData] = analyzedDataSorter.sort(self.analyzedDataArray,
+                                                                                                               by: self.order,
+                                                                                                               filteredIfNeededBy: self.searchText)
+                    analyzedDataArrayHandler?(sortedAnalyzedDataArray)
                     
-                    state = .updated(timestamp: latestRate.timestamp, analyzedSortedDataArray: analyzedSortedDataArray)
-                    stateHandler?(state)
+                    latestUpdateTimestamp = latestRate.timestamp
+                    refreshStatusHandler?(.idle(latestUpdateTimestamp: latestRate.timestamp))
                     
                 case .failure(let error):
-                    state = .failure(error)
-                    stateHandler?(state)
+                    errorHandler?(error)
+                    
+                    refreshStatusHandler?(.idle(latestUpdateTimestamp: latestUpdateTimestamp))
             }
+        }
+    }
+    
+    func setOrder(_ order: BaseResultModel.Order) -> [QuasiBaseResultModel.AnalyzedData] {
+        userSettingManager.resultOrder = order
+        self.order = order
+        
+        return analyzedDataSorter.sort(self.analyzedDataArray,
+                                       by: self.order,
+                                       filteredIfNeededBy: self.searchText)
+    }
+    
+    func setSearchText(_ searchText: String?) -> [QuasiBaseResultModel.AnalyzedData] {
+        self.searchText = searchText
+        
+        return analyzedDataSorter.sort(self.analyzedDataArray,
+                                       by: self.order,
+                                       filteredIfNeededBy: self.searchText)
+    }
+}
+
+// MARK: - private methods: auto refreshing
+private extension ResultModel {
+    func resumeAutoRefreshing() {
+        timer = Timer.scheduledTimer(withTimeInterval: Self.autoRefreshTimeInterval, repeats: true) { [unowned self] _ in
+            refresh()
+        }
+        timer?.fire()
+    }
+    
+    func suspendAutoRefreshing() {
+        timer?.invalidate()
+        timer = nil
+    }
+}
+
+// MARK: - SettingModelFactory
+extension ResultModel {
+    func makeSettingModel() -> SettingModel {
+        suspendAutoRefreshing()
+        
+        return SettingModel(setting: setting) { [unowned self] setting in
+            self.setting = setting
+            
+            userSettingManager.numberOfDays = setting.numberOfDays
+            userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
+            userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
+            
+            resumeAutoRefreshing()
+        } cancelCompletionHandler: { [unowned self] in
+            resumeAutoRefreshing()
         }
     }
 }
 
 // MARK: - name space
 extension ResultModel {
-    typealias StateHandler = (_ state: State) -> Void
+    typealias AnalyzedDataArrayHandlebar = (_ analyzedData: [QuasiBaseResultModel.AnalyzedData]) -> Void
+    
+    typealias RefreshStatusHandlebar = (_ refreshStatus: QuasiBaseResultModel.RefreshStatus) -> Void
+    
+    typealias ErrorHandler = (_ error: Error) -> Void
 }

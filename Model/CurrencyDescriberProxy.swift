@@ -1,10 +1,10 @@
 import Foundation
 
-protocol CurrencyDescriberHolder: CurrencyDescriberProtocol {
+protocol CurrencyDescriberProxy: CurrencyDescriberProtocol {
     var currencyDescriber: CurrencyDescriberProtocol { get }
 }
 
-extension CurrencyDescriberHolder {
+extension CurrencyDescriberProxy {
     func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
         currencyDescriber.displayStringFor(currencyCode: currencyCode)
     }

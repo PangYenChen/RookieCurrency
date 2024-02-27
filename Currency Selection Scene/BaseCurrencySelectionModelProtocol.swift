@@ -1,7 +1,7 @@
 import Foundation
 
 /// 這裡的 base 是 base class 的意思，不是基準貨幣
-protocol BaseCurrencySelectionModelProtocol: CurrencyDescriberHolder {
+protocol BaseCurrencySelectionModelProtocol: CurrencyDescriberProxy {
     var title: String { get }
     
     var allowsMultipleSelection: Bool { get }

@@ -63,16 +63,16 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     
     var hasChangesToSave: Bool
     
+    // MARK: - view
     let stepper: UIStepper
     
-    // MARK: IBOutlet
-    @IBOutlet var saveButton: UIBarButtonItem! // swiftlint:disable:this private_outlet
+    @ViewLoading @IBOutlet var saveButton: UIBarButtonItem // TODO: 這邊應該要擋起來，開 setDisable 之類的 method
     
-    @IBOutlet private var sectionFooterView: UIView!
+    @ViewLoading @IBOutlet private var sectionFooterView: UIView
     
-    @IBOutlet private var versionLabel: UILabel!
+    @ViewLoading @IBOutlet private var versionLabel: UILabel
     
-    @IBOutlet private var dateLabel: UILabel!
+    @ViewLoading @IBOutlet private var dateLabel: UILabel
     
     // MARK: - hook methods
     func stepperValueDidChange() {
@@ -341,7 +341,7 @@ extension BaseSettingTableViewController: UIAdaptivePresentationControllerDelega
     }
     
     func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        print("###, \(self), \(#function), aa,")
+        baseSettingModel.cancel()
     }
 }
 

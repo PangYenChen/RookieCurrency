@@ -1,6 +1,6 @@
 import UIKit
 
-@MainActor 
+@MainActor
 protocol AlertPresenter {
     func presentAlert(title: String, error: Error, handler: ((UIAlertAction) -> Void)?)
     func presentAlert(title: String, message: String, handler: ((UIAlertAction) -> Void)?)

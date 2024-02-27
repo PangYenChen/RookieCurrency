@@ -13,6 +13,7 @@ disabled_rules:
     - void_function_in_ternary
     
 function_body_length:
+    warning: 150
     error: 200
 
 identifier_name:
@@ -122,6 +123,7 @@ opt_in_rules:
     - unhandled_throwing_task
     - unneeded_parentheses_in_closure_argument
     - untyped_error_in_catch
+    - unused_control_flow_label
     - vertical_parameter_alignment_on_call
     - vertical_whitespace_closing_braces
     - vertical_whitespace_opening_braces
@@ -139,6 +141,9 @@ attributes:
     always_on_line_above:
         - "@discardableResult"
         - "@MainActor"
+
+closure_body_length:
+    warning: 100
 
 expiring_todo:
     date_format: "yyyy/MM/dd"

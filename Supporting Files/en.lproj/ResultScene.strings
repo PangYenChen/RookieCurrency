@@ -4,5 +4,5 @@
 "currencyCellDetail" = "historical mean：%2$@，today：%1$@";
 "increasing" = "increasing";
 "decreasing" = "decreasing";
-"updating" = "updating";
+"refreshing" = "refreshing";
 "fluctuation" = "fluctuation: %@";

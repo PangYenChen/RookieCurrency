@@ -8,67 +8,67 @@ class ResultModel: BaseResultModel {
         rateManager: RateManagerProtocol = RateManager.shared,
         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared
     ) {
-        var userSettingManager = userSettingManager
+        var userSettingManager: UserSettingManagerProtocol = userSettingManager
         
-        // input
-        do {
+        do /*initialize input*/ {
             setting = CurrentValueSubject((userSettingManager.numberOfDays,
                                            userSettingManager.baseCurrencyCode,
                                            userSettingManager.currencyCodeOfInterest))
             
-            updateTriggerByUser = PassthroughSubject<Void, Never>()
+            refreshTriggerByUser = PassthroughSubject<Void, Never>()
             
             searchText = CurrentValueSubject<String?, Never>(nil)
             
             order = CurrentValueSubject<BaseResultModel.Order, Never>(userSettingManager.resultOrder)
             
-            enableAutoUpdate = CurrentValueSubject<Void, Never>(())
+            resumeAutoRefresh = CurrentValueSubject<Void, Never>(())
             
-            disableAutoUpdate = PassthroughSubject<Void, Never>()
+            suspendAutoRefresh = PassthroughSubject<Void, Never>()
         }
         
-        let settingFromSettingModel = setting.dropFirst()
+        let settingFromSettingModel: AnyPublisher<Setting, Never> = setting.dropFirst().eraseToAnyPublisher()
         
-        // output
-        do {
-            let update: AnyPublisher<Void, Never>
+        do /*initialize output*/ {
+            let refresh: AnyPublisher<Void, Never>
             
-            do {
-                let autoUpdate: AnyPublisher<Void, Never>
+            do /*initialize refresh*/ {
+                let autoRefresh: AnyPublisher<Void, Never>
                 
-                do {
-                    let autoUpdateTimeInterval: TimeInterval = 5
-                    
-                    let timerPublisher = Publishers.Merge(enableAutoUpdate,
-                                                          settingFromSettingModel.map { _ in })
+                do /*initialize autoRefresh*/ {
+                    let timerPublisher: AnyPublisher<AnyPublisher<Void, Never>, Never> = Publishers
+                        .Merge(resumeAutoRefresh,
+                               settingFromSettingModel.map { _ in })
                         .map { _ in
-                            Timer.publish(every: autoUpdateTimeInterval, on: RunLoop.main, in: .default)
+                            Timer.publish(every: Self.autoRefreshTimeInterval, on: RunLoop.main, in: .default)
                                 .autoconnect()
-                                .map { _ in return }
+                                .map { _ in }
                                 .prepend(()) // start immediately after subscribing
                                 .eraseToAnyPublisher()
                         }
+                        .eraseToAnyPublisher()
                     
-                    let emptyPublisher = disableAutoUpdate.map { Empty<Void, Never>().eraseToAnyPublisher() }
+                    let emptyPublisher: AnyPublisher<AnyPublisher<Void, Never>, Never> = suspendAutoRefresh
+                        .map { Empty<Void, Never>().eraseToAnyPublisher() }
+                        .eraseToAnyPublisher()
                     
-                    autoUpdate = Publishers.Merge(timerPublisher, emptyPublisher)
+                    autoRefresh = Publishers.Merge(timerPublisher, emptyPublisher)
                         .switchToLatest()
                         .eraseToAnyPublisher()
                 }
                 
-                update = Publishers.Merge(updateTriggerByUser, autoUpdate).eraseToAnyPublisher()
+                refresh = Publishers.Merge(refreshTriggerByUser,
+                                           autoRefresh)
+                .eraseToAnyPublisher()
             }
             
-            let updatingStatePublisher = update.map { State.updating }
-            
-            let analyzedResult = update.withLatestFrom(setting)
+            let analyzedResult: AnyPublisher<Result<AnalyzedSuccess, Error>, Never> = refresh.withLatestFrom(setting)
                 .flatMap { _, setting in
                     rateManager
                         .ratePublisher(numberOfDays: setting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in
                             result.map { rateTuple in
-                                let analyzedDataArray = Analyst
+                                let analyzedDataArray: [QuasiBaseResultModel.AnalyzedData] = Analyst
                                     .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
                                              latestRate: rateTuple.latestRate,
                                              historicalRateSet: rateTuple.historicalRateSet,
@@ -83,41 +83,43 @@ class ResultModel: BaseResultModel {
                         }
                 }
                 .share()
-            
-            let failureStatePublisher = analyzedResult.resultFailure().map { error in State.failure(error) }
-            
-            let analyzedSuccessTuple = analyzedResult.resultSuccess()
-            
-            let orderAndSearchText = Publishers.CombineLatest(order, searchText)
-                .map { (order: $0, searchText: $1) }
-            
-            let analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
-            
-            let updatedStatePublisher = analyzedSuccessTuple.withLatestFrom(orderAndSearchText)
-                .map { analyzedSuccessTuple, orderAndSearchText in
-                    let analyzedSortedDataArray = analyzedDataSorter.sort(analyzedSuccessTuple.analyzedDataArray,
-                                                                          by: orderAndSearchText.order,
-                                                                          filteredIfNeededBy: orderAndSearchText.searchText)
-                    return State.updated(timestamp: analyzedSuccessTuple.latestUpdateTime,
-                                         analyzedSortedDataArray: analyzedSortedDataArray)
-                }
                 .eraseToAnyPublisher()
             
-            let sortedStatePublisher = orderAndSearchText.withLatestFrom(analyzedSuccessTuple)
-                .map { (orderAndSearchText, analyzedSuccessTuple) in
-                    let analyzedSortedDataArray = analyzedDataSorter.sort(analyzedSuccessTuple.analyzedDataArray,
-                                                                          by: orderAndSearchText.order,
-                                                                          filteredIfNeededBy: orderAndSearchText.searchText)
-                    return State.sorted(analyzedSortedDataArray: analyzedSortedDataArray)
-                }
-                .eraseToAnyPublisher()
+            do /*initialize analyzedDataArray*/ {
+                let analyzedDataSorter: AnalyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
+                
+                analyzedDataArray = analyzedResult.resultSuccess()
+                    .map { tuple in tuple.analyzedDataArray }
+                    .combineLatest(order, searchText)
+                    .map { analyzedDataArray, order, searchText in
+                        analyzedDataSorter.sort(analyzedDataArray,
+                                                by: order,
+                                                filteredIfNeededBy: searchText)
+                    }
+                    .eraseToAnyPublisher()
+            }
             
-            state = Publishers
-                .Merge4(updatingStatePublisher.print("#### updating state"),
-                        updatedStatePublisher.print("#### updated state"),
-                        sortedStatePublisher.print("#### sorted state"),
-                        failureStatePublisher.print("#### failure"))
-                .eraseToAnyPublisher()
+            error = analyzedResult.resultFailure()
+            
+            do /*initialize refreshStatus*/ {
+                let refreshStatusProcess: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = refresh
+                    .map { _ in .process }
+                    .eraseToAnyPublisher()
+                
+                let refreshStatusIdleForSuccess: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = analyzedResult.resultSuccess()
+                    .map { tuple in QuasiBaseResultModel.RefreshStatus.idle(latestUpdateTimestamp: tuple.latestUpdateTime) }
+                    .eraseToAnyPublisher()
+                
+                let refreshStatusIdleForFailure: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = error
+                    .withLatestFrom(refreshStatusIdleForSuccess.prepend(.idle(latestUpdateTimestamp: nil)))
+                    .map { _, refreshStatusIdle  in refreshStatusIdle }
+                    .eraseToAnyPublisher()
+             
+                refreshStatus = Publishers.Merge3(refreshStatusProcess,
+                                                  refreshStatusIdleForSuccess,
+                                                  refreshStatusIdleForFailure)
+                    .eraseToAnyPublisher()
+            }
         }
         
         anyCancellableSet = Set<AnyCancellable>()
@@ -125,8 +127,7 @@ class ResultModel: BaseResultModel {
         super.init(currencyDescriber: currencyDescriber,
                    userSettingManager: userSettingManager)
         
-        // subscribe
-        do {
+        do /*subscribe*/ {
             settingFromSettingModel
                 .sink { setting in
                     userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
@@ -143,35 +144,56 @@ class ResultModel: BaseResultModel {
     }
     
     // MARK: - input
+    /// 是 user setting 的一部份，要傳遞到 setting scene 的資料，在那邊編輯
     private let setting: CurrentValueSubject<BaseResultModel.Setting, Never>
-    private let updateTriggerByUser: PassthroughSubject<Void, Never>
+    
+    /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這個 scene 修改
     private let order: CurrentValueSubject<Order, Never>
+    
+    private let refreshTriggerByUser: PassthroughSubject<Void, Never>
+    
     private let searchText: CurrentValueSubject<String?, Never>
-    private let enableAutoUpdate: CurrentValueSubject<Void, Never>
-    private let disableAutoUpdate: PassthroughSubject<Void, Never>
+    
+    private let resumeAutoRefresh: CurrentValueSubject<Void, Never>
+    
+    private let suspendAutoRefresh: PassthroughSubject<Void, Never>
     
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: output
-    let state: AnyPublisher<State, Never>
+    let analyzedDataArray: AnyPublisher<[QuasiBaseResultModel.AnalyzedData], Never>
     
-    // MARK: - hook methods
-    override func updateState() {
-        updateTriggerByUser.send()
+    let refreshStatus: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never>
+    
+    let error: AnyPublisher<Error, Never>
+}
+
+// MARK: - methods
+extension ResultModel {
+    func refresh() {
+        refreshTriggerByUser.send()
     }
     
-    override func setOrder(_ order: BaseResultModel.Order) {
+    func setOrder(_ order: BaseResultModel.Order) {
         self.order.send(order)
     }
     
-    override func setSearchText(_ searchText: String?) {
+    func setSearchText(_ searchText: String?) {
         self.searchText.send(searchText)
     }
-    
-    override func settingModel() -> SettingModel {
-        disableAutoUpdate.send()
+}
+
+// MARK: - SettingModelFactory
+extension ResultModel {
+    func makeSettingModel() -> SettingModel {
+        suspendAutoRefresh.send()
         return SettingModel(setting: setting.value,
                             settingSubscriber: AnySubscriber(setting),
-                            cancelSubscriber: AnySubscriber(enableAutoUpdate))
+                            cancelSubscriber: AnySubscriber(resumeAutoRefresh))
     }
+}
+
+// MARK: - private name space
+private extension ResultModel {
+    typealias AnalyzedSuccess = (latestUpdateTime: Int, analyzedDataArray: [QuasiBaseResultModel.AnalyzedData])
 }
