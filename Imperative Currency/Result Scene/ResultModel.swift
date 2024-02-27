@@ -49,7 +49,7 @@ class ResultModel: BaseResultModel {
     
     var analyzedDataArrayHandler: AnalyzedDataArrayHandlebar?
     
-    var updatingStatusHandler: UpdatingStatusHandlebar?
+    var refreshStatusHandler: RefreshStatusHandlebar?
     
     var errorHandler: ErrorHandler?
     
@@ -59,7 +59,7 @@ class ResultModel: BaseResultModel {
 // MARK: - methods
 extension ResultModel {
     func refresh() {
-        updatingStatusHandler?(.process)
+        refreshStatusHandler?(.process)
         
         rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
@@ -95,12 +95,12 @@ extension ResultModel {
                     analyzedDataArrayHandler?(sortedAnalyzedDataArray)
                     
                     latestUpdateTimestamp = latestRate.timestamp
-                    updatingStatusHandler?(.idle(latestUpdateTimestamp: latestRate.timestamp))
+                    refreshStatusHandler?(.idle(latestUpdateTimestamp: latestRate.timestamp))
                     
                 case .failure(let error):
                     errorHandler?(error)
                     
-                    updatingStatusHandler?(.idle(latestUpdateTimestamp: latestUpdateTimestamp))
+                    refreshStatusHandler?(.idle(latestUpdateTimestamp: latestUpdateTimestamp))
             }
         }
     }
@@ -126,7 +126,7 @@ extension ResultModel {
 // MARK: - private methods: auto refreshing
 private extension ResultModel {
     func resumeAutoRefreshing() {
-        timer = Timer.scheduledTimer(withTimeInterval: autoRefreshingTimeInterval, repeats: true) { [unowned self] _ in
+        timer = Timer.scheduledTimer(withTimeInterval: Self.autoRefreshTimeInterval, repeats: true) { [unowned self] _ in
             refresh()
         }
         timer?.fire()
@@ -161,7 +161,7 @@ extension ResultModel {
 extension ResultModel {
     typealias AnalyzedDataArrayHandlebar = (_ analyzedData: [QuasiBaseResultModel.AnalyzedData]) -> Void
     
-    typealias UpdatingStatusHandlebar = (_ updatingStatus: QuasiBaseResultModel.UpdatingStatus) -> Void
+    typealias RefreshStatusHandlebar = (_ refreshStatus: QuasiBaseResultModel.RefreshStatus) -> Void
     
     typealias ErrorHandler = (_ error: Error) -> Void
 }

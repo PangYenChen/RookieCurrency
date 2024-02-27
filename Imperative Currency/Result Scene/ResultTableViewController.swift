@@ -13,7 +13,7 @@ class ResultTableViewController: BaseResultTableViewController {
         super.viewDidLoad()
         
         resultModel.analyzedDataArrayHandler = populateTableViewWith
-        resultModel.updatingStatusHandler = updateUpdatingStatusBarButtonItemFor(status:)
+        resultModel.refreshStatusHandler = populateRefreshStatusBarButtonItemWith(status:)
         resultModel.errorHandler = presentErrorAlert(error:)
     }
     

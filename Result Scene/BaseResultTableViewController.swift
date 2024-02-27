@@ -110,9 +110,9 @@ class BaseResultTableViewController: UITableViewController {
             sortingBarButtonItem.menu?.children.first?.subtitle = baseResultModel.initialOrder.localizedName
         }
         
-        do /*configure updatingStatusItem*/ {
-            updatingStatusBarButtonItem.isEnabled = false
-            updatingStatusBarButtonItem.setTitleTextAttributes([.foregroundColor: UIColor.label], for: .disabled)
+        do /*configure refreshStatusItem*/ {
+            refreshStatusBarButtonItem.isEnabled = false
+            refreshStatusBarButtonItem.setTitleTextAttributes([.foregroundColor: UIColor.label], for: .disabled)
         }
     }
     
@@ -122,7 +122,7 @@ class BaseResultTableViewController: UITableViewController {
     private let baseResultModel: BaseResultModel
     
     // MARK: - view
-    @ViewLoading @IBOutlet private var updatingStatusBarButtonItem: UIBarButtonItem
+    @ViewLoading @IBOutlet private var refreshStatusBarButtonItem: UIBarButtonItem
     
     @ViewLoading @IBOutlet private var sortingBarButtonItem: UIBarButtonItem
     
@@ -150,10 +150,10 @@ extension BaseResultTableViewController {
         dataSource.apply(snapshot)
     }
     
-    final func updateUpdatingStatusBarButtonItemFor(status: QuasiBaseResultModel.RefreshStatus) {
+    final func populateRefreshStatusBarButtonItemWith(status: QuasiBaseResultModel.RefreshStatus) {
         switch status {
             case .process:
-                updatingStatusBarButtonItem.title = R.string.resultScene.updating()
+                refreshStatusBarButtonItem.title = R.string.resultScene.refreshing()
             case .idle(let latestUpdateTimestamp):
                 if tableView.refreshControl?.isRefreshing == true {
                     tableView.refreshControl?.endRefreshing()
@@ -162,7 +162,7 @@ extension BaseResultTableViewController {
                 let relativeDateString: String = latestUpdateTimestamp.map(Double.init)
                     .map(Date.init(timeIntervalSince1970:))?
                     .formatted(.relative(presentation: .named)) ?? "-"
-                updatingStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(relativeDateString)
+                refreshStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(relativeDateString)
         }
     }
     
