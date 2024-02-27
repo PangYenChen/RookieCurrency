@@ -89,7 +89,7 @@ extension ResultModel {
                             AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                         }
                     
-                    let sortedAnalyzedDataArray: [QuasiBaseResultModel.AnalyzedData] = analyzedDataSorter.sort(self.analyzedDataArray,
+                    let sortedAnalyzedDataArray: [BaseResultModel.AnalyzedData] = analyzedDataSorter.sort(self.analyzedDataArray,
                                                                                                                by: self.order,
                                                                                                                filteredIfNeededBy: self.searchText)
                     analyzedDataArrayHandler?(sortedAnalyzedDataArray)
@@ -105,7 +105,7 @@ extension ResultModel {
         }
     }
     
-    func setOrder(_ order: BaseResultModel.Order) -> [QuasiBaseResultModel.AnalyzedData] {
+    func setOrder(_ order: BaseResultModel.Order) -> [BaseResultModel.AnalyzedData] {
         userSettingManager.resultOrder = order
         self.order = order
         
@@ -114,7 +114,7 @@ extension ResultModel {
                                        filteredIfNeededBy: self.searchText)
     }
     
-    func setSearchText(_ searchText: String?) -> [QuasiBaseResultModel.AnalyzedData] {
+    func setSearchText(_ searchText: String?) -> [BaseResultModel.AnalyzedData] {
         self.searchText = searchText
         
         return analyzedDataSorter.sort(self.analyzedDataArray,
@@ -159,9 +159,9 @@ extension ResultModel {
 
 // MARK: - name space
 extension ResultModel {
-    typealias AnalyzedDataArrayHandlebar = (_ analyzedData: [QuasiBaseResultModel.AnalyzedData]) -> Void
+    typealias AnalyzedDataArrayHandlebar = (_ analyzedData: [BaseResultModel.AnalyzedData]) -> Void
     
-    typealias RefreshStatusHandlebar = (_ refreshStatus: QuasiBaseResultModel.RefreshStatus) -> Void
+    typealias RefreshStatusHandlebar = (_ refreshStatus: BaseResultModel.RefreshStatus) -> Void
     
     typealias ErrorHandler = (_ error: Error) -> Void
 }
