@@ -4,5 +4,5 @@
 "currencyCellDetail" = "過去平均：%1$@，今天匯率：%2$@";
 "increasing" = "遞增";
 "decreasing" = "遞減";
-"updating" = "正在更新";
+"refreshing" = "正在更新";
 "fluctuation" = "漲跌: %@";

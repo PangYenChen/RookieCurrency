@@ -10,8 +10,7 @@ class ResultModel: BaseResultModel {
     ) {
         var userSettingManager: UserSettingManagerProtocol = userSettingManager
         
-        // input
-        do {
+        do /*initialize intout*/ {
             setting = CurrentValueSubject((userSettingManager.numberOfDays,
                                            userSettingManager.baseCurrencyCode,
                                            userSettingManager.currencyCodeOfInterest))
@@ -29,16 +28,16 @@ class ResultModel: BaseResultModel {
         
         let settingFromSettingModel: AnyPublisher<Setting, Never> = setting.dropFirst().eraseToAnyPublisher() // TODO: 改成屬性
         
-        do /*output*/ {
+        do /*initialize output*/ {
             let refresh: AnyPublisher<Void, Never>
             
-            do {
+            do /*initialize refresh*/ {
                 let autoRefresh: AnyPublisher<Void, Never>
                 
-                do {
+                do /*initialize autoRefresh*/ {
                     let timerPublisher: AnyPublisher<AnyPublisher<Void, Never>, Never> = Publishers
                         .Merge(resumeAutoRefresh,
-                               settingFromSettingModel.map { _ in })
+                               settingFromSettingModel.map { _ in }) // TODO: 這個應該要拆出去
                         .map { _ in
                             Timer.publish(every: Self.autoRefreshTimeInterval, on: RunLoop.main, in: .default)
                                 .autoconnect()
@@ -57,7 +56,9 @@ class ResultModel: BaseResultModel {
                         .eraseToAnyPublisher()
                 }
                 
-                refresh = Publishers.Merge(refreshTriggerByUser, autoRefresh).eraseToAnyPublisher()
+                refresh = Publishers.Merge(refreshTriggerByUser, 
+                                           autoRefresh)
+                .eraseToAnyPublisher()
             }
             
             let analyzedResult: AnyPublisher<Result<(latestUpdateTime: Int, analyzedDataArray: [QuasiBaseResultModel.AnalyzedData]), Error>, Never> = refresh.withLatestFrom(setting)
@@ -84,30 +85,42 @@ class ResultModel: BaseResultModel {
                 .share()
                 .eraseToAnyPublisher()
             
+            do /*initialize analyzedDataArray*/ {
+                let analyzedDataSorter: AnalyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
+                
+                analyzedDataArray = analyzedResult.resultSuccess()
+                    .map { tuple in tuple.analyzedDataArray }
+                    .combineLatest(order, searchText)
+                    .map { analyzedDataArray, order, searchText in
+                        analyzedDataSorter.sort(analyzedDataArray,
+                                                by: order,
+                                                filteredIfNeededBy: searchText)
+                    }
+                    .eraseToAnyPublisher()
+            }
+            
             error = analyzedResult.resultFailure()
             
-            let refreshStatusIdle: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = analyzedResult.resultSuccess()
-                .map { tuple in QuasiBaseResultModel.RefreshStatus.idle(latestUpdateTimestamp: tuple.latestUpdateTime) }
-                .eraseToAnyPublisher() // TODO: 還沒處理失敗後回傳上一次的時間
-            
-            let orderAndSearchText: AnyPublisher<(order: Order, searchText: String?), Never> = Publishers.CombineLatest(order, searchText)
-                .map { (order: $0, searchText: $1) }
-                .eraseToAnyPublisher()
-            
-            let analyzedDataSorter: AnalyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
-            
-            analyzedDataArray = analyzedResult.resultSuccess()
-                .map { tuple in tuple.analyzedDataArray }
-                .withLatestFrom(orderAndSearchText)
-                .map { analyzedDataArray, orderAndSearchText in
-                    analyzedDataSorter.sort(analyzedDataArray,
-                                            by: orderAndSearchText.order,
-                                            filteredIfNeededBy: orderAndSearchText.searchText)
-                }
-                .eraseToAnyPublisher()
+            do /*initialize refreshStatus*/ {
+                let refreshStatusProcess: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = refresh
+                    .map { _ in .process }
+                    .eraseToAnyPublisher()
+                
+                let refreshStatusIdleForSuccess: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = analyzedResult.resultSuccess()
+                    .map { tuple in QuasiBaseResultModel.RefreshStatus.idle(latestUpdateTimestamp: tuple.latestUpdateTime) }
+                    .eraseToAnyPublisher()
+                
+                let refreshStatusIdleForFailure: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = error
+                    .withLatestFrom(refreshStatusIdleForSuccess.prepend(.idle(latestUpdateTimestamp: nil)))
+                    .map { _, refreshStatusIdle  in refreshStatusIdle }
+                    .eraseToAnyPublisher()
+             
+                refreshStatus = Publishers.Merge3(refreshStatusProcess,
+                                                  refreshStatusIdleForSuccess,
+                                                  refreshStatusIdleForFailure)
+                    .eraseToAnyPublisher()
+            }
         }
-        
-        refreshStatus = Empty().eraseToAnyPublisher() // TODO:
         
         anyCancellableSet = Set<AnyCancellable>()
         
