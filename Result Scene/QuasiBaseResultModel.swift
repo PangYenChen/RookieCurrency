@@ -36,13 +36,6 @@ extension QuasiBaseResultModel {
         }
     }
     
-    enum State { // TODO: 可能要重新設計這個
-        case updating
-        case updated(timestamp: Int, analyzedSortedDataArray: [AnalyzedData])
-        case sorted(analyzedSortedDataArray: [AnalyzedData])
-        case failure(Error)
-    }
-    
     struct AnalyzedData: Hashable { // TODO: 名字要想一下
         let currencyCode: ResponseDataModel.CurrencyCode
         let latest: Decimal
@@ -78,7 +71,7 @@ extension QuasiBaseResultModel {
         }
     }
     
-    enum UpdatingStatus {
+    enum RefreshStatus {
         case process
         case idle(latestUpdateTimestamp: Int?)
     }

@@ -5,8 +5,6 @@ class BaseResultTableViewController: UITableViewController {
     init?(coder: NSCoder, baseResultModel: BaseResultModel) {
         self.baseResultModel = baseResultModel
         
-        latestUpdateTime = nil
-        
         super.init(coder: coder)
         
         do /*configure search controller*/ {
@@ -123,9 +121,6 @@ class BaseResultTableViewController: UITableViewController {
     
     private let baseResultModel: BaseResultModel
     
-    @available(*, deprecated)
-    private var latestUpdateTime: Int? // TODO: 搬到 model
-    
     // MARK: - view
     @ViewLoading @IBOutlet private var updatingStatusBarButtonItem: UIBarButtonItem
     
@@ -144,39 +139,8 @@ private extension BaseResultTableViewController {
     }
 }
 
-// MARK: - methods
+// MARK: - instance methods
 extension BaseResultTableViewController {
-    @available(*, deprecated)
-    final func updateUIFor(_ state: BaseResultModel.State) { // TODO: to be removed
-        switch state {
-            case .updating:
-                dismissAlertIfPresented()
-                updatingStatusBarButtonItem.title = R.string.resultScene.updating()
-                
-            case let .updated(timestamp, analyzedDataArray):
-                self.latestUpdateTime = timestamp
-                
-                populateTableViewWith(analyzedDataArray)
-                endRefreshingRefreshControlIfBegan()
-                populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
-                
-            case .sorted(let analyzedDataArray):
-                populateTableViewWith(analyzedDataArray)
-                
-            case .failure(let error):
-                endRefreshingRefreshControlIfBegan()
-                dismissAlertIfPresented()
-                presentAlert(error: error)
-                populateUpdatingStatusBarButtonItemWith(self.latestUpdateTime)
-        }
-    }
-
-    final func dismissAlertIfPresented() {
-        if presentingViewController is UIAlertController {
-            dismiss(animated: true)
-        }
-    }
-    
     final func populateTableViewWith(_ analyzedDataArray: [BaseResultModel.AnalyzedData]) {
         var snapshot: Snapshot = Snapshot()
         snapshot.appendSections([.main])
@@ -186,22 +150,7 @@ extension BaseResultTableViewController {
         dataSource.apply(snapshot)
     }
     
-    @available(*, deprecated)
-    final func endRefreshingRefreshControlIfBegan() { // TODO: to be removed
-        if tableView.refreshControl?.isRefreshing == true {
-            tableView.refreshControl?.endRefreshing()
-        }
-    }
-    
-    @available(*, deprecated) // TODO: to be removed
-    final func populateUpdatingStatusBarButtonItemWith(_ timestamp: Int?) {
-        let relativeDateString: String = timestamp.map(Double.init)
-            .map(Date.init(timeIntervalSince1970:))?
-            .formatted(.relative(presentation: .named)) ?? "-"
-        updatingStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(relativeDateString)
-    }
-    
-    final func updateUpdatingStatusBarButtonItemFor(status: QuasiBaseResultModel.UpdatingStatus) {
+    final func updateUpdatingStatusBarButtonItemFor(status: QuasiBaseResultModel.RefreshStatus) {
         switch status {
             case .process:
                 updatingStatusBarButtonItem.title = R.string.resultScene.updating()

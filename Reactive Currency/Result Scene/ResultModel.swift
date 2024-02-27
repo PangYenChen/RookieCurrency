@@ -86,8 +86,8 @@ class ResultModel: BaseResultModel {
             
             error = analyzedResult.resultFailure()
             
-            let refreshStatusIdle: AnyPublisher<QuasiBaseResultModel.UpdatingStatus, Never> = analyzedResult.resultSuccess()
-                .map { tuple in QuasiBaseResultModel.UpdatingStatus.idle(latestUpdateTimestamp: tuple.latestUpdateTime) }
+            let refreshStatusIdle: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = analyzedResult.resultSuccess()
+                .map { tuple in QuasiBaseResultModel.RefreshStatus.idle(latestUpdateTimestamp: tuple.latestUpdateTime) }
                 .eraseToAnyPublisher() // TODO: 還沒處理失敗後回傳上一次的時間
             
             let orderAndSearchText: AnyPublisher<(order: Order, searchText: String?), Never> = Publishers.CombineLatest(order, searchText)
@@ -150,7 +150,7 @@ class ResultModel: BaseResultModel {
     // MARK: output
     let analyzedDataArray: AnyPublisher<[QuasiBaseResultModel.AnalyzedData], Never>
     
-    let refreshStatus: AnyPublisher<QuasiBaseResultModel.UpdatingStatus, Never>
+    let refreshStatus: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never>
     
     let error: AnyPublisher<Error, Never>
 }
