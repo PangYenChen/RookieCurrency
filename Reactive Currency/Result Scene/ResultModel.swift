@@ -37,7 +37,7 @@ class ResultModel: BaseResultModel {
                 do /*initialize autoRefresh*/ {
                     let timerPublisher: AnyPublisher<AnyPublisher<Void, Never>, Never> = Publishers
                         .Merge(resumeAutoRefresh,
-                               settingFromSettingModel.map { _ in }) // TODO: 這個應該要拆出去
+                               settingFromSettingModel.map { _ in })
                         .map { _ in
                             Timer.publish(every: Self.autoRefreshTimeInterval, on: RunLoop.main, in: .default)
                                 .autoconnect()
@@ -56,12 +56,12 @@ class ResultModel: BaseResultModel {
                         .eraseToAnyPublisher()
                 }
                 
-                refresh = Publishers.Merge(refreshTriggerByUser, 
+                refresh = Publishers.Merge(refreshTriggerByUser,
                                            autoRefresh)
                 .eraseToAnyPublisher()
             }
             
-            let analyzedResult: AnyPublisher<Result<(latestUpdateTime: Int, analyzedDataArray: [QuasiBaseResultModel.AnalyzedData]), Error>, Never> = refresh.withLatestFrom(setting)
+            let analyzedResult: AnyPublisher<Result<AnalyzedSuccess, Error>, Never> = refresh.withLatestFrom(setting)
                 .flatMap { _, setting in
                     rateManager
                         .ratePublisher(numberOfDays: setting.numberOfDays)
@@ -191,4 +191,9 @@ extension ResultModel {
                             settingSubscriber: AnySubscriber(setting),
                             cancelSubscriber: AnySubscriber(resumeAutoRefresh))
     }
+}
+
+// MARK: - private name space
+private extension ResultModel {
+    typealias AnalyzedSuccess = (latestUpdateTime: Int, analyzedDataArray: [QuasiBaseResultModel.AnalyzedData])
 }
