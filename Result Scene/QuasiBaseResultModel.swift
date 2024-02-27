@@ -1,6 +1,6 @@
 import Foundation
 
-class QuasiBaseResultModel: CurrencyDescriberHolder {
+class QuasiBaseResultModel: CurrencyDescriberProxy {
     init(currencyDescriber: CurrencyDescriberProtocol,
          userSettingManager: UserSettingManagerProtocol) {
         self.currencyDescriber = currencyDescriber
@@ -48,7 +48,7 @@ extension QuasiBaseResultModel {
         let deviation: Decimal
     }
     
-    class AnalyzedDataSorter: CurrencyDescriberHolder {
+    class AnalyzedDataSorter: CurrencyDescriberProxy {
         let currencyDescriber: CurrencyDescriberProtocol
         
         init(currencyDescriber: CurrencyDescriberProtocol) {

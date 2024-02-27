@@ -55,7 +55,7 @@ extension CurrencySelectionModel {
         }
     }
     
-    class CurrencyCodeDescriptionDictionarySorter: CurrencyDescriberHolder {
+    class CurrencyCodeDescriptionDictionarySorter: CurrencyDescriberProxy {
         let currencyDescriber: CurrencyDescriberProtocol
         
         init(currencyDescriber: CurrencyDescriberProtocol) {
