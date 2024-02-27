@@ -35,10 +35,10 @@ class ResultModel: BaseResultModel {
     
     // MARK: - private properties
     
-    /// 要傳遞到 setting scene 的資料，可以在那邊修改
+    /// 是 user setting 的一部份，要傳遞到 setting scene 的資料，在那邊編輯
     private var setting: Setting
     
-    /// 同樣是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這個 scene 修改
+    /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這個 scene 修改
     private var order: Order
     
     private var searchText: String?

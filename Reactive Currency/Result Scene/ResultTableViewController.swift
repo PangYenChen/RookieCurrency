@@ -15,10 +15,27 @@ class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        resultModel.state
+        resultModel.analyzedDataArray
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: self.updateUIFor(_:))
+            .sink(receiveValue: populateTableViewWith)
             .store(in: &anyCancellableSet)
+        
+        resultModel.refreshStatus
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: updateUpdatingStatusBarButtonItemFor(status:))
+            .store(in: &anyCancellableSet)
+        
+        resultModel.error
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: presentErrorAlert(error:))
+            .store(in: &anyCancellableSet)
+    }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        
+        refreshControl?.beginRefreshing()
+        resultModel.refresh()
     }
     
     // MARK: - private properties
@@ -27,10 +44,6 @@ class ResultTableViewController: BaseResultTableViewController {
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: - kind of abstract methods
-    override func refresh() {
-        resultModel.refresh()
-    }
-    
     override func setOrder(_ order: BaseResultModel.Order) {
         resultModel.setOrder(order)
     }

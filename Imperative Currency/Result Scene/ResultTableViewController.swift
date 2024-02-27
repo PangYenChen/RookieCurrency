@@ -8,6 +8,7 @@ class ResultTableViewController: BaseResultTableViewController {
         super.init(coder: coder, baseResultModel: resultModel)
     }
     
+    // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -16,7 +17,6 @@ class ResultTableViewController: BaseResultTableViewController {
         resultModel.errorHandler = presentErrorAlert(error:)
     }
     
-    // MARK: - life cycle
     override func viewIsAppearing(_ animated: Bool) {
         super.viewIsAppearing(animated)
         

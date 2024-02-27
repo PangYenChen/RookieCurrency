@@ -5,14 +5,16 @@ class QuasiBaseResultModel: CurrencyDescriberProxy {
          userSettingManager: UserSettingManagerProtocol) {
         self.currencyDescriber = currencyDescriber
         initialOrder = userSettingManager.resultOrder
-        autoRefreshingTimeInterval = 5 // swiftlint:disable:this no_magic_numbers
     }
     
     let initialOrder: Order
     
     let currencyDescriber: CurrencyDescriberProtocol
-    
-    let autoRefreshingTimeInterval: TimeInterval
+}
+
+// MARK: - static property
+extension QuasiBaseResultModel {
+    static let autoRefreshTimeInterval: TimeInterval = 5
 }
 
 // MARK: - name space
