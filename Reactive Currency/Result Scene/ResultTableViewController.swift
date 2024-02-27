@@ -22,7 +22,7 @@ class ResultTableViewController: BaseResultTableViewController {
         
         resultModel.refreshStatus
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: updateUpdatingStatusBarButtonItemFor(status:))
+            .sink(receiveValue: populateRefreshStatusBarButtonItemWith(status:))
             .store(in: &anyCancellableSet)
         
         resultModel.error
