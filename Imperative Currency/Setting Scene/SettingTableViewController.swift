@@ -8,7 +8,6 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         super.init(coder: coder, baseSettingModel: model)
         
-        self.editedBaseCurrencyCode = model.editedBaseCurrencyCode
         self.editedCurrencyCodeOfInterest = model.editedCurrencyCodeOfInterest
         
         stepper.value = Double(model.editedNumberOfDays)
