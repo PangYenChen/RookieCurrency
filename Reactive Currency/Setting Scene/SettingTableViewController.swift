@@ -23,11 +23,11 @@ class SettingTableViewController: BaseSettingTableViewController {
             .store(in: &anyCancellableSet)
         
         settingModel.editedBaseCurrencyCodePublisher
-            .sink(receiveValue: self.reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode:))
+            .sink(receiveValue: self.reloadBaseCurrencyRowFor(baseCurrencyCode:))
             .store(in: &anyCancellableSet)
         
-        settingModel.editedCurrencyCodeOfInterest
-            .sink(receiveValue: self.reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest:))
+        settingModel.editedCurrencyCodeOfInterestPublisher
+            .sink(receiveValue: self.reloadCurrencyOfInterestRowFor(currencyCodeOfInterest:))
             .store(in: &anyCancellableSet)
         
         settingModel.hasChangesToSave

@@ -120,6 +120,7 @@ extension BaseSettingTableViewController {
         present(alertController, animated: true)
     }
     
+    // TODO: 下面這三個 reload 的 method 不要接受參數，反正 data source 會去拿
     final func updateNumberOfDaysRow(for numberOfDays: Int) {
         let numberOfDaysRow: IndexPath = IndexPath(row: Row.numberOfDays.rawValue, section: 0)
         
@@ -144,12 +145,6 @@ extension BaseSettingTableViewController {
     }
     
     final func reloadCurrencyOfInterestRowFor(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) {
-        // NOTE: 判斷要不要 reoload 的邏輯應該要在 model
-        
-//        guard editedCurrencyCodeOfInterest != currencyCodeOfInterest else { return }
-//        
-//        editedCurrencyCodeOfInterest = currencyCodeOfInterest
-//        
         let currencyOfInterestIndexPath: IndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
         tableView.reloadRows(at: [currencyOfInterestIndexPath], with: .automatic)
     }

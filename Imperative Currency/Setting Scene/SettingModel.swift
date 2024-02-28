@@ -89,6 +89,7 @@ extension SettingModel {
     typealias SaveHandler = (_ setting: BaseResultModel.Setting) -> Void
     typealias CancelHandler = () -> Void
     
+    // TODO: 這些 handler 不用接收參數，因為 table view data source 會跟 model 拿，名稱改成 change handler
     typealias BaseCurrencyCodeHandler = (_ baseCurrencyCode: ResponseDataModel.CurrencyCode) -> Void
     typealias CurrencyCodeOfInterestHandler = (_ currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) -> Void
 }
