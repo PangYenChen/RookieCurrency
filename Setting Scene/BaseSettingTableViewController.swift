@@ -3,8 +3,7 @@ import UIKit
 class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - initializer
     init?(coder: NSCoder, baseSettingModel: BaseSettingModel) {
-        editedNumberOfDays = -1
-        
+
         editedBaseCurrencyCode = ""
         
         editedCurrencyCodeOfInterest = Set<ResponseDataModel.CurrencyCode>()
@@ -55,8 +54,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     private let baseSettingModel: BaseSettingModel
     
     // TODO: 這幾個東西應該要放在 model
-    var editedNumberOfDays: Int
-    
+
     var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
@@ -74,7 +72,10 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     
     @ViewLoading @IBOutlet private var dateLabel: UILabel
     
-    // MARK: - hook methods
+    // MARK: - kind of abstract method
+    // 這樣做的原因是想把兩個 target 共用的 code（設定 `UIAction`）寫在一起。
+    // 而內容使用到的 model 的 method 的方式不同，所以無法共用。
+    // swiftlint:disable:next unavailable_function
     func stepperValueDidChange() {
         fatalError("stepperValueDidChange() has not been implemented")
     }
@@ -218,9 +219,9 @@ extension BaseSettingTableViewController {
             switch row {
                 case .numberOfDays:
                     contentConfiguration.text = R.string.settingScene.numberOfConsideredDay()
-                    contentConfiguration.secondaryText = String(editedNumberOfDays)
+                    contentConfiguration.secondaryText = String(baseSettingModel.editedNumberOfDays)
                     contentConfiguration.image = UIImage(systemSymbol: .calendar)
-                    stepper.value = Double(editedNumberOfDays)
+                    stepper.value = Double(baseSettingModel.editedNumberOfDays)
                     cell.accessoryView = stepper
                 case .baseCurrency:
                     contentConfiguration.text = R.string.share.baseCurrency()

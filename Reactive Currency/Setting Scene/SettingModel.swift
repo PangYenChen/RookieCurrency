@@ -4,7 +4,7 @@ import Combine
 class SettingModel {
     // MARK: - initializer
     init(setting: BaseResultModel.Setting,
-         settingSubscriber: AnySubscriber<BaseResultModel.Setting, Never>,
+         settingSubscriber: AnySubscriber<BaseResultModel.Setting, Never>, // TODO: 改成 save setting subscriber
          cancelSubscriber: AnySubscriber<Void, Never>,
          currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
         self.currencyDescriber = currencyDescriber

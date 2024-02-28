@@ -1,6 +1,6 @@
 import Foundation
 
-final class SettingModel {
+final class SettingModel: BaseSettingModel {
     // MARK: - initializer
     init(setting: BaseResultModel.Setting,
          saveCompletionHandler: @escaping SaveHandler,
@@ -47,8 +47,8 @@ final class SettingModel {
     private let cancelCompletionHandler: CancelHandler
 }
 
-// MARK: - Confirming BaseSettingModel
-extension SettingModel: BaseSettingModel {
+// MARK: - instance methods
+extension SettingModel {
     func save() {
         let setting: BaseResultModel.Setting = (numberOfDays: editedNumberOfDays,
                                                 baseCurrencyCode: editedBaseCurrencyCode,

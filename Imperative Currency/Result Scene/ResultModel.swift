@@ -94,8 +94,8 @@ extension ResultModel {
                         }
                     
                     let sortedAnalyzedDataArray: [BaseResultModel.AnalyzedData] = analyzedDataSorter.sort(self.analyzedDataArray,
-                                                                                                               by: self.order,
-                                                                                                               filteredIfNeededBy: self.searchText)
+                                                                                                          by: self.order,
+                                                                                                          filteredIfNeededBy: self.searchText)
                     analyzedDataArrayHandler?(sortedAnalyzedDataArray)
                     
                     latestUpdateTimestamp = latestRate.timestamp
@@ -109,6 +109,7 @@ extension ResultModel {
         }
     }
     
+    // TODO: 名字要想一下，這看不出來有 return value
     func setOrder(_ order: BaseResultModel.Order) -> [BaseResultModel.AnalyzedData] {
         userSettingManager.resultOrder = order
         self.order = order
@@ -118,6 +119,7 @@ extension ResultModel {
                                        filteredIfNeededBy: self.searchText)
     }
     
+    // TODO: 名字要想一下，這看不出來有 return value
     func setSearchText(_ searchText: String?) -> [BaseResultModel.AnalyzedData] {
         self.searchText = searchText
         

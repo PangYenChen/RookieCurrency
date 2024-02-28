@@ -1,6 +1,8 @@
 import Foundation
 
 protocol BaseSettingModel: CurrencyDescriberProxy {
+    var editedNumberOfDays: Int { get }
+    
     func save()
     
     func cancel()

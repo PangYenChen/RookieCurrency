@@ -8,7 +8,6 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         super.init(coder: coder, baseSettingModel: model)
         
-        self.editedNumberOfDays = model.editedNumberOfDays
         self.editedBaseCurrencyCode = model.editedBaseCurrencyCode
         self.editedCurrencyCodeOfInterest = model.editedCurrencyCodeOfInterest
         
@@ -32,6 +31,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - hook methods
     override func stepperValueDidChange() {
+        // TODO: 這裡有 bug，漏通知 model
         updateForModelHasChangesToSaveIfNeeded(settingModel.hasChangeToSave)
         
         updateNumberOfDaysRow(for: settingModel.editedNumberOfDays)
