@@ -16,24 +16,22 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        // TODO: 這些東西在第一次進來畫面，table veiw本身會 load 一次，這裡會不會多load一次？
-        settingModel.editedNumberOfDaysPublisher
-            .dropFirst()
+        settingModel.numberOfDaysDidChange
             .receive(on: DispatchQueue.main)
-            .sink { [unowned self] _ in updateNumberOfDaysRow() }
+            .sink(receiveValue: updateNumberOfDaysRow)
             .store(in: &anyCancellableSet)
         
-        settingModel.editedBaseCurrencyCodePublisher
+        settingModel.baseCurrencyCodeDidChange
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [unowned self] _ in reloadBaseCurrencyRow() })
+            .sink(receiveValue: reloadBaseCurrencyRow)
             .store(in: &anyCancellableSet)
         
-        settingModel.editedCurrencyCodeOfInterestPublisher
+        settingModel.currencyCodeOfInterestDidChange
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: { [unowned self] _ in reloadCurrencyOfInterestRow() })
+            .sink(receiveValue: reloadCurrencyOfInterestRow)
             .store(in: &anyCancellableSet)
         
-        settingModel.hasChangesToSave
+        settingModel.hasModificationsToSave
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: self.updateFor(hasChangesToSave:))
             .store(in: &anyCancellableSet)

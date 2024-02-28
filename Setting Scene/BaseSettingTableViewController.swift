@@ -110,7 +110,6 @@ extension BaseSettingTableViewController {
         present(alertController, animated: true)
     }
     
-    // TODO: 下面這三個 reload 的 method 不要接受參數，反正 data source 會去拿
     final func updateNumberOfDaysRow() {
         let numberOfDaysRow: IndexPath = IndexPath(row: Row.numberOfDays.rawValue, section: 0)
         
@@ -153,12 +152,12 @@ extension BaseSettingTableViewController {
         dismiss(animated: true)
     }
     
+    final func getStepperValue() -> Double { stepper.value }
+    
     @IBAction final func save() { // swiftlint:disable:this private_action
         baseSettingModel.save()
         dismiss(animated: true)
     }
-    
-    final func getStepperValue() -> Double { stepper.value }
 }
 
 // MARK: - Table view data source
