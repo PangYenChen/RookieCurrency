@@ -192,7 +192,7 @@ extension ResultModel {
     func makeSettingModel() -> SettingModel {
         suspendAutoRefresh.send()
         return SettingModel(setting: setting.value,
-                            settingSubscriber: AnySubscriber(setting),
+                            saveSettingSubscriber: AnySubscriber(setting),
                             cancelSubscriber: AnySubscriber(resumeAutoRefresh))
     }
 }

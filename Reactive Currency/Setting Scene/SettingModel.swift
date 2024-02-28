@@ -4,11 +4,15 @@ import Combine
 class SettingModel {
     // MARK: - initializer
     init(setting: BaseResultModel.Setting,
-         settingSubscriber: AnySubscriber<BaseResultModel.Setting, Never>, // TODO: 改成 save setting subscriber
+         saveSettingSubscriber: AnySubscriber<BaseResultModel.Setting, Never>,
          cancelSubscriber: AnySubscriber<Void, Never>,
          currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
         self.currencyDescriber = currencyDescriber
-        editedNumberOfDays = CurrentValueSubject<Int, Never>(setting.numberOfDays)
+        
+        do {
+            editedNumberOfDaysSubject = CurrentValueSubject<Int, Never>(setting.numberOfDays)
+            editedNumberOfDaysPublisher = editedNumberOfDaysSubject.eraseToAnyPublisher()
+        }
         
         editedBaseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(setting.baseCurrencyCode)
         
@@ -16,7 +20,7 @@ class SettingModel {
         
         // has changes
         do {
-            let numberOfDaysHasChanges = editedNumberOfDays.map { $0 != setting.numberOfDays }
+            let numberOfDaysHasChanges = editedNumberOfDaysPublisher.map { $0 != setting.numberOfDays }
             let baseCurrencyCodeHasChanges = editedBaseCurrencyCode.map { $0 != setting.baseCurrencyCode }
             let currencyCodeOfInterestHasChanges = editedCurrencyCodeOfInterest.map { $0 != setting.currencyCodeOfInterest }
             hasChangesToSave = Publishers.CombineLatest3(numberOfDaysHasChanges, baseCurrencyCodeHasChanges, currencyCodeOfInterestHasChanges)
@@ -30,18 +34,22 @@ class SettingModel {
         
         // finish initialization
         saveSubject
-            .withLatestFrom(editedNumberOfDays)
+            .withLatestFrom(editedNumberOfDaysPublisher)
             .map { $1 }
             .withLatestFrom(editedBaseCurrencyCode)
             .withLatestFrom(editedCurrencyCodeOfInterest)
             .map { (numberOfDays: $0.0, baseCurrencyCode: $0.1, currencyCodeOfInterest: $1) }
-            .subscribe(settingSubscriber)
+            .subscribe(saveSettingSubscriber)
         
         cancelSubject
             .subscribe(cancelSubscriber)
     }
     
-    let editedNumberOfDays: CurrentValueSubject<Int, Never>
+    // MARK: - properties
+    
+    private let editedNumberOfDaysSubject: CurrentValueSubject<Int, Never>
+    
+    let editedNumberOfDaysPublisher: AnyPublisher<Int, Never>
     
     let editedBaseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
     
@@ -59,6 +67,8 @@ class SettingModel {
 
 // MARK: - Confirming BaseSettingModel
 extension SettingModel: BaseSettingModel {
+    var editedNumberOfDays: Int { editedNumberOfDaysSubject.value }
+    
     func cancel() {
         cancelSubject.send()
     }
@@ -83,5 +93,11 @@ extension SettingModel: BaseSettingModel {
         )
         
         return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
+    }
+}
+
+extension SettingModel {
+    func set(editedNumberOfDays: Int) {
+        editedNumberOfDaysSubject.send(editedNumberOfDays)
     }
 }

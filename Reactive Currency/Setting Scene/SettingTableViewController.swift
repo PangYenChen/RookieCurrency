@@ -16,23 +16,23 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        settingModel.editedNumberOfDays
+        settingModel.editedNumberOfDaysPublisher
             .dropFirst()
             .sink { [unowned self] numberOfDays in
                 updateNumberOfDaysRow(for: numberOfDays)
-                editedNumberOfDays = numberOfDays
+//                editedNumberOfDays = numberOfDays
             }
             .store(in: &anyCancellableSet)
         
-        settingModel.editedNumberOfDays
-            .first()
-            .sink { [unowned self] numberOfDays in
-                editedNumberOfDays = numberOfDays
-                // table view 在 viewIsAppearing 跟 viewDidAppear 之間才會第一次 call data source method
-                // 所以這時候無法透過 table view 的 cellForRow(at:) 拿到 cell
-                // 只能讓 table view 自己處理
-            }
-            .store(in: &anyCancellableSet)
+//        settingModel.editedNumberOfDaysPublisher
+//            .first()
+//            .sink { [unowned self] numberOfDays in
+//                editedNumberOfDays = numberOfDays
+//                // table view 在 viewIsAppearing 跟 viewDidAppear 之間才會第一次 call data source method
+//                // 所以這時候無法透過 table view 的 cellForRow(at:) 拿到 cell
+//                // 只能讓 table view 自己處理
+//            }
+//            .store(in: &anyCancellableSet)
         
         settingModel.editedBaseCurrencyCode
             .sink(receiveValue: self.reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode:))
@@ -54,6 +54,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - other methods
     override func stepperValueDidChange() {
-        settingModel.editedNumberOfDays.send(Int(stepper.value))
+//        settingModel.editedNumberOfDaysPublisher.send(Int(stepper.value))
+        settingModel.set(editedNumberOfDays: Int(stepper.value))
     }
 }
