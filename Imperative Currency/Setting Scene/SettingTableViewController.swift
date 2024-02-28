@@ -25,7 +25,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - override abstract method
     override func stepperValueDidChange() {
-        settingModel.editedNumberOfDays = Int(getStepperValue())
+        settingModel.numberOfDays = Int(getStepperValue())
         updateNumberOfDaysRow()
     }
     

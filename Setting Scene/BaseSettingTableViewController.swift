@@ -123,7 +123,7 @@ extension BaseSettingTableViewController {
             return
         }
         
-        contentConfiguration.secondaryText = String(baseSettingModel.editedNumberOfDays)
+        contentConfiguration.secondaryText = String(baseSettingModel.numberOfDays)
         
         cell.contentConfiguration = contentConfiguration
     }
@@ -138,7 +138,7 @@ extension BaseSettingTableViewController {
         tableView.reloadRows(at: [currencyOfInterestIndexPath], with: .automatic)
     }
     
-    final func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
+    final func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String { // TODO: rename or to remove
         baseSettingModel.displayStringFor(currencyCode: currencyCode)
     }
     
@@ -190,9 +190,9 @@ extension BaseSettingTableViewController {
             switch row {
                 case .numberOfDays:
                     contentConfiguration.text = R.string.settingScene.numberOfConsideredDay()
-                    contentConfiguration.secondaryText = String(baseSettingModel.editedNumberOfDays)
+                    contentConfiguration.secondaryText = String(baseSettingModel.numberOfDays)
                     contentConfiguration.image = UIImage(systemSymbol: .calendar)
-                    stepper.value = Double(baseSettingModel.editedNumberOfDays)
+                    stepper.value = Double(baseSettingModel.numberOfDays)
                     cell.accessoryView = stepper
                 case .baseCurrency:
                     contentConfiguration.text = R.string.share.baseCurrency()

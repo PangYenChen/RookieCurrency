@@ -97,7 +97,7 @@ class SettingModel {
 
 // MARK: - Confirming BaseSettingModel
 extension SettingModel: BaseSettingModel {
-    var editedNumberOfDays: Int { numberOfDaysSubject.value }
+    var numberOfDays: Int { numberOfDaysSubject.value }
     
     var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode { baseCurrencyCodeSubject.value }
     

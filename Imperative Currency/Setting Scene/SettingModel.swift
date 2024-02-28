@@ -7,7 +7,7 @@ final class SettingModel: BaseSettingModel {
          cancelCompletionHandler: @escaping CancelHandler,
          currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
         originalNumberOfDays = setting.numberOfDays
-        editedNumberOfDays = setting.numberOfDays
+        numberOfDays = setting.numberOfDays
         
         originalBaseCurrencyCode = setting.baseCurrencyCode
         editedBaseCurrencyCode = setting.baseCurrencyCode
@@ -23,7 +23,7 @@ final class SettingModel: BaseSettingModel {
         self.currencyDescriber = currencyDescriber
     }
     // MARK: - internal properties
-    var editedNumberOfDays: Int {
+    var numberOfDays: Int {
         didSet { updateHasModificationsToSave() }
     }
     
@@ -66,7 +66,7 @@ final class SettingModel: BaseSettingModel {
 // MARK: - instance methods
 extension SettingModel {
     func save() {
-        let setting: BaseResultModel.Setting = (numberOfDays: editedNumberOfDays,
+        let setting: BaseResultModel.Setting = (numberOfDays: numberOfDays,
                                                 baseCurrencyCode: editedBaseCurrencyCode,
                                                 currencyCodeOfInterest: editedCurrencyCodeOfInterest)
         saveCompletionHandler(setting)
@@ -106,7 +106,7 @@ extension SettingModel {
 // MARK: - private method
 private extension SettingModel {
     func updateHasModificationsToSave() {
-        let isNumberOfDaysModified: Bool = originalNumberOfDays != editedNumberOfDays
+        let isNumberOfDaysModified: Bool = originalNumberOfDays != numberOfDays
         let isBaseCurrencyCodeModified: Bool = originalBaseCurrencyCode != editedBaseCurrencyCode
         let isCurrencyCodeOfInterestModified: Bool = originalCurrencyCodeOfInterest != editedCurrencyCodeOfInterest
         
