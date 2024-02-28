@@ -16,34 +16,29 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        settingModel.editedNumberOfDays
-            .dropFirst()
-            .sink { [unowned self] numberOfDays in
-                updateNumberOfDaysRow(for: numberOfDays)
-                editedNumberOfDays = numberOfDays
-            }
+        settingModel.numberOfDaysDidChange
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: updateNumberOfDaysRow)
             .store(in: &anyCancellableSet)
         
-        settingModel.editedNumberOfDays
-            .first()
-            .sink { [unowned self] numberOfDays in
-                editedNumberOfDays = numberOfDays
-                // table view 在 viewIsAppearing 跟 viewDidAppear 之間才會第一次 call data source method
-                // 所以這時候無法透過 table view 的 cellForRow(at:) 拿到 cell
-                // 只能讓 table view 自己處理
-            }
+        settingModel.baseCurrencyCodeDidChange
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: reloadBaseCurrencyRow)
             .store(in: &anyCancellableSet)
         
-        settingModel.editedBaseCurrencyCode
-            .sink(receiveValue: self.reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode:))
+        settingModel.currencyCodeOfInterestDidChange
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: reloadCurrencyOfInterestRow)
             .store(in: &anyCancellableSet)
         
-        settingModel.editedCurrencyCodeOfInterest
-            .sink(receiveValue: self.reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest:))
+        settingModel.hasModificationsToSave
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: self.updateFor(hasModificationsToSave:))
             .store(in: &anyCancellableSet)
         
-        settingModel.hasChangesToSave
-            .sink(receiveValue: self.updateForModelHasChangesToSaveIfNeeded(_:))
+        settingModel.cancellationConfirmation
+            .receive(on: DispatchQueue.main)
+            .sink { [unowned self] in presentDismissalConfirmation(withSaveOption: false) }
             .store(in: &anyCancellableSet)
     }
     
@@ -52,8 +47,12 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     private var anyCancellableSet: Set<AnyCancellable>
     
-    // MARK: - other methods
+    // MARK: - override abstract method
     override func stepperValueDidChange() {
-        settingModel.editedNumberOfDays.send(Int(stepper.value))
+        settingModel.set(numberOfDays: Int(getStepperValue()))
+    }
+    
+    override func didTapCancelButton(_ sender: UIBarButtonItem) {
+        settingModel.attemptToCancel()
     }
 }

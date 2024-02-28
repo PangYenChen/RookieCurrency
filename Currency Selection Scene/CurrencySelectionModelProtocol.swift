@@ -71,8 +71,8 @@ extension CurrencySelectionModel {
             let sortedCurrencyCodes: [ResponseDataModel.CurrencyCode] = currencyCodes.sorted { lhs, rhs in
                 switch sortingMethod {
                     case .currencyName, .currencyNameZhuyin:
-                        let lhsString: String = displayStringFor(currencyCode: lhs)
-                        let rhsString: String = displayStringFor(currencyCode: rhs)
+                        let lhsString: String = localizedStringFor(currencyCode: lhs)
+                        let rhsString: String = localizedStringFor(currencyCode: rhs)
                         
                         if sortingMethod == .currencyName {
                             switch sortingOrder {
@@ -111,7 +111,7 @@ extension CurrencySelectionModel {
             if let searchText, !searchText.isEmpty {
                 filteredCurrencyCodes = sortedCurrencyCodes
                     .filter { currencyCode in
-                        [currencyCode, displayStringFor(currencyCode: currencyCode)]
+                        [currencyCode, localizedStringFor(currencyCode: currencyCode)]
                             .compactMap { $0 }
                             .contains { text in text.localizedStandardContains(searchText) }
                     }

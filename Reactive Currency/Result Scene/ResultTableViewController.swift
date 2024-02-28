@@ -1,7 +1,7 @@
 import UIKit
 import Combine
 
-class ResultTableViewController: BaseResultTableViewController {
+final class ResultTableViewController: BaseResultTableViewController {
     // MARK: - initializer
     required init?(coder: NSCoder) {
         resultModel = ResultModel()
@@ -43,7 +43,7 @@ class ResultTableViewController: BaseResultTableViewController {
     
     private var anyCancellableSet: Set<AnyCancellable>
     
-    // MARK: - kind of abstract methods
+    // MARK: - override abstract methods
     override func setOrder(_ order: BaseResultModel.Order) {
         resultModel.setOrder(order)
     }

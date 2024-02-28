@@ -5,7 +5,7 @@ protocol CurrencyDescriberProxy: CurrencyDescriberProtocol {
 }
 
 extension CurrencyDescriberProxy {
-    func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
-        currencyDescriber.displayStringFor(currencyCode: currencyCode)
+    func localizedStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
+        currencyDescriber.localizedStringFor(currencyCode: currencyCode)
     }
 }

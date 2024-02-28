@@ -1,6 +1,6 @@
 import Foundation
 
-class ResultModel: BaseResultModel {
+final class ResultModel: BaseResultModel {
     // MARK: - life cycle
     init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
          rateManager: RateManagerProtocol = RateManager.shared,
@@ -24,6 +24,10 @@ class ResultModel: BaseResultModel {
                    userSettingManager: userSettingManager)
         
         resumeAutoRefreshing()
+    }
+    
+    deinit {
+        suspendAutoRefreshing()
     }
     
     // MARK: - dependencies
@@ -89,9 +93,9 @@ extension ResultModel {
                             AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                         }
                     
-                    let sortedAnalyzedDataArray: [QuasiBaseResultModel.AnalyzedData] = analyzedDataSorter.sort(self.analyzedDataArray,
-                                                                                                               by: self.order,
-                                                                                                               filteredIfNeededBy: self.searchText)
+                    let sortedAnalyzedDataArray: [BaseResultModel.AnalyzedData] = analyzedDataSorter.sort(self.analyzedDataArray,
+                                                                                                          by: self.order,
+                                                                                                          filteredIfNeededBy: self.searchText)
                     analyzedDataArrayHandler?(sortedAnalyzedDataArray)
                     
                     latestUpdateTimestamp = latestRate.timestamp
@@ -105,7 +109,8 @@ extension ResultModel {
         }
     }
     
-    func setOrder(_ order: BaseResultModel.Order) -> [QuasiBaseResultModel.AnalyzedData] {
+    // TODO: 名字要想一下，這看不出來有 return value
+    func setOrder(_ order: BaseResultModel.Order) -> [BaseResultModel.AnalyzedData] {
         userSettingManager.resultOrder = order
         self.order = order
         
@@ -114,7 +119,8 @@ extension ResultModel {
                                        filteredIfNeededBy: self.searchText)
     }
     
-    func setSearchText(_ searchText: String?) -> [QuasiBaseResultModel.AnalyzedData] {
+    // TODO: 名字要想一下，這看不出來有 return value
+    func setSearchText(_ searchText: String?) -> [BaseResultModel.AnalyzedData] {
         self.searchText = searchText
         
         return analyzedDataSorter.sort(self.analyzedDataArray,
@@ -159,9 +165,9 @@ extension ResultModel {
 
 // MARK: - name space
 extension ResultModel {
-    typealias AnalyzedDataArrayHandlebar = (_ analyzedData: [QuasiBaseResultModel.AnalyzedData]) -> Void
+    typealias AnalyzedDataArrayHandlebar = (_ analyzedData: [BaseResultModel.AnalyzedData]) -> Void
     
-    typealias RefreshStatusHandlebar = (_ refreshStatus: QuasiBaseResultModel.RefreshStatus) -> Void
+    typealias RefreshStatusHandlebar = (_ refreshStatus: BaseResultModel.RefreshStatus) -> Void
     
     typealias ErrorHandler = (_ error: Error) -> Void
 }

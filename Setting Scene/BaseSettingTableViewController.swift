@@ -3,22 +3,13 @@ import UIKit
 class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - initializer
     init?(coder: NSCoder, baseSettingModel: BaseSettingModel) {
-        editedNumberOfDays = -1
-        
-        editedBaseCurrencyCode = ""
-        
-        editedCurrencyCodeOfInterest = Set<ResponseDataModel.CurrencyCode>()
-        
-        hasChangesToSave = false
-        
         stepper = UIStepper()
         
         self.baseSettingModel = baseSettingModel
         
         super.init(coder: coder)
         
-        // stepper
-        do {
+        do /*configure stepper*/ {
             let handler: UIAction = UIAction { [unowned self] _ in stepperValueDidChange() }
             stepper.addAction(handler, for: .primaryActionTriggered)
         }
@@ -33,7 +24,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        do {
+        do /*configure version label*/ {
             versionLabel.font = UIFont.preferredFont(forTextStyle: .callout)
             versionLabel.textColor = UIColor.secondaryLabel
             versionLabel.adjustsFontForContentSizeCategory = true
@@ -41,7 +32,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
             versionLabel.text = R.string.settingScene.version(appVersionString ?? "", AppUtility.gitHash)
         }
         
-        do {
+        do /*configure date label*/ {
             dateLabel.font = UIFont.preferredFont(forTextStyle: .callout)
             dateLabel.textColor = UIColor.secondaryLabel
             dateLabel.adjustsFontForContentSizeCategory = true
@@ -55,18 +46,10 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - instance properties
     private let baseSettingModel: BaseSettingModel
     
-    var editedNumberOfDays: Int
-    
-    var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode
-    
-    var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
-    
-    var hasChangesToSave: Bool
-    
     // MARK: - view
-    let stepper: UIStepper
+    private let stepper: UIStepper
     
-    @ViewLoading @IBOutlet var saveButton: UIBarButtonItem // TODO: 這邊應該要擋起來，開 setDisable 之類的 method
+    @ViewLoading @IBOutlet private var saveButton: UIBarButtonItem
     
     @ViewLoading @IBOutlet private var sectionFooterView: UIView
     
@@ -74,15 +57,19 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     
     @ViewLoading @IBOutlet private var dateLabel: UILabel
     
-    // MARK: - hook methods
-    func stepperValueDidChange() {
-        fatalError("stepperValueDidChange() has not been implemented")
-    }
+    // MARK: - kind of abstract method
+    // 這樣做的原因是想把兩個 target 共用的 code（設定 `UIAction`）寫在一起。
+    // 而內容使用到的 model 的 method 的方式不同，所以無法共用。
+    // swiftlint:disable unavailable_function
+    func stepperValueDidChange() { fatalError("stepperValueDidChange() has not been implemented") }
+    
+    // swiftlint:disable:next private_action
+    @IBAction func didTapCancelButton(_ sender: UIBarButtonItem) { fatalError("didTapCancelButton(_:) has not been implemented") }
+    // swiftlint:enable unavailable_function
 }
 
-// MARK: - private methods
+// MARK: - private methods: Navigation
 private extension BaseSettingTableViewController {
-    // MARK: Navigation
     @IBSegueAction final func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
         CurrencySelectionTableViewController(coder: coder,
                                              currencySelectionModel: baseSettingModel.makeBaseCurrencySelectionModel())
@@ -92,34 +79,28 @@ private extension BaseSettingTableViewController {
         CurrencySelectionTableViewController(coder: coder,
                                              currencySelectionModel: baseSettingModel.makeCurrencyOfInterestSelectionModel())
     }
-    
-    @IBAction final func didTapCancelButton(_ sender: UIBarButtonItem) {
-        hasChangesToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
-    }
 }
 
 // MARK: - internal method
 extension BaseSettingTableViewController {
+    /// 向使用者確認是否要取消，尤其是使用者已編輯時，詢問使用者是否要儲存
     final func presentDismissalConfirmation(withSaveOption: Bool) {
         let alertController: UIAlertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        // 儲存的 action，只有在下拉的時候加上這個 action。
         if withSaveOption {
             let saveAction: UIAlertAction = UIAlertAction(title: R.string.settingScene.cancelAlertSavingTitle(),
                                                           style: .default) { [unowned self] _ in save() }
             alertController.addAction(saveAction)
         }
         
-        // 捨棄變更的 action
-        do {
+        do /*捨棄變更的 action*/ {
             let discardChangeAction: UIAlertAction = UIAlertAction(title: R.string.settingScene.cancelAlertDiscardTitle(),
                                                                    style: .default) { [unowned self] _ in cancel() }
             
             alertController.addAction(discardChangeAction)
         }
         
-        // 繼續編輯的 action
-        do {
+        do /*繼續編輯的 action*/ {
             let continueSettingAction: UIAlertAction = UIAlertAction(title: R.string.settingScene.cancelAlertContinueTitle(),
                                                                      style: .cancel)
             
@@ -129,7 +110,7 @@ extension BaseSettingTableViewController {
         present(alertController, animated: true)
     }
     
-    final func updateNumberOfDaysRow(for numberOfDays: Int) {
+    final func updateNumberOfDaysRow() {
         let numberOfDaysRow: IndexPath = IndexPath(row: Row.numberOfDays.rawValue, section: 0)
         
         guard let cell = tableView.cellForRow(at: numberOfDaysRow) else {
@@ -142,39 +123,24 @@ extension BaseSettingTableViewController {
             return
         }
         
-        contentConfiguration.secondaryText = String(numberOfDays)
+        contentConfiguration.secondaryText = String(baseSettingModel.numberOfDays)
         
         cell.contentConfiguration = contentConfiguration
     }
     
-    final func reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: ResponseDataModel.CurrencyCode) {
-        guard editedBaseCurrencyCode != baseCurrencyCode else { return }
-        
-        editedBaseCurrencyCode = baseCurrencyCode
-        
+    final func reloadBaseCurrencyRow() {
         let baseCurrencyIndexPath: IndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
         tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
     }
     
-    final func reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) {
-        guard editedCurrencyCodeOfInterest != currencyCodeOfInterest else { return }
-        
-        editedCurrencyCodeOfInterest = currencyCodeOfInterest
-        
+    final func reloadCurrencyOfInterestRow() {
         let currencyOfInterestIndexPath: IndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
         tableView.reloadRows(at: [currencyOfInterestIndexPath], with: .automatic)
     }
     
-    final func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
-        baseSettingModel.displayStringFor(currencyCode: currencyCode)
-    }
-    
-    final func updateForModelHasChangesToSaveIfNeeded(_ modelHasChangesToSave: Bool) {
-        guard hasChangesToSave != modelHasChangesToSave else { return }
-        
-        hasChangesToSave = modelHasChangesToSave
-        saveButton.isEnabled = hasChangesToSave
-        isModalInPresentation = hasChangesToSave
+    final func updateFor(hasModificationsToSave: Bool) {
+        saveButton.isEnabled = hasModificationsToSave
+        isModalInPresentation = hasModificationsToSave
     }
     
     final func cancel() {
@@ -182,7 +148,12 @@ extension BaseSettingTableViewController {
         dismiss(animated: true)
     }
     
-    @IBAction final func save() { // swiftlint:disable:this private_action
+    final func getStepperValue() -> Double { stepper.value }
+    
+    // usually IBAction should be private
+    // however, this method has to be called by subclasses
+    // swiftlint:disable:next private_action
+    @IBAction final func save() {
         baseSettingModel.save()
         dismiss(animated: true)
     }
@@ -195,15 +166,15 @@ extension BaseSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let identifier = R.reuseIdentifier.settingCell.identifier
-        let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: R.reuseIdentifier.settingCell,
+                                                                  for: indexPath) ?? UITableViewCell()
         
         var contentConfiguration: UIListContentConfiguration = cell.defaultContentConfiguration()
-        contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-        contentConfiguration.textToSecondaryTextVerticalPadding = 4
+        contentConfiguration.directionalLayoutMargins = UIConfiguration.TableView.cellContentDirectionalLayoutMargins
         
-        // font
-        do {
+        contentConfiguration.textToSecondaryTextVerticalPadding = UIConfiguration.TableView.cellContentTextToSecondaryTextVerticalPadding
+        
+        do /*configure font*/ {
             contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .body)
             contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
             
@@ -212,31 +183,30 @@ extension BaseSettingTableViewController {
             contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
         }
         
-        // content
-        do {
+        do /*configure content*/ {
             let row: Row? = Row(rawValue: indexPath.row)
             switch row {
                 case .numberOfDays:
                     contentConfiguration.text = R.string.settingScene.numberOfConsideredDay()
-                    contentConfiguration.secondaryText = String(editedNumberOfDays)
+                    contentConfiguration.secondaryText = String(baseSettingModel.numberOfDays)
                     contentConfiguration.image = UIImage(systemSymbol: .calendar)
-                    stepper.value = Double(editedNumberOfDays)
+                    stepper.value = Double(baseSettingModel.numberOfDays)
                     cell.accessoryView = stepper
                 case .baseCurrency:
                     contentConfiguration.text = R.string.share.baseCurrency()
-                    contentConfiguration.secondaryText = displayStringFor(currencyCode: editedBaseCurrencyCode)
+                    contentConfiguration.secondaryText = baseSettingModel.localizedStringFor(currencyCode: baseSettingModel.baseCurrencyCode)
                     contentConfiguration.image = UIImage(systemSymbol: .dollarsignCircle)
                     cell.accessoryType = .disclosureIndicator
                 case .currencyOfInterest:
                     contentConfiguration.text = R.string.share.currencyOfInterest()
                     
-                    let editedCurrencyNameOfInterest: [String] = editedCurrencyCodeOfInterest
-                        .map(self.displayStringFor(currencyCode:))
+                    let currencyNameOfInterest: [String] = baseSettingModel.currencyCodeOfInterest
+                        .map(baseSettingModel.localizedStringFor(currencyCode:))
                         .sorted()
                     
-                    let displayStringForEditedCurrencyNameOfInterest: String = ListFormatter.localizedString(byJoining: editedCurrencyNameOfInterest)
+                    let localizedStringForCurrencyNameOfInterest: String = ListFormatter.localizedString(byJoining: currencyNameOfInterest)
                     
-                    contentConfiguration.secondaryText = displayStringForEditedCurrencyNameOfInterest
+                    contentConfiguration.secondaryText = localizedStringForCurrencyNameOfInterest
                     contentConfiguration.image = UIImage(systemSymbol: .checklistUnchecked)
                     cell.accessoryType = .disclosureIndicator
                 case .language:
@@ -295,15 +265,21 @@ extension BaseSettingTableViewController {
                 assertionFailure("###, \(#function), \(self), number of day 這個 row 在 tableView(_:willSelectRowAt:) 被設定成不能被點")
                 
             case .baseCurrency:
-                let identifier = R.segue.settingTableViewController.showBaseCurrencySelectionTableViewController.identifier
+                let identifier: String = R.segue.settingTableViewController.showBaseCurrencySelectionTableViewController.identifier
                 performSegue(withIdentifier: identifier, sender: self)
                 
             case .currencyOfInterest:
-                let identifier = R.segue.settingTableViewController.showCurrencyOfInterestSelectionTableViewController.identifier
+                let identifier: String = R.segue.settingTableViewController.showCurrencyOfInterestSelectionTableViewController.identifier
                 performSegue(withIdentifier: identifier, sender: self)
                 
             case .language:
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                guard let openSettingsURL = URL(string: UIApplication.openSettingsURLString) else {
+                    assertionFailure("###, \(#function), \(self), 系統給的 urlString 不是有效的 url，這表示蘋果工程師弄錯了。")
+                    presentAlert(message: R.string.settingScene.openSettingsURLFailMessage())
+                    return
+                }
+                
+                UIApplication.shared.open(openSettingsURL)
                 tableView.deselectRow(at: indexPath, animated: true)
                 
             case .removeFile:
@@ -312,7 +288,7 @@ extension BaseSettingTableViewController {
                 tableView.deselectRow(at: indexPath, animated: true)
 #if DEBUG
             case .debugInfo:
-                let identifier = R.segue.settingTableViewController.showDebugInfo.identifier
+                let identifier: String = R.segue.settingTableViewController.showDebugInfo.identifier
                 performSegue(withIdentifier: identifier, sender: self)
 #endif
                 

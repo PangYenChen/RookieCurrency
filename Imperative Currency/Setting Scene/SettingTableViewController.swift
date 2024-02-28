@@ -7,33 +7,29 @@ class SettingTableViewController: BaseSettingTableViewController {
         self.settingModel = model
         
         super.init(coder: coder, baseSettingModel: model)
-        
-        self.editedNumberOfDays = model.editedNumberOfDays
-        self.editedBaseCurrencyCode = model.editedBaseCurrencyCode
-        self.editedCurrencyCodeOfInterest = model.editedCurrencyCodeOfInterest
-        
-        stepper.value = Double(model.editedNumberOfDays)
-        
-        isModalInPresentation = model.hasChangeToSave
-        hasChangesToSave = model.hasChangeToSave
     }
     
     // MARK: - life cycle
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-        updateForModelHasChangesToSaveIfNeeded(settingModel.hasChangeToSave)
-        reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: settingModel.editedBaseCurrencyCode)
-        reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: settingModel.editedCurrencyCodeOfInterest)
+        settingModel.baseCurrencyCodeDidChangeHandler = reloadBaseCurrencyRow
+        settingModel.currencyCodeOfInterestDidChangeHandler = reloadCurrencyOfInterestRow
+        settingModel.hasModificationsToSaveHandler = updateFor(hasModificationsToSave:)
+        
+        updateFor(hasModificationsToSave: settingModel.hasModificationsToSave)
     }
     
     // MARK: - private property
     private let settingModel: SettingModel
     
-    // MARK: - hook methods
+    // MARK: - override abstract method
     override func stepperValueDidChange() {
-        updateForModelHasChangesToSaveIfNeeded(settingModel.hasChangeToSave)
-        
-        updateNumberOfDaysRow(for: settingModel.editedNumberOfDays)
+        settingModel.numberOfDays = Int(getStepperValue())
+        updateNumberOfDaysRow()
+    }
+    
+    override func didTapCancelButton(_ sender: UIBarButtonItem) {
+        settingModel.hasModificationsToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
     }
 }

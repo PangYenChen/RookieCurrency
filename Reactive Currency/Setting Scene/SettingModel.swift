@@ -4,50 +4,90 @@ import Combine
 class SettingModel {
     // MARK: - initializer
     init(setting: BaseResultModel.Setting,
-         settingSubscriber: AnySubscriber<BaseResultModel.Setting, Never>,
+         saveSettingSubscriber: AnySubscriber<BaseResultModel.Setting, Never>,
          cancelSubscriber: AnySubscriber<Void, Never>,
          currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
         self.currencyDescriber = currencyDescriber
-        editedNumberOfDays = CurrentValueSubject<Int, Never>(setting.numberOfDays)
         
-        editedBaseCurrencyCode = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(setting.baseCurrencyCode)
-        
-        editedCurrencyCodeOfInterest = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(setting.currencyCodeOfInterest)
-        
-        // has changes
-        do {
-            let numberOfDaysHasChanges = editedNumberOfDays.map { $0 != setting.numberOfDays }
-            let baseCurrencyCodeHasChanges = editedBaseCurrencyCode.map { $0 != setting.baseCurrencyCode }
-            let currencyCodeOfInterestHasChanges = editedCurrencyCodeOfInterest.map { $0 != setting.currencyCodeOfInterest }
-            hasChangesToSave = Publishers.CombineLatest3(numberOfDaysHasChanges, baseCurrencyCodeHasChanges, currencyCodeOfInterestHasChanges)
-                .map { $0 || $1 || $2 }
+        do /*initialize number of days*/ {
+            numberOfDaysSubject = CurrentValueSubject<Int, Never>(setting.numberOfDays)
+            numberOfDaysDidChange = numberOfDaysSubject.removeDuplicates()
+                .map { _ in }
                 .eraseToAnyPublisher()
         }
+        
+        do /*initialize base currency code*/ {
+            baseCurrencyCodeSubject = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(setting.baseCurrencyCode)
+            baseCurrencyCodeDidChange = baseCurrencyCodeSubject.removeDuplicates()
+                .map { _ in }
+                .eraseToAnyPublisher()
+        }
+        
+        do /*initialize currency of interest*/ {
+            currencyCodeOfInterestSubject = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(setting.currencyCodeOfInterest)
+            currencyCodeOfInterestDidChange = currencyCodeOfInterestSubject.removeDuplicates()
+                .map { _ in }
+                .eraseToAnyPublisher()
+        }
+        
+        do /*initialize has modification*/ {
+            let isNumberOfDaysModified: AnyPublisher<Bool, Never> = numberOfDaysSubject
+                .map { $0 != setting.numberOfDays }
+                .eraseToAnyPublisher()
+            let isBaseCurrencyCodeModified: AnyPublisher<Bool, Never> = baseCurrencyCodeSubject
+                .map { $0 != setting.baseCurrencyCode }
+                .eraseToAnyPublisher()
+            let isCurrencyCodeOfInterestModified: AnyPublisher<Bool, Never> = currencyCodeOfInterestSubject
+                .map { $0 != setting.currencyCodeOfInterest }
+                .eraseToAnyPublisher()
+            
+            hasModificationsToSave = Publishers.CombineLatest3(isNumberOfDaysModified,
+                                                               isBaseCurrencyCodeModified,
+                                                               isCurrencyCodeOfInterestModified)
+                .map { $0 || $1 || $2 }
+                .removeDuplicates()
+                .eraseToAnyPublisher()
+        }
+        
+        attemptToCancelSubject = PassthroughSubject<Void, Never>()
+        
+        cancellationConfirmation = attemptToCancelSubject.withLatestFrom(hasModificationsToSave)
+            .compactMap { _, hasModificationsToSave in hasModificationsToSave ? () : nil }
+            .eraseToAnyPublisher()
         
         cancelSubject = PassthroughSubject<Void, Never>()
         
         saveSubject = PassthroughSubject<Void, Never>()
         
-        // finish initialization
+        // initialization is complete
+        
         saveSubject
-            .withLatestFrom(editedNumberOfDays)
+            .withLatestFrom(numberOfDaysSubject)
             .map { $1 }
-            .withLatestFrom(editedBaseCurrencyCode)
-            .withLatestFrom(editedCurrencyCodeOfInterest)
+            .withLatestFrom(baseCurrencyCodeSubject)
+            .withLatestFrom(currencyCodeOfInterestSubject)
             .map { (numberOfDays: $0.0, baseCurrencyCode: $0.1, currencyCodeOfInterest: $1) }
-            .subscribe(settingSubscriber)
+            .subscribe(saveSettingSubscriber)
         
         cancelSubject
             .subscribe(cancelSubscriber)
     }
     
-    let editedNumberOfDays: CurrentValueSubject<Int, Never>
+    // MARK: - properties
+    private let numberOfDaysSubject: CurrentValueSubject<Int, Never>
+    let numberOfDaysDidChange: AnyPublisher<Void, Never>
     
-    let editedBaseCurrencyCode: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
+    private let baseCurrencyCodeSubject: CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>
+    let baseCurrencyCodeDidChange: AnyPublisher<Void, Never>
     
-    let editedCurrencyCodeOfInterest: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
+    private let currencyCodeOfInterestSubject: CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>
+    let currencyCodeOfInterestDidChange: AnyPublisher<Void, Never>
     
-    let hasChangesToSave: AnyPublisher<Bool, Never>
+    let hasModificationsToSave: AnyPublisher<Bool, Never>
+    
+    private let attemptToCancelSubject: PassthroughSubject<Void, Never>
+    
+    let cancellationConfirmation: AnyPublisher<Void, Never>
     
     let currencyDescriber: CurrencyDescriberProtocol
     
@@ -59,6 +99,12 @@ class SettingModel {
 
 // MARK: - Confirming BaseSettingModel
 extension SettingModel: BaseSettingModel {
+    var numberOfDays: Int { numberOfDaysSubject.value }
+    
+    var baseCurrencyCode: ResponseDataModel.CurrencyCode { baseCurrencyCodeSubject.value }
+    
+    var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterestSubject.value }
+    
     func cancel() {
         cancelSubject.send()
     }
@@ -69,8 +115,8 @@ extension SettingModel: BaseSettingModel {
     
     func makeBaseCurrencySelectionModel() -> CurrencySelectionModel {
         let baseCurrencySelectionStrategy: BaseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
-            baseCurrencyCode: editedBaseCurrencyCode.value,
-            selectedBaseCurrencyCode: AnySubscriber(editedBaseCurrencyCode)
+            baseCurrencyCode: baseCurrencyCode,
+            selectedBaseCurrencyCode: AnySubscriber(baseCurrencyCodeSubject)
         )
         
         return CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy)
@@ -78,10 +124,20 @@ extension SettingModel: BaseSettingModel {
     
     func makeCurrencyOfInterestSelectionModel() -> CurrencySelectionModel {
         let currencyOfInterestSelectionStrategy: CurrencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
-            currencyCodeOfInterest: editedCurrencyCodeOfInterest.value,
-            selectedCurrencyCodeOfInterest: AnySubscriber(editedCurrencyCodeOfInterest)
+            currencyCodeOfInterest: currencyCodeOfInterestSubject.value,
+            selectedCurrencyCodeOfInterest: AnySubscriber(currencyCodeOfInterestSubject)
         )
         
         return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
+    }
+}
+
+extension SettingModel {
+    func set(numberOfDays: Int) {
+        numberOfDaysSubject.send(numberOfDays)
+    }
+    
+    func attemptToCancel() {
+        attemptToCancelSubject.send()
     }
 }

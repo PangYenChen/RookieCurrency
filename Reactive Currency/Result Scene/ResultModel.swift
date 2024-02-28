@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-class ResultModel: BaseResultModel {
+final class ResultModel: BaseResultModel {
     // MARK: - initializer
     init(
         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
@@ -68,7 +68,7 @@ class ResultModel: BaseResultModel {
                         .convertOutputToResult()
                         .map { result in
                             result.map { rateTuple in
-                                let analyzedDataArray: [QuasiBaseResultModel.AnalyzedData] = Analyst
+                                let analyzedDataArray: [BaseResultModel.AnalyzedData] = Analyst
                                     .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
                                              latestRate: rateTuple.latestRate,
                                              historicalRateSet: rateTuple.historicalRateSet,
@@ -90,8 +90,7 @@ class ResultModel: BaseResultModel {
                 
                 analyzedDataArray = analyzedResult.resultSuccess()
                     .map { tuple in tuple.analyzedDataArray }
-                    .combineLatest(order, searchText)
-                    .map { analyzedDataArray, order, searchText in
+                    .combineLatest(order, searchText) { analyzedDataArray, order, searchText in
                         analyzedDataSorter.sort(analyzedDataArray,
                                                 by: order,
                                                 filteredIfNeededBy: searchText)
@@ -112,7 +111,7 @@ class ResultModel: BaseResultModel {
                 
                 let refreshStatusIdleForFailure: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = error
                     .withLatestFrom(refreshStatusIdleForSuccess.prepend(.idle(latestUpdateTimestamp: nil)))
-                    .map { _, refreshStatusIdle  in refreshStatusIdle }
+                    .map { _, refreshStatusIdle in refreshStatusIdle }
                     .eraseToAnyPublisher()
              
                 refreshStatus = Publishers.Merge3(refreshStatusProcess,
@@ -143,7 +142,11 @@ class ResultModel: BaseResultModel {
         }
     }
     
-    // MARK: - input
+    deinit {
+        suspendAutoRefresh.send()
+    }
+    
+    // MARK: - input properties
     /// 是 user setting 的一部份，要傳遞到 setting scene 的資料，在那邊編輯
     private let setting: CurrentValueSubject<BaseResultModel.Setting, Never>
     
@@ -160,10 +163,10 @@ class ResultModel: BaseResultModel {
     
     private var anyCancellableSet: Set<AnyCancellable>
     
-    // MARK: output
-    let analyzedDataArray: AnyPublisher<[QuasiBaseResultModel.AnalyzedData], Never>
+    // MARK: output properties
+    let analyzedDataArray: AnyPublisher<[BaseResultModel.AnalyzedData], Never>
     
-    let refreshStatus: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never>
+    let refreshStatus: AnyPublisher<BaseResultModel.RefreshStatus, Never>
     
     let error: AnyPublisher<Error, Never>
 }
@@ -188,12 +191,12 @@ extension ResultModel {
     func makeSettingModel() -> SettingModel {
         suspendAutoRefresh.send()
         return SettingModel(setting: setting.value,
-                            settingSubscriber: AnySubscriber(setting),
+                            saveSettingSubscriber: AnySubscriber(setting),
                             cancelSubscriber: AnySubscriber(resumeAutoRefresh))
     }
 }
 
 // MARK: - private name space
 private extension ResultModel {
-    typealias AnalyzedSuccess = (latestUpdateTime: Int, analyzedDataArray: [QuasiBaseResultModel.AnalyzedData])
+    typealias AnalyzedSuccess = (latestUpdateTime: Int, analyzedDataArray: [BaseResultModel.AnalyzedData])
 }

@@ -1,19 +1,21 @@
 import Foundation
 
-class SettingModel {
+final class SettingModel: BaseSettingModel {
     // MARK: - initializer
     init(setting: BaseResultModel.Setting,
          saveCompletionHandler: @escaping SaveHandler,
          cancelCompletionHandler: @escaping CancelHandler,
          currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
         originalNumberOfDays = setting.numberOfDays
-        editedNumberOfDays = setting.numberOfDays
+        numberOfDays = setting.numberOfDays
         
         originalBaseCurrencyCode = setting.baseCurrencyCode
-        editedBaseCurrencyCode = setting.baseCurrencyCode
+        baseCurrencyCode = setting.baseCurrencyCode
         
         originalCurrencyCodeOfInterest = setting.currencyCodeOfInterest
-        editedCurrencyCodeOfInterest = setting.currencyCodeOfInterest
+        currencyCodeOfInterest = setting.currencyCodeOfInterest
+        
+        hasModificationsToSave = false
         
         self.saveCompletionHandler = saveCompletionHandler
         self.cancelCompletionHandler = cancelCompletionHandler
@@ -21,19 +23,33 @@ class SettingModel {
         self.currencyDescriber = currencyDescriber
     }
     // MARK: - internal properties
-    var editedNumberOfDays: Int
+    var numberOfDays: Int {
+        didSet { updateHasModificationsToSave() }
+    }
     
-    var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode
+    var baseCurrencyCode: ResponseDataModel.CurrencyCode {
+        didSet {
+            oldValue != baseCurrencyCode ? baseCurrencyCodeDidChangeHandler?() : ()
+            updateHasModificationsToSave()
+        }
+    }
+    var baseCurrencyCodeDidChangeHandler: BaseCurrencyCodeDidChangeHandler?
     
-    var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
+    var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
+        didSet {
+            oldValue != currencyCodeOfInterest ? currencyCodeOfInterestDidChangeHandler?() : ()
+            updateHasModificationsToSave()
+        }
+    }
+    var currencyCodeOfInterestDidChangeHandler: CurrencyCodeOfInterestDidChangeHandler?
     
     let currencyDescriber: CurrencyDescriberProtocol
     
-    var hasChangeToSave: Bool {
-        originalNumberOfDays != editedNumberOfDays ||
-        originalBaseCurrencyCode != editedBaseCurrencyCode ||
-        originalCurrencyCodeOfInterest != editedCurrencyCodeOfInterest
+    var hasModificationsToSave: Bool {
+        didSet { oldValue != hasModificationsToSave ? hasModificationsToSaveHandler?(hasModificationsToSave) : () }
     }
+    
+    var hasModificationsToSaveHandler: HasModificationsToSaveHandler?
     
     // MARK: - private properties
     private let originalNumberOfDays: Int
@@ -44,15 +60,15 @@ class SettingModel {
     
     private let saveCompletionHandler: SaveHandler
     
-    private let cancelCompletionHandler: CancelHandler // TODO: 檢查有沒有用到
+    private let cancelCompletionHandler: CancelHandler
 }
 
-// MARK: - Confirming BaseSettingModel
-extension SettingModel: BaseSettingModel {
+// MARK: - instance methods
+extension SettingModel {
     func save() {
-        let setting = (numberOfDays: editedNumberOfDays,
-                       baseCurrencyCode: editedBaseCurrencyCode,
-                       currencyCodeOfInterest: editedCurrencyCodeOfInterest)
+        let setting: BaseResultModel.Setting = (numberOfDays: numberOfDays,
+                                                baseCurrencyCode: baseCurrencyCode,
+                                                currencyCodeOfInterest: currencyCodeOfInterest)
         saveCompletionHandler(setting)
     }
     
@@ -61,21 +77,17 @@ extension SettingModel: BaseSettingModel {
     }
     
     func makeBaseCurrencySelectionModel() -> CurrencySelectionModel {
-        let baseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
-            baseCurrencyCode: editedBaseCurrencyCode
-        ) { [unowned self] selectedBaseCurrencyCode in
-            editedBaseCurrencyCode = selectedBaseCurrencyCode
-        }
+        let baseCurrencySelectionStrategy: BaseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
+            baseCurrencyCode: baseCurrencyCode
+        ) { [unowned self] selectedBaseCurrencyCode in baseCurrencyCode = selectedBaseCurrencyCode }
         
         return CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy)
     }
     
     func makeCurrencyOfInterestSelectionModel() -> CurrencySelectionModel {
-        let currencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
-            currencyCodeOfInterest: editedCurrencyCodeOfInterest
-        ) { [unowned self] selectedCurrencyCodeOfInterest in
-            editedCurrencyCodeOfInterest = selectedCurrencyCodeOfInterest
-        }
+        let currencyOfInterestSelectionStrategy: CurrencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
+            currencyCodeOfInterest: currencyCodeOfInterest
+        ) { [unowned self] selectedCurrencyCodeOfInterest in currencyCodeOfInterest = selectedCurrencyCodeOfInterest }
         
         return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
     }
@@ -85,4 +97,19 @@ extension SettingModel: BaseSettingModel {
 extension SettingModel {
     typealias SaveHandler = (_ setting: BaseResultModel.Setting) -> Void
     typealias CancelHandler = () -> Void
+    
+    typealias BaseCurrencyCodeDidChangeHandler = () -> Void
+    typealias CurrencyCodeOfInterestDidChangeHandler = () -> Void
+    typealias HasModificationsToSaveHandler = (_ hasModificationsToSave: Bool) -> Void
+}
+
+// MARK: - private method
+private extension SettingModel {
+    func updateHasModificationsToSave() {
+        let isNumberOfDaysModified: Bool = originalNumberOfDays != numberOfDays
+        let isBaseCurrencyCodeModified: Bool = originalBaseCurrencyCode != baseCurrencyCode
+        let isCurrencyCodeOfInterestModified: Bool = originalCurrencyCodeOfInterest != currencyCodeOfInterest
+        
+        hasModificationsToSave = isNumberOfDaysModified || isBaseCurrencyCodeModified || isCurrencyCodeOfInterestModified
+    }
 }

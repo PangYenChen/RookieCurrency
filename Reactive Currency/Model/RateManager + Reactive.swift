@@ -64,8 +64,7 @@ extension RateManager: RateManagerProtocol {
                 }
             }
             .collect(numberOfDays)
-            .combineLatest(fetcher.publisher(for: Endpoints.Latest()))
-            .map { (latestRate: $0.1, historicalRateSet: Set($0.0)) }
+            .combineLatest(fetcher.publisher(for: Endpoints.Latest())) { (latestRate: $1, historicalRateSet: Set($0)) }
             .eraseToAnyPublisher()
     }
 }

@@ -10,3 +10,4 @@
 "removeFiles" = "remove downloaded data";
 "removeFilesDescription" = "this would remove data which may be unused";
 "dataHaveBeenRemoved" = "data have been remove";
+"openSettingsURLFailMessage" = "Please switch the language in Settings app.";

@@ -42,11 +42,11 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                     do {
                         switch baseCurrencySelectionModel.getSortingMethod() {
                             case .currencyName, .currencyNameZhuyin:
-                                contentConfiguration.text = baseCurrencySelectionModel.displayStringFor(currencyCode: currencyCode)
+                                contentConfiguration.text = baseCurrencySelectionModel.localizedStringFor(currencyCode: currencyCode)
                                 contentConfiguration.secondaryText = currencyCode
                             case .currencyCode:
                                 contentConfiguration.text = currencyCode
-                                contentConfiguration.secondaryText = baseCurrencySelectionModel.displayStringFor(currencyCode: currencyCode)
+                                contentConfiguration.secondaryText = baseCurrencySelectionModel.localizedStringFor(currencyCode: currencyCode)
                         }
                     }
                     
