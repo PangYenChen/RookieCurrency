@@ -41,7 +41,9 @@ class SettingModel {
                 .map { $0 != setting.currencyCodeOfInterest }
                 .eraseToAnyPublisher()
             
-            hasModificationsToSave = Publishers.CombineLatest3(isNumberOfDaysModified, isBaseCurrencyCodeModified, isCurrencyCodeOfInterestModified)
+            hasModificationsToSave = Publishers.CombineLatest3(isNumberOfDaysModified,
+                                                               isBaseCurrencyCodeModified,
+                                                               isCurrencyCodeOfInterestModified)
                 .map { $0 || $1 || $2 }
                 .removeDuplicates()
                 .eraseToAnyPublisher()

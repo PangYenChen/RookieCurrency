@@ -90,8 +90,7 @@ final class ResultModel: BaseResultModel {
                 
                 analyzedDataArray = analyzedResult.resultSuccess()
                     .map { tuple in tuple.analyzedDataArray }
-                    .combineLatest(order, searchText)
-                    .map { analyzedDataArray, order, searchText in
+                    .combineLatest(order, searchText) { analyzedDataArray, order, searchText in
                         analyzedDataSorter.sort(analyzedDataArray,
                                                 by: order,
                                                 filteredIfNeededBy: searchText)
@@ -112,7 +111,7 @@ final class ResultModel: BaseResultModel {
                 
                 let refreshStatusIdleForFailure: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = error
                     .withLatestFrom(refreshStatusIdleForSuccess.prepend(.idle(latestUpdateTimestamp: nil)))
-                    .map { _, refreshStatusIdle  in refreshStatusIdle }
+                    .map { _, refreshStatusIdle in refreshStatusIdle }
                     .eraseToAnyPublisher()
              
                 refreshStatus = Publishers.Merge3(refreshStatusProcess,
