@@ -13,7 +13,7 @@ final class SettingModel: BaseSettingModel {
         baseCurrencyCode = setting.baseCurrencyCode
         
         originalCurrencyCodeOfInterest = setting.currencyCodeOfInterest
-        editedCurrencyCodeOfInterest = setting.currencyCodeOfInterest
+        currencyCodeOfInterest = setting.currencyCodeOfInterest
         
         hasModificationsToSave = false
         
@@ -35,9 +35,9 @@ final class SettingModel: BaseSettingModel {
     }
     var editedBaseCurrencyCodeDidChangeHandler: BaseCurrencyCodeDidChangeHandler?
     
-    var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
+    var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
         didSet {
-            oldValue != editedCurrencyCodeOfInterest ? editedCurrencyCodeOfInterestDidChangeHandler?() : ()
+            oldValue != currencyCodeOfInterest ? editedCurrencyCodeOfInterestDidChangeHandler?() : ()
             updateHasModificationsToSave()
         }
     }
@@ -68,7 +68,7 @@ extension SettingModel {
     func save() {
         let setting: BaseResultModel.Setting = (numberOfDays: numberOfDays,
                                                 baseCurrencyCode: baseCurrencyCode,
-                                                currencyCodeOfInterest: editedCurrencyCodeOfInterest)
+                                                currencyCodeOfInterest: currencyCodeOfInterest)
         saveCompletionHandler(setting)
     }
     
@@ -86,8 +86,8 @@ extension SettingModel {
     
     func makeCurrencyOfInterestSelectionModel() -> CurrencySelectionModel {
         let currencyOfInterestSelectionStrategy: CurrencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
-            currencyCodeOfInterest: editedCurrencyCodeOfInterest
-        ) { [unowned self] selectedCurrencyCodeOfInterest in editedCurrencyCodeOfInterest = selectedCurrencyCodeOfInterest }
+            currencyCodeOfInterest: currencyCodeOfInterest
+        ) { [unowned self] selectedCurrencyCodeOfInterest in currencyCodeOfInterest = selectedCurrencyCodeOfInterest }
         
         return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
     }
@@ -108,7 +108,7 @@ private extension SettingModel {
     func updateHasModificationsToSave() {
         let isNumberOfDaysModified: Bool = originalNumberOfDays != numberOfDays
         let isBaseCurrencyCodeModified: Bool = originalBaseCurrencyCode != baseCurrencyCode
-        let isCurrencyCodeOfInterestModified: Bool = originalCurrencyCodeOfInterest != editedCurrencyCodeOfInterest
+        let isCurrencyCodeOfInterestModified: Bool = originalCurrencyCodeOfInterest != currencyCodeOfInterest
         
         hasModificationsToSave = isNumberOfDaysModified || isBaseCurrencyCodeModified || isCurrencyCodeOfInterestModified
     }

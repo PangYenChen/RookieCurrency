@@ -202,7 +202,7 @@ extension BaseSettingTableViewController {
                 case .currencyOfInterest:
                     contentConfiguration.text = R.string.share.currencyOfInterest()
                     
-                    let editedCurrencyNameOfInterest: [String] = baseSettingModel.editedCurrencyCodeOfInterest
+                    let editedCurrencyNameOfInterest: [String] = baseSettingModel.currencyCodeOfInterest
                         .map(self.displayStringFor(currencyCode:))
                         .sorted()
                     

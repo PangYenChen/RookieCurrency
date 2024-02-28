@@ -5,7 +5,7 @@ protocol BaseSettingModel: CurrencyDescriberProxy {
     
     var baseCurrencyCode: ResponseDataModel.CurrencyCode { get }
     
-    var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> { get }
+    var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> { get }
     
     func save()
     

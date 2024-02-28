@@ -101,7 +101,7 @@ extension SettingModel: BaseSettingModel {
     
     var baseCurrencyCode: ResponseDataModel.CurrencyCode { baseCurrencyCodeSubject.value }
     
-    var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterestSubject.value }
+    var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterestSubject.value }
     
     func cancel() {
         cancelSubject.send()
