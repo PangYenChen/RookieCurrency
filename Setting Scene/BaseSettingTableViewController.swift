@@ -83,26 +83,24 @@ private extension BaseSettingTableViewController {
 
 // MARK: - internal method
 extension BaseSettingTableViewController {
+    /// 向使用者確認是否要取消，尤其是使用者已編輯時，詢問使用者是否要儲存
     final func presentDismissalConfirmation(withSaveOption: Bool) {
         let alertController: UIAlertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        // 儲存的 action，只有在下拉的時候加上這個 action。
         if withSaveOption {
             let saveAction: UIAlertAction = UIAlertAction(title: R.string.settingScene.cancelAlertSavingTitle(),
                                                           style: .default) { [unowned self] _ in save() }
             alertController.addAction(saveAction)
         }
         
-        // 捨棄變更的 action
-        do {
+        do /*捨棄變更的 action*/ {
             let discardChangeAction: UIAlertAction = UIAlertAction(title: R.string.settingScene.cancelAlertDiscardTitle(),
                                                                    style: .default) { [unowned self] _ in cancel() }
             
             alertController.addAction(discardChangeAction)
         }
         
-        // 繼續編輯的 action
-        do {
+        do /*繼續編輯的 action*/ {
             let continueSettingAction: UIAlertAction = UIAlertAction(title: R.string.settingScene.cancelAlertContinueTitle(),
                                                                      style: .cancel)
             
@@ -113,7 +111,7 @@ extension BaseSettingTableViewController {
     }
     
     // TODO: 下面這三個 reload 的 method 不要接受參數，反正 data source 會去拿
-    final func updateNumberOfDaysRow(for numberOfDays: Int) {
+    final func updateNumberOfDaysRow() {
         let numberOfDaysRow: IndexPath = IndexPath(row: Row.numberOfDays.rawValue, section: 0)
         
         guard let cell = tableView.cellForRow(at: numberOfDaysRow) else {
@@ -126,7 +124,7 @@ extension BaseSettingTableViewController {
             return
         }
         
-        contentConfiguration.secondaryText = String(numberOfDays)
+        contentConfiguration.secondaryText = String(baseSettingModel.editedNumberOfDays)
         
         cell.contentConfiguration = contentConfiguration
     }

@@ -20,7 +20,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         settingModel.editedNumberOfDaysPublisher
             .dropFirst()
             .receive(on: DispatchQueue.main)
-            .sink { [unowned self] numberOfDays in updateNumberOfDaysRow(for: numberOfDays) }
+            .sink { [unowned self] _ in updateNumberOfDaysRow() }
             .store(in: &anyCancellableSet)
         
         settingModel.editedBaseCurrencyCodePublisher
