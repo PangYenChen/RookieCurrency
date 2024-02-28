@@ -99,7 +99,7 @@ class SettingModel {
 extension SettingModel: BaseSettingModel {
     var numberOfDays: Int { numberOfDaysSubject.value }
     
-    var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode { baseCurrencyCodeSubject.value }
+    var baseCurrencyCode: ResponseDataModel.CurrencyCode { baseCurrencyCodeSubject.value }
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> { currencyCodeOfInterestSubject.value }
     
@@ -113,7 +113,7 @@ extension SettingModel: BaseSettingModel {
     
     func makeBaseCurrencySelectionModel() -> CurrencySelectionModel {
         let baseCurrencySelectionStrategy: BaseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
-            baseCurrencyCode: editedBaseCurrencyCode,
+            baseCurrencyCode: baseCurrencyCode,
             selectedBaseCurrencyCode: AnySubscriber(baseCurrencyCodeSubject)
         )
         

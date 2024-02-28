@@ -3,7 +3,7 @@ import Foundation
 protocol BaseSettingModel: CurrencyDescriberProxy {
     var numberOfDays: Int { get }
     
-    var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode { get }
+    var baseCurrencyCode: ResponseDataModel.CurrencyCode { get }
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> { get }
     

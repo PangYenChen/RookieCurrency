@@ -196,7 +196,7 @@ extension BaseSettingTableViewController {
                     cell.accessoryView = stepper
                 case .baseCurrency:
                     contentConfiguration.text = R.string.share.baseCurrency()
-                    contentConfiguration.secondaryText = displayStringFor(currencyCode: baseSettingModel.editedBaseCurrencyCode)
+                    contentConfiguration.secondaryText = displayStringFor(currencyCode: baseSettingModel.baseCurrencyCode)
                     contentConfiguration.image = UIImage(systemSymbol: .dollarsignCircle)
                     cell.accessoryType = .disclosureIndicator
                 case .currencyOfInterest:
