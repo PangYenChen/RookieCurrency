@@ -142,12 +142,7 @@ extension BaseSettingTableViewController {
         cell.contentConfiguration = contentConfiguration
     }
     
-    final func reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: ResponseDataModel.CurrencyCode) {
-        // NOTE: 要不要 reload 的邏輯要寫在 model
-//        guard editedBaseCurrencyCode != baseCurrencyCode else { return }
-//        
-//        editedBaseCurrencyCode = baseCurrencyCode
-        
+    final func reloadBaseCurrencyRowFor(baseCurrencyCode: ResponseDataModel.CurrencyCode) {
         let baseCurrencyIndexPath: IndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
         tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
     }

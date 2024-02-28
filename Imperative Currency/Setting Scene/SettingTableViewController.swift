@@ -17,11 +17,16 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     // MARK: - life cycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        settingModel.editedBaseCurrencyCodeHandler = reloadBaseCurrencyRowFor(baseCurrencyCode:)
+    }
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         updateForModelHasChangesToSaveIfNeeded(settingModel.hasChangeToSave)
-        reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: settingModel.editedBaseCurrencyCode)
         reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: settingModel.editedCurrencyCodeOfInterest)
     }
     

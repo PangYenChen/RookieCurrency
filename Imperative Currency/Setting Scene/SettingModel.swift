@@ -23,7 +23,10 @@ final class SettingModel: BaseSettingModel {
     // MARK: - internal properties
     var editedNumberOfDays: Int
     
-    var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode
+    var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode {
+        didSet { oldValue != editedBaseCurrencyCode ? editedBaseCurrencyCodeHandler?(editedBaseCurrencyCode) : () }
+    }
+    var editedBaseCurrencyCodeHandler: BaseCurrencyCodeHandler?
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
@@ -81,4 +84,6 @@ extension SettingModel {
 extension SettingModel {
     typealias SaveHandler = (_ setting: BaseResultModel.Setting) -> Void
     typealias CancelHandler = () -> Void
+    
+    typealias BaseCurrencyCodeHandler = (_ baseCurrencyCode: ResponseDataModel.CurrencyCode) -> Void
 }
