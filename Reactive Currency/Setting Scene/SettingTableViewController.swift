@@ -49,7 +49,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - override abstract method
     override func stepperValueDidChange() {
-        settingModel.set(editedNumberOfDays: Int(getStepperValue()))
+        settingModel.set(numberOfDays: Int(getStepperValue()))
     }
     
     override func didTapCancelButton(_ sender: UIBarButtonItem) {

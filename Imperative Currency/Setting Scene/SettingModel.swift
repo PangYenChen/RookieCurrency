@@ -29,19 +29,19 @@ final class SettingModel: BaseSettingModel {
     
     var baseCurrencyCode: ResponseDataModel.CurrencyCode {
         didSet {
-            oldValue != baseCurrencyCode ? editedBaseCurrencyCodeDidChangeHandler?() : ()
+            oldValue != baseCurrencyCode ? baseCurrencyCodeDidChangeHandler?() : ()
             updateHasModificationsToSave()
         }
     }
-    var editedBaseCurrencyCodeDidChangeHandler: BaseCurrencyCodeDidChangeHandler?
+    var baseCurrencyCodeDidChangeHandler: BaseCurrencyCodeDidChangeHandler?
     
     var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
         didSet {
-            oldValue != currencyCodeOfInterest ? editedCurrencyCodeOfInterestDidChangeHandler?() : ()
+            oldValue != currencyCodeOfInterest ? currencyCodeOfInterestDidChangeHandler?() : ()
             updateHasModificationsToSave()
         }
     }
-    var editedCurrencyCodeOfInterestDidChangeHandler: CurrencyCodeOfInterestDidChangeHandler?
+    var currencyCodeOfInterestDidChangeHandler: CurrencyCodeOfInterestDidChangeHandler?
     
     let currencyDescriber: CurrencyDescriberProtocol
     

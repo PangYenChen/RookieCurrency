@@ -202,13 +202,13 @@ extension BaseSettingTableViewController {
                 case .currencyOfInterest:
                     contentConfiguration.text = R.string.share.currencyOfInterest()
                     
-                    let editedCurrencyNameOfInterest: [String] = baseSettingModel.currencyCodeOfInterest
+                    let currencyNameOfInterest: [String] = baseSettingModel.currencyCodeOfInterest
                         .map(self.displayStringFor(currencyCode:))
                         .sorted()
                     
-                    let displayStringForEditedCurrencyNameOfInterest: String = ListFormatter.localizedString(byJoining: editedCurrencyNameOfInterest)
+                    let displayStringForCurrencyNameOfInterest: String = ListFormatter.localizedString(byJoining: currencyNameOfInterest)
                     
-                    contentConfiguration.secondaryText = displayStringForEditedCurrencyNameOfInterest
+                    contentConfiguration.secondaryText = displayStringForCurrencyNameOfInterest
                     contentConfiguration.image = UIImage(systemSymbol: .checklistUnchecked)
                     cell.accessoryType = .disclosureIndicator
                 case .language:

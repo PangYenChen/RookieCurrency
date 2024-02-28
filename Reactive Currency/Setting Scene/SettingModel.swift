@@ -9,7 +9,7 @@ class SettingModel {
          currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
         self.currencyDescriber = currencyDescriber
         
-        do /*initialize edited number of days*/ {
+        do /*initialize number of days*/ {
             numberOfDaysSubject = CurrentValueSubject<Int, Never>(setting.numberOfDays)
             numberOfDaysDidChange = numberOfDaysSubject.removeDuplicates()
                 .map { _ in }
@@ -131,8 +131,8 @@ extension SettingModel: BaseSettingModel {
 }
 
 extension SettingModel {
-    func set(editedNumberOfDays: Int) {
-        numberOfDaysSubject.send(editedNumberOfDays)
+    func set(numberOfDays: Int) {
+        numberOfDaysSubject.send(numberOfDays)
     }
     
     func attemptToCancel() {

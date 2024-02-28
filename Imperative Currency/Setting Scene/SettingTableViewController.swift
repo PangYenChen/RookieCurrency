@@ -13,8 +13,8 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        settingModel.editedBaseCurrencyCodeDidChangeHandler = reloadBaseCurrencyRow
-        settingModel.editedCurrencyCodeOfInterestDidChangeHandler = reloadCurrencyOfInterestRow
+        settingModel.baseCurrencyCodeDidChangeHandler = reloadBaseCurrencyRow
+        settingModel.currencyCodeOfInterestDidChangeHandler = reloadCurrencyOfInterestRow
         settingModel.hasModificationsToSaveHandler = updateFor(hasModificationsToSave:)
         
         updateFor(hasModificationsToSave: settingModel.hasModificationsToSave)
