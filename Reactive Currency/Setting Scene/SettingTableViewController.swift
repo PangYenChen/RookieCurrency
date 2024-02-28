@@ -33,7 +33,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         settingModel.hasModificationsToSave
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: self.updateFor(hasChangesToSave:))
+            .sink(receiveValue: self.updateFor(hasModificationsToSave:))
             .store(in: &anyCancellableSet)
         
         settingModel.cancellationConfirmation

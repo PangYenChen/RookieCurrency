@@ -15,7 +15,7 @@ final class SettingModel: BaseSettingModel {
         originalCurrencyCodeOfInterest = setting.currencyCodeOfInterest
         editedCurrencyCodeOfInterest = setting.currencyCodeOfInterest
         
-        hasChangesToSave = false
+        hasModificationsToSave = false
         
         self.saveCompletionHandler = saveCompletionHandler
         self.cancelCompletionHandler = cancelCompletionHandler
@@ -24,13 +24,13 @@ final class SettingModel: BaseSettingModel {
     }
     // MARK: - internal properties
     var editedNumberOfDays: Int {
-        didSet { updateHasChangesToSave() }
+        didSet { updateHasModificationsToSave() }
     }
     
     var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode {
         didSet {
             oldValue != editedBaseCurrencyCode ? editedBaseCurrencyCodeDidChangeHandler?() : ()
-            updateHasChangesToSave()
+            updateHasModificationsToSave()
         }
     }
     var editedBaseCurrencyCodeDidChangeHandler: BaseCurrencyCodeDidChangeHandler?
@@ -38,18 +38,18 @@ final class SettingModel: BaseSettingModel {
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
         didSet {
             oldValue != editedCurrencyCodeOfInterest ? editedCurrencyCodeOfInterestDidChangeHandler?() : ()
-            updateHasChangesToSave()
+            updateHasModificationsToSave()
         }
     }
     var editedCurrencyCodeOfInterestDidChangeHandler: CurrencyCodeOfInterestDidChangeHandler?
     
     let currencyDescriber: CurrencyDescriberProtocol
     
-    var hasChangesToSave: Bool {
-        didSet { oldValue != hasChangesToSave ? hasChangesToSaveHandler?(hasChangesToSave) : () }
+    var hasModificationsToSave: Bool {
+        didSet { oldValue != hasModificationsToSave ? hasModificationsToSaveHandler?(hasModificationsToSave) : () }
     }
     
-    var hasChangesToSaveHandler: HasChangesToSaveHandler?
+    var hasModificationsToSaveHandler: HasModificationsToSaveHandler?
     
     // MARK: - private properties
     private let originalNumberOfDays: Int
@@ -98,19 +98,18 @@ extension SettingModel {
     typealias SaveHandler = (_ setting: BaseResultModel.Setting) -> Void
     typealias CancelHandler = () -> Void
     
-    // TODO: 這些 handler 不用接收參數，因為 table view data source 會跟 model 拿，名稱改成 change handler
     typealias BaseCurrencyCodeDidChangeHandler = () -> Void
     typealias CurrencyCodeOfInterestDidChangeHandler = () -> Void
-    typealias HasChangesToSaveHandler = (_ hasChangesToSave: Bool) -> Void
+    typealias HasModificationsToSaveHandler = (_ hasModificationsToSave: Bool) -> Void
 }
 
 // MARK: - private method
 private extension SettingModel {
-    func updateHasChangesToSave() {
-        let doesNumberOfDaysChange: Bool = originalNumberOfDays != editedNumberOfDays
-        let doesBaseCurrencyCodeChange: Bool = originalBaseCurrencyCode != editedBaseCurrencyCode
-        let doesCurrencyCodeOfInterestChange: Bool = originalCurrencyCodeOfInterest != editedCurrencyCodeOfInterest
+    func updateHasModificationsToSave() {
+        let isNumberOfDaysModified: Bool = originalNumberOfDays != editedNumberOfDays
+        let isBaseCurrencyCodeModified: Bool = originalBaseCurrencyCode != editedBaseCurrencyCode
+        let isCurrencyCodeOfInterestModified: Bool = originalCurrencyCodeOfInterest != editedCurrencyCodeOfInterest
         
-        hasChangesToSave = doesNumberOfDaysChange || doesBaseCurrencyCodeChange || doesCurrencyCodeOfInterestChange
+        hasModificationsToSave = isNumberOfDaysModified || isBaseCurrencyCodeModified || isCurrencyCodeOfInterestModified
     }
 }

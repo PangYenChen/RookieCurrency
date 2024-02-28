@@ -15,9 +15,9 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         settingModel.editedBaseCurrencyCodeDidChangeHandler = reloadBaseCurrencyRow
         settingModel.editedCurrencyCodeOfInterestDidChangeHandler = reloadCurrencyOfInterestRow
-        settingModel.hasChangesToSaveHandler = updateFor(hasChangesToSave:)
+        settingModel.hasModificationsToSaveHandler = updateFor(hasModificationsToSave:)
         
-        updateFor(hasChangesToSave: settingModel.hasChangesToSave)
+        updateFor(hasModificationsToSave: settingModel.hasModificationsToSave)
     }
     
     // MARK: - private property
@@ -30,6 +30,6 @@ class SettingTableViewController: BaseSettingTableViewController {
     }
     
     override func didTapCancelButton(_ sender: UIBarButtonItem) {
-        settingModel.hasChangesToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
+        settingModel.hasModificationsToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
     }
 }

@@ -31,17 +31,17 @@ class SettingModel {
         }
         
         do /*initialize has modification*/ {
-            let numberOfDaysIsModified: AnyPublisher<Bool, Never> = numberOfDaysSubject
+            let isNumberOfDaysModified: AnyPublisher<Bool, Never> = numberOfDaysSubject
                 .map { $0 != setting.numberOfDays }
                 .eraseToAnyPublisher()
-            let baseCurrencyCodeIsModified: AnyPublisher<Bool, Never> = baseCurrencyCodeSubject
+            let isBaseCurrencyCodeModified: AnyPublisher<Bool, Never> = baseCurrencyCodeSubject
                 .map { $0 != setting.baseCurrencyCode }
                 .eraseToAnyPublisher()
-            let currencyCodeOfInterestIsModified: AnyPublisher<Bool, Never> = currencyCodeOfInterestSubject
+            let isCurrencyCodeOfInterestModified: AnyPublisher<Bool, Never> = currencyCodeOfInterestSubject
                 .map { $0 != setting.currencyCodeOfInterest }
                 .eraseToAnyPublisher()
             
-            hasModificationsToSave = Publishers.CombineLatest3(numberOfDaysIsModified, baseCurrencyCodeIsModified, currencyCodeOfInterestIsModified)
+            hasModificationsToSave = Publishers.CombineLatest3(isNumberOfDaysModified, isBaseCurrencyCodeModified, isCurrencyCodeOfInterestModified)
                 .map { $0 || $1 || $2 }
                 .removeDuplicates()
                 .eraseToAnyPublisher()

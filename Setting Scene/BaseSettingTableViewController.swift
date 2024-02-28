@@ -142,9 +142,9 @@ extension BaseSettingTableViewController {
         baseSettingModel.displayStringFor(currencyCode: currencyCode)
     }
     
-    final func updateFor(hasChangesToSave: Bool) {
-        saveButton.isEnabled = hasChangesToSave
-        isModalInPresentation = hasChangesToSave
+    final func updateFor(hasModificationsToSave: Bool) {
+        saveButton.isEnabled = hasModificationsToSave
+        isModalInPresentation = hasModificationsToSave
     }
     
     final func cancel() {
