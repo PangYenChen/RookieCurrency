@@ -91,10 +91,6 @@ extension SettingModel: BaseSettingModel {
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> { editedCurrencyCodeOfInterestSubject.value }
     
-    func attemptToCancel() {
-        attemptToCancelSubject.send()
-    }
-    
     func cancel() {
         cancelSubject.send()
     }
@@ -125,5 +121,9 @@ extension SettingModel: BaseSettingModel {
 extension SettingModel {
     func set(editedNumberOfDays: Int) {
         editedNumberOfDaysSubject.send(editedNumberOfDays)
+    }
+    
+    func attemptToCancel() {
+        attemptToCancelSubject.send()
     }
 }

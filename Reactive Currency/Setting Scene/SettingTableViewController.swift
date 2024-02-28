@@ -35,7 +35,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         settingModel.hasChangesToSave
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: self.updateForHasChangesToSave(_:))
+            .sink(receiveValue: self.updateFor(hasChangesToSave:))
             .store(in: &anyCancellableSet)
         
         settingModel.cancellationConfirmation
@@ -49,9 +49,9 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     private var anyCancellableSet: Set<AnyCancellable>
     
-    // MARK: - kind of abstract method
+    // MARK: - override abstract method
     override func stepperValueDidChange() {
-        settingModel.set(editedNumberOfDays: Int(stepper.value))
+        settingModel.set(editedNumberOfDays: Int(getStepperValue()))
     }
     
     override func didTapCancelButton(_ sender: UIBarButtonItem) {

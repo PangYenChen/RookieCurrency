@@ -47,7 +47,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     private let baseSettingModel: BaseSettingModel
     
     // MARK: - view
-    let stepper: UIStepper // TODO: 要擋起來
+    private let stepper: UIStepper
     
     @ViewLoading @IBOutlet var saveButton: UIBarButtonItem // TODO: 這邊應該要擋起來，開 setDisable 之類的 method
     
@@ -68,9 +68,8 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // swiftlint:enable unavailable_function
 }
 
-// MARK: - private methods
+// MARK: - private methods: Navigation
 private extension BaseSettingTableViewController {
-    // MARK: Navigation
     @IBSegueAction final func showBaseCurrencySelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
         CurrencySelectionTableViewController(coder: coder,
                                              currencySelectionModel: baseSettingModel.makeBaseCurrencySelectionModel())
@@ -160,6 +159,8 @@ extension BaseSettingTableViewController {
         baseSettingModel.save()
         dismiss(animated: true)
     }
+    
+    final func getStepperValue() -> Double { stepper.value }
 }
 
 // MARK: - Table view data source
