@@ -29,11 +29,11 @@ final class SettingModel: BaseSettingModel {
     
     var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode {
         didSet {
-            oldValue != editedBaseCurrencyCode ? editedBaseCurrencyCodeHandler?(editedBaseCurrencyCode) : ()
+            oldValue != editedBaseCurrencyCode ? editedBaseCurrencyCodeHandler?() : ()
             updateHasChangesToSave()
         }
     }
-    var editedBaseCurrencyCodeHandler: BaseCurrencyCodeHandler?
+    var editedBaseCurrencyCodeHandler: BaseCurrencyCodeDidChangeHandler?
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
         didSet {
@@ -99,7 +99,7 @@ extension SettingModel {
     typealias CancelHandler = () -> Void
     
     // TODO: 這些 handler 不用接收參數，因為 table view data source 會跟 model 拿，名稱改成 change handler
-    typealias BaseCurrencyCodeHandler = (_ baseCurrencyCode: ResponseDataModel.CurrencyCode) -> Void
+    typealias BaseCurrencyCodeDidChangeHandler = () -> Void
     typealias CurrencyCodeOfInterestHandler = (_ currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) -> Void
     typealias HasChangesToSaveHandler = (_ hasChangesToSave: Bool) -> Void
 }
@@ -107,9 +107,9 @@ extension SettingModel {
 // MARK: - private method
 private extension SettingModel {
     func updateHasChangesToSave() {
-        let doesNumberOfDaysChange = originalNumberOfDays != editedNumberOfDays
-        let doesBaseCurrencyCodeChange = originalBaseCurrencyCode != editedBaseCurrencyCode
-        let doesCurrencyCodeOfInterestChange = originalCurrencyCodeOfInterest != editedCurrencyCodeOfInterest
+        let doesNumberOfDaysChange: Bool = originalNumberOfDays != editedNumberOfDays
+        let doesBaseCurrencyCodeChange: Bool = originalBaseCurrencyCode != editedBaseCurrencyCode
+        let doesCurrencyCodeOfInterestChange: Bool = originalCurrencyCodeOfInterest != editedCurrencyCodeOfInterest
         
         hasChangesToSave = doesNumberOfDaysChange || doesBaseCurrencyCodeChange || doesCurrencyCodeOfInterestChange
     }

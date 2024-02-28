@@ -25,7 +25,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         settingModel.editedBaseCurrencyCodePublisher
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: self.reloadBaseCurrencyRowFor(baseCurrencyCode:))
+            .sink(receiveValue: { [unowned self] _ in reloadBaseCurrencyRow() })
             .store(in: &anyCancellableSet)
         
         settingModel.editedCurrencyCodeOfInterestPublisher
