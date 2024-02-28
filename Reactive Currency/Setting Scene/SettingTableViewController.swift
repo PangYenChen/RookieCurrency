@@ -30,7 +30,7 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         settingModel.editedCurrencyCodeOfInterestPublisher
             .receive(on: DispatchQueue.main)
-            .sink(receiveValue: self.reloadCurrencyOfInterestRowFor(currencyCodeOfInterest:))
+            .sink(receiveValue: { [unowned self] _ in reloadCurrencyOfInterestRow() })
             .store(in: &anyCancellableSet)
         
         settingModel.hasChangesToSave

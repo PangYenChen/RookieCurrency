@@ -29,19 +29,19 @@ final class SettingModel: BaseSettingModel {
     
     var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode {
         didSet {
-            oldValue != editedBaseCurrencyCode ? editedBaseCurrencyCodeHandler?() : ()
+            oldValue != editedBaseCurrencyCode ? editedBaseCurrencyCodeDidChangeHandler?() : ()
             updateHasChangesToSave()
         }
     }
-    var editedBaseCurrencyCodeHandler: BaseCurrencyCodeDidChangeHandler?
+    var editedBaseCurrencyCodeDidChangeHandler: BaseCurrencyCodeDidChangeHandler?
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
         didSet {
-            oldValue != editedCurrencyCodeOfInterest ? editedCurrencyCodeOfInterestHandler?(editedCurrencyCodeOfInterest) : ()
+            oldValue != editedCurrencyCodeOfInterest ? editedCurrencyCodeOfInterestDidChangeHandler?() : ()
             updateHasChangesToSave()
         }
     }
-    var editedCurrencyCodeOfInterestHandler: CurrencyCodeOfInterestHandler?
+    var editedCurrencyCodeOfInterestDidChangeHandler: CurrencyCodeOfInterestDidChangeHandler?
     
     let currencyDescriber: CurrencyDescriberProtocol
     
@@ -100,7 +100,7 @@ extension SettingModel {
     
     // TODO: 這些 handler 不用接收參數，因為 table view data source 會跟 model 拿，名稱改成 change handler
     typealias BaseCurrencyCodeDidChangeHandler = () -> Void
-    typealias CurrencyCodeOfInterestHandler = (_ currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) -> Void
+    typealias CurrencyCodeOfInterestDidChangeHandler = () -> Void
     typealias HasChangesToSaveHandler = (_ hasChangesToSave: Bool) -> Void
 }
 
