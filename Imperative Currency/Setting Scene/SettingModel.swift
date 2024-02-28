@@ -1,6 +1,6 @@
 import Foundation
 
-class SettingModel {
+final class SettingModel {
     // MARK: - initializer
     init(setting: BaseResultModel.Setting,
          saveCompletionHandler: @escaping SaveHandler,
@@ -50,9 +50,9 @@ class SettingModel {
 // MARK: - Confirming BaseSettingModel
 extension SettingModel: BaseSettingModel {
     func save() {
-        let setting = (numberOfDays: editedNumberOfDays,
-                       baseCurrencyCode: editedBaseCurrencyCode,
-                       currencyCodeOfInterest: editedCurrencyCodeOfInterest)
+        let setting: BaseResultModel.Setting = (numberOfDays: editedNumberOfDays,
+                                                baseCurrencyCode: editedBaseCurrencyCode,
+                                                currencyCodeOfInterest: editedCurrencyCodeOfInterest)
         saveCompletionHandler(setting)
     }
     
@@ -61,21 +61,17 @@ extension SettingModel: BaseSettingModel {
     }
     
     func makeBaseCurrencySelectionModel() -> CurrencySelectionModel {
-        let baseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
+        let baseCurrencySelectionStrategy: BaseCurrencySelectionStrategy = BaseCurrencySelectionStrategy(
             baseCurrencyCode: editedBaseCurrencyCode
-        ) { [unowned self] selectedBaseCurrencyCode in
-            editedBaseCurrencyCode = selectedBaseCurrencyCode
-        }
+        ) { [unowned self] selectedBaseCurrencyCode in editedBaseCurrencyCode = selectedBaseCurrencyCode }
         
         return CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy)
     }
     
     func makeCurrencyOfInterestSelectionModel() -> CurrencySelectionModel {
-        let currencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
+        let currencyOfInterestSelectionStrategy: CurrencyOfInterestSelectionStrategy = CurrencyOfInterestSelectionStrategy(
             currencyCodeOfInterest: editedCurrencyCodeOfInterest
-        ) { [unowned self] selectedCurrencyCodeOfInterest in
-            editedCurrencyCodeOfInterest = selectedCurrencyCodeOfInterest
-        }
+        ) { [unowned self] selectedCurrencyCodeOfInterest in editedCurrencyCodeOfInterest = selectedCurrencyCodeOfInterest }
         
         return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
     }

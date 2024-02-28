@@ -17,8 +17,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
         
         super.init(coder: coder)
         
-        // stepper
-        do {
+        do /*configure stepper*/ {
             let handler: UIAction = UIAction { [unowned self] _ in stepperValueDidChange() }
             stepper.addAction(handler, for: .primaryActionTriggered)
         }
@@ -33,7 +32,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        do {
+        do /*configure version label*/ {
             versionLabel.font = UIFont.preferredFont(forTextStyle: .callout)
             versionLabel.textColor = UIColor.secondaryLabel
             versionLabel.adjustsFontForContentSizeCategory = true
@@ -41,7 +40,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
             versionLabel.text = R.string.settingScene.version(appVersionString ?? "", AppUtility.gitHash)
         }
         
-        do {
+        do /*configure date label*/ {
             dateLabel.font = UIFont.preferredFont(forTextStyle: .callout)
             dateLabel.textColor = UIColor.secondaryLabel
             dateLabel.adjustsFontForContentSizeCategory = true
@@ -55,6 +54,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - instance properties
     private let baseSettingModel: BaseSettingModel
     
+    // TODO: 這幾個東西應該要放在 model
     var editedNumberOfDays: Int
     
     var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode
@@ -64,7 +64,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     var hasChangesToSave: Bool
     
     // MARK: - view
-    let stepper: UIStepper
+    let stepper: UIStepper // TODO: 要擋起來
     
     @ViewLoading @IBOutlet var saveButton: UIBarButtonItem // TODO: 這邊應該要擋起來，開 setDisable 之類的 method
     

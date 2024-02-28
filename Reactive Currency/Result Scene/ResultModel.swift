@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-class ResultModel: BaseResultModel {
+final class ResultModel: BaseResultModel {
     // MARK: - initializer
     init(
         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
@@ -143,7 +143,11 @@ class ResultModel: BaseResultModel {
         }
     }
     
-    // MARK: - input
+    deinit {
+        suspendAutoRefresh.send()
+    }
+    
+    // MARK: - input properties
     /// 是 user setting 的一部份，要傳遞到 setting scene 的資料，在那邊編輯
     private let setting: CurrentValueSubject<BaseResultModel.Setting, Never>
     
@@ -160,7 +164,7 @@ class ResultModel: BaseResultModel {
     
     private var anyCancellableSet: Set<AnyCancellable>
     
-    // MARK: output
+    // MARK: output properties
     let analyzedDataArray: AnyPublisher<[BaseResultModel.AnalyzedData], Never>
     
     let refreshStatus: AnyPublisher<BaseResultModel.RefreshStatus, Never>

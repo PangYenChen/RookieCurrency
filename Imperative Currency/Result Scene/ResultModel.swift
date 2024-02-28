@@ -1,6 +1,6 @@
 import Foundation
 
-class ResultModel: BaseResultModel {
+final class ResultModel: BaseResultModel {
     // MARK: - life cycle
     init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
          rateManager: RateManagerProtocol = RateManager.shared,
@@ -24,6 +24,10 @@ class ResultModel: BaseResultModel {
                    userSettingManager: userSettingManager)
         
         resumeAutoRefreshing()
+    }
+    
+    deinit {
+        suspendAutoRefreshing()
     }
     
     // MARK: - dependencies

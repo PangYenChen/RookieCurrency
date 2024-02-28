@@ -1,7 +1,7 @@
 import UIKit
 import Combine
 
-class ResultTableViewController: BaseResultTableViewController {
+final class ResultTableViewController: BaseResultTableViewController {
     // MARK: - initializer
     required init?(coder: NSCoder) {
         resultModel = ResultModel()
