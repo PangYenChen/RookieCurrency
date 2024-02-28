@@ -3,8 +3,6 @@ import UIKit
 class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - initializer
     init?(coder: NSCoder, baseSettingModel: BaseSettingModel) {
-        hasChangesToSave = false
-        
         stepper = UIStepper()
         
         self.baseSettingModel = baseSettingModel
@@ -48,9 +46,6 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - instance properties
     private let baseSettingModel: BaseSettingModel
     
-    // TODO: 這幾個東西應該要放在 model
-    var hasChangesToSave: Bool
-    
     // MARK: - view
     let stepper: UIStepper // TODO: 要擋起來
     
@@ -65,10 +60,17 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - kind of abstract method
     // 這樣做的原因是想把兩個 target 共用的 code（設定 `UIAction`）寫在一起。
     // 而內容使用到的 model 的 method 的方式不同，所以無法共用。
-    // swiftlint:disable:next unavailable_function
+    // swiftlint:disable unavailable_function
     func stepperValueDidChange() {
         fatalError("stepperValueDidChange() has not been implemented")
     }
+    
+    // swiftlint:disable:next private_action
+    @IBAction func didTapCancelButton(_ sender: UIBarButtonItem) {
+        fatalError("didTapCancelButton(_:) has not been implemented")
+//        baseSettingModel.hasChangesToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
+    }
+    // swiftlint:enable unavailable_function
 }
 
 // MARK: - private methods
@@ -82,10 +84,6 @@ private extension BaseSettingTableViewController {
     @IBSegueAction final func showCurrencyOfInterestSelectionTableViewController(_ coder: NSCoder) -> CurrencySelectionTableViewController? {
         CurrencySelectionTableViewController(coder: coder,
                                              currencySelectionModel: baseSettingModel.makeCurrencyOfInterestSelectionModel())
-    }
-    
-    @IBAction final func didTapCancelButton(_ sender: UIBarButtonItem) {
-        hasChangesToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
     }
 }
 
@@ -153,10 +151,7 @@ extension BaseSettingTableViewController {
         baseSettingModel.displayStringFor(currencyCode: currencyCode)
     }
     
-    final func updateForModelHasChangesToSaveIfNeeded(_ modelHasChangesToSave: Bool) {
-        guard hasChangesToSave != modelHasChangesToSave else { return }
-        
-        hasChangesToSave = modelHasChangesToSave
+    final func updateForHasChangesToSave(_ hasChangesToSave: Bool) {
         saveButton.isEnabled = hasChangesToSave
         isModalInPresentation = hasChangesToSave
     }

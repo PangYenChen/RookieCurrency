@@ -19,19 +19,28 @@ class SettingTableViewController: BaseSettingTableViewController {
         // TODO: 這些東西在第一次進來畫面，table veiw本身會 load 一次，這裡會不會多load一次？
         settingModel.editedNumberOfDaysPublisher
             .dropFirst()
+            .receive(on: DispatchQueue.main)
             .sink { [unowned self] numberOfDays in updateNumberOfDaysRow(for: numberOfDays) }
             .store(in: &anyCancellableSet)
         
         settingModel.editedBaseCurrencyCodePublisher
+            .receive(on: DispatchQueue.main)
             .sink(receiveValue: self.reloadBaseCurrencyRowFor(baseCurrencyCode:))
             .store(in: &anyCancellableSet)
         
         settingModel.editedCurrencyCodeOfInterestPublisher
+            .receive(on: DispatchQueue.main)
             .sink(receiveValue: self.reloadCurrencyOfInterestRowFor(currencyCodeOfInterest:))
             .store(in: &anyCancellableSet)
         
         settingModel.hasChangesToSave
-            .sink(receiveValue: self.updateForModelHasChangesToSaveIfNeeded(_:))
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: self.updateForHasChangesToSave(_:))
+            .store(in: &anyCancellableSet)
+        
+        settingModel.cancellationConfirmation
+            .receive(on: DispatchQueue.main)
+            .sink { [unowned self] in presentDismissalConfirmation(withSaveOption: false) }
             .store(in: &anyCancellableSet)
     }
     
@@ -43,5 +52,9 @@ class SettingTableViewController: BaseSettingTableViewController {
     // MARK: - kind of abstract method
     override func stepperValueDidChange() {
         settingModel.set(editedNumberOfDays: Int(stepper.value))
+    }
+    
+    override func didTapCancelButton(_ sender: UIBarButtonItem) {
+        settingModel.attemptToCancel()
     }
 }

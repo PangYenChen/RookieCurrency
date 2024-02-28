@@ -35,11 +35,18 @@ class SettingModel {
                 .eraseToAnyPublisher()
         }
         
+        attemptToCancelSubject = PassthroughSubject<Void, Never>()
+        
+        cancellationConfirmation = attemptToCancelSubject.withLatestFrom(hasChangesToSave)
+            .compactMap { _, hasChangeToSave in hasChangeToSave ? () : nil }
+            .eraseToAnyPublisher()
+        
         cancelSubject = PassthroughSubject<Void, Never>()
         
         saveSubject = PassthroughSubject<Void, Never>()
         
-        // finish initialization
+        // initialization is complete
+        
         saveSubject
             .withLatestFrom(editedNumberOfDaysPublisher)
             .map { $1 }
@@ -64,6 +71,10 @@ class SettingModel {
     
     let hasChangesToSave: AnyPublisher<Bool, Never>
     
+    private let attemptToCancelSubject: PassthroughSubject<Void, Never>
+    
+    let cancellationConfirmation: AnyPublisher<Void, Never>
+    
     let currencyDescriber: CurrencyDescriberProtocol
     
     // MARK: - properties used to communicate with `ResultModel`
@@ -79,6 +90,10 @@ extension SettingModel: BaseSettingModel {
     var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode { editedBaseCurrencyCodeSubject.value }
     
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> { editedCurrencyCodeOfInterestSubject.value }
+    
+    func attemptToCancel() {
+        attemptToCancelSubject.send()
+    }
     
     func cancel() {
         cancelSubject.send()
