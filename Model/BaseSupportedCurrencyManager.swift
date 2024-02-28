@@ -1,7 +1,7 @@
 import Foundation
 
 protocol CurrencyDescriberProtocol {
-    func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String
+    func localizedStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String
 }
 
 class BaseSupportedCurrencyManager {
@@ -21,7 +21,7 @@ class BaseSupportedCurrencyManager {
 }
 
 extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {
-    func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
+    func localizedStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
         locale.localizedString(forCurrencyCode: currencyCode) ??
         supportedCurrencyDescriptionDictionary?[currencyCode] ??
         currencyCode

@@ -192,19 +192,19 @@ extension BaseSettingTableViewController {
                     cell.accessoryView = stepper
                 case .baseCurrency:
                     contentConfiguration.text = R.string.share.baseCurrency()
-                    contentConfiguration.secondaryText = baseSettingModel.displayStringFor(currencyCode: baseSettingModel.baseCurrencyCode)
+                    contentConfiguration.secondaryText = baseSettingModel.localizedStringFor(currencyCode: baseSettingModel.baseCurrencyCode)
                     contentConfiguration.image = UIImage(systemSymbol: .dollarsignCircle)
                     cell.accessoryType = .disclosureIndicator
                 case .currencyOfInterest:
                     contentConfiguration.text = R.string.share.currencyOfInterest()
                     
                     let currencyNameOfInterest: [String] = baseSettingModel.currencyCodeOfInterest
-                        .map(baseSettingModel.displayStringFor(currencyCode:))
+                        .map(baseSettingModel.localizedStringFor(currencyCode:))
                         .sorted()
                     
-                    let displayStringForCurrencyNameOfInterest: String = ListFormatter.localizedString(byJoining: currencyNameOfInterest)
+                    let localizedStringForCurrencyNameOfInterest: String = ListFormatter.localizedString(byJoining: currencyNameOfInterest)
                     
-                    contentConfiguration.secondaryText = displayStringForCurrencyNameOfInterest
+                    contentConfiguration.secondaryText = localizedStringForCurrencyNameOfInterest
                     contentConfiguration.image = UIImage(systemSymbol: .checklistUnchecked)
                     cell.accessoryType = .disclosureIndicator
                 case .language:

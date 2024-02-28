@@ -64,7 +64,7 @@ extension QuasiBaseResultModel {
                     guard let searchText, !searchText.isEmpty else { return true }
                     
                     return [analyzedData.currencyCode,
-                            displayStringFor(currencyCode: analyzedData.currencyCode)]
+                            localizedStringFor(currencyCode: analyzedData.currencyCode)]
                         .compactMap { $0 }
                         .contains { text in text.localizedStandardContains(searchText) }
                 }

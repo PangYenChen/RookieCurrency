@@ -9,7 +9,7 @@ import Foundation
 
 extension TestDouble {
     class CurrencyDescriber: CurrencyDescriberProtocol {
-        func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
+        func localizedStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
             currencyCode
         }
     }

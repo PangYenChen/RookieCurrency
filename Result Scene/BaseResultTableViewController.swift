@@ -55,7 +55,7 @@ class BaseResultTableViewController: UITableViewController {
                     let fluctuationString: String = R.string.resultScene.fluctuation(deviationString)
                     
                     contentConfiguration.text = [analyzedData.currencyCode,
-                                                 baseResultModel.displayStringFor(currencyCode: analyzedData.currencyCode),
+                                                 baseResultModel.localizedStringFor(currencyCode: analyzedData.currencyCode),
                                                  fluctuationString]
                         .compactMap { $0 }
                         .joined(separator: ", ")
