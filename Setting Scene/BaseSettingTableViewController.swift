@@ -3,9 +3,6 @@ import UIKit
 class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - initializer
     init?(coder: NSCoder, baseSettingModel: BaseSettingModel) {
-
-        editedBaseCurrencyCode = ""
-        
         editedCurrencyCodeOfInterest = Set<ResponseDataModel.CurrencyCode>()
         
         hasChangesToSave = false
@@ -54,9 +51,6 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     private let baseSettingModel: BaseSettingModel
     
     // TODO: 這幾個東西應該要放在 model
-
-    var editedBaseCurrencyCode: ResponseDataModel.CurrencyCode
-    
     var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     
     var hasChangesToSave: Bool
@@ -149,9 +143,10 @@ extension BaseSettingTableViewController {
     }
     
     final func reloadBaseCurrencyRowIfNeededFor(baseCurrencyCode: ResponseDataModel.CurrencyCode) {
-        guard editedBaseCurrencyCode != baseCurrencyCode else { return }
-        
-        editedBaseCurrencyCode = baseCurrencyCode
+        // NOTE: 要不要 reload 的邏輯要寫在 model
+//        guard editedBaseCurrencyCode != baseCurrencyCode else { return }
+//        
+//        editedBaseCurrencyCode = baseCurrencyCode
         
         let baseCurrencyIndexPath: IndexPath = IndexPath(row: Row.baseCurrency.rawValue, section: 0)
         tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
@@ -225,7 +220,7 @@ extension BaseSettingTableViewController {
                     cell.accessoryView = stepper
                 case .baseCurrency:
                     contentConfiguration.text = R.string.share.baseCurrency()
-                    contentConfiguration.secondaryText = displayStringFor(currencyCode: editedBaseCurrencyCode)
+                    contentConfiguration.secondaryText = displayStringFor(currencyCode: baseSettingModel.editedBaseCurrencyCode)
                     contentConfiguration.image = UIImage(systemSymbol: .dollarsignCircle)
                     cell.accessoryType = .disclosureIndicator
                 case .currencyOfInterest:
