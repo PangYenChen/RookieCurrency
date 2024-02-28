@@ -265,19 +265,21 @@ extension BaseSettingTableViewController {
                 assertionFailure("###, \(#function), \(self), number of day 這個 row 在 tableView(_:willSelectRowAt:) 被設定成不能被點")
                 
             case .baseCurrency:
-//                let identifier = R.segue.settingTableViewController.showBaseCurrencySelectionTableViewController.identifier
-//                performSegue(withIdentifier: identifier, sender: self)
-                
-                
-                performSegue(withIdentifier: R.segue.settingTableViewController.showBaseCurrencySelectionTableViewController,
-                             sender: self)
+                let identifier: String = R.segue.settingTableViewController.showBaseCurrencySelectionTableViewController.identifier
+                performSegue(withIdentifier: identifier, sender: self)
                 
             case .currencyOfInterest:
-                let identifier = R.segue.settingTableViewController.showCurrencyOfInterestSelectionTableViewController.identifier
+                let identifier: String = R.segue.settingTableViewController.showCurrencyOfInterestSelectionTableViewController.identifier
                 performSegue(withIdentifier: identifier, sender: self)
                 
             case .language:
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                guard let openSettingsURL = URL(string: UIApplication.openSettingsURLString) else {
+                    assertionFailure("###, \(#function), \(self), 系統給的 urlString 不是有效的 url，這表示蘋果工程師弄錯了。")
+                    presentAlert(message: R.string.settingScene.openSettingsURLFailMessage())
+                    return
+                }
+                
+                UIApplication.shared.open(openSettingsURL)
                 tableView.deselectRow(at: indexPath, animated: true)
                 
             case .removeFile:
@@ -286,7 +288,7 @@ extension BaseSettingTableViewController {
                 tableView.deselectRow(at: indexPath, animated: true)
 #if DEBUG
             case .debugInfo:
-                let identifier = R.segue.settingTableViewController.showDebugInfo.identifier
+                let identifier: String = R.segue.settingTableViewController.showDebugInfo.identifier
                 performSegue(withIdentifier: identifier, sender: self)
 #endif
                 
