@@ -7,9 +7,6 @@ class SettingTableViewController: BaseSettingTableViewController {
         self.settingModel = model
         
         super.init(coder: coder, baseSettingModel: model)
-        
-        isModalInPresentation = model.hasChangeToSave
-        hasChangesToSave = model.hasChangeToSave
     }
     
     // MARK: - life cycle
@@ -18,12 +15,9 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         settingModel.editedBaseCurrencyCodeHandler = reloadBaseCurrencyRowFor(baseCurrencyCode:)
         settingModel.editedCurrencyCodeOfInterestHandler = reloadCurrencyOfInterestRowFor(currencyCodeOfInterest:)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+        settingModel.hasChangesToSaveHandler = updateFor(hasChangesToSave:)
         
-        updateForModelHasChangesToSaveIfNeeded(settingModel.hasChangeToSave)
+        updateFor(hasChangesToSave: settingModel.hasChangesToSave)
     }
     
     // MARK: - private property
@@ -31,9 +25,11 @@ class SettingTableViewController: BaseSettingTableViewController {
     
     // MARK: - hook methods
     override func stepperValueDidChange() {
-        // TODO: 這裡有 bug，漏通知 model
-        updateForModelHasChangesToSaveIfNeeded(settingModel.hasChangeToSave)
-        
+        settingModel.editedNumberOfDays = Int(stepper.value)
         updateNumberOfDaysRow(for: settingModel.editedNumberOfDays)
+    }
+    
+    override func didTapCancelButton(_ sender: UIBarButtonItem) {
+        settingModel.hasChangesToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
     }
 }

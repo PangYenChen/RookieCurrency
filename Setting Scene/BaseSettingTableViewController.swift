@@ -61,15 +61,10 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // 這樣做的原因是想把兩個 target 共用的 code（設定 `UIAction`）寫在一起。
     // 而內容使用到的 model 的 method 的方式不同，所以無法共用。
     // swiftlint:disable unavailable_function
-    func stepperValueDidChange() {
-        fatalError("stepperValueDidChange() has not been implemented")
-    }
+    func stepperValueDidChange() { fatalError("stepperValueDidChange() has not been implemented") }
     
     // swiftlint:disable:next private_action
-    @IBAction func didTapCancelButton(_ sender: UIBarButtonItem) {
-        fatalError("didTapCancelButton(_:) has not been implemented")
-//        baseSettingModel.hasChangesToSave ? presentDismissalConfirmation(withSaveOption: false) : cancel()
-    }
+    @IBAction func didTapCancelButton(_ sender: UIBarButtonItem) { fatalError("didTapCancelButton(_:) has not been implemented") }
     // swiftlint:enable unavailable_function
 }
 
@@ -151,7 +146,7 @@ extension BaseSettingTableViewController {
         baseSettingModel.displayStringFor(currencyCode: currencyCode)
     }
     
-    final func updateForHasChangesToSave(_ hasChangesToSave: Bool) {
+    final func updateFor(hasChangesToSave: Bool) {
         saveButton.isEnabled = hasChangesToSave
         isModalInPresentation = hasChangesToSave
     }
