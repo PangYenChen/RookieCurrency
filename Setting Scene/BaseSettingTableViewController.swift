@@ -49,7 +49,7 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - view
     private let stepper: UIStepper
     
-    @ViewLoading @IBOutlet var saveButton: UIBarButtonItem // TODO: 這邊應該要擋起來，開 setDisable 之類的 method
+    @ViewLoading @IBOutlet private var saveButton: UIBarButtonItem
     
     @ViewLoading @IBOutlet private var sectionFooterView: UIView
     
