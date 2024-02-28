@@ -138,10 +138,6 @@ extension BaseSettingTableViewController {
         tableView.reloadRows(at: [currencyOfInterestIndexPath], with: .automatic)
     }
     
-    final func displayStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String { // TODO: rename or to remove
-        baseSettingModel.displayStringFor(currencyCode: currencyCode)
-    }
-    
     final func updateFor(hasModificationsToSave: Bool) {
         saveButton.isEnabled = hasModificationsToSave
         isModalInPresentation = hasModificationsToSave
@@ -196,14 +192,14 @@ extension BaseSettingTableViewController {
                     cell.accessoryView = stepper
                 case .baseCurrency:
                     contentConfiguration.text = R.string.share.baseCurrency()
-                    contentConfiguration.secondaryText = displayStringFor(currencyCode: baseSettingModel.baseCurrencyCode)
+                    contentConfiguration.secondaryText = baseSettingModel.displayStringFor(currencyCode: baseSettingModel.baseCurrencyCode)
                     contentConfiguration.image = UIImage(systemSymbol: .dollarsignCircle)
                     cell.accessoryType = .disclosureIndicator
                 case .currencyOfInterest:
                     contentConfiguration.text = R.string.share.currencyOfInterest()
                     
                     let currencyNameOfInterest: [String] = baseSettingModel.currencyCodeOfInterest
-                        .map(self.displayStringFor(currencyCode:))
+                        .map(baseSettingModel.displayStringFor(currencyCode:))
                         .sorted()
                     
                     let displayStringForCurrencyNameOfInterest: String = ListFormatter.localizedString(byJoining: currencyNameOfInterest)
