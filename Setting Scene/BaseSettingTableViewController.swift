@@ -150,7 +150,10 @@ extension BaseSettingTableViewController {
     
     final func getStepperValue() -> Double { stepper.value }
     
-    @IBAction final func save() { // swiftlint:disable:this private_action
+    // usually IBAction should be private
+    // however, this method has to be called by subclasses
+    // swiftlint:disable:next private_action
+    @IBAction final func save() {
         baseSettingModel.save()
         dismiss(animated: true)
     }
@@ -163,15 +166,15 @@ extension BaseSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let identifier = R.reuseIdentifier.settingCell.identifier
-        let cell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: R.reuseIdentifier.settingCell,
+                                                                  for: indexPath) ?? UITableViewCell()
         
         var contentConfiguration: UIListContentConfiguration = cell.defaultContentConfiguration()
-        contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-        contentConfiguration.textToSecondaryTextVerticalPadding = 4
+        contentConfiguration.directionalLayoutMargins = UIConfiguration.TableView.cellContentDirectionalLayoutMargins
         
-        // font
-        do {
+        contentConfiguration.textToSecondaryTextVerticalPadding = UIConfiguration.TableView.cellContentTextToSecondaryTextVerticalPadding
+        
+        do /*configure font*/ {
             contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .body)
             contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
             
@@ -180,8 +183,7 @@ extension BaseSettingTableViewController {
             contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
         }
         
-        // content
-        do {
+        do /*configure content*/ {
             let row: Row? = Row(rawValue: indexPath.row)
             switch row {
                 case .numberOfDays:
@@ -263,8 +265,12 @@ extension BaseSettingTableViewController {
                 assertionFailure("###, \(#function), \(self), number of day 這個 row 在 tableView(_:willSelectRowAt:) 被設定成不能被點")
                 
             case .baseCurrency:
-                let identifier = R.segue.settingTableViewController.showBaseCurrencySelectionTableViewController.identifier
-                performSegue(withIdentifier: identifier, sender: self)
+//                let identifier = R.segue.settingTableViewController.showBaseCurrencySelectionTableViewController.identifier
+//                performSegue(withIdentifier: identifier, sender: self)
+                
+                
+                performSegue(withIdentifier: R.segue.settingTableViewController.showBaseCurrencySelectionTableViewController,
+                             sender: self)
                 
             case .currencyOfInterest:
                 let identifier = R.segue.settingTableViewController.showCurrencyOfInterestSelectionTableViewController.identifier
