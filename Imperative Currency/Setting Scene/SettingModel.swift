@@ -28,7 +28,11 @@ final class SettingModel: BaseSettingModel {
     }
     var editedBaseCurrencyCodeHandler: BaseCurrencyCodeHandler?
     
-    var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
+    var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
+        didSet { oldValue != editedCurrencyCodeOfInterest ? editedCurrencyCodeOfInterestHandler?(editedCurrencyCodeOfInterest) : () }
+    }
+    
+    var editedCurrencyCodeOfInterestHandler: CurrencyCodeOfInterestHandler?
     
     let currencyDescriber: CurrencyDescriberProtocol
     
@@ -86,4 +90,5 @@ extension SettingModel {
     typealias CancelHandler = () -> Void
     
     typealias BaseCurrencyCodeHandler = (_ baseCurrencyCode: ResponseDataModel.CurrencyCode) -> Void
+    typealias CurrencyCodeOfInterestHandler = (_ currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) -> Void
 }

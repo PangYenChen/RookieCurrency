@@ -8,10 +8,6 @@ class SettingTableViewController: BaseSettingTableViewController {
         
         super.init(coder: coder, baseSettingModel: model)
         
-        self.editedCurrencyCodeOfInterest = model.editedCurrencyCodeOfInterest
-        
-        stepper.value = Double(model.editedNumberOfDays)
-        
         isModalInPresentation = model.hasChangeToSave
         hasChangesToSave = model.hasChangeToSave
     }
@@ -21,13 +17,13 @@ class SettingTableViewController: BaseSettingTableViewController {
         super.viewDidLoad()
         
         settingModel.editedBaseCurrencyCodeHandler = reloadBaseCurrencyRowFor(baseCurrencyCode:)
+        settingModel.editedCurrencyCodeOfInterestHandler = reloadCurrencyOfInterestRowFor(currencyCodeOfInterest:)
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
         updateForModelHasChangesToSaveIfNeeded(settingModel.hasChangeToSave)
-        reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: settingModel.editedCurrencyCodeOfInterest)
     }
     
     // MARK: - private property

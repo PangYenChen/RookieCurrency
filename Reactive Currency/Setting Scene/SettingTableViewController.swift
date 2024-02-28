@@ -16,6 +16,7 @@ class SettingTableViewController: BaseSettingTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // TODO: 這些東西在第一次進來畫面，table veiw本身會 load 一次，這裡會不會多load一次？
         settingModel.editedNumberOfDaysPublisher
             .dropFirst()
             .sink { [unowned self] numberOfDays in updateNumberOfDaysRow(for: numberOfDays) }

@@ -3,8 +3,6 @@ import UIKit
 class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     // MARK: - initializer
     init?(coder: NSCoder, baseSettingModel: BaseSettingModel) {
-        editedCurrencyCodeOfInterest = Set<ResponseDataModel.CurrencyCode>()
-        
         hasChangesToSave = false
         
         stepper = UIStepper()
@@ -51,8 +49,6 @@ class BaseSettingTableViewController: UITableViewController, AlertPresenter {
     private let baseSettingModel: BaseSettingModel
     
     // TODO: 這幾個東西應該要放在 model
-    var editedCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
-    
     var hasChangesToSave: Bool
     
     // MARK: - view
@@ -147,11 +143,13 @@ extension BaseSettingTableViewController {
         tableView.reloadRows(at: [baseCurrencyIndexPath], with: .automatic)
     }
     
-    final func reloadCurrencyOfInterestRowIfNeededFor(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) {
-        guard editedCurrencyCodeOfInterest != currencyCodeOfInterest else { return }
+    final func reloadCurrencyOfInterestRowFor(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) {
+        // NOTE: 判斷要不要 reoload 的邏輯應該要在 model
         
-        editedCurrencyCodeOfInterest = currencyCodeOfInterest
-        
+//        guard editedCurrencyCodeOfInterest != currencyCodeOfInterest else { return }
+//        
+//        editedCurrencyCodeOfInterest = currencyCodeOfInterest
+//        
         let currencyOfInterestIndexPath: IndexPath = IndexPath(row: Row.currencyOfInterest.rawValue, section: 0)
         tableView.reloadRows(at: [currencyOfInterestIndexPath], with: .automatic)
     }
@@ -221,7 +219,7 @@ extension BaseSettingTableViewController {
                 case .currencyOfInterest:
                     contentConfiguration.text = R.string.share.currencyOfInterest()
                     
-                    let editedCurrencyNameOfInterest: [String] = editedCurrencyCodeOfInterest
+                    let editedCurrencyNameOfInterest: [String] = baseSettingModel.editedCurrencyCodeOfInterest
                         .map(self.displayStringFor(currencyCode:))
                         .sorted()
                     
