@@ -23,5 +23,5 @@ protocol BaseCurrencySelectionModelProtocol: CurrencyDescriberProxy {
     
     func set(searchText: String?)
     
-    func update()
+    func update() // TODO: rename to refresh
 }

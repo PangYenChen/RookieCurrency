@@ -2,7 +2,7 @@ import UIKit
 
 /// 這裡的 base 是 base class 的意思，不是基準貨幣
 class BaseCurrencySelectionTableViewController: UITableViewController {
-    // MARK: - life cycle
+    // MARK: - initializer
     init?(coder: NSCoder, baseCurrencySelectionModel: BaseCurrencySelectionModelProtocol) {
         self.baseCurrencySelectionModel = baseCurrencySelectionModel
         
@@ -23,23 +23,22 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     @available(*, unavailable)
     required init?(coder: NSCoder) { fatalError("init(coder:) has not been implemented") }
     
+    // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
         
         tableView.allowsMultipleSelection = baseCurrencySelectionModel.allowsMultipleSelection
         
-        // table view data source and delegate
-        do {
+        do /*configure table view's data source*/ {
             dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, currencyCode in
-                let identifier: String = R.reuseIdentifier.currencyCell.identifier
-                let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: identifier, for: indexPath)
+                let reuseIdentifier: String = R.reuseIdentifier.currencyCell.identifier
+                let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
                 
                 cell.automaticallyUpdatesContentConfiguration = true
                 cell.configurationUpdateHandler = { [unowned self] cell, state in
                     var contentConfiguration: UIListContentConfiguration = cell.defaultContentConfiguration()
                     
-                    // content
-                    do {
+                    do /*configure content*/ {
                         switch baseCurrencySelectionModel.getSortingMethod() {
                             case .currencyName, .currencyNameZhuyin:
                                 contentConfiguration.text = baseCurrencySelectionModel.localizedStringFor(currencyCode: currencyCode)
@@ -50,8 +49,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                         }
                     }
                     
-                    // font
-                    do {
+                    do /*configure font*/ {
                         contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
                         contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
                         
@@ -59,10 +57,9 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                         contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
                     }
                     
-                    // other
-                    do {
-                        contentConfiguration.directionalLayoutMargins = NSDirectionalEdgeInsets(top: 8, leading: 16, bottom: 8, trailing: 16)
-                        contentConfiguration.textToSecondaryTextVerticalPadding = 4
+                    do /*other*/ {
+                        contentConfiguration.directionalLayoutMargins = UIConfiguration.TableView.cellContentDirectionalLayoutMargins
+                        contentConfiguration.textToSecondaryTextVerticalPadding = UIConfiguration.TableView.cellContentTextToSecondaryTextVerticalPadding
                     }
                     
                     cell.contentConfiguration = contentConfiguration
@@ -75,10 +72,9 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
             dataSource.defaultRowAnimation = .fade
         }
         
-        // sort bar button item
-        do {
+        do /*configure sort bar button item*/ {
             let currencyNameMenu: UIMenu
-            do {
+            do /*initialize currency name menu*/ {
                 let ascendingAction: UIAction = UIAction(
                     title: CurrencySelectionModel.SortingOrder.ascending.localizedName,
                     image: UIImage(systemSymbol: .arrowUpRight)
@@ -94,7 +90,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
             }
             
             let currencyCodeMenu: UIMenu
-            do {
+            do /*initialize currency code menu*/ {
                 let ascendingAction: UIAction = UIAction(
                     title: CurrencySelectionModel.SortingOrder.ascending.localizedName,
                     image: UIImage(systemSymbol: .arrowUpRight)
@@ -109,7 +105,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                                           children: [ascendingAction, descendingAction])
             }
             
-            var children: [UIMenu] = [currencyNameMenu, currencyCodeMenu]
+            var sortMenuChildren: [UIMenu] = [currencyNameMenu, currencyCodeMenu]
             
             // 注音
             if Bundle.main.preferredLocalizations.first == "zh-Hant" {
@@ -126,11 +122,10 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                 let currencyZhuyinMenu: UIMenu = UIMenu(title: CurrencySelectionModel.SortingMethod.currencyNameZhuyin.localizedName,
                                                         children: [ascendingAction, descendingAction])
                 
-                children.append(currencyZhuyinMenu)
+                sortMenuChildren.append(currencyZhuyinMenu)
             }
             
-            // set up the initial state
-            do {
+            do /*configure initial state*/ {
                 let sortingMethodIndex: Int = switch baseCurrencySelectionModel.getSortingMethod() {
                     case .currencyName: 0
                     case .currencyCode: 1
@@ -142,7 +137,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
                     case .descending: 1
                 }
                 
-                let initialChild: UIMenu = children[sortingMethodIndex]
+                let initialChild: UIMenu = sortMenuChildren[sortingMethodIndex]
                 (initialChild.children[sortingOrderIndex] as? UIAction)?.state = .on
                 
                 updateSortingLocalizedStringFor(method: baseCurrencySelectionModel.getSortingMethod(),
@@ -152,15 +147,14 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
             let sortMenu: UIMenu = UIMenu(title: R.string.share.sortedBy(),
                                           image: UIImage(systemSymbol: .arrowUpArrowDown),
                                           options: .singleSelection,
-                                          children: children)
+                                          children: sortMenuChildren)
             
             sortBarButtonItem.menu = UIMenu(title: "",
                                             options: .singleSelection,
                                             children: [sortMenu])
         }
         
-        // table view refresh controller
-        do {
+        do /*initialize table view refresh control*/ {
             tableView.refreshControl = UIRefreshControl()
             
             let action: UIAction = UIAction { [unowned self] _ in baseCurrencySelectionModel.update() }
@@ -177,7 +171,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
     
     @ViewLoading private var dataSource: DataSource
     
-    @ViewLoading @IBOutlet var sortBarButtonItem: UIBarButtonItem // TODO: 這邊應該要擋起來，只開需要的 method 給 subclass
+    @ViewLoading @IBOutlet private var sortBarButtonItem: UIBarButtonItem
 }
 
 // MARK: - helper method
@@ -202,7 +196,7 @@ extension BaseCurrencySelectionTableViewController {
                     snapshot.appendSections([.main])
                     
                     snapshot.appendItems(currencyCodeArray)
-                    snapshot.reloadSections([.main])
+                    snapshot.reloadSections([.main]) // TODO: 查一下當初為什麼要 reload
                     
                     dataSource.apply(snapshot) { [weak self] in
                         guard let self else { return }
@@ -266,7 +260,7 @@ extension BaseCurrencySelectionTableViewController {
 }
 
 // MARK: - Search Bar Delegate
-extension BaseCurrencySelectionTableViewController: UISearchBarDelegate {
+extension BaseCurrencySelectionTableViewController: UISearchBarDelegate { // TODO: 兩個 target 分開寫
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         baseCurrencySelectionModel.set(searchText: searchText)
     }
