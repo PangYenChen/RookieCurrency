@@ -30,7 +30,7 @@ final class ResultTableViewController: BaseResultTableViewController {
     private var timer: Timer?
     
     // MARK: - override abstract methods
-    override func setOrder(_ order: QuasiBaseResultModel.Order) {
+    override func setOrder(_ order: BaseResultModel.Order) {
         populateTableViewWith(resultModel.setOrder(order))
     }
 }

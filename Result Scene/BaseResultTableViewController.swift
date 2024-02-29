@@ -130,7 +130,7 @@ class BaseResultTableViewController: UITableViewController {
     // 這樣做的原因是想把兩個 target 共用的 code（設定 `UIAction`）寫在一起。
     // 而內容使用到的 model 的 method 的方式不同，所以無法共用。
     // swiftlint:disable:next unavailable_function
-    func setOrder(_ order: QuasiBaseResultModel.Order) { fatalError("setOrder() has not been implemented") }
+    func setOrder(_ order: BaseResultModel.Order) { fatalError("setOrder() has not been implemented") }
 }
 
 // MARK: - segue action
@@ -151,7 +151,7 @@ extension BaseResultTableViewController {
         dataSource.apply(snapshot)
     }
     
-    final func populateRefreshStatusBarButtonItemWith(status: QuasiBaseResultModel.RefreshStatus) {
+    final func populateRefreshStatusBarButtonItemWith(status: BaseResultModel.RefreshStatus) {
         switch status {
             case .process:
                 refreshStatusBarButtonItem.title = R.string.resultScene.refreshing()

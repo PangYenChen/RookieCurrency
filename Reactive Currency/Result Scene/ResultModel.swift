@@ -101,12 +101,12 @@ final class ResultModel: BaseResultModel {
             error = analyzedResult.resultFailure()
             
             do /*initialize refreshStatus*/ {
-                let refreshStatusProcess: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = refresh
+                let refreshStatusProcess: AnyPublisher<BaseResultModel.RefreshStatus, Never> = refresh
                     .map { _ in .process }
                     .eraseToAnyPublisher()
                 
-                let refreshStatusIdle: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = analyzedResult
-                    .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, analyzedResult -> QuasiBaseResultModel.RefreshStatus in
+                let refreshStatusIdle: AnyPublisher<BaseResultModel.RefreshStatus, Never> = analyzedResult
+                    .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, analyzedResult -> BaseResultModel.RefreshStatus in
                         switch analyzedResult {
                             case .success(let analyzedSuccess):
                                 return .idle(latestUpdateTimestamp: analyzedSuccess.latestUpdateTime)

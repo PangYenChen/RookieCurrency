@@ -4,7 +4,8 @@ final class ResultModel: BaseResultModel {
     // MARK: - life cycle
     init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
          rateManager: RateManagerProtocol = RateManager.shared,
-         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared) {
+         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
+         timer: TimerProtocol = TimerProxy()) {
         self.analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
         self.rateManager = rateManager
         self.userSettingManager = userSettingManager
@@ -18,7 +19,7 @@ final class ResultModel: BaseResultModel {
         searchText = nil
         analyzedDataArray = []
         
-        timer = nil
+        self.timer = timer
         
         super.init(currencyDescriber: currencyDescriber,
                    userSettingManager: userSettingManager)
@@ -36,6 +37,8 @@ final class ResultModel: BaseResultModel {
     private let rateManager: RateManagerProtocol
     
     private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
+    
+    private let timer: TimerProtocol
     
     // MARK: - private properties
     
@@ -56,8 +59,6 @@ final class ResultModel: BaseResultModel {
     var refreshStatusHandler: RefreshStatusHandlebar?
     
     var errorHandler: ErrorHandler?
-    
-    private var timer: Timer?
 }
 
 // MARK: - methods
@@ -132,15 +133,11 @@ extension ResultModel {
 // MARK: - private methods: auto refreshing
 private extension ResultModel {
     func resumeAutoRefreshing() {
-        timer = Timer.scheduledTimer(withTimeInterval: Self.autoRefreshTimeInterval, repeats: true) { [unowned self] _ in
-            refresh()
-        }
-        timer?.fire()
+        timer.scheduledTimer(withTimeInterval: Self.autoRefreshTimeInterval) { [unowned self]  in refresh() }
     }
     
     func suspendAutoRefreshing() {
-        timer?.invalidate()
-        timer = nil
+        timer.invalidate()
     }
 }
 

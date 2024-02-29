@@ -27,6 +27,8 @@
 		512495692B31E89C00FD86D9 /* SupportedCurrencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512495682B31E89C00FD86D9 /* SupportedCurrencyManager.swift */; };
 		512495752B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512495742B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift */; };
 		512495762B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512495742B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift */; };
+		51290B7E2B90526D005BE201 /* TimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B7D2B90526D005BE201 /* TimerProtocol.swift */; };
+		51290B842B905642005BE201 /* TimerProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B832B905642005BE201 /* TimerProxy.swift */; };
 		5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */; };
 		512CE8CF2B35EA9700019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8CE2B35EA9700019B20 /* RateSession.swift */; };
 		512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D32B35F52D00019B20 /* RateSession.swift */; };
@@ -183,6 +185,8 @@
 		512495632B31E1B400FD86D9 /* CurrencyDescriberProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyDescriberProxy.swift; sourceTree = "<group>"; };
 		512495682B31E89C00FD86D9 /* SupportedCurrencyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedCurrencyManager.swift; sourceTree = "<group>"; };
 		512495742B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySelectionModelProtocol.swift; sourceTree = "<group>"; };
+		51290B7D2B90526D005BE201 /* TimerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProtocol.swift; sourceTree = "<group>"; };
+		51290B832B905642005BE201 /* TimerProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProxy.swift; sourceTree = "<group>"; };
 		5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 		512CE8CE2B35EA9700019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
 		512CE8D32B35F52D00019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
@@ -344,12 +348,22 @@
 		5124955F2B31CBD700FD86D9 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				51290B7C2B90525B005BE201 /* Timer */,
 				512087A229A9EE85005ED87A /* RateManager + Imperative.swift */,
 				512087A829A9F10A005ED87A /* Fetcher + Imperative.swift */,
 				512CE8CE2B35EA9700019B20 /* RateSession.swift */,
 				512495602B31DB0C00FD86D9 /* SupportedCurrencyManager.swift */,
 			);
 			path = Model;
+			sourceTree = "<group>";
+		};
+		51290B7C2B90525B005BE201 /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				51290B7D2B90526D005BE201 /* TimerProtocol.swift */,
+				51290B832B905642005BE201 /* TimerProxy.swift */,
+			);
+			path = Timer;
 			sourceTree = "<group>";
 		};
 		51362E3B29B4D7D700E3CE89 /* Shared Tests */ = {
@@ -902,6 +916,7 @@
 				512087A929A9F10A005ED87A /* Fetcher + Imperative.swift in Sources */,
 				5120879829A8DC71005ED87A /* DebugInfoViewController.swift in Sources */,
 				512087A329A9EE85005ED87A /* RateManager + Imperative.swift in Sources */,
+				51290B7E2B90526D005BE201 /* TimerProtocol.swift in Sources */,
 				514C4CFE29A07A7B0049E192 /* Publisher + Helper.swift in Sources */,
 				512CE8CF2B35EA9700019B20 /* RateSession.swift in Sources */,
 				51119A1A2999D79C002758B3 /* PresentWithNavigationController.swift in Sources */,
@@ -920,6 +935,7 @@
 				514C4D0D29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */,
 				519BD8AA29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */,
 				E1CE96AC248555C30029ED73 /* Analyst.swift in Sources */,
+				51290B842B905642005BE201 /* TimerProxy.swift in Sources */,
 				513E106429F424D0000E1A87 /* AlertPresenter.swift in Sources */,
 				514F171D2B3131B700C806E3 /* CurrencyOfInterestSelectionStrategy.swift in Sources */,
 				514C4D0A29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */,
