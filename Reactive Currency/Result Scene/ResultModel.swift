@@ -105,18 +105,19 @@ final class ResultModel: BaseResultModel {
                     .map { _ in .process }
                     .eraseToAnyPublisher()
                 
-                let refreshStatusIdleForSuccess: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = analyzedResult.resultSuccess()
-                    .map { tuple in QuasiBaseResultModel.RefreshStatus.idle(latestUpdateTimestamp: tuple.latestUpdateTime) }
+                let refreshStatusIdle: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = analyzedResult
+                    .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, analyzedResult -> QuasiBaseResultModel.RefreshStatus in
+                        switch analyzedResult {
+                            case .success(let analyzedSuccess):
+                                return .idle(latestUpdateTimestamp: analyzedSuccess.latestUpdateTime)
+                            case .failure:
+                                return partialResult
+                        }
+                    }
                     .eraseToAnyPublisher()
                 
-                let refreshStatusIdleForFailure: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = error
-                    .withLatestFrom(refreshStatusIdleForSuccess.prepend(.idle(latestUpdateTimestamp: nil)))
-                    .map { _, refreshStatusIdle in refreshStatusIdle }
-                    .eraseToAnyPublisher()
-             
-                refreshStatus = Publishers.Merge3(refreshStatusProcess,
-                                                  refreshStatusIdleForSuccess,
-                                                  refreshStatusIdleForFailure)
+                refreshStatus = Publishers.Merge(refreshStatusProcess,
+                                                 refreshStatusIdle)
                     .eraseToAnyPublisher()
             }
         }
