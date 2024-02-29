@@ -6,7 +6,8 @@ final class ResultModel: BaseResultModel {
     init(
         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
         rateManager: RateManagerProtocol = RateManager.shared,
-        userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared
+        userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
+        timer: TimerProtocol = TimerProxy()
     ) {
         var userSettingManager: UserSettingManagerProtocol = userSettingManager
         
@@ -38,13 +39,7 @@ final class ResultModel: BaseResultModel {
                     let timerPublisher: AnyPublisher<AnyPublisher<Void, Never>, Never> = Publishers
                         .Merge(resumeAutoRefresh,
                                settingFromSettingModel.map { _ in })
-                        .map { _ in
-                            Timer.publish(every: Self.autoRefreshTimeInterval, on: RunLoop.main, in: .default)
-                                .autoconnect()
-                                .map { _ in }
-                                .prepend(()) // start immediately after subscribing
-                                .eraseToAnyPublisher()
-                        }
+                        .map { _ in timer.makeTimerPublisher(every: Self.autoRefreshTimeInterval) }
                         .eraseToAnyPublisher()
                     
                     let emptyPublisher: AnyPublisher<AnyPublisher<Void, Never>, Never> = suspendAutoRefresh

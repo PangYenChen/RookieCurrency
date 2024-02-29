@@ -31,6 +31,7 @@
 		51290B842B905642005BE201 /* TimerProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B832B905642005BE201 /* TimerProxy.swift */; };
 		51290B882B9059A7005BE201 /* TimerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B872B9059A7005BE201 /* TimerSpy.swift */; };
 		51290B8D2B906107005BE201 /* TimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B8C2B906107005BE201 /* TimerProtocol.swift */; };
+		51290B8F2B90672C005BE201 /* TimerProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B8E2B90672C005BE201 /* TimerProxy.swift */; };
 		5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */; };
 		512CE8CF2B35EA9700019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8CE2B35EA9700019B20 /* RateSession.swift */; };
 		512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D32B35F52D00019B20 /* RateSession.swift */; };
@@ -191,6 +192,7 @@
 		51290B832B905642005BE201 /* TimerProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProxy.swift; sourceTree = "<group>"; };
 		51290B872B9059A7005BE201 /* TimerSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSpy.swift; sourceTree = "<group>"; };
 		51290B8C2B906107005BE201 /* TimerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProtocol.swift; sourceTree = "<group>"; };
+		51290B8E2B90672C005BE201 /* TimerProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProxy.swift; sourceTree = "<group>"; };
 		5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 		512CE8CE2B35EA9700019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
 		512CE8D32B35F52D00019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
@@ -375,6 +377,7 @@
 			isa = PBXGroup;
 			children = (
 				51290B8C2B906107005BE201 /* TimerProtocol.swift */,
+				51290B8E2B90672C005BE201 /* TimerProxy.swift */,
 			);
 			path = Timer;
 			sourceTree = "<group>";
@@ -1034,6 +1037,7 @@
 				51D67ED42975922D008B8928 /* SceneDelegate.swift in Sources */,
 				519685F02B8C44A2004EEA72 /* UIConfiguration.swift in Sources */,
 				51E1B4CF29AE4C7100D75669 /* Historical.swift in Sources */,
+				51290B8F2B90672C005BE201 /* TimerProxy.swift in Sources */,
 				512CE8DA2B36F9D000019B20 /* UserSettingManager.swift in Sources */,
 				51578B7229A85A1000BE890F /* Git Commit Info.swift in Sources */,
 				514C4CFF29A07A7B0049E192 /* Publisher + Helper.swift in Sources */,
