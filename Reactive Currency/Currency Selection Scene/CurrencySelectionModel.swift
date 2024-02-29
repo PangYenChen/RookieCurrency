@@ -59,5 +59,5 @@ extension CurrencySelectionModel {
     
     func set(searchText: String?) { self.searchText.send(searchText) }
     
-    func update() { fetchSubject.send() }
+    func refresh() { fetchSubject.send() }
 }

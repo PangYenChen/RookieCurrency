@@ -166,8 +166,8 @@ extension BaseSettingTableViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: R.reuseIdentifier.settingCell,
-                                                                  for: indexPath) ?? UITableViewCell()
+        let reuseIdentifier: String = R.reuseIdentifier.settingCell.identifier
+        let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: reuseIdentifier, for: indexPath)
         
         var contentConfiguration: UIListContentConfiguration = cell.defaultContentConfiguration()
         contentConfiguration.directionalLayoutMargins = UIConfiguration.TableView.cellContentDirectionalLayoutMargins
