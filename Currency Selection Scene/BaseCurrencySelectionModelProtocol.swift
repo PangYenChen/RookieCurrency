@@ -16,12 +16,12 @@ protocol BaseCurrencySelectionModelProtocol: CurrencyDescriberProxy {
     
     func getSortingMethod() -> CurrencySelectionModel.SortingMethod
     
-    func set(
+    func set( // TODO: 考慮拿掉
         sortingMethod: CurrencySelectionModel.SortingMethod,
         andOrder sortingOrder: CurrencySelectionModel.SortingOrder
     )
     
-    func set(searchText: String?)
+    func set(searchText: String?) // TODO: 考慮拿掉
     
-    func update() // TODO: rename to refresh
+    func refresh()
 }

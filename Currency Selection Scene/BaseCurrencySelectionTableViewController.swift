@@ -157,7 +157,7 @@ class BaseCurrencySelectionTableViewController: UITableViewController {
         do /*initialize table view refresh control*/ {
             tableView.refreshControl = UIRefreshControl()
             
-            let action: UIAction = UIAction { [unowned self] _ in baseCurrencySelectionModel.update() }
+            let action: UIAction = UIAction { [unowned self] _ in baseCurrencySelectionModel.refresh() }
             tableView.refreshControl?.addAction(action, for: .primaryActionTriggered)
             
             tableView.refreshControl?.beginRefreshing()
@@ -260,7 +260,7 @@ extension BaseCurrencySelectionTableViewController {
 }
 
 // MARK: - Search Bar Delegate
-extension BaseCurrencySelectionTableViewController: UISearchBarDelegate { // TODO: 兩個 target 分開寫
+extension BaseCurrencySelectionTableViewController: UISearchBarDelegate { // TODO: 兩個 target 分開寫，imperative 應該在這裡解決
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         baseCurrencySelectionModel.set(searchText: searchText)
     }

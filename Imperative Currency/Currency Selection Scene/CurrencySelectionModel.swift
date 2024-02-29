@@ -48,7 +48,7 @@ extension CurrencySelectionModel {
         fetchSupportedCurrency()
     }
     
-    func update() {
+    func refresh() {
         fetchSupportedCurrency()
     }
 }
