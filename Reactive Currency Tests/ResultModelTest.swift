@@ -33,7 +33,7 @@ class ResultModelTest: XCTestCase {
         let sut: ResultModel = ResultModel(currencyDescriber: currencyDescriberStub,
                                            rateManager: rateManagerSpy,
                                            userSettingManager: userSettingManagerStub)
-        sut.state
+        sut.analyzedDataArray
             .subscribe(AnySubscriber())
         
         // assert
