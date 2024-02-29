@@ -29,6 +29,8 @@
 		512495762B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512495742B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift */; };
 		51290B7E2B90526D005BE201 /* TimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B7D2B90526D005BE201 /* TimerProtocol.swift */; };
 		51290B842B905642005BE201 /* TimerProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B832B905642005BE201 /* TimerProxy.swift */; };
+		51290B882B9059A7005BE201 /* TimerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B872B9059A7005BE201 /* TimerSpy.swift */; };
+		51290B8D2B906107005BE201 /* TimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B8C2B906107005BE201 /* TimerProtocol.swift */; };
 		5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */; };
 		512CE8CF2B35EA9700019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8CE2B35EA9700019B20 /* RateSession.swift */; };
 		512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D32B35F52D00019B20 /* RateSession.swift */; };
@@ -187,6 +189,8 @@
 		512495742B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySelectionModelProtocol.swift; sourceTree = "<group>"; };
 		51290B7D2B90526D005BE201 /* TimerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProtocol.swift; sourceTree = "<group>"; };
 		51290B832B905642005BE201 /* TimerProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProxy.swift; sourceTree = "<group>"; };
+		51290B872B9059A7005BE201 /* TimerSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSpy.swift; sourceTree = "<group>"; };
+		51290B8C2B906107005BE201 /* TimerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProtocol.swift; sourceTree = "<group>"; };
 		5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 		512CE8CE2B35EA9700019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
 		512CE8D32B35F52D00019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
@@ -337,6 +341,7 @@
 		512087AB29A9F482005ED87A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				51290B8A2B9060F4005BE201 /* Timer */,
 				512087AF29A9F858005ED87A /* RateManager + Reactive.swift */,
 				512087AD29A9F4A7005ED87A /* Fetcher + Reactive.swift */,
 				512CE8D32B35F52D00019B20 /* RateSession.swift */,
@@ -362,6 +367,14 @@
 			children = (
 				51290B7D2B90526D005BE201 /* TimerProtocol.swift */,
 				51290B832B905642005BE201 /* TimerProxy.swift */,
+			);
+			path = Timer;
+			sourceTree = "<group>";
+		};
+		51290B8A2B9060F4005BE201 /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				51290B8C2B906107005BE201 /* TimerProtocol.swift */,
 			);
 			path = Timer;
 			sourceTree = "<group>";
@@ -398,6 +411,7 @@
 		5143C8832A7B848B00EDEFFF /* Test Double */ = {
 			isa = PBXGroup;
 			children = (
+				51290B872B9059A7005BE201 /* TimerSpy.swift */,
 				512CE8E52B37284D00019B20 /* RateManager.swift */,
 				5143C8862A7B855700EDEFFF /* Fetcher.swift */,
 			);
@@ -967,6 +981,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51290B882B9059A7005BE201 /* TimerSpy.swift in Sources */,
 				512CE8EB2B3737C200019B20 /* ResultModelTest.swift in Sources */,
 				519A643829B4627500918B84 /* TestingData.swift in Sources */,
 				51869FD829D9D31D00EFA13D /* RateManagerTests.swift in Sources */,
@@ -994,6 +1009,7 @@
 				512087AE29A9F4A7005ED87A /* Fetcher + Reactive.swift in Sources */,
 				5120879929A8DC71005ED87A /* DebugInfoViewController.swift in Sources */,
 				51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */,
+				51290B8D2B906107005BE201 /* TimerProtocol.swift in Sources */,
 				E1FB993F24FF554C0096FE2C /* ResultTableViewController.swift in Sources */,
 				512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */,
 				E1FB9944250084760096FE2C /* RateManager.swift in Sources */,
