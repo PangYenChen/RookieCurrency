@@ -29,7 +29,7 @@ class ResultModelTest: XCTestCase {
             rateManagerSpy = TestDouble.RateManager(result: dummyResult)
         }
         
-        let timerSpy: TestDouble.TimerSpy = TestDouble.TimerSpy()
+        let timerSpy: TestDouble.Timer = TestDouble.Timer()
         
         // act
         let sut: ResultModel = ResultModel(currencyDescriber: currencyDescriberStub,

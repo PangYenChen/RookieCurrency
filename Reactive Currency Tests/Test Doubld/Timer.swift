@@ -4,13 +4,13 @@ import Combine
 @testable import ReactiveCurrency
 
 extension TestDouble {
-    final class TimerSpy {
+    final class Timer {
         private var wrappedSubject: PassthroughSubject<Void, Never>?
     }
 }
 
 // MARK: - TimerProtocol
-extension TestDouble.TimerSpy: TimerProtocol {
+extension TestDouble.Timer: TimerProtocol {
     func makeTimerPublisher(every interval: TimeInterval) -> AnyPublisher<Void, Never> {
         let wrappedSubject = PassthroughSubject<Void, Never>()
         self.wrappedSubject = wrappedSubject
@@ -21,7 +21,7 @@ extension TestDouble.TimerSpy: TimerProtocol {
     }
 }
 
-extension TestDouble.TimerSpy {
+extension TestDouble.Timer {
     func publish() {
         wrappedSubject?.send()
     }

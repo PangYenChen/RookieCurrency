@@ -2,7 +2,7 @@ import Foundation
 @testable import ImperativeCurrency
 
 extension TestDouble {
-    final class TimerSpy: TimerProtocol {
+    final class Timer: TimerProtocol {
         // MARK: - initializer
         init() {}
         
@@ -11,9 +11,8 @@ extension TestDouble {
     }
 }
 
-
 // MARK: - instance methods
-extension TestDouble.TimerSpy {
+extension TestDouble.Timer {
     func scheduledTimer(withTimeInterval interval: TimeInterval, block: @escaping @Sendable () -> Void) {
         self.block = block
     }
