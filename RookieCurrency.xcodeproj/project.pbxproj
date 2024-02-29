@@ -32,6 +32,7 @@
 		51290B882B9059A7005BE201 /* TimerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B872B9059A7005BE201 /* TimerSpy.swift */; };
 		51290B8D2B906107005BE201 /* TimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B8C2B906107005BE201 /* TimerProtocol.swift */; };
 		51290B8F2B90672C005BE201 /* TimerProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B8E2B90672C005BE201 /* TimerProxy.swift */; };
+		51290B922B90689E005BE201 /* TimerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B912B90689E005BE201 /* TimerSpy.swift */; };
 		5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */; };
 		512CE8CF2B35EA9700019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8CE2B35EA9700019B20 /* RateSession.swift */; };
 		512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D32B35F52D00019B20 /* RateSession.swift */; };
@@ -193,6 +194,7 @@
 		51290B872B9059A7005BE201 /* TimerSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSpy.swift; sourceTree = "<group>"; };
 		51290B8C2B906107005BE201 /* TimerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProtocol.swift; sourceTree = "<group>"; };
 		51290B8E2B90672C005BE201 /* TimerProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProxy.swift; sourceTree = "<group>"; };
+		51290B912B90689E005BE201 /* TimerSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerSpy.swift; sourceTree = "<group>"; };
 		5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 		512CE8CE2B35EA9700019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
 		512CE8D32B35F52D00019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
@@ -426,6 +428,7 @@
 			children = (
 				51C02C0D2B39B84A00B757FA /* RateManager.swift */,
 				5143C88B2A7B864400EDEFFF /* Fetcher.swift */,
+				51290B912B90689E005BE201 /* TimerSpy.swift */,
 			);
 			path = "Test Doubld";
 			sourceTree = "<group>";
@@ -1063,6 +1066,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51290B922B90689E005BE201 /* TimerSpy.swift in Sources */,
 				51C02C132B39B91000B757FA /* ResultModelTest.swift in Sources */,
 				E15BA6C524FCA66900CA5B1B /* FetcherTests.swift in Sources */,
 				512CE8F12B373D5700019B20 /* CurrencyDescriber.swift in Sources */,

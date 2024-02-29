@@ -1,6 +1,6 @@
 import Foundation
 
-class TimerProxy: TimerProtocol {
+final class TimerProxy: TimerProtocol {
     // MARK: - initializer
     init() {}
     

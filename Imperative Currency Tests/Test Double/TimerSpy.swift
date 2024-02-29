@@ -2,7 +2,7 @@ import Foundation
 @testable import ImperativeCurrency
 
 extension TestDouble {
-    class TimerSpy: TimerProtocol {
+    final class TimerSpy: TimerProtocol {
         // MARK: - initializer
         init() {}
         

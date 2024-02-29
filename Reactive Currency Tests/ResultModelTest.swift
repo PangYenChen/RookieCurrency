@@ -29,12 +29,18 @@ class ResultModelTest: XCTestCase {
             rateManagerSpy = TestDouble.RateManager(result: dummyResult)
         }
         
+        let timerSpy: TestDouble.TimerSpy = TestDouble.TimerSpy()
+        
         // act
         let sut: ResultModel = ResultModel(currencyDescriber: currencyDescriberStub,
                                            rateManager: rateManagerSpy,
-                                           userSettingManager: userSettingManagerStub)
+                                           userSettingManager: userSettingManagerStub,
+                                           timer: timerSpy)
+        
         sut.analyzedDataArray
             .subscribe(AnySubscriber())
+        
+        timerSpy.publish()
         
         // assert
         XCTAssertEqual(numberOfDays, rateManagerSpy.numberOfDays)
