@@ -143,10 +143,10 @@ final class ResultModel: BaseResultModel {
     }
     
     // MARK: - input properties
-    /// 是 user setting 的一部份，要傳遞到 setting scene 的資料，在那邊編輯
+    /// 是 user setting 的一部份，要傳遞到 setting model 的資料，在那邊編輯
     private let setting: CurrentValueSubject<BaseResultModel.Setting, Never>
     
-    /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這個 scene 修改
+    /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這裡修改
     private let order: CurrentValueSubject<Order, Never>
     
     private let refreshTriggerByUser: PassthroughSubject<Void, Never>
