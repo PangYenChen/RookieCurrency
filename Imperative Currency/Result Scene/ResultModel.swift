@@ -6,7 +6,6 @@ final class ResultModel: BaseResultModel {
          rateManager: RateManagerProtocol = RateManager.shared,
          userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
          timer: TimerProtocol = TimerProxy()) {
-        self.analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
         self.rateManager = rateManager
         self.userSettingManager = userSettingManager
         
@@ -35,8 +34,6 @@ final class ResultModel: BaseResultModel {
     private var userSettingManager: UserSettingManagerProtocol
     
     private let rateManager: RateManagerProtocol
-    
-    private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
     
     private let timer: TimerProtocol
     
@@ -94,9 +91,9 @@ extension ResultModel {
                             AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
                         }
                     
-                    let sortedAnalyzedDataArray: [BaseResultModel.AnalyzedData] = analyzedDataSorter.sort(self.analyzedDataArray,
-                                                                                                          by: self.order,
-                                                                                                          filteredIfNeededBy: self.searchText)
+                    let sortedAnalyzedDataArray: [BaseResultModel.AnalyzedData] = Self.sort(self.analyzedDataArray,
+                                                                                            by: self.order,
+                                                                                            filteredIfNeededBy: self.searchText)
                     analyzedDataArrayHandler?(sortedAnalyzedDataArray)
                     
                     latestUpdateTimestamp = latestRate.timestamp
@@ -115,18 +112,18 @@ extension ResultModel {
         userSettingManager.resultOrder = order
         self.order = order
         
-        return analyzedDataSorter.sort(self.analyzedDataArray,
-                                       by: self.order,
-                                       filteredIfNeededBy: self.searchText)
+        return Self.sort(self.analyzedDataArray,
+                         by: self.order,
+                         filteredIfNeededBy: self.searchText)
     }
     
     // TODO: 名字要想一下，這看不出來有 return value
     func setSearchText(_ searchText: String?) -> [BaseResultModel.AnalyzedData] {
         self.searchText = searchText
         
-        return analyzedDataSorter.sort(self.analyzedDataArray,
-                                       by: self.order,
-                                       filteredIfNeededBy: self.searchText)
+        return Self.sort(self.analyzedDataArray,
+                         by: self.order,
+                         filteredIfNeededBy: self.searchText)
     }
 }
 

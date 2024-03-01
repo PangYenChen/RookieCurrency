@@ -17,6 +17,33 @@ extension QuasiBaseResultModel {
     static let autoRefreshTimeInterval: TimeInterval = 5
 }
 
+// MARK: - static methods
+extension QuasiBaseResultModel {
+    /// 這個 method 是給兩個 target 的 subclass 使用的，不寫成 instance method 的原因是，
+    /// reactive target 的 subclass 在 initialization 的 phase 1 中使用，所以必須獨立於 instance。
+    static func sort(_ analyzedDataArray: [AnalyzedData],
+                     by order: Order,
+                     filteredIfNeededBy searchText: String?,
+                     currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) -> [AnalyzedData] {
+        analyzedDataArray
+            .sorted { lhs, rhs in
+                switch order {
+                    case .increasing: lhs.deviation < rhs.deviation
+                    case .decreasing: lhs.deviation > rhs.deviation
+                }
+            }
+            .filter { analyzedData in
+                guard let searchText, !searchText.isEmpty else { return true }
+                
+                return [analyzedData.currencyCode,
+                        currencyDescriber.localizedStringFor(currencyCode: analyzedData.currencyCode)]
+                    .compactMap { $0 }
+                    .contains { text in text.localizedStandardContains(searchText) }
+            }
+    }
+    
+}
+
 // MARK: - name space
 extension QuasiBaseResultModel {
     typealias Setting = (numberOfDays: Int,
@@ -41,34 +68,6 @@ extension QuasiBaseResultModel {
         let latest: Decimal
         let mean: Decimal
         let deviation: Decimal
-    }
-    
-    class AnalyzedDataSorter: CurrencyDescriberProxy {
-        let currencyDescriber: CurrencyDescriberProtocol
-        
-        init(currencyDescriber: CurrencyDescriberProtocol) {
-            self.currencyDescriber = currencyDescriber
-        }
-        
-        func sort(_ analyzedDataArray: [AnalyzedData],
-                  by order: Order,
-                  filteredIfNeededBy searchText: String?) -> [AnalyzedData] {
-            analyzedDataArray
-                .sorted { lhs, rhs in
-                    switch order {
-                        case .increasing: lhs.deviation < rhs.deviation
-                        case .decreasing: lhs.deviation > rhs.deviation
-                    }
-                }
-                .filter { analyzedData in
-                    guard let searchText, !searchText.isEmpty else { return true }
-                    
-                    return [analyzedData.currencyCode,
-                            localizedStringFor(currencyCode: analyzedData.currencyCode)]
-                        .compactMap { $0 }
-                        .contains { text in text.localizedStandardContains(searchText) }
-                }
-        }
     }
     
     enum RefreshStatus {

@@ -80,18 +80,14 @@ final class ResultModel: BaseResultModel {
                 .share()
                 .eraseToAnyPublisher()
             
-            do /*initialize analyzedDataArray*/ {
-                let analyzedDataSorter: AnalyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
-                
-                analyzedDataArray = analyzedResult.resultSuccess()
-                    .map { tuple in tuple.analyzedDataArray }
-                    .combineLatest(order, searchText) { analyzedDataArray, order, searchText in
-                        analyzedDataSorter.sort(analyzedDataArray,
-                                                by: order,
-                                                filteredIfNeededBy: searchText)
-                    }
-                    .eraseToAnyPublisher()
-            }
+            analyzedDataArray = analyzedResult.resultSuccess()
+                .map { tuple in tuple.analyzedDataArray }
+                .combineLatest(order, searchText) { analyzedDataArray, order, searchText in
+                    Self.sort(analyzedDataArray,
+                              by: order,
+                              filteredIfNeededBy: searchText)
+                }
+                .eraseToAnyPublisher()
             
             error = analyzedResult.resultFailure()
             
