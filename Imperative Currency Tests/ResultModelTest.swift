@@ -4,13 +4,12 @@ import XCTest
 final class ResultModelTest: XCTestCase {
     func testPassNumberOfDaysToRateManager() throws {
         // arrange
-        let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         
         let userSettingManagerStub: UserSettingManagerProtocol
         let numberOfDays: Int = Int.random(in: 1...10)
         do {
             let dummyBaseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
-            let dummyResultOrder: BaseResultModel.Order = .increasing
+            let dummyResultOrder: QuasiBaseResultModel.Order = .increasing
             let dummyCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD"]
             userSettingManagerStub = TestDouble.UserSettingManager(
                 numberOfDays: numberOfDays,
@@ -31,8 +30,7 @@ final class ResultModelTest: XCTestCase {
         let timerSpy: TestDouble.Timer = TestDouble.Timer()
         
         // act
-        let sut: ResultModel = ResultModel(currencyDescriber: currencyDescriberStub,
-                                           rateManager: rateManagerSpy,
+        let sut: ResultModel = ResultModel(rateManager: rateManagerSpy,
                                            userSettingManager: userSettingManagerStub,
                                            timer: timerSpy)
         

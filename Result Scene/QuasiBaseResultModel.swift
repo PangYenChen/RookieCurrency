@@ -45,6 +45,9 @@ extension QuasiBaseResultModel {
             }
     }
     
+    /// 這個 method 是給兩個 target 的 subclass 使用的，不寫成 instance method 的原因是，
+    /// reactive target 的 subclass 在 initialization 的 phase 1 中使用，所以必須獨立於 instance。
+    /// 這個 method 是 pure function，所以不寫成 instance 的 dependency 也沒關係。
     static func analyze(
         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
         latestRate: ResponseDataModel.LatestRate,
@@ -123,6 +126,8 @@ extension QuasiBaseResultModel {
     
     /// 分析的 name space
     enum Analysis {
+        typealias Result = Swift.Result<Success, Failure>
+        
         struct Success: Hashable {
             let currencyCode: ResponseDataModel.CurrencyCode
             let localizedString: String
@@ -138,6 +143,7 @@ extension QuasiBaseResultModel {
                 lhs.currencyCode == rhs.currencyCode
             }
         }
+        
         enum Failure: Error {
             case dataAbsent
         }
