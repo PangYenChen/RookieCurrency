@@ -147,10 +147,8 @@
 		E15BA6B724FCA66900CA5B1B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E15BA6B624FCA66900CA5B1B /* Assets.xcassets */; };
 		E15BA6C524FCA66900CA5B1B /* FetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */; };
 		E1CE96AA248555680029ED73 /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96A9248555680029ED73 /* Fetcher.swift */; };
-		E1CE96AC248555C30029ED73 /* Analyst.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AB248555C30029ED73 /* Analyst.swift */; };
 		E1CE96AE248555E10029ED73 /* RateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AD248555E10029ED73 /* RateManager.swift */; };
 		E1FB993524FCDC270096FE2C /* Response Data Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B276824758BCB00E0A07D /* Response Data Model.swift */; };
-		E1FB993C24FF45250096FE2C /* Analyst.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AB248555C30029ED73 /* Analyst.swift */; };
 		E1FB993F24FF554C0096FE2C /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FB993E24FF554C0096FE2C /* ResultTableViewController.swift */; };
 		E1FB994124FF9DCD0096FE2C /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96A9248555680029ED73 /* Fetcher.swift */; };
 		E1FB9943250083BE0096FE2C /* Archiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1133334248A924D00B8E67F /* Archiver.swift */; };
@@ -278,7 +276,6 @@
 		E15BA6C024FCA66900CA5B1B /* ReactiveCurrencyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReactiveCurrencyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherTests.swift; sourceTree = "<group>"; };
 		E1CE96A9248555680029ED73 /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
-		E1CE96AB248555C30029ED73 /* Analyst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyst.swift; sourceTree = "<group>"; };
 		E1CE96AD248555E10029ED73 /* RateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateManager.swift; sourceTree = "<group>"; };
 		E1FB993E24FF554C0096FE2C /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -331,7 +328,6 @@
 			isa = PBXGroup;
 			children = (
 				51E1B4BF29AE3CB000D75669 /* Fetcher */,
-				E1CE96AB248555C30029ED73 /* Analyst.swift */,
 				514F72FD29AB682D0080DD8B /* AppUtility.swift */,
 				5124955C2B31CACF00FD86D9 /* BaseSupportedCurrencyManager.swift */,
 				512CE8D82B36F9D000019B20 /* UserSettingManager.swift */,
@@ -954,7 +950,6 @@
 				E1CE96AA248555680029ED73 /* Fetcher.swift in Sources */,
 				514C4D0D29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */,
 				519BD8AA29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */,
-				E1CE96AC248555C30029ED73 /* Analyst.swift in Sources */,
 				51290B842B905642005BE201 /* TimerProxy.swift in Sources */,
 				513E106429F424D0000E1A87 /* AlertPresenter.swift in Sources */,
 				514F171D2B3131B700C806E3 /* CurrencyOfInterestSelectionStrategy.swift in Sources */,
@@ -1047,7 +1042,6 @@
 				51D6CA492B1C8A7C003F9D13 /* BaseCurrencySelectionModelProtocol.swift in Sources */,
 				51E1B4C929AE488900D75669 /* Endpoints.swift in Sources */,
 				512495692B31E89C00FD86D9 /* SupportedCurrencyManager.swift in Sources */,
-				E1FB993C24FF45250096FE2C /* Analyst.swift in Sources */,
 				512495762B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift in Sources */,
 				514C4D0629A0D6570049E192 /* BaseCurrencySelectionTableViewController.swift in Sources */,
 				515D3D8829ED8C7400B84F4B /* SupportedSymbols.swift in Sources */,

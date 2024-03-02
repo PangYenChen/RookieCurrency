@@ -2,8 +2,7 @@ import Foundation
 
 final class ResultModel: BaseResultModel {
     // MARK: - life cycle
-    init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
-         rateManager: RateManagerProtocol = RateManager.shared,
+    init(rateManager: RateManagerProtocol = RateManager.shared,
          userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
          timer: TimerProtocol = TimerProxy()) {
         self.rateManager = rateManager
@@ -16,12 +15,11 @@ final class ResultModel: BaseResultModel {
         order = userSettingManager.resultOrder
         
         searchText = nil
-        analyzedDataArray = []
+        analysisSuccesses = []
         
         self.timer = timer
         
-        super.init(currencyDescriber: currencyDescriber,
-                   userSettingManager: userSettingManager)
+        super.init(userSettingManager: userSettingManager)
         
         resumeAutoRefreshing()
     }
@@ -49,9 +47,9 @@ final class ResultModel: BaseResultModel {
     
     private var latestUpdateTimestamp: Int?
     
-    private var analyzedDataArray: [AnalyzedData]
+    private var analysisSuccesses: [Analysis.Success]
     
-    var analyzedDataArrayHandler: AnalyzedDataArrayHandlebar?
+    var analysisSuccessesHandler: AnalysisSuccessesHandlebar?
     
     var refreshStatusHandler: RefreshStatusHandlebar?
     
@@ -66,13 +64,13 @@ extension ResultModel {
         rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
                 case .success(let (latestRate, historicalRateSet)):
-                    let analyzedResult: [ResponseDataModel.CurrencyCode: Result<Analyst.AnalyzedData, Analyst.AnalyzedError>] = Analyst
-                        .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
+                    let analysisResult: [ResponseDataModel.CurrencyCode: Result<Analysis.Success, Analysis.Failure>] =
+                    Self.analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
                                  latestRate: latestRate,
                                  historicalRateSet: historicalRateSet,
                                  baseCurrencyCode: setting.baseCurrencyCode)
                     
-                    let analyzedFailure: [ResponseDataModel.CurrencyCode: Result<Analyst.AnalyzedData, Analyst.AnalyzedError>] = analyzedResult
+                    let analysisFailure: [ResponseDataModel.CurrencyCode: Result<Analysis.Success, Analysis.Failure>] = analysisResult
                         .filter { _, result in
                             switch result {
                                 case .failure: return true
@@ -80,21 +78,19 @@ extension ResultModel {
                             }
                         }
                     
-                    guard analyzedFailure.isEmpty else {
+                    guard analysisFailure.isEmpty else {
                         // TODO: 還沒處理錯誤"
                         return
                     }
                     
-                    analyzedDataArray = analyzedResult
-                        .compactMapValues { result in try? result.get() }
-                        .map { tuple in
-                            AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
-                        }
+                    analysisSuccesses = analysisResult
+                        .values
+                        .compactMap { result in try? result.get() }
                     
-                    let sortedAnalyzedDataArray: [BaseResultModel.AnalyzedData] = Self.sort(self.analyzedDataArray,
-                                                                                            by: self.order,
-                                                                                            filteredIfNeededBy: self.searchText)
-                    analyzedDataArrayHandler?(sortedAnalyzedDataArray)
+                    let sortedAnalysisSuccesses: [BaseResultModel.Analysis.Success] = Self.sort(self.analysisSuccesses,
+                                                                                                by: self.order,
+                                                                                                filteredIfNeededBy: self.searchText)
+                    analysisSuccessesHandler?(sortedAnalysisSuccesses)
                     
                     latestUpdateTimestamp = latestRate.timestamp
                     refreshStatusHandler?(.idle(latestUpdateTimestamp: latestRate.timestamp))
@@ -108,20 +104,20 @@ extension ResultModel {
     }
     
     // TODO: 名字要想一下，這看不出來有 return value
-    func setOrder(_ order: BaseResultModel.Order) -> [BaseResultModel.AnalyzedData] {
+    func setOrder(_ order: BaseResultModel.Order) -> [BaseResultModel.Analysis.Success] {
         userSettingManager.resultOrder = order
         self.order = order
         
-        return Self.sort(self.analyzedDataArray,
+        return Self.sort(self.analysisSuccesses,
                          by: self.order,
                          filteredIfNeededBy: self.searchText)
     }
     
     // TODO: 名字要想一下，這看不出來有 return value
-    func setSearchText(_ searchText: String?) -> [BaseResultModel.AnalyzedData] {
+    func setSearchText(_ searchText: String?) -> [BaseResultModel.Analysis.Success] {
         self.searchText = searchText
         
-        return Self.sort(self.analyzedDataArray,
+        return Self.sort(self.analysisSuccesses,
                          by: self.order,
                          filteredIfNeededBy: self.searchText)
     }
@@ -159,7 +155,7 @@ extension ResultModel {
 
 // MARK: - name space
 extension ResultModel {
-    typealias AnalyzedDataArrayHandlebar = (_ analyzedData: [BaseResultModel.AnalyzedData]) -> Void
+    typealias AnalysisSuccessesHandlebar = (_ analysisSuccesses: [BaseResultModel.Analysis.Success]) -> Void
     
     typealias RefreshStatusHandlebar = (_ refreshStatus: BaseResultModel.RefreshStatus) -> Void
     

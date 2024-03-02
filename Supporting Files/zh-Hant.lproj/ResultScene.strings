@@ -1,5 +1,5 @@
 "baseCurrencyInPrompt" = "基準貨幣：%@";
-"analyzedResult" = "分析結果";
+"analysisResult" = "分析結果";
 "latestUpdateTime" = "最後更新時間：%@";
 "currencyCellDetail" = "過去平均：%1$@，今天匯率：%2$@";
 "increasing" = "遞增";

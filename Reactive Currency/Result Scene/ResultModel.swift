@@ -56,6 +56,7 @@ final class ResultModel: BaseResultModel {
                 .eraseToAnyPublisher()
             }
             
+            // TODO: rename to analysis 全域搜尋取代
             let analyzedResult: AnyPublisher<Result<AnalyzedSuccess, Error>, Never> = refresh.withLatestFrom(setting)
                 .flatMap { _, setting in
                     rateManager
