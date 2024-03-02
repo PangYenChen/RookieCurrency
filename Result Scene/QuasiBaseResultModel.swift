@@ -21,6 +21,7 @@ extension QuasiBaseResultModel {
 extension QuasiBaseResultModel {
     /// 這個 method 是給兩個 target 的 subclass 使用的，不寫成 instance method 的原因是，
     /// reactive target 的 subclass 在 initialization 的 phase 1 中使用，所以必須獨立於 instance。
+    /// 這個 method 是 pure function，所以不寫成 instance 的 dependency 也沒關係。
     static func sort(_ analyzedDataArray: [AnalyzedData],
                      by order: Order,
                      filteredIfNeededBy searchText: String?,
