@@ -37,7 +37,7 @@ class ResultModelTest: XCTestCase {
                                            userSettingManager: userSettingManagerStub,
                                            timer: timerSpy)
         
-        sut.analyzedDataArray
+        sut.sortedAnalysisSuccesses
             .subscribe(AnySubscriber())
         
         timerSpy.publish()

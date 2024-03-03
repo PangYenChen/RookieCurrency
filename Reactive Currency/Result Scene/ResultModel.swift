@@ -57,47 +57,49 @@ final class ResultModel: BaseResultModel {
             }
             
             // TODO: rename to analysis 全域搜尋取代
-            let analyzedResult: AnyPublisher<Result<AnalyzedSuccess, Error>, Never> = refresh.withLatestFrom(setting)
+            let analysisTupleResult: AnyPublisher<Result<AnalysisTuple, Error>, Never> = refresh.withLatestFrom(setting)
                 .flatMap { _, setting in
                     rateManager
                         .ratePublisher(numberOfDays: setting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in
                             result.map { rateTuple in
-                                let analyzedDataArray: [BaseResultModel.AnalyzedData] = Analyst
-                                    .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
+                                let analysis: Analysis = Self
+                                    .analyze(baseCurrencyCode: setting.baseCurrencyCode,
+                                             currencyCodeOfInterest: setting.currencyCodeOfInterest,
                                              latestRate: rateTuple.latestRate,
-                                             historicalRateSet: rateTuple.historicalRateSet,
-                                             baseCurrencyCode: setting.baseCurrencyCode)
-                                    .compactMapValues { result in try? result.get() }
+                                             historicalRateSet: rateTuple.historicalRateSet)
                                 // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
-                                    .map { tuple in
-                                        AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
-                                    }
-                                return (latestUpdateTime: rateTuple.latestRate.timestamp, analyzedDataArray: analyzedDataArray)
+                                return (latestUpdateTime: rateTuple.latestRate.timestamp, analysis: analysis)
                             }
                         }
                 }
                 .share()
                 .eraseToAnyPublisher()
             
-            analyzedDataArray = analyzedResult.resultSuccess()
-                .map { tuple in tuple.analyzedDataArray }
-                .combineLatest(order, searchText) { analyzedDataArray, order, searchText in
-                    Self.sort(analyzedDataArray,
+            let analysisTuple = analysisTupleResult.resultSuccess()
+            
+            sortedAnalysisSuccesses = analysisTuple
+                .map { tuple in tuple.analysis.successes }
+                .combineLatest(order, searchText) { analysisSuccesses, order, searchText in
+                    Self.sort(analysisSuccesses,
                               by: order,
                               filteredIfNeededBy: searchText)
                 }
                 .eraseToAnyPublisher()
             
-            error = analyzedResult.resultFailure()
+            let dataAbsentCurrencyCodeSet = analysisTuple
+                .map { tuple in tuple.analysis.dataAbsentCurrencyCodeSet }
+            // TODO: 還沒處理分析錯誤
+            
+            error = analysisTupleResult.resultFailure()
             
             do /*initialize refreshStatus*/ {
                 let refreshStatusProcess: AnyPublisher<BaseResultModel.RefreshStatus, Never> = refresh
                     .map { _ in .process }
                     .eraseToAnyPublisher()
                 
-                let refreshStatusIdle: AnyPublisher<BaseResultModel.RefreshStatus, Never> = analyzedResult
+                let refreshStatusIdle: AnyPublisher<BaseResultModel.RefreshStatus, Never> = analysisTupleResult
                     .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, analyzedResult -> BaseResultModel.RefreshStatus in
                         switch analyzedResult {
                             case .success(let analyzedSuccess):
@@ -157,7 +159,7 @@ final class ResultModel: BaseResultModel {
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: output properties
-    let analyzedDataArray: AnyPublisher<[BaseResultModel.AnalyzedData], Never>
+    let sortedAnalysisSuccesses: AnyPublisher<[BaseResultModel.Analysis.Success], Never>
     
     let refreshStatus: AnyPublisher<BaseResultModel.RefreshStatus, Never>
     
@@ -191,5 +193,6 @@ extension ResultModel {
 
 // MARK: - private name space
 private extension ResultModel {
-    typealias AnalyzedSuccess = (latestUpdateTime: Int, analyzedDataArray: [BaseResultModel.AnalyzedData])
+    // TODO: 想一下名字
+    typealias AnalysisTuple = (latestUpdateTime: Int, analysis: BaseResultModel.Analysis)
 }
