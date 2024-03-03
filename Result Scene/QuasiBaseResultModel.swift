@@ -20,7 +20,7 @@ extension QuasiBaseResultModel {
 }
 
 // MARK: - static methods
-extension QuasiBaseResultModel {
+extension QuasiBaseResultModel { // TODO: to be removed
     /// 這個 method 是給兩個 target 的 subclass 使用的，不寫成 instance method 的原因是，
     /// reactive target 的 subclass 在 initialization 的 phase 1 中使用，所以必須獨立於 instance。
     /// 這個 method 是 pure function，所以不寫成 instance 的 dependency 也沒關係。
@@ -126,23 +126,23 @@ extension QuasiBaseResultModel {
     }
 }
 
-// MARK: - 第四版
+// MARK: - static methods
 extension QuasiBaseResultModel {
     /// 這個 method 是給兩個 target 的 subclass 使用的，不寫成 instance method 的原因是，
     /// reactive target 的 subclass 在 initialization 的 phase 1 中使用，所以必須獨立於 instance。
     /// 這個 method 是 pure function，所以不寫成 instance 的 dependency 也沒關係。
-    static func analyze4(
+    static func analyze(
         baseCurrencyCode: ResponseDataModel.CurrencyCode,
         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
         latestRate: ResponseDataModel.LatestRate,
         historicalRateSet: Set<ResponseDataModel.HistoricalRate>,
         currencyDescriber: CurrencyDescriberProtocol
-    ) -> MyStruct {
-        var successArray: Set<Analysis.Success> = []
-        var failureArray: Set<ResponseDataModel.CurrencyCode> = []
+    ) -> Analysis {
+        var successes: Set<Analysis.Success> = []
+        var dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = []
         
         // TODO: 需要 unit test
-    outer:
+    outer: // 這邊刻意不用 functional 的方式寫，因為 currency code 的數量可以很多，number of days 也可以很的，要儘早 continue
         for currencyCode in currencyCodeOfInterest {
             // 計算 mean
             var mean: Decimal = 0
@@ -153,7 +153,7 @@ extension QuasiBaseResultModel {
                     mean += convertedHistoricalRateForCurrencyCode
                 }
                 else {
-                    failureArray.insert(currencyCode)
+                    dataAbsentCurrencyCodeSet.insert(currencyCode)
                     continue outer
                 }
             }
@@ -163,9 +163,9 @@ extension QuasiBaseResultModel {
             let rateConverter: RateConverter = RateConverter(rate: latestRate, baseCurrencyCode: baseCurrencyCode)
             
             if let convertedLatestRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
-                let deviation = (convertedLatestRateForCurrencyCode - mean) / mean
+                let deviation: Decimal = (convertedLatestRateForCurrencyCode - mean) / mean
                 
-                successArray.insert(Analysis.Success(
+                successes.insert(Analysis.Success(
                     currencyCode: currencyCode,
                     localizedString: currencyDescriber.localizedStringFor(currencyCode: currencyCode),
                     latest: convertedLatestRateForCurrencyCode,
@@ -174,11 +174,11 @@ extension QuasiBaseResultModel {
                 ))
             }
             else {
-                failureArray.insert(currencyCode)
+                dataAbsentCurrencyCodeSet.insert(currencyCode)
             }
         }
         
-        return MyStruct(successes: successArray, dataAbsentCurrencyCodeArray: failureArray)
+        return Analysis(successes: successes, dataAbsentCurrencyCodeSet: dataAbsentCurrencyCodeSet)
         
         // 基準貨幣的換算，api 的資料邏輯是「一單位的基準貨幣等於多少單位的其他貨幣」，app 的邏輯是「一單位的其他貨幣等於多少單位的基準貨幣」。
         // TODO: 這個看要不要寫在 response model 裡面，或者在進來之前轉好，不然這邊的邏輯有點多
@@ -209,9 +209,9 @@ extension QuasiBaseResultModel {
     /// 這個 method 是給兩個 target 的 subclass 使用的，不寫成 instance method 的原因是，
     /// reactive target 的 subclass 在 initialization 的 phase 1 中使用，所以必須獨立於 instance。
     /// 這個 method 是 pure function，所以不寫成 instance 的 dependency 也沒關係。
-    static func sort4(_ analysisSuccesses: [Analysis.Success],
-                      by order: Order,
-                      filteredIfNeededBy searchText: String?) -> [Analysis.Success] {
+    static func sort(_ analysisSuccesses: [Analysis.Success],
+                     by order: Order,
+                     filteredIfNeededBy searchText: String?) -> [Analysis.Success] {
         analysisSuccesses
             .sorted { lhs, rhs in
                 switch order {
@@ -253,7 +253,9 @@ extension QuasiBaseResultModel {
                          currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>)
     
     /// 分析的 name space
-    enum Analysis {
+    struct Analysis {
+        let successes: Set<Analysis.Success>
+        let dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>
         
         struct Success: Hashable {
             let currencyCode: ResponseDataModel.CurrencyCode
@@ -274,11 +276,6 @@ extension QuasiBaseResultModel {
         enum Failure: Error {
             case dataAbsent
         }
-    }
-    
-    struct MyStruct {
-        let successes: Set<Analysis.Success>
-        let dataAbsentCurrencyCodeArray: Set<ResponseDataModel.CurrencyCode>
     }
     
     enum RefreshStatus {
