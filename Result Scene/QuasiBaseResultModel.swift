@@ -40,7 +40,7 @@ extension QuasiBaseResultModel {
         for historicalRate in historicalRateSet {
             let rateConverter: RateConverter = RateConverter(rate: historicalRate, baseCurrencyCode: baseCurrencyCode)
             
-            if let convertedHistoricalRateForCurrencyCode = rateConverter[currencyCodeCode: currencyCode] {
+            if let convertedHistoricalRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
                 mean += convertedHistoricalRateForCurrencyCode
             }
             else {
@@ -59,7 +59,7 @@ extension QuasiBaseResultModel {
             resultDictionary[currencyCode] = meanResult.flatMap { mean in
                 let rateConverter: RateConverter = RateConverter(rate: latestRate, baseCurrencyCode: baseCurrencyCode)
                 
-                if let convertedLatestRateForCurrencyCode = rateConverter[currencyCodeCode: currencyCode] {
+                if let convertedLatestRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
                     let deviation = (convertedLatestRateForCurrencyCode - mean) / mean
                     
                     return .success(Analysis.Success(currencyCode: currencyCode,
@@ -92,9 +92,9 @@ extension QuasiBaseResultModel {
                 self.baseCurrencyCode = baseCurrencyCode
             }
             
-            subscript(currencyCodeCode currencyCodeCode: ResponseDataModel.CurrencyCode) -> Decimal? {
+            subscript(currencyCode currencyCode: ResponseDataModel.CurrencyCode) -> Decimal? {
                 guard let rateForBaseCurrencyCode = rate[currencyCode: baseCurrencyCode],
-                      let rateForCurrencyCode = rate[currencyCode: currencyCodeCode] else { return nil }
+                      let rateForCurrencyCode = rate[currencyCode: currencyCode] else { return nil }
                 
                 return rateForBaseCurrencyCode / rateForCurrencyCode
             }
@@ -149,7 +149,7 @@ extension QuasiBaseResultModel {
             for historicalRate in historicalRateSet {
                 let rateConverter: RateConverter = RateConverter(rate: historicalRate, baseCurrencyCode: baseCurrencyCode)
                 
-                if let convertedHistoricalRateForCurrencyCode = rateConverter[currencyCodeCode: currencyCode] {
+                if let convertedHistoricalRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
                     mean += convertedHistoricalRateForCurrencyCode
                 }
                 else {
@@ -162,7 +162,7 @@ extension QuasiBaseResultModel {
             // 計算 deviation
             let rateConverter: RateConverter = RateConverter(rate: latestRate, baseCurrencyCode: baseCurrencyCode)
             
-            if let convertedLatestRateForCurrencyCode = rateConverter[currencyCodeCode: currencyCode] {
+            if let convertedLatestRateForCurrencyCode = rateConverter[currencyCode: currencyCode] {
                 let deviation = (convertedLatestRateForCurrencyCode - mean) / mean
                 
                 successArray.insert(Analysis.Success(
@@ -197,9 +197,9 @@ extension QuasiBaseResultModel {
                 self.baseCurrencyCode = baseCurrencyCode
             }
             
-            subscript(currencyCodeCode currencyCodeCode: ResponseDataModel.CurrencyCode) -> Decimal? {
+            subscript(currencyCode currencyCode: ResponseDataModel.CurrencyCode) -> Decimal? {
                 guard let rateForBaseCurrencyCode = rate[currencyCode: baseCurrencyCode],
-                      let rateForCurrencyCode = rate[currencyCode: currencyCodeCode] else { return nil }
+                      let rateForCurrencyCode = rate[currencyCode: currencyCode] else { return nil }
                 
                 return rateForBaseCurrencyCode / rateForCurrencyCode
             }
