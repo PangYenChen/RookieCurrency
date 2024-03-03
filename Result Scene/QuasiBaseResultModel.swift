@@ -34,8 +34,7 @@ extension QuasiBaseResultModel {
         var successes: Set<Analysis.Success> = []
         var dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = []
         
-        // TODO: 需要 unit test
-    outer: // 這邊刻意不用 functional 的方式寫，因為 currency code 的數量可以很多，number of days 也可以很的，要儘早 continue
+    loop: // 這邊刻意不用 functional 的方式寫，因為 currency code 的數量可以很多，number of days 也可以很的，要儘早 continue
         for currencyCode in currencyCodeOfInterest {
             // 計算 mean
             var mean: Decimal = 0
@@ -47,7 +46,7 @@ extension QuasiBaseResultModel {
                 }
                 else {
                     dataAbsentCurrencyCodeSet.insert(currencyCode)
-                    continue outer
+                    continue loop
                 }
             }
             mean /= Decimal(historicalRateSet.count)
@@ -68,6 +67,7 @@ extension QuasiBaseResultModel {
             }
             else {
                 dataAbsentCurrencyCodeSet.insert(currencyCode)
+                continue loop
             }
         }
         

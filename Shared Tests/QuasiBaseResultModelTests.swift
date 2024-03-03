@@ -6,7 +6,11 @@ import XCTest
 @testable import ReactiveCurrency
 #endif
 
+// this test case only tests `QuasiBaseResultModel`'s static method
+// instance behaviors are tested in other test cases.
 final class QuasiBaseResultModelTests: XCTestCase {
+    private let sut: QuasiBaseResultModel.Type = QuasiBaseResultModel.self
+    
     /// 測試一切正常運作的 test method
     func testSimpleAnalyze() throws {
         // arrange
@@ -20,35 +24,25 @@ final class QuasiBaseResultModelTests: XCTestCase {
         let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         
         // act
-        let analyzedData: [ResponseDataModel.CurrencyCode: Result<QuasiBaseResultModel.Analysis.Success, QuasiBaseResultModel.Analysis.Failure>] = QuasiBaseResultModel
-            .analyze(currencyCodeOfInterest: currencyCodeOfInterest,
-                     latestRate: latestRate,
-                     historicalRateSet: [historicalRate],
-                     baseCurrencyCode: baseCurrencyCode,
-                     currencyDescriber: currencyDescriberStub)
+        let analysis: QuasiBaseResultModel.Analysis = sut.analyze(baseCurrencyCode: baseCurrencyCode,
+                                                                  currencyCodeOfInterest: currencyCodeOfInterest,
+                                                                  latestRate: latestRate,
+                                                                  historicalRateSet: [historicalRate],
+                                                                  currencyDescriber: currencyDescriberStub)
         
         // assert
         // 檢查回傳資料沒有遺漏
-        XCTAssertEqual(Set(analyzedData.keys), currencyCodeOfInterest)
+        XCTAssertEqual(Set(analysis.successes.map { $0.currencyCode }), currencyCodeOfInterest)
         
         // 每個 currency 都成功分析
-        let isAnalyzedDataContainsFailure: Bool = analyzedData.values
-            .contains { result in
-                switch result {
-                    case .success: return false
-                    case .failure: return true
-                }
-            }
+        XCTAssert(analysis.dataAbsentCurrencyCodeSet.isEmpty)
         
-        XCTAssertFalse(isAnalyzedDataContainsFailure)
-        
-        let analyzedResultRelativeToUSD: Result<QuasiBaseResultModel.Analysis.Success, QuasiBaseResultModel.Analysis.Failure> = try XCTUnwrap(analyzedData["USD"])
-        let analyzedDataRelativeToUSD: QuasiBaseResultModel.Analysis.Success = try analyzedResultRelativeToUSD.get()
+        let usdSuccess: QuasiBaseResultModel.Analysis.Success = try XCTUnwrap(analysis.successes.first { success in success.currencyCode == "USD" })
         
         // 美金同時是 base currency 也是 currency of interest 時會有的性質
-        XCTAssertEqual(analyzedDataRelativeToUSD.latest, 1)
-        XCTAssertEqual(analyzedDataRelativeToUSD.mean, 1)
-        XCTAssertEqual(analyzedDataRelativeToUSD.deviation, 0)
+        XCTAssertEqual(usdSuccess.latest, 1)
+        XCTAssertEqual(usdSuccess.mean, 1)
+        XCTAssertEqual(usdSuccess.deviation, 0)
     }
     
     func testHistoricalRateLossACurrency() throws {
@@ -65,21 +59,15 @@ final class QuasiBaseResultModelTests: XCTestCase {
         let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         
         // act
-        var analyzedData: [ResponseDataModel.CurrencyCode: Result<QuasiBaseResultModel.Analysis.Success, QuasiBaseResultModel.Analysis.Failure>] = QuasiBaseResultModel
-            .analyze(currencyCodeOfInterest: currencyCodeOfInterest,
-                     latestRate: latestRate,
-                     historicalRateSet: [historicalRate],
-                     baseCurrencyCode: baseCurrencyCode,
-                     currencyDescriber: currencyDescriberStub)
+        var analysis: QuasiBaseResultModel.Analysis = sut.analyze(baseCurrencyCode: baseCurrencyCode,
+                                                                  currencyCodeOfInterest: currencyCodeOfInterest,
+                                                                  latestRate: latestRate,
+                                                                  historicalRateSet: [historicalRate],
+                                                                  currencyDescriber: currencyDescriberStub)
         
         // assert
         // 檢查 currencyLossInHistoricalRate 確實分析失敗
-        let analyzedResultForLossCurrency: Result<QuasiBaseResultModel.Analysis.Success, QuasiBaseResultModel.Analysis.Failure> = try XCTUnwrap(analyzedData.removeValue(forKey: currencyLossInHistoricalRate))
-        
-        switch analyzedResultForLossCurrency {
-            case .success: XCTFail("不應該是 success，這表示測試資料安排錯了。")
-            case .failure: break
-        }
+        XCTAssertEqual(analysis.dataAbsentCurrencyCodeSet, Set([currencyLossInHistoricalRate]))
     }
     
     func testLatestRateLossACurrency() throws {
@@ -96,20 +84,14 @@ final class QuasiBaseResultModelTests: XCTestCase {
         let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         
         // act
-        var analyzedData: [ResponseDataModel.CurrencyCode: Result<QuasiBaseResultModel.Analysis.Success, QuasiBaseResultModel.Analysis.Failure>] = QuasiBaseResultModel
-            .analyze(currencyCodeOfInterest: currencyCodeOfInterest,
-                     latestRate: latestRate,
-                     historicalRateSet: [historicalRate],
-                     baseCurrencyCode: baseCurrencyCode,
-                     currencyDescriber: currencyDescriberStub)
+        var analysis: QuasiBaseResultModel.Analysis = sut.analyze(baseCurrencyCode: baseCurrencyCode,
+                                                                  currencyCodeOfInterest: currencyCodeOfInterest,
+                                                                  latestRate: latestRate,
+                                                                  historicalRateSet: [historicalRate],
+                                                                  currencyDescriber: currencyDescriberStub)
         
         // assert
         // 檢查 currencyLossInLatestRate 確實分析失敗
-        let analyzedResultForLossCurrency: Result<QuasiBaseResultModel.Analysis.Success, QuasiBaseResultModel.Analysis.Failure> = try XCTUnwrap(analyzedData.removeValue(forKey: currencyLossInLatestRate))
-        
-        switch analyzedResultForLossCurrency {
-            case .success: XCTFail("不應該是 success，這表示測試資料安排錯了。")
-            case .failure: break
-        }
+        XCTAssertEqual(analysis.dataAbsentCurrencyCodeSet, Set([currencyLossInLatestRate]))
     }
 }
