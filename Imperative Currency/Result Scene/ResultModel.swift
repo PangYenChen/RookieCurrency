@@ -47,9 +47,9 @@ final class ResultModel: BaseResultModel {
     
     private var latestUpdateTimestamp: Int?
     
-    private var analysisSuccesses: [Analysis.Success]
+    private var analysisSuccesses: Set<Analysis.Success>
     
-    var analysisSuccessesHandler: AnalysisSuccessesHandlebar?
+    var analysisSuccessesHandler: SortedAnalysisSuccessesHandlebar?
     
     var refreshStatusHandler: RefreshStatusHandlebar?
     
@@ -64,32 +64,22 @@ extension ResultModel {
         rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
                 case .success(let (latestRate, historicalRateSet)):
-                    let analysisResult: [ResponseDataModel.CurrencyCode: Result<Analysis.Success, Analysis.Failure>] =
-                    Self.analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
-                                 latestRate: latestRate,
-                                 historicalRateSet: historicalRateSet,
-                                 baseCurrencyCode: setting.baseCurrencyCode)
+                    let analysis: Analysis = Self.analyze(baseCurrencyCode: setting.baseCurrencyCode,
+                                                          currencyCodeOfInterest: setting.currencyCodeOfInterest,
+                                                          latestRate: latestRate,
+                                                          historicalRateSet: historicalRateSet)
                     
-                    let analysisFailure: [ResponseDataModel.CurrencyCode: Result<Analysis.Success, Analysis.Failure>] = analysisResult
-                        .filter { _, result in
-                            switch result {
-                                case .failure: return true
-                                case .success: return false
-                            }
-                        }
-                    
-                    guard analysisFailure.isEmpty else {
+                    guard analysis.dataAbsentCurrencyCodeSet.isEmpty else {
                         // TODO: 還沒處理錯誤"
+                        assertionFailure("還沒處理錯誤")
                         return
                     }
                     
-                    analysisSuccesses = analysisResult
-                        .values
-                        .compactMap { result in try? result.get() }
+                    analysisSuccesses = analysis.successes
                     
-                    let sortedAnalysisSuccesses: [BaseResultModel.Analysis.Success] = Self.sort(self.analysisSuccesses,
-                                                                                                by: self.order,
-                                                                                                filteredIfNeededBy: self.searchText)
+                    let sortedAnalysisSuccesses: [Analysis.Success] = Self.sort(self.analysisSuccesses,
+                                                                                by: self.order,
+                                                                                filteredIfNeededBy: self.searchText)
                     analysisSuccessesHandler?(sortedAnalysisSuccesses)
                     
                     latestUpdateTimestamp = latestRate.timestamp
@@ -155,7 +145,7 @@ extension ResultModel {
 
 // MARK: - name space
 extension ResultModel {
-    typealias AnalysisSuccessesHandlebar = (_ analysisSuccesses: [BaseResultModel.Analysis.Success]) -> Void
+    typealias SortedAnalysisSuccessesHandlebar = (_ sortedAnalysisSuccesses: [BaseResultModel.Analysis.Success]) -> Void
     
     typealias RefreshStatusHandlebar = (_ refreshStatus: BaseResultModel.RefreshStatus) -> Void
     
