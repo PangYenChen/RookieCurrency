@@ -24,30 +24,6 @@ extension QuasiBaseResultModel {
     /// 這個 method 是給兩個 target 的 subclass 使用的，不寫成 instance method 的原因是，
     /// reactive target 的 subclass 在 initialization 的 phase 1 中使用，所以必須獨立於 instance。
     /// 這個 method 是 pure function，所以不寫成 instance 的 dependency 也沒關係。
-    static func sort(_ analysisSuccesses: [Analysis.Success],
-                     by order: Order,
-                     filteredIfNeededBy searchText: String?,
-                     currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) -> [Analysis.Success] {
-        analysisSuccesses
-            .sorted { lhs, rhs in
-                switch order {
-                    case .increasing: lhs.deviation < rhs.deviation
-                    case .decreasing: lhs.deviation > rhs.deviation
-                }
-            }
-            .filter { analysisSuccess in
-                guard let searchText, !searchText.isEmpty else { return true }
-                
-                return [analysisSuccess.currencyCode,
-                        currencyDescriber.localizedStringFor(currencyCode: analysisSuccess.currencyCode)]
-                    .compactMap { $0 }
-                    .contains { text in text.localizedStandardContains(searchText) }
-            }
-    }
-    
-    /// 這個 method 是給兩個 target 的 subclass 使用的，不寫成 instance method 的原因是，
-    /// reactive target 的 subclass 在 initialization 的 phase 1 中使用，所以必須獨立於 instance。
-    /// 這個 method 是 pure function，所以不寫成 instance 的 dependency 也沒關係。
     static func analyze(
         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
         latestRate: ResponseDataModel.LatestRate,
@@ -99,6 +75,54 @@ extension QuasiBaseResultModel {
         }
         
         return resultDictionary
+        
+        // 基準貨幣的換算，api 的資料邏輯是「一單位的基準貨幣等於多少單位的其他貨幣」，app 的邏輯是「一單位的其他貨幣等於多少單位的基準貨幣」。
+        struct RateConverter<Category> where Category: RateCategoryProtocol {
+            typealias Rate = ResponseDataModel.Rate<Category>
+            
+            private let rate: Rate
+            
+            private let baseCurrencyCode: ResponseDataModel.CurrencyCode
+            
+            init(
+                rate: Rate,
+                baseCurrencyCode: ResponseDataModel.CurrencyCode
+            ) {
+                self.rate = rate
+                self.baseCurrencyCode = baseCurrencyCode
+            }
+            
+            subscript(currencyCodeCode currencyCodeCode: ResponseDataModel.CurrencyCode) -> Decimal? {
+                guard let rateForBaseCurrencyCode = rate[currencyCode: baseCurrencyCode],
+                      let rateForCurrencyCode = rate[currencyCode: currencyCodeCode] else { return nil }
+                
+                return rateForBaseCurrencyCode / rateForCurrencyCode
+            }
+        }
+    }
+    
+    /// 這個 method 是給兩個 target 的 subclass 使用的，不寫成 instance method 的原因是，
+    /// reactive target 的 subclass 在 initialization 的 phase 1 中使用，所以必須獨立於 instance。
+    /// 這個 method 是 pure function，所以不寫成 instance 的 dependency 也沒關係。
+    static func sort(_ analysisSuccesses: [Analysis.Success],
+                     by order: Order,
+                     filteredIfNeededBy searchText: String?,
+                     currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) -> [Analysis.Success] {
+        analysisSuccesses
+            .sorted { lhs, rhs in
+                switch order {
+                    case .increasing: lhs.deviation < rhs.deviation
+                    case .decreasing: lhs.deviation > rhs.deviation
+                }
+            }
+            .filter { analysisSuccess in
+                guard let searchText, !searchText.isEmpty else { return true }
+                
+                return [analysisSuccess.currencyCode,
+                        currencyDescriber.localizedStringFor(currencyCode: analysisSuccess.currencyCode)]
+                    .compactMap { $0 }
+                    .contains { text in text.localizedStandardContains(searchText) }
+            }
     }
 }
 
@@ -146,29 +170,6 @@ extension QuasiBaseResultModel {
         
         enum Failure: Error {
             case dataAbsent
-        }
-    }
-    // 基準貨幣的換算，api 的資料邏輯是「一單位的基準貨幣等於多少單位的其他貨幣」，app 的邏輯是「一單位的其他貨幣等於多少單位的基準貨幣」。
-    private struct RateConverter<Category> where Category: RateCategoryProtocol {
-        typealias Rate = ResponseDataModel.Rate<Category>
-        
-        private let rate: Rate
-        
-        private let baseCurrencyCode: ResponseDataModel.CurrencyCode
-        
-        init(
-            rate: Rate,
-            baseCurrencyCode: ResponseDataModel.CurrencyCode
-        ) {
-            self.rate = rate
-            self.baseCurrencyCode = baseCurrencyCode
-        }
-        
-        subscript(currencyCodeCode currencyCodeCode: ResponseDataModel.CurrencyCode) -> Decimal? {
-            guard let rateForBaseCurrencyCode = rate[currencyCode: baseCurrencyCode],
-                  let rateForCurrencyCode = rate[currencyCode: currencyCodeCode] else { return nil }
-            
-            return rateForBaseCurrencyCode / rateForCurrencyCode
         }
     }
     
