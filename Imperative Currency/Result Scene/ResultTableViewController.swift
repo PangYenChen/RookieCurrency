@@ -12,7 +12,7 @@ final class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        resultModel.analysisSuccessesHandler = populateTableViewWith
+        resultModel.sortedAnalysisSuccessesHandler = populateTableViewWith
         resultModel.refreshStatusHandler = populateRefreshStatusBarButtonItemWith(status:)
         resultModel.errorHandler = presentErrorAlert(error:)
     }

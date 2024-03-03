@@ -49,7 +49,7 @@ final class ResultModel: BaseResultModel {
     
     private var analysisSuccesses: Set<Analysis.Success>
     
-    var analysisSuccessesHandler: SortedAnalysisSuccessesHandlebar?
+    var sortedAnalysisSuccessesHandler: SortedAnalysisSuccessesHandlebar?
     
     var refreshStatusHandler: RefreshStatusHandlebar?
     
@@ -80,7 +80,7 @@ extension ResultModel {
                     let sortedAnalysisSuccesses: [Analysis.Success] = Self.sort(self.analysisSuccesses,
                                                                                 by: self.order,
                                                                                 filteredIfNeededBy: self.searchText)
-                    analysisSuccessesHandler?(sortedAnalysisSuccesses)
+                    sortedAnalysisSuccessesHandler?(sortedAnalysisSuccesses)
                     
                     latestUpdateTimestamp = latestRate.timestamp
                     refreshStatusHandler?(.idle(latestUpdateTimestamp: latestRate.timestamp))
