@@ -125,7 +125,57 @@ extension QuasiBaseResultModel {
 
 // MARK: - 第五版
 extension QuasiBaseResultModel {
+    /// 這個 method 是給兩個 target 的 subclass 使用的，不寫成 instance method 的原因是，
+    /// reactive target 的 subclass 在 initialization 的 phase 1 中使用，所以必須獨立於 instance。
+    /// 這個 method 是 pure function，所以不寫成 instance 的 dependency 也沒關係。
+    static func statisticize(
+        baseCurrencyCode: ResponseDataModel.CurrencyCode,
+        currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
+        latestRate: ResponseDataModel.LatestRate,
+        historicalRateSet: Set<ResponseDataModel.HistoricalRate>,
+        currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared
+    ) -> StatisticsResult {
+        var rateStatistics: Set<RateStatistic> = []
+        var dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = []
+        
+        for targetCurrencyCode in currencyCodeOfInterest {
+            if let rateStatic = RateStatistic(baseCurrencyCode: baseCurrencyCode,
+                                              currencyCode: targetCurrencyCode,
+                                              currencyDescriber: currencyDescriber,
+                                              latestRate: latestRate,
+                                              historicalRateSet: historicalRateSet) {
+                rateStatistics.insert(rateStatic)
+            }
+            else {
+                dataAbsentCurrencyCodeSet.insert(targetCurrencyCode)
+            }
+        }
+        
+        return (rateStatistics: rateStatistics, dataAbsentCurrencyCodeSet: dataAbsentCurrencyCodeSet)
+    }
     
+    /// 這個 method 是給兩個 target 的 subclass 使用的，不寫成 instance method 的原因是，
+    /// reactive target 的 subclass 在 initialization 的 phase 1 中使用，所以必須獨立於 instance。
+    /// 這個 method 是 pure function，所以不寫成 instance 的 dependency 也沒關係。
+    static func sort(_ rateStatistics: Set<RateStatistic>,
+                     by order: Order,
+                     filteredIfNeededBy searchText: String?) -> [RateStatistic] {
+        rateStatistics
+            .sorted { lhs, rhs in
+                switch order {
+                    case .increasing: lhs.fluctuation < rhs.fluctuation
+                    case .decreasing: lhs.fluctuation > rhs.fluctuation
+                }
+            }
+            .filter { rateStatistic in
+                guard let searchText, !searchText.isEmpty else { return true }
+                
+                return [rateStatistic.currencyCode,
+                        rateStatistic.localizedString]
+                    .compactMap { $0 }
+                    .contains { text in text.localizedStandardContains(searchText) }
+            }
+    }
 }
 
 // MARK: - name space
@@ -172,7 +222,7 @@ extension QuasiBaseResultModel {
     }
     
     /// 這是容納換算好的資料的容器
-    struct RateStatistic {
+    struct RateStatistic: Hashable {
         init?(baseCurrencyCode: ResponseDataModel.CurrencyCode,
               currencyCode: ResponseDataModel.CurrencyCode,
               currencyDescriber: CurrencyDescriberProtocol,
@@ -212,7 +262,7 @@ extension QuasiBaseResultModel {
         }
     }
     
-    struct DataAbsent: Error {}
+    typealias StatisticsResult = (rateStatistics: Set<RateStatistic>, dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>)
     
     enum RefreshStatus {
         case process

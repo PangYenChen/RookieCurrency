@@ -94,4 +94,32 @@ final class QuasiBaseResultModelTests: XCTestCase {
         // 檢查 currencyLossInLatestRate 確實分析失敗
         XCTAssertEqual(analysis.dataAbsentCurrencyCodeSet, Set([currencyLossInLatestRate]))
     }
+    
+    func testStatisticize() throws {
+        // arrange
+        
+        let baseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
+        
+        let supportedCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
+        let nonSupportedCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = ["FakeCurrencyInHistoricalRate"]
+        let currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = supportedCurrencyCodeSet.union(nonSupportedCurrencyCodeSet)
+        
+        let latestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
+        let dummyDateString: String = "1970-01-01"
+        let historicalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: dummyDateString)
+        let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
+        
+        // act
+        let statisticsResult = sut.statisticize(baseCurrencyCode: baseCurrencyCode,
+                                                currencyCodeOfInterest: currencyCodeOfInterest,
+                                                latestRate: latestRate,
+                                                historicalRateSet: [historicalRate],
+                                                currencyDescriber: currencyDescriberStub)
+        
+        // assert
+        XCTAssertEqual(Set(statisticsResult.rateStatistics.map { $0.currencyCode }),
+                       supportedCurrencyCodeSet)
+        
+        XCTAssertEqual(statisticsResult.dataAbsentCurrencyCodeSet, nonSupportedCurrencyCodeSet)
+    }
 }
