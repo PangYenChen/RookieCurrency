@@ -34,7 +34,7 @@ extension CurrencySelectionModel {
         case currencyCode
         case currencyNameZhuyin
         
-        var localizedName: String {
+        var localizedString: String {
             switch self {
                 case .currencyName: return R.string.currencyScene.currencyName()
                 case .currencyCode: return R.string.currencyScene.currencyCode()
@@ -47,7 +47,7 @@ extension CurrencySelectionModel {
         case ascending
         case descending
         
-        var localizedName: String {
+        var localizedString: String {
             switch self {
                 case .ascending: return R.string.currencyScene.ascending()
                 case .descending: return R.string.currencyScene.descending()

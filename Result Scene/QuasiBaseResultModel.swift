@@ -130,7 +130,7 @@ extension QuasiBaseResultModel {
         case increasing
         case decreasing
         
-        var localizedName: String {
+        var localizedString: String {
             switch self {
                 case .increasing: R.string.resultScene.increasing()
                 case .decreasing: R.string.resultScene.decreasing()

@@ -84,12 +84,12 @@ class BaseResultTableViewController: UITableViewController {
         
         do /*configure sort item*/ {
             let increasingAction: UIAction = UIAction(
-                title: BaseResultModel.Order.increasing.localizedName,
+                title: BaseResultModel.Order.increasing.localizedString,
                 image: UIImage(systemSymbol: .arrowUpRight)
             ) { [unowned self] _ in setOrder(.increasing) }
             
             let decreasingAction: UIAction = UIAction(
-                title: BaseResultModel.Order.decreasing.localizedName,
+                title: BaseResultModel.Order.decreasing.localizedString,
                 image: UIImage(systemSymbol: .arrowDownRight)
             ) { [unowned self] _ in setOrder(.decreasing) }
             
@@ -107,7 +107,7 @@ class BaseResultTableViewController: UITableViewController {
                                                options: .singleSelection,
                                                children: [sortMenu])
             
-            sortingBarButtonItem.menu?.children.first?.subtitle = baseResultModel.initialOrder.localizedName
+            sortingBarButtonItem.menu?.children.first?.subtitle = baseResultModel.initialOrder.localizedString
         }
         
         do /*configure refreshStatusItem*/ {
