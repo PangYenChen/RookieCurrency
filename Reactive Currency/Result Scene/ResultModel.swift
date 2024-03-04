@@ -56,7 +56,6 @@ final class ResultModel: BaseResultModel {
                 .eraseToAnyPublisher()
             }
             
-            // TODO: rename to analysis 全域搜尋取代
             let analysisTupleResult: AnyPublisher<Result<AnalysisTuple, Error>, Never> = refresh.withLatestFrom(setting)
                 .flatMap { _, setting in
                     rateManager
@@ -69,7 +68,6 @@ final class ResultModel: BaseResultModel {
                                              currencyCodeOfInterest: setting.currencyCodeOfInterest,
                                              latestRate: rateTuple.latestRate,
                                              historicalRateSet: rateTuple.historicalRateSet)
-                                // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
                                 return (latestUpdateTime: rateTuple.latestRate.timestamp, analysis: analysis)
                             }
                         }
@@ -90,7 +88,7 @@ final class ResultModel: BaseResultModel {
             
             let dataAbsentCurrencyCodeSet = analysisTuple
                 .map { tuple in tuple.analysis.dataAbsentCurrencyCodeSet }
-            // TODO: 還沒處理分析錯誤
+            // TODO: 還沒處理分析錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
             
             error = analysisTupleResult.resultFailure()
             
@@ -100,10 +98,10 @@ final class ResultModel: BaseResultModel {
                     .eraseToAnyPublisher()
                 
                 let refreshStatusIdle: AnyPublisher<BaseResultModel.RefreshStatus, Never> = analysisTupleResult
-                    .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, analyzedResult -> BaseResultModel.RefreshStatus in
-                        switch analyzedResult {
-                            case .success(let analyzedSuccess):
-                                return .idle(latestUpdateTimestamp: analyzedSuccess.latestUpdateTime)
+                    .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, analysisTupleResult -> BaseResultModel.RefreshStatus in
+                        switch analysisTupleResult {
+                            case .success(let analysisTuple):
+                                return .idle(latestUpdateTimestamp: analysisTuple.latestUpdateTime)
                             case .failure:
                                 return partialResult
                         }
