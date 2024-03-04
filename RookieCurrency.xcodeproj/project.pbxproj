@@ -27,6 +27,14 @@
 		512495692B31E89C00FD86D9 /* SupportedCurrencyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512495682B31E89C00FD86D9 /* SupportedCurrencyManager.swift */; };
 		512495752B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512495742B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift */; };
 		512495762B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512495742B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift */; };
+		51290B7E2B90526D005BE201 /* TimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B7D2B90526D005BE201 /* TimerProtocol.swift */; };
+		51290B842B905642005BE201 /* TimerProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B832B905642005BE201 /* TimerProxy.swift */; };
+		51290B882B9059A7005BE201 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B872B9059A7005BE201 /* Timer.swift */; };
+		51290B8D2B906107005BE201 /* TimerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B8C2B906107005BE201 /* TimerProtocol.swift */; };
+		51290B8F2B90672C005BE201 /* TimerProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B8E2B90672C005BE201 /* TimerProxy.swift */; };
+		51290B922B90689E005BE201 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B912B90689E005BE201 /* Timer.swift */; };
+		51290B9B2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */; };
+		51290B9C2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */; };
 		5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */; };
 		512CE8CF2B35EA9700019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8CE2B35EA9700019B20 /* RateSession.swift */; };
 		512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D32B35F52D00019B20 /* RateSession.swift */; };
@@ -92,8 +100,6 @@
 		5168923E2A754353002018CE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5168923D2A754353002018CE /* Main.storyboard */; };
 		5168923F2A754353002018CE /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5168923D2A754353002018CE /* Main.storyboard */; };
 		516FF51C2B01014000576177 /* SettingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FF51A2B01014000576177 /* SettingModel.swift */; };
-		517CD31E2A47EE3800AB1E32 /* AnalystTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517CD31D2A47EE3800AB1E32 /* AnalystTest.swift */; };
-		517CD3212A47F32D00AB1E32 /* AnalystTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 517CD31D2A47EE3800AB1E32 /* AnalystTest.swift */; };
 		51869FD829D9D31D00EFA13D /* RateManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* RateManagerTests.swift */; };
 		51869FD929D9D31D00EFA13D /* RateManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* RateManagerTests.swift */; };
 		5189F9D029DAD630004234D3 /* ImperativeRateManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5189F9CF29DAD630004234D3 /* ImperativeRateManagerTests.swift */; };
@@ -141,10 +147,8 @@
 		E15BA6B724FCA66900CA5B1B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E15BA6B624FCA66900CA5B1B /* Assets.xcassets */; };
 		E15BA6C524FCA66900CA5B1B /* FetcherTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */; };
 		E1CE96AA248555680029ED73 /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96A9248555680029ED73 /* Fetcher.swift */; };
-		E1CE96AC248555C30029ED73 /* Analyst.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AB248555C30029ED73 /* Analyst.swift */; };
 		E1CE96AE248555E10029ED73 /* RateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AD248555E10029ED73 /* RateManager.swift */; };
 		E1FB993524FCDC270096FE2C /* Response Data Model.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B276824758BCB00E0A07D /* Response Data Model.swift */; };
-		E1FB993C24FF45250096FE2C /* Analyst.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96AB248555C30029ED73 /* Analyst.swift */; };
 		E1FB993F24FF554C0096FE2C /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1FB993E24FF554C0096FE2C /* ResultTableViewController.swift */; };
 		E1FB994124FF9DCD0096FE2C /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1CE96A9248555680029ED73 /* Fetcher.swift */; };
 		E1FB9943250083BE0096FE2C /* Archiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1133334248A924D00B8E67F /* Archiver.swift */; };
@@ -183,6 +187,13 @@
 		512495632B31E1B400FD86D9 /* CurrencyDescriberProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyDescriberProxy.swift; sourceTree = "<group>"; };
 		512495682B31E89C00FD86D9 /* SupportedCurrencyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedCurrencyManager.swift; sourceTree = "<group>"; };
 		512495742B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySelectionModelProtocol.swift; sourceTree = "<group>"; };
+		51290B7D2B90526D005BE201 /* TimerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProtocol.swift; sourceTree = "<group>"; };
+		51290B832B905642005BE201 /* TimerProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProxy.swift; sourceTree = "<group>"; };
+		51290B872B9059A7005BE201 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
+		51290B8C2B906107005BE201 /* TimerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProtocol.swift; sourceTree = "<group>"; };
+		51290B8E2B90672C005BE201 /* TimerProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProxy.swift; sourceTree = "<group>"; };
+		51290B912B90689E005BE201 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
+		51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuasiBaseResultModelTests.swift; sourceTree = "<group>"; };
 		5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 		512CE8CE2B35EA9700019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
 		512CE8D32B35F52D00019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
@@ -230,7 +241,6 @@
 		5168923D2A754353002018CE /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
 		516916B92983D4C800547B60 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		516FF51A2B01014000576177 /* SettingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingModel.swift; sourceTree = "<group>"; };
-		517CD31D2A47EE3800AB1E32 /* AnalystTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalystTest.swift; sourceTree = "<group>"; };
 		51869FD729D9D31D00EFA13D /* RateManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateManagerTests.swift; sourceTree = "<group>"; };
 		5189F9CF29DAD630004234D3 /* ImperativeRateManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImperativeRateManagerTests.swift; sourceTree = "<group>"; };
 		518F31062AD524D800146818 /* ResultModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultModel.swift; sourceTree = "<group>"; };
@@ -266,7 +276,6 @@
 		E15BA6C024FCA66900CA5B1B /* ReactiveCurrencyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReactiveCurrencyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FetcherTests.swift; sourceTree = "<group>"; };
 		E1CE96A9248555680029ED73 /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
-		E1CE96AB248555C30029ED73 /* Analyst.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Analyst.swift; sourceTree = "<group>"; };
 		E1CE96AD248555E10029ED73 /* RateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateManager.swift; sourceTree = "<group>"; };
 		E1FB993E24FF554C0096FE2C /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -319,7 +328,6 @@
 			isa = PBXGroup;
 			children = (
 				51E1B4BF29AE3CB000D75669 /* Fetcher */,
-				E1CE96AB248555C30029ED73 /* Analyst.swift */,
 				514F72FD29AB682D0080DD8B /* AppUtility.swift */,
 				5124955C2B31CACF00FD86D9 /* BaseSupportedCurrencyManager.swift */,
 				512CE8D82B36F9D000019B20 /* UserSettingManager.swift */,
@@ -333,6 +341,7 @@
 		512087AB29A9F482005ED87A /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				51290B8A2B9060F4005BE201 /* Timer */,
 				512087AF29A9F858005ED87A /* RateManager + Reactive.swift */,
 				512087AD29A9F4A7005ED87A /* Fetcher + Reactive.swift */,
 				512CE8D32B35F52D00019B20 /* RateSession.swift */,
@@ -344,6 +353,7 @@
 		5124955F2B31CBD700FD86D9 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				51290B7C2B90525B005BE201 /* Timer */,
 				512087A229A9EE85005ED87A /* RateManager + Imperative.swift */,
 				512087A829A9F10A005ED87A /* Fetcher + Imperative.swift */,
 				512CE8CE2B35EA9700019B20 /* RateSession.swift */,
@@ -352,13 +362,31 @@
 			path = Model;
 			sourceTree = "<group>";
 		};
+		51290B7C2B90525B005BE201 /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				51290B7D2B90526D005BE201 /* TimerProtocol.swift */,
+				51290B832B905642005BE201 /* TimerProxy.swift */,
+			);
+			path = Timer;
+			sourceTree = "<group>";
+		};
+		51290B8A2B9060F4005BE201 /* Timer */ = {
+			isa = PBXGroup;
+			children = (
+				51290B8C2B906107005BE201 /* TimerProtocol.swift */,
+				51290B8E2B90672C005BE201 /* TimerProxy.swift */,
+			);
+			path = Timer;
+			sourceTree = "<group>";
+		};
 		51362E3B29B4D7D700E3CE89 /* Shared Tests */ = {
 			isa = PBXGroup;
 			children = (
 				519A643429B4615B00918B84 /* ResponseDataModelTest.swift */,
 				51869FD729D9D31D00EFA13D /* RateManagerTests.swift */,
 				519A642F29B0D5D000918B84 /* ArchiverTest.swift */,
-				517CD31D2A47EE3800AB1E32 /* AnalystTest.swift */,
+				51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */,
 			);
 			path = "Shared Tests";
 			sourceTree = "<group>";
@@ -384,6 +412,7 @@
 		5143C8832A7B848B00EDEFFF /* Test Double */ = {
 			isa = PBXGroup;
 			children = (
+				51290B872B9059A7005BE201 /* Timer.swift */,
 				512CE8E52B37284D00019B20 /* RateManager.swift */,
 				5143C8862A7B855700EDEFFF /* Fetcher.swift */,
 			);
@@ -395,6 +424,7 @@
 			children = (
 				51C02C0D2B39B84A00B757FA /* RateManager.swift */,
 				5143C88B2A7B864400EDEFFF /* Fetcher.swift */,
+				51290B912B90689E005BE201 /* Timer.swift */,
 			);
 			path = "Test Doubld";
 			sourceTree = "<group>";
@@ -902,6 +932,7 @@
 				512087A929A9F10A005ED87A /* Fetcher + Imperative.swift in Sources */,
 				5120879829A8DC71005ED87A /* DebugInfoViewController.swift in Sources */,
 				512087A329A9EE85005ED87A /* RateManager + Imperative.swift in Sources */,
+				51290B7E2B90526D005BE201 /* TimerProtocol.swift in Sources */,
 				514C4CFE29A07A7B0049E192 /* Publisher + Helper.swift in Sources */,
 				512CE8CF2B35EA9700019B20 /* RateSession.swift in Sources */,
 				51119A1A2999D79C002758B3 /* PresentWithNavigationController.swift in Sources */,
@@ -919,7 +950,7 @@
 				E1CE96AA248555680029ED73 /* Fetcher.swift in Sources */,
 				514C4D0D29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */,
 				519BD8AA29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */,
-				E1CE96AC248555C30029ED73 /* Analyst.swift in Sources */,
+				51290B842B905642005BE201 /* TimerProxy.swift in Sources */,
 				513E106429F424D0000E1A87 /* AlertPresenter.swift in Sources */,
 				514F171D2B3131B700C806E3 /* CurrencyOfInterestSelectionStrategy.swift in Sources */,
 				514C4D0A29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */,
@@ -951,11 +982,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51290B882B9059A7005BE201 /* Timer.swift in Sources */,
 				512CE8EB2B3737C200019B20 /* ResultModelTest.swift in Sources */,
 				519A643829B4627500918B84 /* TestingData.swift in Sources */,
 				51869FD829D9D31D00EFA13D /* RateManagerTests.swift in Sources */,
 				E13B275D24758ACF00E0A07D /* FetcherTests.swift in Sources */,
 				51362E2629B4CF3F00E3CE89 /* Rate Instance.swift in Sources */,
+				51290B9B2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift in Sources */,
 				5143C8872A7B855700EDEFFF /* Fetcher.swift in Sources */,
 				512CE8E82B37287A00019B20 /* RateManager.swift in Sources */,
 				515DE3732AA31FE6005E719C /* Session Output.swift in Sources */,
@@ -963,7 +996,6 @@
 				51E731C829B4DCFA00C1DB2B /* ArchiverTest.swift in Sources */,
 				512CE8E32B37259300019B20 /* UserSettingManager.swift in Sources */,
 				51E731CA29B4DCFF00C1DB2B /* ResponseDataModelTest.swift in Sources */,
-				517CD31E2A47EE3800AB1E32 /* AnalystTest.swift in Sources */,
 				51E1B4B929ADADD800D75669 /* TestingData For Data.swift in Sources */,
 				5121216C29E2D60C001D234B /* TestDouble.swift in Sources */,
 				5143C8802A7B5B5200EDEFFF /* Archiver.swift in Sources */,
@@ -978,6 +1010,7 @@
 				512087AE29A9F4A7005ED87A /* Fetcher + Reactive.swift in Sources */,
 				5120879929A8DC71005ED87A /* DebugInfoViewController.swift in Sources */,
 				51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */,
+				51290B8D2B906107005BE201 /* TimerProtocol.swift in Sources */,
 				E1FB993F24FF554C0096FE2C /* ResultTableViewController.swift in Sources */,
 				512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */,
 				E1FB9944250084760096FE2C /* RateManager.swift in Sources */,
@@ -1002,13 +1035,13 @@
 				51D67ED42975922D008B8928 /* SceneDelegate.swift in Sources */,
 				519685F02B8C44A2004EEA72 /* UIConfiguration.swift in Sources */,
 				51E1B4CF29AE4C7100D75669 /* Historical.swift in Sources */,
+				51290B8F2B90672C005BE201 /* TimerProxy.swift in Sources */,
 				512CE8DA2B36F9D000019B20 /* UserSettingManager.swift in Sources */,
 				51578B7229A85A1000BE890F /* Git Commit Info.swift in Sources */,
 				514C4CFF29A07A7B0049E192 /* Publisher + Helper.swift in Sources */,
 				51D6CA492B1C8A7C003F9D13 /* BaseCurrencySelectionModelProtocol.swift in Sources */,
 				51E1B4C929AE488900D75669 /* Endpoints.swift in Sources */,
 				512495692B31E89C00FD86D9 /* SupportedCurrencyManager.swift in Sources */,
-				E1FB993C24FF45250096FE2C /* Analyst.swift in Sources */,
 				512495762B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift in Sources */,
 				514C4D0629A0D6570049E192 /* BaseCurrencySelectionTableViewController.swift in Sources */,
 				515D3D8829ED8C7400B84F4B /* SupportedSymbols.swift in Sources */,
@@ -1027,18 +1060,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				51290B922B90689E005BE201 /* Timer.swift in Sources */,
 				51C02C132B39B91000B757FA /* ResultModelTest.swift in Sources */,
 				E15BA6C524FCA66900CA5B1B /* FetcherTests.swift in Sources */,
 				512CE8F12B373D5700019B20 /* CurrencyDescriber.swift in Sources */,
 				51869FD929D9D31D00EFA13D /* RateManagerTests.swift in Sources */,
 				51E1B4BA29ADADD800D75669 /* TestingData For Data.swift in Sources */,
+				51290B9C2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift in Sources */,
 				51362E4F29B4D93500E3CE89 /* Rate Instance.swift in Sources */,
 				5143C88C2A7B864400EDEFFF /* Fetcher.swift in Sources */,
 				515DE3742AA31FE6005E719C /* Session Output.swift in Sources */,
 				51E731C729B4DCF900C1DB2B /* ArchiverTest.swift in Sources */,
 				512CE8E22B37259200019B20 /* UserSettingManager.swift in Sources */,
 				51E731C929B4DCFE00C1DB2B /* ResponseDataModelTest.swift in Sources */,
-				517CD3212A47F32D00AB1E32 /* AnalystTest.swift in Sources */,
 				5121216929E2D59F001D234B /* ReactiveRateManagerTests.swift in Sources */,
 				5121216D29E2D60C001D234B /* TestDouble.swift in Sources */,
 				5143C8812A7B5B5200EDEFFF /* Archiver.swift in Sources */,

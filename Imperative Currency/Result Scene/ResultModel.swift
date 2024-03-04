@@ -2,10 +2,9 @@ import Foundation
 
 final class ResultModel: BaseResultModel {
     // MARK: - life cycle
-    init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
-         rateManager: RateManagerProtocol = RateManager.shared,
-         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared) {
-        self.analyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
+    init(rateManager: RateManagerProtocol = RateManager.shared,
+         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
+         timer: TimerProtocol = TimerProxy()) {
         self.rateManager = rateManager
         self.userSettingManager = userSettingManager
         
@@ -16,12 +15,11 @@ final class ResultModel: BaseResultModel {
         order = userSettingManager.resultOrder
         
         searchText = nil
-        analyzedDataArray = []
+        analysisSuccesses = []
         
-        timer = nil
+        self.timer = timer
         
-        super.init(currencyDescriber: currencyDescriber,
-                   userSettingManager: userSettingManager)
+        super.init(userSettingManager: userSettingManager)
         
         resumeAutoRefreshing()
     }
@@ -35,29 +33,27 @@ final class ResultModel: BaseResultModel {
     
     private let rateManager: RateManagerProtocol
     
-    private let analyzedDataSorter: BaseResultModel.AnalyzedDataSorter
+    private let timer: TimerProtocol
     
     // MARK: - private properties
     
-    /// 是 user setting 的一部份，要傳遞到 setting scene 的資料，在那邊編輯
+    /// 是 user setting 的一部份，要傳遞到 setting model 的資料，在那邊編輯
     private var setting: Setting
     
-    /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這個 scene 修改
+    /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這裡修改
     private var order: Order
     
     private var searchText: String?
     
     private var latestUpdateTimestamp: Int?
     
-    private var analyzedDataArray: [AnalyzedData]
+    private var analysisSuccesses: Set<Analysis.Success>
     
-    var analyzedDataArrayHandler: AnalyzedDataArrayHandlebar?
+    var sortedAnalysisSuccessesHandler: SortedAnalysisSuccessesHandlebar?
     
     var refreshStatusHandler: RefreshStatusHandlebar?
     
     var errorHandler: ErrorHandler?
-    
-    private var timer: Timer?
 }
 
 // MARK: - methods
@@ -68,35 +64,23 @@ extension ResultModel {
         rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
                 case .success(let (latestRate, historicalRateSet)):
-                    let analyzedResult: [ResponseDataModel.CurrencyCode: Result<Analyst.AnalyzedData, Analyst.AnalyzedError>] = Analyst
-                        .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
-                                 latestRate: latestRate,
-                                 historicalRateSet: historicalRateSet,
-                                 baseCurrencyCode: setting.baseCurrencyCode)
+                    let analysis: Analysis = Self.analyze(baseCurrencyCode: setting.baseCurrencyCode,
+                                                          currencyCodeOfInterest: setting.currencyCodeOfInterest,
+                                                          latestRate: latestRate,
+                                                          historicalRateSet: historicalRateSet)
                     
-                    let analyzedFailure: [ResponseDataModel.CurrencyCode: Result<Analyst.AnalyzedData, Analyst.AnalyzedError>] = analyzedResult
-                        .filter { _, result in
-                            switch result {
-                                case .failure: return true
-                                case .success: return false
-                            }
-                        }
-                    
-                    guard analyzedFailure.isEmpty else {
+                    guard analysis.dataAbsentCurrencyCodeSet.isEmpty else {
                         // TODO: 還沒處理錯誤"
+                        assertionFailure("還沒處理錯誤")
                         return
                     }
                     
-                    analyzedDataArray = analyzedResult
-                        .compactMapValues { result in try? result.get() }
-                        .map { tuple in
-                            AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
-                        }
+                    analysisSuccesses = analysis.successes
                     
-                    let sortedAnalyzedDataArray: [BaseResultModel.AnalyzedData] = analyzedDataSorter.sort(self.analyzedDataArray,
-                                                                                                          by: self.order,
-                                                                                                          filteredIfNeededBy: self.searchText)
-                    analyzedDataArrayHandler?(sortedAnalyzedDataArray)
+                    let sortedAnalysisSuccesses: [Analysis.Success] = Self.sort(self.analysisSuccesses,
+                                                                                by: self.order,
+                                                                                filteredIfNeededBy: self.searchText)
+                    sortedAnalysisSuccessesHandler?(sortedAnalysisSuccesses)
                     
                     latestUpdateTimestamp = latestRate.timestamp
                     refreshStatusHandler?(.idle(latestUpdateTimestamp: latestRate.timestamp))
@@ -110,37 +94,33 @@ extension ResultModel {
     }
     
     // TODO: 名字要想一下，這看不出來有 return value
-    func setOrder(_ order: BaseResultModel.Order) -> [BaseResultModel.AnalyzedData] {
+    func setOrder(_ order: BaseResultModel.Order) -> [BaseResultModel.Analysis.Success] {
         userSettingManager.resultOrder = order
         self.order = order
         
-        return analyzedDataSorter.sort(self.analyzedDataArray,
-                                       by: self.order,
-                                       filteredIfNeededBy: self.searchText)
+        return Self.sort(self.analysisSuccesses,
+                         by: self.order,
+                         filteredIfNeededBy: self.searchText)
     }
     
     // TODO: 名字要想一下，這看不出來有 return value
-    func setSearchText(_ searchText: String?) -> [BaseResultModel.AnalyzedData] {
+    func setSearchText(_ searchText: String?) -> [BaseResultModel.Analysis.Success] {
         self.searchText = searchText
         
-        return analyzedDataSorter.sort(self.analyzedDataArray,
-                                       by: self.order,
-                                       filteredIfNeededBy: self.searchText)
+        return Self.sort(self.analysisSuccesses,
+                         by: self.order,
+                         filteredIfNeededBy: self.searchText)
     }
 }
 
 // MARK: - private methods: auto refreshing
 private extension ResultModel {
     func resumeAutoRefreshing() {
-        timer = Timer.scheduledTimer(withTimeInterval: Self.autoRefreshTimeInterval, repeats: true) { [unowned self] _ in
-            refresh()
-        }
-        timer?.fire()
+        timer.scheduledTimer(withTimeInterval: Self.autoRefreshTimeInterval) { [unowned self]  in refresh() }
     }
     
     func suspendAutoRefreshing() {
-        timer?.invalidate()
-        timer = nil
+        timer.invalidate()
     }
 }
 
@@ -165,7 +145,7 @@ extension ResultModel {
 
 // MARK: - name space
 extension ResultModel {
-    typealias AnalyzedDataArrayHandlebar = (_ analyzedData: [BaseResultModel.AnalyzedData]) -> Void
+    typealias SortedAnalysisSuccessesHandlebar = (_ sortedAnalysisSuccesses: [BaseResultModel.Analysis.Success]) -> Void
     
     typealias RefreshStatusHandlebar = (_ refreshStatus: BaseResultModel.RefreshStatus) -> Void
     

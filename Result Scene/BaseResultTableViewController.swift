@@ -21,7 +21,7 @@ class BaseResultTableViewController: UITableViewController {
         }
         
         do /*configure title*/ {
-            title = R.string.resultScene.analyzedResult()
+            title = R.string.resultScene.analysisResult()
             navigationItem.largeTitleDisplayMode = .automatic
         }
     }
@@ -42,7 +42,7 @@ class BaseResultTableViewController: UITableViewController {
         }
         
         do /*configure table view's data source*/ {
-            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, analyzedData in
+            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, analysisSuccess in
                 let reusedIdentifier: String = R.reuseIdentifier.currencyCell.identifier
                 let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
                 
@@ -51,23 +51,23 @@ class BaseResultTableViewController: UITableViewController {
                 contentConfiguration.textToSecondaryTextVerticalPadding = UIConfiguration.TableView.cellContentTextToSecondaryTextVerticalPadding
                 
                 do /*configure text*/ {
-                    let deviationString: String = analyzedData.deviation.formatted()
+                    let deviationString: String = analysisSuccess.deviation.formatted()
                     let fluctuationString: String = R.string.resultScene.fluctuation(deviationString)
                     
-                    contentConfiguration.text = [analyzedData.currencyCode,
-                                                 baseResultModel.localizedStringFor(currencyCode: analyzedData.currencyCode),
+                    contentConfiguration.text = [analysisSuccess.currencyCode,
+                                                 analysisSuccess.localizedString,
                                                  fluctuationString]
                         .compactMap { $0 }
                         .joined(separator: ", ")
                     
                     contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
                     contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
-                    contentConfiguration.textProperties.color = analyzedData.deviation < 0 ? .systemGreen : .systemRed
+                    contentConfiguration.textProperties.color = analysisSuccess.deviation < 0 ? .systemGreen : .systemRed
                 }
                 
                 do /*configure secondary text*/ {
-                    let meanString: String = analyzedData.mean.formatted()
-                    let latestString: String = analyzedData.latest.formatted()
+                    let meanString: String = analysisSuccess.mean.formatted()
+                    let latestString: String = analysisSuccess.latest.formatted()
                     
                     contentConfiguration.secondaryText = R.string.resultScene.currencyCellDetail(meanString, latestString)
                     contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
@@ -130,7 +130,7 @@ class BaseResultTableViewController: UITableViewController {
     // 這樣做的原因是想把兩個 target 共用的 code（設定 `UIAction`）寫在一起。
     // 而內容使用到的 model 的 method 的方式不同，所以無法共用。
     // swiftlint:disable:next unavailable_function
-    func setOrder(_ order: QuasiBaseResultModel.Order) { fatalError("setOrder() has not been implemented") }
+    func setOrder(_ order: BaseResultModel.Order) { fatalError("setOrder() has not been implemented") }
 }
 
 // MARK: - segue action
@@ -142,16 +142,16 @@ private extension BaseResultTableViewController {
 
 // MARK: - instance methods
 extension BaseResultTableViewController {
-    final func populateTableViewWith(_ analyzedDataArray: [BaseResultModel.AnalyzedData]) {
+    final func populateTableViewWith(_ analysisSuccess: [BaseResultModel.Analysis.Success]) {
         var snapshot: Snapshot = Snapshot()
         snapshot.appendSections([.main])
-        snapshot.appendItems(analyzedDataArray)
+        snapshot.appendItems(analysisSuccess)
         snapshot.reloadSections([.main])
         
         dataSource.apply(snapshot)
     }
     
-    final func populateRefreshStatusBarButtonItemWith(status: QuasiBaseResultModel.RefreshStatus) {
+    final func populateRefreshStatusBarButtonItemWith(status: BaseResultModel.RefreshStatus) {
         switch status {
             case .process:
                 refreshStatusBarButtonItem.title = R.string.resultScene.refreshing()
@@ -187,8 +187,8 @@ extension BaseResultTableViewController: UISearchBarDelegate {}
 
 // MARK: - private name space
 private extension BaseResultTableViewController {
-    typealias DataSource = UITableViewDiffableDataSource<Section, BaseResultModel.AnalyzedData>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, BaseResultModel.AnalyzedData>
+    typealias DataSource = UITableViewDiffableDataSource<Section, QuasiBaseResultModel.Analysis.Success>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, QuasiBaseResultModel.Analysis.Success>
     
     enum Section {
         case main

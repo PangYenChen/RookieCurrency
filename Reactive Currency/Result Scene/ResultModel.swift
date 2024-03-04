@@ -6,7 +6,8 @@ final class ResultModel: BaseResultModel {
     init(
         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
         rateManager: RateManagerProtocol = RateManager.shared,
-        userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared
+        userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
+        timer: TimerProtocol = TimerProxy()
     ) {
         var userSettingManager: UserSettingManagerProtocol = userSettingManager
         
@@ -38,13 +39,7 @@ final class ResultModel: BaseResultModel {
                     let timerPublisher: AnyPublisher<AnyPublisher<Void, Never>, Never> = Publishers
                         .Merge(resumeAutoRefresh,
                                settingFromSettingModel.map { _ in })
-                        .map { _ in
-                            Timer.publish(every: Self.autoRefreshTimeInterval, on: RunLoop.main, in: .default)
-                                .autoconnect()
-                                .map { _ in }
-                                .prepend(()) // start immediately after subscribing
-                                .eraseToAnyPublisher()
-                        }
+                        .map { _ in timer.makeTimerPublisher(every: Self.autoRefreshTimeInterval) }
                         .eraseToAnyPublisher()
                     
                     let emptyPublisher: AnyPublisher<AnyPublisher<Void, Never>, Never> = suspendAutoRefresh
@@ -61,55 +56,52 @@ final class ResultModel: BaseResultModel {
                 .eraseToAnyPublisher()
             }
             
-            let analyzedResult: AnyPublisher<Result<AnalyzedSuccess, Error>, Never> = refresh.withLatestFrom(setting)
+            let analysisTupleResult: AnyPublisher<Result<AnalysisTuple, Error>, Never> = refresh.withLatestFrom(setting)
                 .flatMap { _, setting in
                     rateManager
                         .ratePublisher(numberOfDays: setting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in
                             result.map { rateTuple in
-                                let analyzedDataArray: [BaseResultModel.AnalyzedData] = Analyst
-                                    .analyze(currencyCodeOfInterest: setting.currencyCodeOfInterest,
+                                let analysis: Analysis = Self
+                                    .analyze(baseCurrencyCode: setting.baseCurrencyCode,
+                                             currencyCodeOfInterest: setting.currencyCodeOfInterest,
                                              latestRate: rateTuple.latestRate,
-                                             historicalRateSet: rateTuple.historicalRateSet,
-                                             baseCurrencyCode: setting.baseCurrencyCode)
-                                    .compactMapValues { result in try? result.get() }
-                                // TODO: 還沒處理錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
-                                    .map { tuple in
-                                        AnalyzedData(currencyCode: tuple.key, latest: tuple.value.latest, mean: tuple.value.mean, deviation: tuple.value.deviation)
-                                    }
-                                return (latestUpdateTime: rateTuple.latestRate.timestamp, analyzedDataArray: analyzedDataArray)
+                                             historicalRateSet: rateTuple.historicalRateSet)
+                                return (latestUpdateTime: rateTuple.latestRate.timestamp, analysis: analysis)
                             }
                         }
                 }
                 .share()
                 .eraseToAnyPublisher()
             
-            do /*initialize analyzedDataArray*/ {
-                let analyzedDataSorter: AnalyzedDataSorter = AnalyzedDataSorter(currencyDescriber: currencyDescriber)
-                
-                analyzedDataArray = analyzedResult.resultSuccess()
-                    .map { tuple in tuple.analyzedDataArray }
-                    .combineLatest(order, searchText) { analyzedDataArray, order, searchText in
-                        analyzedDataSorter.sort(analyzedDataArray,
-                                                by: order,
-                                                filteredIfNeededBy: searchText)
-                    }
-                    .eraseToAnyPublisher()
-            }
+            let analysisTuple = analysisTupleResult.resultSuccess()
             
-            error = analyzedResult.resultFailure()
+            sortedAnalysisSuccesses = analysisTuple
+                .map { tuple in tuple.analysis.successes }
+                .combineLatest(order, searchText) { analysisSuccesses, order, searchText in
+                    Self.sort(analysisSuccesses,
+                              by: order,
+                              filteredIfNeededBy: searchText)
+                }
+                .eraseToAnyPublisher()
+            
+            let dataAbsentCurrencyCodeSet = analysisTuple
+                .map { tuple in tuple.analysis.dataAbsentCurrencyCodeSet }
+            // TODO: 還沒處理分析錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
+            
+            error = analysisTupleResult.resultFailure()
             
             do /*initialize refreshStatus*/ {
-                let refreshStatusProcess: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = refresh
+                let refreshStatusProcess: AnyPublisher<BaseResultModel.RefreshStatus, Never> = refresh
                     .map { _ in .process }
                     .eraseToAnyPublisher()
                 
-                let refreshStatusIdle: AnyPublisher<QuasiBaseResultModel.RefreshStatus, Never> = analyzedResult
-                    .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, analyzedResult -> QuasiBaseResultModel.RefreshStatus in
-                        switch analyzedResult {
-                            case .success(let analyzedSuccess):
-                                return .idle(latestUpdateTimestamp: analyzedSuccess.latestUpdateTime)
+                let refreshStatusIdle: AnyPublisher<BaseResultModel.RefreshStatus, Never> = analysisTupleResult
+                    .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, analysisTupleResult -> BaseResultModel.RefreshStatus in
+                        switch analysisTupleResult {
+                            case .success(let analysisTuple):
+                                return .idle(latestUpdateTimestamp: analysisTuple.latestUpdateTime)
                             case .failure:
                                 return partialResult
                         }
@@ -148,10 +140,10 @@ final class ResultModel: BaseResultModel {
     }
     
     // MARK: - input properties
-    /// 是 user setting 的一部份，要傳遞到 setting scene 的資料，在那邊編輯
+    /// 是 user setting 的一部份，要傳遞到 setting model 的資料，在那邊編輯
     private let setting: CurrentValueSubject<BaseResultModel.Setting, Never>
     
-    /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這個 scene 修改
+    /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這裡修改
     private let order: CurrentValueSubject<Order, Never>
     
     private let refreshTriggerByUser: PassthroughSubject<Void, Never>
@@ -165,7 +157,7 @@ final class ResultModel: BaseResultModel {
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: output properties
-    let analyzedDataArray: AnyPublisher<[BaseResultModel.AnalyzedData], Never>
+    let sortedAnalysisSuccesses: AnyPublisher<[BaseResultModel.Analysis.Success], Never>
     
     let refreshStatus: AnyPublisher<BaseResultModel.RefreshStatus, Never>
     
@@ -199,5 +191,6 @@ extension ResultModel {
 
 // MARK: - private name space
 private extension ResultModel {
-    typealias AnalyzedSuccess = (latestUpdateTime: Int, analyzedDataArray: [BaseResultModel.AnalyzedData])
+    // TODO: 想一下名字
+    typealias AnalysisTuple = (latestUpdateTime: Int, analysis: BaseResultModel.Analysis)
 }
