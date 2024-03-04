@@ -123,6 +123,11 @@ extension QuasiBaseResultModel {
     }
 }
 
+// MARK: - 第五版
+extension QuasiBaseResultModel {
+    
+}
+
 // MARK: - name space
 extension QuasiBaseResultModel {
     /// 資料的排序方式。
@@ -145,7 +150,7 @@ extension QuasiBaseResultModel {
                          baseCurrencyCode: ResponseDataModel.CurrencyCode,
                          currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>)
     
-    struct Analysis {
+    struct Analysis { // TODO: to be removed
         let successes: Set<Analysis.Success>
         let dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>
         
@@ -166,8 +171,61 @@ extension QuasiBaseResultModel {
         }
     }
     
+    /// 這是容納換算好的資料的容器
+    struct RateStatistic {
+        init?(baseCurrencyCode: ResponseDataModel.CurrencyCode,
+              currencyCode: ResponseDataModel.CurrencyCode,
+              currencyDescriber: CurrencyDescriberProtocol,
+              latestRate: ResponseDataModel.LatestRate,
+              historicalRateSet: Set<ResponseDataModel.HistoricalRate>) {
+            self.currencyCode = currencyCode
+            self.localizedString = currencyDescriber.localizedStringFor(currencyCode: currencyCode)
+            
+            guard let latestRate = latestRate.convertOneUnitOf(baseCurrencyCode, to: currencyCode) else { return nil }
+            
+            self.latestRate = latestRate
+            
+            var total: Decimal = 0
+            for historicalRate in historicalRateSet {
+                guard let historicalRate = historicalRate.convertOneUnitOf(baseCurrencyCode, to: currencyCode) else { return nil }
+                
+                total += historicalRate
+            }
+            
+            meanRate = total / Decimal(historicalRateSet.count)
+            
+            fluctuation = (latestRate - meanRate) / meanRate
+        }
+        
+        let currencyCode: ResponseDataModel.CurrencyCode
+        let localizedString: String
+        let latestRate: Decimal
+        let meanRate: Decimal
+        let fluctuation: Decimal
+        
+        func hash(into hasher: inout Hasher) {
+            hasher.combine(currencyCode)
+        }
+        
+        static func == (lhs: Self, rhs: Self) -> Bool {
+            lhs.currencyCode == rhs.currencyCode
+        }
+    }
+    
+    struct DataAbsent: Error {}
+    
     enum RefreshStatus {
         case process
         case idle(latestUpdateTimestamp: Int?)
+    }
+}
+
+private extension ResponseDataModel.Rate {
+    /// api 的資料邏輯是「一單位的基準貨幣等於多少單位的其他貨幣」，app 的邏輯是「一單位的其他貨幣等於多少單位的基準貨幣」。
+    func convertOneUnitOf(_ baseCurrencyCode: ResponseDataModel.CurrencyCode, to targetCurrencyCode: ResponseDataModel.CurrencyCode) -> Decimal? {
+        guard let rateForBaseCurrencyCode = self[currencyCode: baseCurrencyCode],
+              let rateForTargetCurrencyCode = self[currencyCode: targetCurrencyCode] else { return nil }
+        
+        return rateForBaseCurrencyCode / rateForTargetCurrencyCode
     }
 }

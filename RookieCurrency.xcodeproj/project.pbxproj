@@ -35,6 +35,8 @@
 		51290B922B90689E005BE201 /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B912B90689E005BE201 /* Timer.swift */; };
 		51290B9B2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */; };
 		51290B9C2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */; };
+		51290BA62B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290BA52B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift */; };
+		51290BA72B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290BA52B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift */; };
 		5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */; };
 		512CE8CF2B35EA9700019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8CE2B35EA9700019B20 /* RateSession.swift */; };
 		512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D32B35F52D00019B20 /* RateSession.swift */; };
@@ -194,6 +196,7 @@
 		51290B8E2B90672C005BE201 /* TimerProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TimerProxy.swift; sourceTree = "<group>"; };
 		51290B912B90689E005BE201 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuasiBaseResultModelTests.swift; sourceTree = "<group>"; };
+		51290BA52B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuasiBaseResultModelRateStatisticTests.swift; sourceTree = "<group>"; };
 		5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 		512CE8CE2B35EA9700019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
 		512CE8D32B35F52D00019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
@@ -387,6 +390,7 @@
 				51869FD729D9D31D00EFA13D /* RateManagerTests.swift */,
 				519A642F29B0D5D000918B84 /* ArchiverTest.swift */,
 				51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */,
+				51290BA52B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift */,
 			);
 			path = "Shared Tests";
 			sourceTree = "<group>";
@@ -985,6 +989,7 @@
 				51290B882B9059A7005BE201 /* Timer.swift in Sources */,
 				512CE8EB2B3737C200019B20 /* ResultModelTest.swift in Sources */,
 				519A643829B4627500918B84 /* TestingData.swift in Sources */,
+				51290BA62B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift in Sources */,
 				51869FD829D9D31D00EFA13D /* RateManagerTests.swift in Sources */,
 				E13B275D24758ACF00E0A07D /* FetcherTests.swift in Sources */,
 				51362E2629B4CF3F00E3CE89 /* Rate Instance.swift in Sources */,
@@ -1063,6 +1068,7 @@
 				51290B922B90689E005BE201 /* Timer.swift in Sources */,
 				51C02C132B39B91000B757FA /* ResultModelTest.swift in Sources */,
 				E15BA6C524FCA66900CA5B1B /* FetcherTests.swift in Sources */,
+				51290BA72B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift in Sources */,
 				512CE8F12B373D5700019B20 /* CurrencyDescriber.swift in Sources */,
 				51869FD929D9D31D00EFA13D /* RateManagerTests.swift in Sources */,
 				51E1B4BA29ADADD800D75669 /* TestingData For Data.swift in Sources */,

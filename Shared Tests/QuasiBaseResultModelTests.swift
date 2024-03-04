@@ -59,7 +59,7 @@ final class QuasiBaseResultModelTests: XCTestCase {
         let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         
         // act
-        var analysis: QuasiBaseResultModel.Analysis = sut.analyze(baseCurrencyCode: baseCurrencyCode,
+        let analysis: QuasiBaseResultModel.Analysis = sut.analyze(baseCurrencyCode: baseCurrencyCode,
                                                                   currencyCodeOfInterest: currencyCodeOfInterest,
                                                                   latestRate: latestRate,
                                                                   historicalRateSet: [historicalRate],
