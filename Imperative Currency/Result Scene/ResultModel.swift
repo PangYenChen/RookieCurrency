@@ -15,7 +15,7 @@ final class ResultModel: BaseResultModel {
         order = userSettingManager.resultOrder
         
         searchText = nil
-        analysisSuccesses = []
+        rateStatistics = []
         
         self.timer = timer
         
@@ -47,9 +47,9 @@ final class ResultModel: BaseResultModel {
     
     private var latestUpdateTimestamp: Int?
     
-    private var analysisSuccesses: Set<Analysis.Success>
+    private var rateStatistics: Set<RateStatistic>
     
-    var sortedAnalysisSuccessesHandler: SortedAnalysisSuccessesHandlebar?
+    var sortedRateStatisticsHandler: SortedRateStatisticsHandlebar?
     
     var refreshStatusHandler: RefreshStatusHandlebar?
     
@@ -64,23 +64,24 @@ extension ResultModel {
         rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
                 case .success(let (latestRate, historicalRateSet)):
-                    let analysis: Analysis = Self.analyze(baseCurrencyCode: setting.baseCurrencyCode,
-                                                          currencyCodeOfInterest: setting.currencyCodeOfInterest,
-                                                          latestRate: latestRate,
-                                                          historicalRateSet: historicalRateSet)
+                    let statisticsResult: StatisticsResult = Self
+                        .statisticize(baseCurrencyCode: setting.baseCurrencyCode,
+                                      currencyCodeOfInterest: setting.currencyCodeOfInterest,
+                                      latestRate: latestRate,
+                                      historicalRateSet: historicalRateSet)
                     
-                    guard analysis.dataAbsentCurrencyCodeSet.isEmpty else {
+                    guard statisticsResult.dataAbsentCurrencyCodeSet.isEmpty else {
                         // TODO: 還沒處理錯誤"
                         assertionFailure("還沒處理錯誤")
                         return
                     }
                     
-                    analysisSuccesses = analysis.successes
+                    rateStatistics = statisticsResult.rateStatistics
                     
-                    let sortedAnalysisSuccesses: [Analysis.Success] = Self.sort(self.analysisSuccesses,
-                                                                                by: self.order,
-                                                                                filteredIfNeededBy: self.searchText)
-                    sortedAnalysisSuccessesHandler?(sortedAnalysisSuccesses)
+                    let sortedRateStatistics: [RateStatistic] = Self.sort(self.rateStatistics,
+                                                                          by: self.order,
+                                                                          filteredIfNeededBy: self.searchText)
+                    sortedRateStatisticsHandler?(sortedRateStatistics)
                     
                     latestUpdateTimestamp = latestRate.timestamp
                     refreshStatusHandler?(.idle(latestUpdateTimestamp: latestRate.timestamp))
@@ -94,20 +95,20 @@ extension ResultModel {
     }
     
     // TODO: 名字要想一下，這看不出來有 return value
-    func setOrder(_ order: BaseResultModel.Order) -> [BaseResultModel.Analysis.Success] {
+    func setOrder(_ order: BaseResultModel.Order) -> [RateStatistic] {
         userSettingManager.resultOrder = order
         self.order = order
         
-        return Self.sort(self.analysisSuccesses,
+        return Self.sort(self.rateStatistics,
                          by: self.order,
                          filteredIfNeededBy: self.searchText)
     }
     
     // TODO: 名字要想一下，這看不出來有 return value
-    func setSearchText(_ searchText: String?) -> [BaseResultModel.Analysis.Success] {
+    func setSearchText(_ searchText: String?) -> [RateStatistic] {
         self.searchText = searchText
         
-        return Self.sort(self.analysisSuccesses,
+        return Self.sort(self.rateStatistics,
                          by: self.order,
                          filteredIfNeededBy: self.searchText)
     }
@@ -145,7 +146,7 @@ extension ResultModel {
 
 // MARK: - name space
 extension ResultModel {
-    typealias SortedAnalysisSuccessesHandlebar = (_ sortedAnalysisSuccesses: [BaseResultModel.Analysis.Success]) -> Void
+    typealias SortedRateStatisticsHandlebar = (_ sortedRateStatistics: [RateStatistic]) -> Void
     
     typealias RefreshStatusHandlebar = (_ refreshStatus: BaseResultModel.RefreshStatus) -> Void
     

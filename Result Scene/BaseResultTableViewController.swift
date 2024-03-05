@@ -42,7 +42,7 @@ class BaseResultTableViewController: UITableViewController {
         }
         
         do /*configure table view's data source*/ {
-            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, analysisSuccess in
+            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, rateStatistic in
                 let reusedIdentifier: String = R.reuseIdentifier.currencyCell.identifier
                 let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
                 
@@ -51,23 +51,23 @@ class BaseResultTableViewController: UITableViewController {
                 contentConfiguration.textToSecondaryTextVerticalPadding = UIConfiguration.TableView.cellContentTextToSecondaryTextVerticalPadding
                 
                 do /*configure text*/ {
-                    let deviationString: String = analysisSuccess.deviation.formatted()
+                    let deviationString: String = rateStatistic.fluctuation.formatted()
                     let fluctuationString: String = R.string.resultScene.fluctuation(deviationString)
                     
-                    contentConfiguration.text = [analysisSuccess.currencyCode,
-                                                 analysisSuccess.localizedString,
+                    contentConfiguration.text = [rateStatistic.currencyCode,
+                                                 rateStatistic.localizedString,
                                                  fluctuationString]
                         .compactMap { $0 }
                         .joined(separator: ", ")
                     
                     contentConfiguration.textProperties.adjustsFontForContentSizeCategory = true
                     contentConfiguration.textProperties.font = UIFont.preferredFont(forTextStyle: .headline)
-                    contentConfiguration.textProperties.color = analysisSuccess.deviation < 0 ? .systemGreen : .systemRed
+                    contentConfiguration.textProperties.color = rateStatistic.fluctuation < 0 ? .systemGreen : .systemRed
                 }
                 
                 do /*configure secondary text*/ {
-                    let meanString: String = analysisSuccess.mean.formatted()
-                    let latestString: String = analysisSuccess.latest.formatted()
+                    let meanString: String = rateStatistic.meanRate.formatted()
+                    let latestString: String = rateStatistic.latestRate.formatted()
                     
                     contentConfiguration.secondaryText = R.string.resultScene.currencyCellDetail(meanString, latestString)
                     contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
@@ -142,10 +142,10 @@ private extension BaseResultTableViewController {
 
 // MARK: - instance methods
 extension BaseResultTableViewController {
-    final func populateTableViewWith(_ analysisSuccess: [BaseResultModel.Analysis.Success]) {
+    final func populateTableViewWith(_ rateStatistics: [BaseResultModel.RateStatistic]) {
         var snapshot: Snapshot = Snapshot()
         snapshot.appendSections([.main])
-        snapshot.appendItems(analysisSuccess)
+        snapshot.appendItems(rateStatistics)
         snapshot.reloadSections([.main])
         
         dataSource.apply(snapshot)
@@ -187,8 +187,8 @@ extension BaseResultTableViewController: UISearchBarDelegate {}
 
 // MARK: - private name space
 private extension BaseResultTableViewController {
-    typealias DataSource = UITableViewDiffableDataSource<Section, QuasiBaseResultModel.Analysis.Success>
-    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, QuasiBaseResultModel.Analysis.Success>
+    typealias DataSource = UITableViewDiffableDataSource<Section, QuasiBaseResultModel.RateStatistic>
+    typealias Snapshot = NSDiffableDataSourceSnapshot<Section, QuasiBaseResultModel.RateStatistic>
     
     enum Section {
         case main
