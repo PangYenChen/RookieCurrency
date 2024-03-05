@@ -95,7 +95,7 @@ extension ResultModel {
     }
     
     // TODO: 名字要想一下，這看不出來有 return value
-    func setOrder(_ order: BaseResultModel.Order) -> [RateStatistic] {
+    func setOrder(_ order: Order) -> [RateStatistic] {
         userSettingManager.resultOrder = order
         self.order = order
         
@@ -148,7 +148,7 @@ extension ResultModel {
 extension ResultModel {
     typealias SortedRateStatisticsHandlebar = (_ sortedRateStatistics: [RateStatistic]) -> Void
     
-    typealias RefreshStatusHandlebar = (_ refreshStatus: BaseResultModel.RefreshStatus) -> Void
+    typealias RefreshStatusHandlebar = (_ refreshStatus: RefreshStatus) -> Void
     
     typealias ErrorHandler = (_ error: Error) -> Void
 }
