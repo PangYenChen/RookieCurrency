@@ -64,19 +64,19 @@ extension ResultModel {
         rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
             switch result {
                 case .success(let (latestRate, historicalRateSet)):
-                    let statisticsResult: StatisticsResult = Self
+                    let statisticsInfo: StatisticsInfo = Self
                         .statisticize(baseCurrencyCode: setting.baseCurrencyCode,
                                       currencyCodeOfInterest: setting.currencyCodeOfInterest,
                                       latestRate: latestRate,
                                       historicalRateSet: historicalRateSet)
                     
-                    guard statisticsResult.dataAbsentCurrencyCodeSet.isEmpty else {
+                    guard statisticsInfo.dataAbsentCurrencyCodeSet.isEmpty else {
                         // TODO: 還沒處理錯誤"
                         assertionFailure("還沒處理錯誤")
                         return
                     }
                     
-                    rateStatistics = statisticsResult.rateStatistics
+                    rateStatistics = statisticsInfo.rateStatistics
                     
                     let sortedRateStatistics: [RateStatistic] = Self.sort(self.rateStatistics,
                                                                           by: self.order,

@@ -30,7 +30,7 @@ extension QuasiBaseResultModel {
         latestRate: ResponseDataModel.LatestRate,
         historicalRateSet: Set<ResponseDataModel.HistoricalRate>,
         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared
-    ) -> StatisticsResult {
+    ) -> StatisticsInfo {
         var rateStatistics: Set<RateStatistic> = []
         var dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = []
         
@@ -137,7 +137,7 @@ extension QuasiBaseResultModel {
         }
     }
     
-    typealias StatisticsResult = (rateStatistics: Set<RateStatistic>, dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>)
+    typealias StatisticsInfo = (rateStatistics: Set<RateStatistic>, dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>)
     
     enum RefreshStatus {
         case process
