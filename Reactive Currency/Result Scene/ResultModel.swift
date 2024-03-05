@@ -56,52 +56,53 @@ final class ResultModel: BaseResultModel {
                 .eraseToAnyPublisher()
             }
             
-            let analysisTupleResult: AnyPublisher<Result<AnalysisTuple, Error>, Never> = refresh.withLatestFrom(setting)
+            let statisticsInfoTupleResult: AnyPublisher<Result<StatisticsInfoTuple, Error>, Never> = refresh.withLatestFrom(setting)
                 .flatMap { _, setting in
                     rateManager
                         .ratePublisher(numberOfDays: setting.numberOfDays)
                         .convertOutputToResult()
                         .map { result in
                             result.map { rateTuple in
-                                let analysis: Analysis = Self
-                                    .analyze(baseCurrencyCode: setting.baseCurrencyCode,
-                                             currencyCodeOfInterest: setting.currencyCodeOfInterest,
-                                             latestRate: rateTuple.latestRate,
-                                             historicalRateSet: rateTuple.historicalRateSet)
-                                return (latestUpdateTime: rateTuple.latestRate.timestamp, analysis: analysis)
+                                let statisticsInfo: StatisticsInfo = Self
+                                    .statisticize(baseCurrencyCode: setting.baseCurrencyCode,
+                                                  currencyCodeOfInterest: setting.currencyCodeOfInterest,
+                                                  latestRate: rateTuple.latestRate,
+                                                  historicalRateSet: rateTuple.historicalRateSet)
+                                return (latestUpdateTime: rateTuple.latestRate.timestamp,
+                                        statisticsInfo: statisticsInfo)
                             }
                         }
                 }
                 .share()
                 .eraseToAnyPublisher()
             
-            let analysisTuple = analysisTupleResult.resultSuccess()
+            let statisticsInfoTuple: AnyPublisher<StatisticsInfoTuple, Never> = statisticsInfoTupleResult.resultSuccess()
             
-            sortedAnalysisSuccesses = analysisTuple
-                .map { tuple in tuple.analysis.successes }
-                .combineLatest(order, searchText) { analysisSuccesses, order, searchText in
-                    Self.sort(analysisSuccesses,
+            sortedRateStatistics = statisticsInfoTuple
+                .map { statisticsInfoTuple in statisticsInfoTuple.statisticsInfo }
+                .combineLatest(order, searchText) { statisticsInfo, order, searchText in
+                    Self.sort(statisticsInfo.rateStatistics,
                               by: order,
                               filteredIfNeededBy: searchText)
                 }
                 .eraseToAnyPublisher()
             
-            let dataAbsentCurrencyCodeSet = analysisTuple
-                .map { tuple in tuple.analysis.dataAbsentCurrencyCodeSet }
+            let dataAbsentCurrencyCodeSet = statisticsInfoTuple
+                .map { rateStatisticsTuple in rateStatisticsTuple.statisticsInfo.dataAbsentCurrencyCodeSet }
             // TODO: 還沒處理分析錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
             
-            error = analysisTupleResult.resultFailure()
+            error = statisticsInfoTupleResult.resultFailure()
             
             do /*initialize refreshStatus*/ {
                 let refreshStatusProcess: AnyPublisher<BaseResultModel.RefreshStatus, Never> = refresh
                     .map { _ in .process }
                     .eraseToAnyPublisher()
                 
-                let refreshStatusIdle: AnyPublisher<BaseResultModel.RefreshStatus, Never> = analysisTupleResult
-                    .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, analysisTupleResult -> BaseResultModel.RefreshStatus in
-                        switch analysisTupleResult {
-                            case .success(let analysisTuple):
-                                return .idle(latestUpdateTimestamp: analysisTuple.latestUpdateTime)
+                let refreshStatusIdle: AnyPublisher<BaseResultModel.RefreshStatus, Never> = statisticsInfoTupleResult
+                    .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, statisticsInfoTupleResult -> BaseResultModel.RefreshStatus in
+                        switch statisticsInfoTupleResult {
+                            case .success(let statisticsInfoTuple):
+                                return .idle(latestUpdateTimestamp: statisticsInfoTuple.latestUpdateTime)
                             case .failure:
                                 return partialResult
                         }
@@ -157,7 +158,7 @@ final class ResultModel: BaseResultModel {
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: output properties
-    let sortedAnalysisSuccesses: AnyPublisher<[BaseResultModel.Analysis.Success], Never>
+    let sortedRateStatistics: AnyPublisher<[RateStatistic], Never>
     
     let refreshStatus: AnyPublisher<BaseResultModel.RefreshStatus, Never>
     
@@ -191,6 +192,5 @@ extension ResultModel {
 
 // MARK: - private name space
 private extension ResultModel {
-    // TODO: 想一下名字
-    typealias AnalysisTuple = (latestUpdateTime: Int, analysis: BaseResultModel.Analysis)
+    typealias StatisticsInfoTuple = (latestUpdateTime: Int, statisticsInfo: StatisticsInfo)
 }
