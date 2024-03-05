@@ -20,7 +20,7 @@ final class ResultModel: BaseResultModel {
             
             searchText = CurrentValueSubject<String?, Never>(nil)
             
-            order = CurrentValueSubject<BaseResultModel.Order, Never>(userSettingManager.resultOrder)
+            order = CurrentValueSubject<Order, Never>(userSettingManager.resultOrder)
             
             resumeAutoRefresh = CurrentValueSubject<Void, Never>(())
             
@@ -94,12 +94,12 @@ final class ResultModel: BaseResultModel {
             error = statisticsInfoTupleResult.resultFailure()
             
             do /*initialize refreshStatus*/ {
-                let refreshStatusProcess: AnyPublisher<BaseResultModel.RefreshStatus, Never> = refresh
+                let refreshStatusProcess: AnyPublisher<RefreshStatus, Never> = refresh
                     .map { _ in .process }
                     .eraseToAnyPublisher()
                 
-                let refreshStatusIdle: AnyPublisher<BaseResultModel.RefreshStatus, Never> = statisticsInfoTupleResult
-                    .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, statisticsInfoTupleResult -> BaseResultModel.RefreshStatus in
+                let refreshStatusIdle: AnyPublisher<RefreshStatus, Never> = statisticsInfoTupleResult
+                    .scan(.idle(latestUpdateTimestamp: nil)) { partialResult, statisticsInfoTupleResult -> RefreshStatus in
                         switch statisticsInfoTupleResult {
                             case .success(let statisticsInfoTuple):
                                 return .idle(latestUpdateTimestamp: statisticsInfoTuple.latestUpdateTime)
@@ -142,7 +142,7 @@ final class ResultModel: BaseResultModel {
     
     // MARK: - input properties
     /// 是 user setting 的一部份，要傳遞到 setting model 的資料，在那邊編輯
-    private let setting: CurrentValueSubject<BaseResultModel.Setting, Never>
+    private let setting: CurrentValueSubject<Setting, Never>
     
     /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這裡修改
     private let order: CurrentValueSubject<Order, Never>
@@ -160,7 +160,7 @@ final class ResultModel: BaseResultModel {
     // MARK: output properties
     let sortedRateStatistics: AnyPublisher<[RateStatistic], Never>
     
-    let refreshStatus: AnyPublisher<BaseResultModel.RefreshStatus, Never>
+    let refreshStatus: AnyPublisher<RefreshStatus, Never>
     
     let error: AnyPublisher<Error, Never>
 }
@@ -171,7 +171,7 @@ extension ResultModel {
         refreshTriggerByUser.send()
     }
     
-    func setOrder(_ order: BaseResultModel.Order) {
+    func setOrder(_ order: Order) {
         self.order.send(order)
     }
     
