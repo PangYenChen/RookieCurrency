@@ -8,12 +8,6 @@ final class ResultModel: BaseResultModel {
         self.rateManager = rateManager
         self.userSettingManager = userSettingManager
         
-        setting = (numberOfDays: userSettingManager.numberOfDays,
-                   baseCurrencyCode: userSettingManager.baseCurrencyCode,
-                   currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest)
-        
-        order = userSettingManager.resultOrder
-        
         searchText = nil
         rateStatistics = []
         
@@ -36,13 +30,6 @@ final class ResultModel: BaseResultModel {
     private let timer: TimerProtocol
     
     // MARK: - private properties
-    
-    /// 是 user setting 的一部份，要傳遞到 setting model 的資料，在那邊編輯
-    private var setting: Setting
-    
-    /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這裡修改
-    private var order: Order
-    
     private var searchText: String?
     
     private var latestUpdateTimestamp: Int?
@@ -61,12 +48,13 @@ extension ResultModel {
     func refresh() {
         refreshStatusHandler?(.process)
         
-        rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
+        rateManager.getRateFor(numberOfDays: userSettingManager.numberOfDays,
+                               completionHandlerQueue: .main) { [unowned self] result in
             switch result {
                 case .success(let (latestRate, historicalRateSet)):
                     let statisticsInfo: StatisticsInfo = Self
-                        .statisticize(baseCurrencyCode: setting.baseCurrencyCode,
-                                      currencyCodeOfInterest: setting.currencyCodeOfInterest,
+                        .statisticize(baseCurrencyCode: userSettingManager.baseCurrencyCode,
+                                      currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest,
                                       latestRate: latestRate,
                                       historicalRateSet: historicalRateSet)
                     
@@ -79,7 +67,7 @@ extension ResultModel {
                     rateStatistics = statisticsInfo.rateStatistics
                     
                     let sortedRateStatistics: [RateStatistic] = Self.sort(self.rateStatistics,
-                                                                          by: self.order,
+                                                                          by: userSettingManager.resultOrder,
                                                                           filteredIfNeededBy: self.searchText)
                     sortedRateStatisticsHandler?(sortedRateStatistics)
                     
@@ -97,10 +85,9 @@ extension ResultModel {
     // TODO: 名字要想一下，這看不出來有 return value
     func setOrder(_ order: Order) -> [RateStatistic] {
         userSettingManager.resultOrder = order
-        self.order = order
-        
+
         return Self.sort(self.rateStatistics,
-                         by: self.order,
+                         by: userSettingManager.resultOrder,
                          filteredIfNeededBy: self.searchText)
     }
     
@@ -109,7 +96,7 @@ extension ResultModel {
         self.searchText = searchText
         
         return Self.sort(self.rateStatistics,
-                         by: self.order,
+                         by: self.initialOrder,
                          filteredIfNeededBy: self.searchText)
     }
 }
@@ -130,9 +117,11 @@ extension ResultModel {
     func makeSettingModel() -> SettingModel {
         suspendAutoRefreshing()
         
+        let setting = (numberOfDays: userSettingManager.numberOfDays,
+                       baseCurrencyCode: userSettingManager.baseCurrencyCode,
+                       currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest)
+        
         return SettingModel(setting: setting) { [unowned self] setting in
-            self.setting = setting
-            
             userSettingManager.numberOfDays = setting.numberOfDays
             userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
             userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
