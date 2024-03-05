@@ -37,6 +37,8 @@
 		51290B9C2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */; };
 		51290BA62B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290BA52B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift */; };
 		51290BA72B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290BA52B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift */; };
+		51290BB02B97B173005BE201 /* UserDefaultsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290BAF2B97B173005BE201 /* UserDefaultsProtocol.swift */; };
+		51290BB12B97B173005BE201 /* UserDefaultsProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290BAF2B97B173005BE201 /* UserDefaultsProtocol.swift */; };
 		5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */; };
 		512CE8CF2B35EA9700019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8CE2B35EA9700019B20 /* RateSession.swift */; };
 		512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D32B35F52D00019B20 /* RateSession.swift */; };
@@ -197,6 +199,7 @@
 		51290B912B90689E005BE201 /* Timer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuasiBaseResultModelTests.swift; sourceTree = "<group>"; };
 		51290BA52B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QuasiBaseResultModelRateStatisticTests.swift; sourceTree = "<group>"; };
+		51290BAF2B97B173005BE201 /* UserDefaultsProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaultsProtocol.swift; sourceTree = "<group>"; };
 		5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 		512CE8CE2B35EA9700019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
 		512CE8D32B35F52D00019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
@@ -334,6 +337,7 @@
 				514F72FD29AB682D0080DD8B /* AppUtility.swift */,
 				5124955C2B31CACF00FD86D9 /* BaseSupportedCurrencyManager.swift */,
 				512CE8D82B36F9D000019B20 /* UserSettingManager.swift */,
+				51290BAF2B97B173005BE201 /* UserDefaultsProtocol.swift */,
 				512495632B31E1B400FD86D9 /* CurrencyDescriberProxy.swift */,
 				E1CE96AD248555E10029ED73 /* RateManager.swift */,
 				E1133334248A924D00B8E67F /* Archiver.swift */,
@@ -955,6 +959,7 @@
 				514C4D0D29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */,
 				519BD8AA29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */,
 				51290B842B905642005BE201 /* TimerProxy.swift in Sources */,
+				51290BB02B97B173005BE201 /* UserDefaultsProtocol.swift in Sources */,
 				513E106429F424D0000E1A87 /* AlertPresenter.swift in Sources */,
 				514F171D2B3131B700C806E3 /* CurrencyOfInterestSelectionStrategy.swift in Sources */,
 				514C4D0A29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */,
@@ -1034,6 +1039,7 @@
 				51DF916A299FD0C100CEA5A6 /* CurrencySelectionTableViewController.swift in Sources */,
 				519BD8AB29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */,
 				514C4D0B29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */,
+				51290BB12B97B173005BE201 /* UserDefaultsProtocol.swift in Sources */,
 				514E45A12B2EADBE00E1F3EC /* CurrencySelectionModel.swift in Sources */,
 				514F17262B313D8B00C806E3 /* CurrencyOfInterestSelectionStrategy.swift in Sources */,
 				513E106529F424D0000E1A87 /* AlertPresenter.swift in Sources */,

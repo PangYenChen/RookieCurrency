@@ -13,12 +13,12 @@ protocol UserSettingManagerProtocol {
 // MARK: - user setting storage, including some specific fallback logic
 class UserSettingManager: UserSettingManagerProtocol {
     // MARK: - initializer
-    init(userDefaults: UserDefaults = .standard) {
+    init(userDefaults: UserDefaultsProtocol = UserDefaults.standard) {
         self.userDefaults = userDefaults
     }
     
     // MARK: - instance property
-    private let userDefaults: UserDefaults
+    private let userDefaults: UserDefaultsProtocol
 }
 
 // MARK: - instance computed properties
@@ -71,7 +71,7 @@ extension UserSettingManager {
             }
         }
         set {
-            userDefaults.setValue(newValue.sorted(), forKey: Key.currencyCodeOfInterest.rawValue)
+            userDefaults.set(newValue.sorted(), forKey: Key.currencyCodeOfInterest.rawValue)
         }
     }
 }
