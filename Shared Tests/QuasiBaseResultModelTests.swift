@@ -26,7 +26,7 @@ final class QuasiBaseResultModelTests: XCTestCase {
         let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         
         // act
-        let statisticsResult = sut.statisticize(baseCurrencyCode: baseCurrencyCode,
+        let statisticsResult: QuasiBaseResultModel.StatisticsInfo = sut.statisticize(baseCurrencyCode: baseCurrencyCode,
                                                 currencyCodeOfInterest: currencyCodeOfInterest,
                                                 latestRate: latestRate,
                                                 historicalRateSet: [historicalRate],
