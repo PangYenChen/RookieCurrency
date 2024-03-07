@@ -7,8 +7,6 @@ protocol UserDefaultsProtocol {
     
     func set(_ value: Any?, forKey defaultName: String)
     
-    func setValue(_ value: Any?, forKey key: String)
-    
     func stringArray(forKey defaultName: String) -> [String]?
 }
 
