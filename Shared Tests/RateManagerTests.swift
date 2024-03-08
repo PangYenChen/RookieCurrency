@@ -2,8 +2,10 @@ import XCTest
 
 #if IMPERATIVE_CURRENCY_TESTS
 @testable import ImperativeCurrency
-#else
+#elseif REACTIVE_CURRENCY_TESTS
 @testable import ReactiveCurrency
+#else
+@testable import ReactiveCurrency // dead code
 #endif
 
 /// 這個 test case 測試 rate controller 跟 fetcher 無關的 method
