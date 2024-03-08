@@ -18,14 +18,14 @@ class UserSettingManager: UserSettingManagerProtocol {
         
         do /*initialize number of days*/ {
             let storedNumberOfDays: Int = userDefaults.integer(forKey: Key.numberOfDays.rawValue)
-            let defaultNumberOfDays: Int = 3
+            defaultNumberOfDays = 3
             
             numberOfDays = storedNumberOfDays > 0 ? storedNumberOfDays : defaultNumberOfDays
         }
         
         do /*initialize base currency code*/ {
             let storedBaseCurrencyCode: ResponseDataModel.CurrencyCode? = userDefaults.string(forKey: Key.baseCurrencyCode.rawValue)
-            let defaultBaseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
+            defaultBaseCurrencyCode = "TWD"
             
             baseCurrencyCode = storedBaseCurrencyCode ?? defaultBaseCurrencyCode
         }
@@ -33,14 +33,14 @@ class UserSettingManager: UserSettingManagerProtocol {
         do /*initialize currency code of interest*/ {
             let storedCurrencyCodeOfInterest: [ResponseDataModel.CurrencyCode]? = userDefaults.stringArray(forKey: Key.currencyCodeOfInterest.rawValue)
             // 預設值為強勢貨幣(Hard Currency)
-            let defaultCurrencyOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
+            defaultCurrencyCodeOfInterest = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
             
-            currencyCodeOfInterest = storedCurrencyCodeOfInterest.map(Set.init) ?? defaultCurrencyOfInterest
+            currencyCodeOfInterest = storedCurrencyCodeOfInterest.map(Set.init) ?? defaultCurrencyCodeOfInterest
         }
         
         do /*initialize result order*/ {
             let storedOrderString: String? = userDefaults.string(forKey: Key.resultOrder.rawValue)
-            let defaultResultOrder: BaseResultModel.Order = .increasing
+            defaultResultOrder = .increasing
             
             resultOrder = storedOrderString.flatMap(BaseResultModel.Order.init(rawValue:)) ?? defaultResultOrder
         }
@@ -49,6 +49,7 @@ class UserSettingManager: UserSettingManagerProtocol {
     // MARK: - instance property
     private let userDefaults: UserDefaultsProtocol
 
+    let defaultNumberOfDays: Int // TODO: 改成 UInt
     var numberOfDays: Int {
         didSet {
             guard oldValue != numberOfDays else { return }
@@ -56,6 +57,7 @@ class UserSettingManager: UserSettingManagerProtocol {
         }
     }
     
+    let defaultBaseCurrencyCode: ResponseDataModel.CurrencyCode
     var baseCurrencyCode: ResponseDataModel.CurrencyCode {
         didSet {
             guard oldValue != baseCurrencyCode else { return }
@@ -63,6 +65,7 @@ class UserSettingManager: UserSettingManagerProtocol {
         }
     }
     
+    let defaultCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
         didSet {
             guard oldValue != currencyCodeOfInterest else { return }
@@ -70,6 +73,7 @@ class UserSettingManager: UserSettingManagerProtocol {
         }
     }
     
+    let defaultResultOrder: BaseResultModel.Order
     var resultOrder: BaseResultModel.Order {
         didSet {
             guard oldValue != resultOrder else { return }
@@ -84,7 +88,7 @@ extension UserSettingManager {
 }
 
 // MARK: - name space
-private extension UserSettingManager {
+extension UserSettingManager {
     enum Key: String {
         case numberOfDays
         case baseCurrencyCode
