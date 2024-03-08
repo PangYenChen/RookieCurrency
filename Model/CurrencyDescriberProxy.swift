@@ -1,5 +1,6 @@
 import Foundation
 
+// TODO: 看能不能拿掉
 protocol CurrencyDescriberProxy: CurrencyDescriberProtocol {
     var currencyDescriber: CurrencyDescriberProtocol { get }
 }

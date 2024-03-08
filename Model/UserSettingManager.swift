@@ -13,65 +13,71 @@ protocol UserSettingManagerProtocol {
 // MARK: - user setting storage, including some specific fallback logic
 class UserSettingManager: UserSettingManagerProtocol {
     // MARK: - initializer
-    init(userDefaults: UserDefaults = .standard) {
+    init(userDefaults: UserDefaultsProtocol = UserDefaults.standard) {
         self.userDefaults = userDefaults
+        
+        do /*initialize number of days*/ {
+            let storedNumberOfDays: Int = userDefaults.integer(forKey: Key.numberOfDays.rawValue)
+            defaultNumberOfDays = 3
+            
+            numberOfDays = storedNumberOfDays > 0 ? storedNumberOfDays : defaultNumberOfDays
+        }
+        
+        do /*initialize base currency code*/ {
+            let storedBaseCurrencyCode: ResponseDataModel.CurrencyCode? = userDefaults.string(forKey: Key.baseCurrencyCode.rawValue)
+            defaultBaseCurrencyCode = "TWD"
+            
+            baseCurrencyCode = storedBaseCurrencyCode ?? defaultBaseCurrencyCode
+        }
+        
+        do /*initialize currency code of interest*/ {
+            let storedCurrencyCodeOfInterest: [ResponseDataModel.CurrencyCode]? = userDefaults.stringArray(forKey: Key.currencyCodeOfInterest.rawValue)
+            // 預設值為強勢貨幣(Hard Currency)
+            defaultCurrencyCodeOfInterest = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
+            
+            currencyCodeOfInterest = storedCurrencyCodeOfInterest.map(Set.init) ?? defaultCurrencyCodeOfInterest
+        }
+        
+        do /*initialize result order*/ {
+            let storedOrderString: String? = userDefaults.string(forKey: Key.resultOrder.rawValue)
+            defaultResultOrder = .increasing
+            
+            resultOrder = storedOrderString.flatMap(BaseResultModel.Order.init(rawValue:)) ?? defaultResultOrder
+        }
     }
     
     // MARK: - instance property
-    private let userDefaults: UserDefaults
-}
+    private let userDefaults: UserDefaultsProtocol
 
-// MARK: - instance computed properties
-extension UserSettingManager {
+    let defaultNumberOfDays: Int // TODO: 改成 UInt
     var numberOfDays: Int {
-        get {
-            let numberOfDaysInUserDefaults: Int = userDefaults.integer(forKey: Key.numberOfDays.rawValue)
-            return numberOfDaysInUserDefaults > 0 ? numberOfDaysInUserDefaults : 3
+        didSet {
+            guard oldValue != numberOfDays else { return }
+            userDefaults.set(numberOfDays, forKey: Key.numberOfDays.rawValue)
         }
-        set { userDefaults.set(newValue, forKey: Key.numberOfDays.rawValue) }
     }
     
+    let defaultBaseCurrencyCode: ResponseDataModel.CurrencyCode
     var baseCurrencyCode: ResponseDataModel.CurrencyCode {
-        get {
-            if let baseCurrencyCode = userDefaults.string(forKey: Key.baseCurrencyCode.rawValue) {
-                return baseCurrencyCode
-            }
-            else {
-                return "TWD"
-            }
-        }
-        set {
-            userDefaults.set(newValue, forKey: Key.baseCurrencyCode.rawValue)
+        didSet {
+            guard oldValue != baseCurrencyCode else { return }
+            userDefaults.set(oldValue, forKey: Key.baseCurrencyCode.rawValue)
         }
     }
     
-    var resultOrder: BaseResultModel.Order {
-        get {
-            if let orderString = userDefaults.string(forKey: Key.resultOrder.rawValue),
-               let order = BaseResultModel.Order(rawValue: orderString) {
-                return order
-            }
-            else {
-                return .increasing
-            }
-        }
-        set {
-            userDefaults.set(newValue.rawValue, forKey: Key.resultOrder.rawValue)
-        }
-    }
-    
+    let defaultCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
     var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
-        get {
-            if let currencyCodeOfInterest = userDefaults.stringArray(forKey: Key.currencyCodeOfInterest.rawValue) {
-                return Set(currencyCodeOfInterest)
-            }
-            else {
-                // 預設值為強勢貨幣(Hard Currency) 
-                return ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
-            }
+        didSet {
+            guard oldValue != currencyCodeOfInterest else { return }
+            userDefaults.set(oldValue.sorted(), forKey: Key.currencyCodeOfInterest.rawValue)
         }
-        set {
-            userDefaults.setValue(newValue.sorted(), forKey: Key.currencyCodeOfInterest.rawValue)
+    }
+    
+    let defaultResultOrder: BaseResultModel.Order
+    var resultOrder: BaseResultModel.Order {
+        didSet {
+            guard oldValue != resultOrder else { return }
+            userDefaults.set(oldValue.rawValue, forKey: Key.resultOrder.rawValue)
         }
     }
 }
@@ -83,7 +89,7 @@ extension UserSettingManager {
 
 // MARK: - name space
 extension UserSettingManager {
-    private enum Key: String {
+    enum Key: String {
         case numberOfDays
         case baseCurrencyCode
         case resultOrder

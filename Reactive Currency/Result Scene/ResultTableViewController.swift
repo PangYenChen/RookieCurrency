@@ -15,7 +15,7 @@ final class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        resultModel.sortedAnalysisSuccesses
+        resultModel.sortedRateStatistics
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: populateTableViewWith)
             .store(in: &anyCancellableSet)

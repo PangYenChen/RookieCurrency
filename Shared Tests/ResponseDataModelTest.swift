@@ -2,8 +2,10 @@ import XCTest
 
 #if IMPERATIVE_CURRENCY_TESTS
 @testable import ImperativeCurrency
-#else
+#elseif REACTIVE_CURRENCY_TESTS
 @testable import ReactiveCurrency
+#else
+@testable import ReactiveCurrency // dead code
 #endif
 
 /// 這個 test case 測試 data model 是否正確對應到伺服器提供的 json

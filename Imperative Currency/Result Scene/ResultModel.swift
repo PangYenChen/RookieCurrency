@@ -8,14 +8,8 @@ final class ResultModel: BaseResultModel {
         self.rateManager = rateManager
         self.userSettingManager = userSettingManager
         
-        setting = (numberOfDays: userSettingManager.numberOfDays,
-                   baseCurrencyCode: userSettingManager.baseCurrencyCode,
-                   currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest)
-        
-        order = userSettingManager.resultOrder
-        
         searchText = nil
-        analysisSuccesses = []
+        rateStatistics = []
         
         self.timer = timer
         
@@ -36,20 +30,13 @@ final class ResultModel: BaseResultModel {
     private let timer: TimerProtocol
     
     // MARK: - private properties
-    
-    /// 是 user setting 的一部份，要傳遞到 setting model 的資料，在那邊編輯
-    private var setting: Setting
-    
-    /// 是 user setting 的一部份，跟 `setting` 不同的是，`order` 在這裡修改
-    private var order: Order
-    
     private var searchText: String?
     
     private var latestUpdateTimestamp: Int?
     
-    private var analysisSuccesses: Set<Analysis.Success>
+    private var rateStatistics: Set<RateStatistic>
     
-    var sortedAnalysisSuccessesHandler: SortedAnalysisSuccessesHandlebar?
+    var sortedRateStatisticsHandler: SortedRateStatisticsHandlebar?
     
     var refreshStatusHandler: RefreshStatusHandlebar?
     
@@ -61,26 +48,28 @@ extension ResultModel {
     func refresh() {
         refreshStatusHandler?(.process)
         
-        rateManager.getRateFor(numberOfDays: setting.numberOfDays, completionHandlerQueue: .main) { [unowned self] result in
+        rateManager.getRateFor(numberOfDays: userSettingManager.numberOfDays,
+                               completionHandlerQueue: .main) { [unowned self] result in
             switch result {
                 case .success(let (latestRate, historicalRateSet)):
-                    let analysis: Analysis = Self.analyze(baseCurrencyCode: setting.baseCurrencyCode,
-                                                          currencyCodeOfInterest: setting.currencyCodeOfInterest,
-                                                          latestRate: latestRate,
-                                                          historicalRateSet: historicalRateSet)
+                    let statisticsInfo: StatisticsInfo = Self
+                        .statisticize(baseCurrencyCode: userSettingManager.baseCurrencyCode,
+                                      currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest,
+                                      latestRate: latestRate,
+                                      historicalRateSet: historicalRateSet)
                     
-                    guard analysis.dataAbsentCurrencyCodeSet.isEmpty else {
+                    guard statisticsInfo.dataAbsentCurrencyCodeSet.isEmpty else {
                         // TODO: 還沒處理錯誤"
                         assertionFailure("還沒處理錯誤")
                         return
                     }
                     
-                    analysisSuccesses = analysis.successes
+                    rateStatistics = statisticsInfo.rateStatistics
                     
-                    let sortedAnalysisSuccesses: [Analysis.Success] = Self.sort(self.analysisSuccesses,
-                                                                                by: self.order,
-                                                                                filteredIfNeededBy: self.searchText)
-                    sortedAnalysisSuccessesHandler?(sortedAnalysisSuccesses)
+                    let sortedRateStatistics: [RateStatistic] = Self.sort(self.rateStatistics,
+                                                                          by: userSettingManager.resultOrder,
+                                                                          filteredIfNeededBy: self.searchText)
+                    sortedRateStatisticsHandler?(sortedRateStatistics)
                     
                     latestUpdateTimestamp = latestRate.timestamp
                     refreshStatusHandler?(.idle(latestUpdateTimestamp: latestRate.timestamp))
@@ -94,21 +83,20 @@ extension ResultModel {
     }
     
     // TODO: 名字要想一下，這看不出來有 return value
-    func setOrder(_ order: BaseResultModel.Order) -> [BaseResultModel.Analysis.Success] {
+    func setOrder(_ order: Order) -> [RateStatistic] {
         userSettingManager.resultOrder = order
-        self.order = order
-        
-        return Self.sort(self.analysisSuccesses,
-                         by: self.order,
+
+        return Self.sort(self.rateStatistics,
+                         by: userSettingManager.resultOrder,
                          filteredIfNeededBy: self.searchText)
     }
     
     // TODO: 名字要想一下，這看不出來有 return value
-    func setSearchText(_ searchText: String?) -> [BaseResultModel.Analysis.Success] {
+    func setSearchText(_ searchText: String?) -> [RateStatistic] {
         self.searchText = searchText
         
-        return Self.sort(self.analysisSuccesses,
-                         by: self.order,
+        return Self.sort(self.rateStatistics,
+                         by: self.initialOrder,
                          filteredIfNeededBy: self.searchText)
     }
 }
@@ -129,9 +117,11 @@ extension ResultModel {
     func makeSettingModel() -> SettingModel {
         suspendAutoRefreshing()
         
+        let setting = (numberOfDays: userSettingManager.numberOfDays,
+                       baseCurrencyCode: userSettingManager.baseCurrencyCode,
+                       currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest)
+        
         return SettingModel(setting: setting) { [unowned self] setting in
-            self.setting = setting
-            
             userSettingManager.numberOfDays = setting.numberOfDays
             userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
             userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
@@ -145,9 +135,9 @@ extension ResultModel {
 
 // MARK: - name space
 extension ResultModel {
-    typealias SortedAnalysisSuccessesHandlebar = (_ sortedAnalysisSuccesses: [BaseResultModel.Analysis.Success]) -> Void
+    typealias SortedRateStatisticsHandlebar = (_ sortedRateStatistics: [RateStatistic]) -> Void
     
-    typealias RefreshStatusHandlebar = (_ refreshStatus: BaseResultModel.RefreshStatus) -> Void
+    typealias RefreshStatusHandlebar = (_ refreshStatus: RefreshStatus) -> Void
     
     typealias ErrorHandler = (_ error: Error) -> Void
 }
