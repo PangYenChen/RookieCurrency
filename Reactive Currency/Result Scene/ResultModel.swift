@@ -4,9 +4,9 @@ import Combine
 final class ResultModel: BaseResultModel {
     // MARK: - initializer
     init(
-        currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
-        rateManager: RateManagerProtocol = RateManager.shared,
         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
+        rateManager: RateManagerProtocol = RateManager.shared,
+        currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
         timer: TimerProtocol = TimerProxy()
     ) {
         var userSettingManager: UserSettingManagerProtocol = userSettingManager
@@ -117,8 +117,8 @@ final class ResultModel: BaseResultModel {
         
         anyCancellableSet = Set<AnyCancellable>()
         
-        super.init(currencyDescriber: currencyDescriber,
-                   userSettingManager: userSettingManager)
+        super.init(userSettingManager: userSettingManager,
+                   currencyDescriber: currencyDescriber)
         
         do /*subscribe*/ {
             settingFromSettingModel

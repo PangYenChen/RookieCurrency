@@ -1,15 +1,15 @@
 import Foundation
 
 class QuasiBaseResultModel {
-    init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
-         userSettingManager: UserSettingManagerProtocol) {
+    init(userSettingManager: UserSettingManagerProtocol,
+         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
         self.currencyDescriber = currencyDescriber
         initialOrder = userSettingManager.resultOrder
     }
     
     let initialOrder: Order
     
-    private let currencyDescriber: CurrencyDescriberProtocol
+    let currencyDescriber: CurrencyDescriberProtocol
 }
 
 // MARK: - static property

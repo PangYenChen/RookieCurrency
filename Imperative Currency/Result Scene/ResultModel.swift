@@ -7,7 +7,6 @@ final class ResultModel: BaseResultModel {
          currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
          timer: TimerProtocol = TimerProxy()) {
         self.rateManager = rateManager
-        self.currencyDescriber = currencyDescriber
         self.userSettingManager = userSettingManager
         
         searchText = nil
@@ -15,7 +14,8 @@ final class ResultModel: BaseResultModel {
         
         self.timer = timer
         
-        super.init(userSettingManager: userSettingManager)
+        super.init(userSettingManager: userSettingManager,
+                   currencyDescriber: currencyDescriber)
         
         resumeAutoRefreshing()
     }
@@ -28,8 +28,6 @@ final class ResultModel: BaseResultModel {
     private var userSettingManager: UserSettingManagerProtocol
     
     private let rateManager: RateManagerProtocol
-    
-    let currencyDescriber: CurrencyDescriberProtocol
     
     private let timer: TimerProtocol
     
