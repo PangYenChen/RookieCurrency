@@ -14,6 +14,7 @@ final class ResultTableViewController: BaseResultTableViewController {
         
         resultModel.sortedRateStatisticsHandler = populateTableViewWith
         resultModel.refreshStatusHandler = populateRefreshStatusBarButtonItemWith(status:)
+        resultModel.dataAbsentCurrencyCodeSetHandler = presentDataAbsentAlertFor(currencyCodeSet:)
         resultModel.errorHandler = presentErrorAlert(error:)
     }
     

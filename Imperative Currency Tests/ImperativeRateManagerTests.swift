@@ -2,7 +2,6 @@ import XCTest
 @testable import ImperativeCurrency
 
 final class ImperativeRateManagerTests: XCTestCase {
-
     var sut: RateManager!
     
     override func tearDown() {
@@ -11,11 +10,10 @@ final class ImperativeRateManagerTests: XCTestCase {
     }
     
     // TODO: `RateManager` 的 method 太長了，不好測試。等 method 拆解好之後再來寫測試。
-    
     func testNoCacheAndDiskData() throws {
         // arrange
-        let stubFetcher = StubFetcher()
-        let spyArchiver = TestDouble.SpyArchiver.self
+        let stubFetcher: StubFetcher = StubFetcher()
+        let spyArchiver: TestDouble.SpyArchiver.Type = TestDouble.SpyArchiver.self
         let concurrentQueue = DispatchQueue(label: "testing queue", attributes: .concurrent)
         
         sut = RateManager(fetcher: stubFetcher,
@@ -100,7 +98,7 @@ final class ImperativeRateManagerTests: XCTestCase {
 //    }
 }
 
-final class StubFetcher: FetcherProtocol {
+final class StubFetcher: FetcherProtocol { // TODO: 放進 test double 的 name space
     
     private(set) var numberOfLatestEndpointCall = 0
     

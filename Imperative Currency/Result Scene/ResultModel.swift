@@ -4,8 +4,10 @@ final class ResultModel: BaseResultModel {
     // MARK: - life cycle
     init(rateManager: RateManagerProtocol = RateManager.shared,
          userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
+         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
          timer: TimerProtocol = TimerProxy()) {
         self.rateManager = rateManager
+        self.currencyDescriber = currencyDescriber
         self.userSettingManager = userSettingManager
         
         searchText = nil
@@ -27,6 +29,8 @@ final class ResultModel: BaseResultModel {
     
     private let rateManager: RateManagerProtocol
     
+    let currencyDescriber: CurrencyDescriberProtocol
+    
     private let timer: TimerProtocol
     
     // MARK: - private properties
@@ -36,7 +40,10 @@ final class ResultModel: BaseResultModel {
     
     private var rateStatistics: Set<RateStatistic>
     
+    // MARK: - internal handlers
     var sortedRateStatisticsHandler: SortedRateStatisticsHandlebar?
+    
+    var dataAbsentCurrencyCodeSetHandler: DataAbsentCurrencyCodeSetHandler?
     
     var refreshStatusHandler: RefreshStatusHandlebar?
     
@@ -59,8 +66,7 @@ extension ResultModel {
                                       historicalRateSet: historicalRateSet)
                     
                     guard statisticsInfo.dataAbsentCurrencyCodeSet.isEmpty else {
-                        // TODO: 還沒處理錯誤"
-                        assertionFailure("還沒處理錯誤")
+                        dataAbsentCurrencyCodeSetHandler?(statisticsInfo.dataAbsentCurrencyCodeSet)
                         return
                     }
                     
@@ -136,6 +142,8 @@ extension ResultModel {
 // MARK: - name space
 extension ResultModel {
     typealias SortedRateStatisticsHandlebar = (_ sortedRateStatistics: [RateStatistic]) -> Void
+    
+    typealias DataAbsentCurrencyCodeSetHandler = (_ dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>) -> Void
     
     typealias RefreshStatusHandlebar = (_ refreshStatus: RefreshStatus) -> Void
     

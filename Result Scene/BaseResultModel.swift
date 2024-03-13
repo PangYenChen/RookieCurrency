@@ -8,4 +8,4 @@ protocol ResultRefresher {
     func refresh()
 }
 
-typealias BaseResultModel = QuasiBaseResultModel & SettingModelFactory & ResultRefresher
+typealias BaseResultModel = QuasiBaseResultModel & SettingModelFactory & ResultRefresher & CurrencyDescriberProxy

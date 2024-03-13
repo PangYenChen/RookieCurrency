@@ -27,11 +27,14 @@ final class ResultModelTest: XCTestCase {
             rateManagerSpy = TestDouble.RateManager(result: dummyResult)
         }
         
+        let dummyCurrencyDescriber: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
+        
         let timerSpy: TestDouble.Timer = TestDouble.Timer()
         
         // act
         let sut: ResultModel = ResultModel(rateManager: rateManagerSpy,
                                            userSettingManager: userSettingManagerStub,
+                                           currencyDescriber: dummyCurrencyDescriber,
                                            timer: timerSpy)
         
         timerSpy.block?()
