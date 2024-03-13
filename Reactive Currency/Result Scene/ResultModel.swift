@@ -87,9 +87,9 @@ final class ResultModel: BaseResultModel {
                 }
                 .eraseToAnyPublisher()
             
-            let dataAbsentCurrencyCodeSet = statisticsInfoTuple
+            dataAbsentCurrencyCodeSet = statisticsInfoTuple
                 .map { rateStatisticsTuple in rateStatisticsTuple.statisticsInfo.dataAbsentCurrencyCodeSet }
-            // TODO: 還沒處理分析錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
+                .eraseToAnyPublisher()
             
             error = statisticsInfoTupleResult.resultFailure()
             
@@ -159,6 +159,8 @@ final class ResultModel: BaseResultModel {
     
     // MARK: output properties
     let sortedRateStatistics: AnyPublisher<[RateStatistic], Never>
+    
+    let dataAbsentCurrencyCodeSet: AnyPublisher<Set<ResponseDataModel.CurrencyCode>, Never>
     
     let refreshStatus: AnyPublisher<RefreshStatus, Never>
     

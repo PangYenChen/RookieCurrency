@@ -32,9 +32,9 @@ class ResultModelTest: XCTestCase {
         let timerSpy: TestDouble.Timer = TestDouble.Timer()
         
         // act
-        let sut: ResultModel = ResultModel(currencyDescriber: currencyDescriberStub,
+        let sut: ResultModel = ResultModel(userSettingManager: userSettingManagerStub,
                                            rateManager: rateManagerSpy,
-                                           userSettingManager: userSettingManagerStub,
+                                           currencyDescriber: currencyDescriberStub,
                                            timer: timerSpy)
         
         sut.sortedRateStatistics

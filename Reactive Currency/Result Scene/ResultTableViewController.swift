@@ -20,6 +20,11 @@ final class ResultTableViewController: BaseResultTableViewController {
             .sink(receiveValue: populateTableViewWith)
             .store(in: &anyCancellableSet)
         
+        resultModel.dataAbsentCurrencyCodeSet
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: presentDataAbsentAlertFor(currencyCodeSet:))
+            .store(in: &anyCancellableSet)
+        
         resultModel.refreshStatus
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: populateRefreshStatusBarButtonItemWith(status:))
