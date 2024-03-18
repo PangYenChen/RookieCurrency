@@ -39,7 +39,7 @@ final class ResultModel: BaseResultModel {
     private var rateStatistics: Set<RateStatistic>
     
     // MARK: - internal handlers
-    var sortedRateStatisticsHandler: SortedRateStatisticsHandlebar?
+    var rateStatisticsHandler: RateStatisticsHandlebar?
     
     var dataAbsentCurrencyCodeSetHandler: DataAbsentCurrencyCodeSetHandler?
     
@@ -73,7 +73,7 @@ extension ResultModel {
                     let sortedRateStatistics: [RateStatistic] = Self.sort(self.rateStatistics,
                                                                           by: userSettingManager.resultOrder,
                                                                           filteredIfNeededBy: self.searchText)
-                    sortedRateStatisticsHandler?(sortedRateStatistics)
+                    rateStatisticsHandler?(sortedRateStatistics)
                     
                     latestUpdateTimestamp = latestRate.timestamp
                     refreshStatusHandler?(.idle(latestUpdateTimestamp: latestRate.timestamp))
@@ -86,8 +86,7 @@ extension ResultModel {
         }
     }
     
-    // TODO: 名字要想一下，這看不出來有 return value
-    func setOrder(_ order: Order) -> [RateStatistic] {
+    func sortedRateStatistics(by order: Order) -> [RateStatistic] {
         userSettingManager.resultOrder = order
 
         return Self.sort(self.rateStatistics,
@@ -95,8 +94,7 @@ extension ResultModel {
                          filteredIfNeededBy: self.searchText)
     }
     
-    // TODO: 名字要想一下，這看不出來有 return value
-    func setSearchText(_ searchText: String?) -> [RateStatistic] {
+    func filteredRateStatistics(by searchText: String?) -> [RateStatistic] {
         self.searchText = searchText
         
         return Self.sort(self.rateStatistics,
@@ -121,9 +119,9 @@ extension ResultModel {
     func makeSettingModel() -> SettingModel {
         suspendAutoRefreshing()
         
-        let setting = (numberOfDays: userSettingManager.numberOfDays,
-                       baseCurrencyCode: userSettingManager.baseCurrencyCode,
-                       currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest)
+        let setting: Setting = (numberOfDays: userSettingManager.numberOfDays,
+                                baseCurrencyCode: userSettingManager.baseCurrencyCode,
+                                currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest)
         
         return SettingModel(setting: setting) { [unowned self] setting in
             userSettingManager.numberOfDays = setting.numberOfDays
@@ -139,7 +137,7 @@ extension ResultModel {
 
 // MARK: - name space
 extension ResultModel {
-    typealias SortedRateStatisticsHandlebar = (_ sortedRateStatistics: [RateStatistic]) -> Void
+    typealias RateStatisticsHandlebar = (_ sortedRateStatistics: [RateStatistic]) -> Void
     
     typealias DataAbsentCurrencyCodeSetHandler = (_ dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>) -> Void
     

@@ -454,4 +454,3 @@ extension FetcherTests {
         }
     }
 }
-

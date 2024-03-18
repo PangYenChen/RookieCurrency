@@ -12,7 +12,7 @@ final class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        resultModel.sortedRateStatisticsHandler = populateTableViewWith
+        resultModel.rateStatisticsHandler = populateTableViewWith
         resultModel.refreshStatusHandler = populateRefreshStatusBarButtonItemWith(status:)
         resultModel.dataAbsentCurrencyCodeSetHandler = presentDataAbsentAlertFor(currencyCodeSet:)
         resultModel.errorHandler = presentErrorAlert(error:)
@@ -32,17 +32,17 @@ final class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - override abstract methods
     override func setOrder(_ order: QuasiBaseResultModel.Order) {
-        populateTableViewWith(resultModel.setOrder(order))
+        populateTableViewWith(resultModel.sortedRateStatistics(by: order))
     }
 }
 
 // MARK: - Search Bar Delegate
 extension ResultTableViewController {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
-        populateTableViewWith(resultModel.setSearchText(searchText))
+        populateTableViewWith(resultModel.filteredRateStatistics(by: searchText))
     }
     
     func searchBarCancelButtonClicked(_ searchBar: UISearchBar) {
-        populateTableViewWith(resultModel.setSearchText(nil))
+        populateTableViewWith(resultModel.filteredRateStatistics(by: nil))
     }
 }
