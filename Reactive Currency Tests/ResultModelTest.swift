@@ -37,7 +37,7 @@ class ResultModelTest: XCTestCase {
                                            currencyDescriber: currencyDescriberStub,
                                            timer: timerSpy)
         
-        sut.sortedRateStatistics
+        sut.rateStatistics
             .subscribe(AnySubscriber())
         
         timerSpy.publish()

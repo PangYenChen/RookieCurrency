@@ -78,7 +78,7 @@ final class ResultModel: BaseResultModel {
             
             let statisticsInfoTuple: AnyPublisher<StatisticsInfoTuple, Never> = statisticsInfoTupleResult.resultSuccess()
             
-            sortedRateStatistics = statisticsInfoTuple
+            rateStatistics = statisticsInfoTuple
                 .map { statisticsInfoTuple in statisticsInfoTuple.statisticsInfo }
                 .combineLatest(order, searchText) { statisticsInfo, order, searchText in
                     Self.sort(statisticsInfo.rateStatistics,
@@ -158,7 +158,7 @@ final class ResultModel: BaseResultModel {
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: output properties
-    let sortedRateStatistics: AnyPublisher<[RateStatistic], Never>
+    let rateStatistics: AnyPublisher<[RateStatistic], Never>
     
     let dataAbsentCurrencyCodeSet: AnyPublisher<Set<ResponseDataModel.CurrencyCode>, Never>
     
