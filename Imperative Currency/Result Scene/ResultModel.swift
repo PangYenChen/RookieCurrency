@@ -2,17 +2,16 @@ import Foundation
 
 final class ResultModel: BaseResultModel {
     // MARK: - life cycle
-    init(rateManager: RateManagerProtocol = RateManager.shared,
-         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
+    init(userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
+         rateManager: RateManagerProtocol = RateManager.shared,
          currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
          timer: TimerProtocol = TimerProxy()) {
-        self.rateManager = rateManager
         self.userSettingManager = userSettingManager
+        self.rateManager = rateManager
+        self.timer = timer
         
         searchText = nil
         rateStatistics = []
-        
-        self.timer = timer
         
         super.init(userSettingManager: userSettingManager,
                    currencyDescriber: currencyDescriber)
