@@ -45,14 +45,8 @@ final class ResultModelTest: XCTestCase {
     func testPassNumberOfDaysToRateManager() throws {
         // arrange
         let expectedNumberOfDays: Int = Int.random(in: 1...10)
-        let fakeUserSettingManager: TestDouble.UserSettingManager = userSettingManager
-        do /*set up fake user setting manager*/ {
-            userSettingManager.numberOfDays = expectedNumberOfDays
-            
-            userSettingManager.baseCurrencyCode = "TWD"
-            userSettingManager.resultOrder = .increasing
-            userSettingManager.currencyCodeOfInterest = ["USD"]
-        }
+        let userSettingManagerStub: TestDouble.UserSettingManager = userSettingManager
+        userSettingManagerStub.numberOfDays = expectedNumberOfDays
         
         let rateManagerSpy: TestDouble.RateManager = rateManager
         do /*set up rate manager spy*/ {

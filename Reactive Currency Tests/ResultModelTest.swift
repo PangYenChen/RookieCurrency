@@ -3,46 +3,67 @@ import Combine
 @testable import ReactiveCurrency
 
 class ResultModelTest: XCTestCase {
+    // MARK: - system under test
+    private var sut: ResultModel!
+    
+    // MARK: - test double
+    private var userSettingManager: TestDouble.UserSettingManager!
+    private var rateManager: TestDouble.RateManager!
+    private var dummyCurrencyCodeDescriber: CurrencyDescriberProtocol!
+    private var fakeTimer: TestDouble.Timer!
+    
+    override func setUp() {
+        userSettingManager = TestDouble.UserSettingManager()
+        rateManager = TestDouble.RateManager()
+        dummyCurrencyCodeDescriber = TestDouble.CurrencyDescriber()
+        fakeTimer = TestDouble.Timer()
+        
+        sut = ResultModel(userSettingManager: userSettingManager,
+                          rateManager: rateManager,
+                          currencyDescriber: dummyCurrencyCodeDescriber,
+                          timer: fakeTimer)
+    }
+    
+    override func tearDown() {
+        sut = nil
+        
+        fakeTimer = nil
+        dummyCurrencyCodeDescriber = nil
+        rateManager = nil
+        userSettingManager = nil
+    }
+    
+    func testNoRetainCycleOccur() {
+        // arrange
+        addTeardownBlock { [weak sut] in
+            // assert
+            XCTAssertNil(sut)
+        }
+        // act
+        sut = nil
+    }
+    
     func testPassNumberOfDaysToRateManager() throws {
         // arrange
-        let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
+        let expectedNumberOfDays: Int = Int.random(in: 1...10)
+        let userSettingManagerStub: TestDouble.UserSettingManager = userSettingManager
+        userSettingManagerStub.numberOfDays = expectedNumberOfDays
         
-        let userSettingManagerStub: UserSettingManagerProtocol
-        let numberOfDays: Int = Int.random(in: 1...10)
-        do {
-            let dummyBaseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
-            let dummyResultOrder: BaseResultModel.Order = .increasing
-            let dummyCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD"]
-            userSettingManagerStub = TestDouble.UserSettingManager(
-                numberOfDays: numberOfDays,
-                baseCurrencyCode: dummyBaseCurrencyCode,
-                resultOrder: dummyResultOrder,
-                currencyCodeOfInterest: dummyCurrencyCodeOfInterest
-            )
-        }
-        
-        let rateManagerSpy: TestDouble.RateManager
-        do {
+        let rateManagerSpy: TestDouble.RateManager = rateManager
+        do /*set up rate manager spy*/ {
             let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
             let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
             let dummyResult: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
-            rateManagerSpy = TestDouble.RateManager(result: dummyResult)
+            rateManagerSpy.result = dummyResult
         }
         
-        let timerSpy: TestDouble.Timer = TestDouble.Timer()
-        
         // act
-        let sut: ResultModel = ResultModel(userSettingManager: userSettingManagerStub,
-                                           rateManager: rateManagerSpy,
-                                           currencyDescriber: currencyDescriberStub,
-                                           timer: timerSpy)
-        
         sut.rateStatistics
             .subscribe(AnySubscriber())
         
-        timerSpy.publish()
+        fakeTimer.publish()
         
         // assert
-        XCTAssertEqual(numberOfDays, rateManagerSpy.numberOfDays)
+        XCTAssertEqual(expectedNumberOfDays, rateManagerSpy.numberOfDays)
     }
 }
