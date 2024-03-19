@@ -97,7 +97,7 @@ extension ResultModel {
         self.searchText = searchText
         
         return Self.sort(self.rateStatistics,
-                         by: self.initialOrder,
+                         by: userSettingManager.resultOrder,
                          filteredIfNeededBy: self.searchText)
     }
 }
