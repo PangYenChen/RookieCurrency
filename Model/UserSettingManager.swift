@@ -77,7 +77,7 @@ class UserSettingManager: UserSettingManagerProtocol {
     var resultOrder: BaseResultModel.Order {
         didSet {
             guard oldValue != resultOrder else { return }
-            userDefaults.set(oldValue.rawValue, forKey: Key.resultOrder.rawValue)
+            userDefaults.set(resultOrder.rawValue, forKey: Key.resultOrder.rawValue)
         }
     }
 }

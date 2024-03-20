@@ -240,7 +240,7 @@ final class UserSettingManagerTests: XCTestCase {
     
     // MARK: - test result order
     func testDefaultValueOfResultOrder() {
-        // arrange, do nothing
+        // arrange, do nothing. UserDefaults spy is initially empty.
         
         // act, do nothing
         
@@ -262,7 +262,7 @@ final class UserSettingManagerTests: XCTestCase {
         XCTAssertEqual(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.resultOrder.rawValue], 1)
     }
     
-    func testResultOrderDoNotStoreInDefaultValueAfterSettingSameValue() {
+    func testResultOrderDoNotStoreInDefaultValueAfterSettingSameValueUsingDefaultValue() {
         // arrange, do nothing
         
         // act
@@ -270,12 +270,13 @@ final class UserSettingManagerTests: XCTestCase {
         
         // assert
         XCTAssertEqual(sut.resultOrder, sut.defaultResultOrder)
+        XCTAssertNil(userDefaultsSpy.dataDictionary[UserSettingManager.Key.resultOrder.rawValue])
         XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.resultOrder.rawValue], 1)
         XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.resultOrder.rawValue])
     }
     
     func testResultOrderStoreInDefaultValueAfterSettingDifferentValue() {
-        // arrange, do nothing
+        // arrange
         let newResultOrder: BaseResultModel.Order = switch sut.defaultResultOrder {
             case .increasing: .decreasing
             case .decreasing: .increasing
@@ -286,6 +287,27 @@ final class UserSettingManagerTests: XCTestCase {
         
         // assert
         XCTAssertEqual(sut.resultOrder, newResultOrder)
+        XCTAssertEqual(userDefaultsSpy.dataDictionary[UserSettingManager.Key.resultOrder.rawValue] as? String,
+                       newResultOrder.rawValue)
+        XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.resultOrder.rawValue], 1)
+        XCTAssertEqual(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.resultOrder.rawValue], 1)
+    }
+    
+    func testResultOrderDoNotStoreInDefaultValueAfterSettingSameValueUsingNewValue() {
+        // arrange
+        let newResultOrder: BaseResultModel.Order = switch sut.defaultResultOrder {
+            case .increasing: .decreasing
+            case .decreasing: .increasing
+        }
+        
+        // act
+        sut.resultOrder = newResultOrder
+        sut.resultOrder = newResultOrder
+        
+        // assert
+        XCTAssertEqual(sut.resultOrder, newResultOrder)
+        XCTAssertEqual(userDefaultsSpy.dataDictionary[UserSettingManager.Key.resultOrder.rawValue] as? String,
+                       newResultOrder.rawValue)
         XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.resultOrder.rawValue], 1)
         XCTAssertEqual(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.resultOrder.rawValue], 1)
     }
