@@ -69,7 +69,7 @@ class UserSettingManager: UserSettingManagerProtocol {
     var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
         didSet {
             guard oldValue != currencyCodeOfInterest else { return }
-            userDefaults.set(oldValue.sorted(), forKey: Key.currencyCodeOfInterest.rawValue)
+            userDefaults.set(currencyCodeOfInterest.sorted(), forKey: Key.currencyCodeOfInterest.rawValue)
         }
     }
     

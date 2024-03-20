@@ -94,7 +94,7 @@ final class UserSettingManagerTests: XCTestCase {
     
     // MARK: - test base currency code
     func testDefaultValueOfBaseCurrencyCode() {
-        // arrange, do nothing
+        // arrange, do nothing. UserDefaults spy is initially empty.
         
         // act, do nothing
         
@@ -162,7 +162,7 @@ final class UserSettingManagerTests: XCTestCase {
     
     // MARK: - test currency code of interest
     func testDefaultValueOfCurrencyCodeOfInterest() {
-        // arrange, do nothing
+        // arrange, do nothing. UserDefaults spy is initially empty.
         
         // act, do nothing
         
@@ -184,7 +184,7 @@ final class UserSettingManagerTests: XCTestCase {
         XCTAssertEqual(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue], 1)
     }
     
-    func testCurrencyCodeOfInterestDoNotStoreInDefaultValueAfterSettingSameValue() {
+    func testCurrencyCodeOfInterestDoNotStoreInDefaultValueAfterSettingSameValueUsingDefaultValue() {
         // arrange, do nothing
         
         // act
@@ -192,12 +192,13 @@ final class UserSettingManagerTests: XCTestCase {
         
         // assert
         XCTAssertEqual(sut.currencyCodeOfInterest, sut.defaultCurrencyCodeOfInterest)
+        XCTAssertNil(userDefaultsSpy.dataDictionary[UserSettingManager.Key.currencyCodeOfInterest.rawValue])
         XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue], 1)
         XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue])
     }
     
     func testCurrencyCodeOfInterestStoreInDefaultValueAfterSettingDifferentValue() {
-        // arrange, do nothing
+        // arrange
         let newCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["something to simulate setting different value"]
         
         // act
@@ -205,6 +206,34 @@ final class UserSettingManagerTests: XCTestCase {
         
         // assert
         XCTAssertEqual(sut.currencyCodeOfInterest, newCurrencyCodeOfInterest)
+        
+        do {
+            let arrayInSpy: [ResponseDataModel.CurrencyCode]? = userDefaultsSpy.dataDictionary[UserSettingManager.Key.currencyCodeOfInterest.rawValue] as? [String]
+            XCTAssertEqual(arrayInSpy.map(Set.init),
+                           newCurrencyCodeOfInterest)
+        }
+        
+        XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue], 1)
+        XCTAssertEqual(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue], 1)
+    }
+    
+    func testCurrencyCodeOfInterestDoNotStoreInDefaultValueAfterSettingSameValueUsingNewValue() {
+        // arrange
+        let newCurrencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["something to simulate setting different value"]
+        
+        // act
+        sut.currencyCodeOfInterest = newCurrencyCodeOfInterest
+        sut.currencyCodeOfInterest = newCurrencyCodeOfInterest
+        
+        // assert
+        XCTAssertEqual(sut.currencyCodeOfInterest, newCurrencyCodeOfInterest)
+        
+        do {
+            let arrayInSpy: [ResponseDataModel.CurrencyCode]? = userDefaultsSpy.dataDictionary[UserSettingManager.Key.currencyCodeOfInterest.rawValue] as? [String]
+            XCTAssertEqual(arrayInSpy.map(Set.init),
+                           newCurrencyCodeOfInterest)
+        }
+        
         XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue], 1)
         XCTAssertEqual(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue], 1)
     }
