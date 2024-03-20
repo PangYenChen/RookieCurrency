@@ -3,58 +3,54 @@ import Combine
 @testable import ReactiveCurrency
 
 class ResultModelTest: XCTestCase {
-    // MARK: - system under test
-    private var sut: ResultModel!
-    
-    // MARK: - test double
-    private var userSettingManager: TestDouble.UserSettingManager!
-    private var rateManager: TestDouble.RateManager!
-    private var dummyCurrencyCodeDescriber: CurrencyDescriberProtocol!
-    private var fakeTimer: TestDouble.Timer!
-    
-    override func setUp() {
-        userSettingManager = TestDouble.UserSettingManager()
-        rateManager = TestDouble.RateManager()
-        dummyCurrencyCodeDescriber = TestDouble.CurrencyDescriber()
-        fakeTimer = TestDouble.Timer()
-        
-        sut = ResultModel(userSettingManager: userSettingManager,
-                          rateManager: rateManager,
-                          currencyDescriber: dummyCurrencyCodeDescriber,
-                          timer: fakeTimer)
-    }
-    
-    override func tearDown() {
-        sut = nil
-        
-        fakeTimer = nil
-        dummyCurrencyCodeDescriber = nil
-        rateManager = nil
-        userSettingManager = nil
-    }
-    
     func testNoRetainCycleOccur() {
         // arrange
+        var sut: ResultModel?
+        do /*set up sut*/ {
+            let dummyUserSettingManager: UserSettingManagerProtocol = TestDouble.UserSettingManager()
+            let dummyRateManager: RateManagerProtocol = TestDouble.RateManager()
+            let dummyCurrencyCodeDescriber: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
+            let dummyTimer: TimerProtocol = TestDouble.Timer()
+            
+            sut = ResultModel(userSettingManager: dummyUserSettingManager,
+                              rateManager: dummyRateManager,
+                              currencyDescriber: dummyCurrencyCodeDescriber,
+                              timer: dummyTimer)
+        }
+        
         addTeardownBlock { [weak sut] in
             // assert
             XCTAssertNil(sut)
         }
+        
         // act
         sut = nil
     }
     
     func testPassNumberOfDaysToRateManager() throws {
         // arrange
+        let rateManagerSpy: TestDouble.RateManager
+        let fakeTimer: TestDouble.Timer = TestDouble.Timer()
+        let sut: ResultModel
         let expectedNumberOfDays: Int = Int.random(in: 1...10)
-        let userSettingManagerStub: TestDouble.UserSettingManager = userSettingManager
-        userSettingManagerStub.numberOfDays = expectedNumberOfDays
-        
-        let rateManagerSpy: TestDouble.RateManager = rateManager
-        do /*set up rate manager spy*/ {
-            let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
-            let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
-            let dummyResult: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
-            rateManagerSpy.result = dummyResult
+        do /*set up sut*/ {
+            let userSettingManagerStub: TestDouble.UserSettingManager = TestDouble.UserSettingManager()
+            userSettingManagerStub.numberOfDays = expectedNumberOfDays
+            
+            rateManagerSpy = TestDouble.RateManager()
+            do /*set up rate manager spy*/ {
+                let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
+                let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
+                let dummyResult: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
+                rateManagerSpy.result = dummyResult
+            }
+            
+            let dummyCurrencyCodeDescriber: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
+            
+            sut = ResultModel(userSettingManager: userSettingManagerStub,
+                              rateManager: rateManagerSpy,
+                              currencyDescriber: dummyCurrencyCodeDescriber,
+                              timer: fakeTimer)
         }
         
         // act
