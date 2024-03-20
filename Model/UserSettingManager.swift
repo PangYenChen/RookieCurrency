@@ -61,7 +61,7 @@ class UserSettingManager: UserSettingManagerProtocol {
     var baseCurrencyCode: ResponseDataModel.CurrencyCode {
         didSet {
             guard oldValue != baseCurrencyCode else { return }
-            userDefaults.set(oldValue, forKey: Key.baseCurrencyCode.rawValue)
+            userDefaults.set(baseCurrencyCode, forKey: Key.baseCurrencyCode.rawValue)
         }
     }
     

@@ -18,7 +18,7 @@ extension TestDouble {
         }
         
         // MARK: - properties
-        private var dataDictionary: [String: Any]
+        private(set) var dataDictionary: [String: Any]
         private(set) var numberOfArchive: [String: Int]
         private(set) var numberOfUnarchive: [String: Int]
         
