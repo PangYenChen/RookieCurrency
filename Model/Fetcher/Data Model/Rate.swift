@@ -59,7 +59,7 @@ extension ResponseDataModel.Rate: Decodable {
     /// Creates a new instance by decoding from the given decoder.
     /// - Parameter decoder: The decoder to read data from.
     init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
+        let container: KeyedDecodingContainer<ResponseDataModel.Rate<Category>.CodingKeys> = try decoder.container(keyedBy: CodingKeys.self)
         
         dateString = try container.decode(String.self, forKey: .date)
         
@@ -101,7 +101,7 @@ extension ResponseDataModel.HistoricalRate: Encodable {
     /// Encodes this value into the given encoder.
     /// - Parameter encoder: The encoder to write data to.
     func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
+        var container: KeyedEncodingContainer<ResponseDataModel.Rate<ResponseDataModel.Category.Historical>.CodingKeys> = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(dateString, forKey: .date)
         try container.encode(timestamp, forKey: .timestamp)
         try container.encode(rates, forKey: .rates)

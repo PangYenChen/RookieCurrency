@@ -28,16 +28,100 @@ final class QuasiBaseResultModelTests: XCTestCase {
         let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         
         // act
-        let statisticsResult: QuasiBaseResultModel.StatisticsInfo = sut.statisticize(baseCurrencyCode: baseCurrencyCode,
-                                                currencyCodeOfInterest: currencyCodeOfInterest,
-                                                latestRate: latestRate,
-                                                historicalRateSet: [historicalRate],
-                                                currencyDescriber: currencyDescriberStub)
+        let statisticsResult: QuasiBaseResultModel.StatisticsInfo = sut
+            .statisticize(baseCurrencyCode: baseCurrencyCode,
+                          currencyCodeOfInterest: currencyCodeOfInterest,
+                          latestRate: latestRate,
+                          historicalRateSet: [historicalRate],
+                          currencyDescriber: currencyDescriberStub)
         
         // assert
         XCTAssertEqual(Set(statisticsResult.rateStatistics.map { $0.currencyCode }),
                        supportedCurrencyCodeSet)
         
         XCTAssertEqual(statisticsResult.dataAbsentCurrencyCodeSet, nonSupportedCurrencyCodeSet)
+    }
+    
+    func testSortByDecreasingOrderAndFilterByDiacriticInsensitiveWay() {
+        // arrange
+        
+        let rateStatisticA: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
+            .RateStatistic(currencyCode: "code-ù",
+                           localizedString: "localized-A",
+                           latestRate: 1,
+                           meanRate: 1,
+                           fluctuation: 0)
+        
+        let rateStatisticB: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
+            .RateStatistic(currencyCode: "code-b",
+                           localizedString: "localized-Ù",
+                           latestRate: 2,
+                           meanRate: 1,
+                           fluctuation: -0.5)
+        
+        let rateStatisticC: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
+            .RateStatistic(currencyCode: "code-",
+                           localizedString: "localized-",
+                           latestRate: 1,
+                           meanRate: 2,
+                           fluctuation: 1)
+        
+        let rateStatisticsToBeSorted: Set<QuasiBaseResultModel.RateStatistic> = [rateStatisticA,
+                                                                                 rateStatisticB,
+                                                                                 rateStatisticC]
+        
+        let expectedSortedStatistics: [QuasiBaseResultModel.RateStatistic] = [rateStatisticA,
+                                                                              rateStatisticB]
+        
+        // act
+        let sortedRateStatistics: [QuasiBaseResultModel.RateStatistic] = QuasiBaseResultModel
+            .sort(rateStatisticsToBeSorted,
+                  by: .decreasing,
+                  filteredIfNeededBy: "Ù")
+        
+        // assert
+        XCTAssertEqual(sortedRateStatistics, expectedSortedStatistics)
+    }
+    
+    func testSortByDecreasingOrderWithoutFiltering() {
+        // arrange
+        
+        let rateStatisticA: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
+            .RateStatistic(currencyCode: "code-ù",
+                           localizedString: "localized-A",
+                           latestRate: 1,
+                           meanRate: 1,
+                           fluctuation: 0)
+        
+        let rateStatisticB: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
+            .RateStatistic(currencyCode: "code-b",
+                           localizedString: "localized-Ù",
+                           latestRate: 2,
+                           meanRate: 1,
+                           fluctuation: -0.5)
+        
+        let rateStatisticC: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
+            .RateStatistic(currencyCode: "code-",
+                           localizedString: "localized-",
+                           latestRate: 1,
+                           meanRate: 2,
+                           fluctuation: 1)
+        
+        let rateStatisticsToBeSorted: Set<QuasiBaseResultModel.RateStatistic> = [rateStatisticA,
+                                                                                 rateStatisticB,
+                                                                                 rateStatisticC]
+        
+        let expectedSortedStatistics: [QuasiBaseResultModel.RateStatistic] = [rateStatisticB,
+                                                                              rateStatisticA,
+                                                                              rateStatisticC]
+        
+        // act
+        let sortedRateStatistics: [QuasiBaseResultModel.RateStatistic] = QuasiBaseResultModel
+            .sort(rateStatisticsToBeSorted,
+                  by: .increasing,
+                  filteredIfNeededBy: nil)
+        
+        // assert
+        XCTAssertEqual(sortedRateStatistics, expectedSortedStatistics)
     }
 }

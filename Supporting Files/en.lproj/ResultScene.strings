@@ -6,3 +6,4 @@
 "decreasing" = "decreasing";
 "refreshing" = "refreshing";
 "fluctuation" = "fluctuation: %@";
+"dataAbsent" = "The data of following currency are absent. Please consider losing interest in those currencies: %@";

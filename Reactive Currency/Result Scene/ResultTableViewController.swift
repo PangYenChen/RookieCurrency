@@ -15,9 +15,14 @@ final class ResultTableViewController: BaseResultTableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        resultModel.sortedRateStatistics
+        resultModel.rateStatistics
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: populateTableViewWith)
+            .store(in: &anyCancellableSet)
+        
+        resultModel.dataAbsentCurrencyCodeSet
+            .receive(on: DispatchQueue.main)
+            .sink(receiveValue: presentDataAbsentAlertFor(currencyCodeSet:))
             .store(in: &anyCancellableSet)
         
         resultModel.refreshStatus

@@ -17,14 +17,11 @@ extension TestDouble {
         
         var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
         
-        init(numberOfDays: Int,
-             baseCurrencyCode: ResponseDataModel.CurrencyCode,
-             resultOrder: BaseResultModel.Order,
-             currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) {
-            self.numberOfDays = numberOfDays
-            self.baseCurrencyCode = baseCurrencyCode
-            self.resultOrder = resultOrder
-            self.currencyCodeOfInterest = currencyCodeOfInterest
+        init() {
+            numberOfDays = 3
+            baseCurrencyCode = "TWD"
+            resultOrder = .decreasing
+            currencyCodeOfInterest = ["USD, JPY"]
         }
     }
 }

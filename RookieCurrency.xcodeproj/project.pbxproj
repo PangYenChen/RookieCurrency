@@ -146,6 +146,10 @@
 		51E731C829B4DCFA00C1DB2B /* ArchiverTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A642F29B0D5D000918B84 /* ArchiverTest.swift */; };
 		51E731C929B4DCFE00C1DB2B /* ResponseDataModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A643429B4615B00918B84 /* ResponseDataModelTest.swift */; };
 		51E731CA29B4DCFF00C1DB2B /* ResponseDataModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519A643429B4615B00918B84 /* ResponseDataModelTest.swift */; };
+		51F23C662BA20DF3003A85AE /* PartialPathProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F23C652BA20DF3003A85AE /* PartialPathProvider.swift */; };
+		51F23C672BA20DF3003A85AE /* PartialPathProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F23C652BA20DF3003A85AE /* PartialPathProvider.swift */; };
+		51F23C6A2BA20E13003A85AE /* BaseOnTWD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F23C692BA20E13003A85AE /* BaseOnTWD.swift */; };
+		51F23C6B2BA20E13003A85AE /* BaseOnTWD.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51F23C692BA20E13003A85AE /* BaseOnTWD.swift */; };
 		E1133335248A924D00B8E67F /* Archiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1133334248A924D00B8E67F /* Archiver.swift */; };
 		E13B274624758ACB00E0A07D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274524758ACB00E0A07D /* AppDelegate.swift */; };
 		E13B274824758ACB00E0A07D /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = E13B274724758ACB00E0A07D /* SceneDelegate.swift */; };
@@ -274,6 +278,8 @@
 		51E1B4C729AE488900D75669 /* Endpoints.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Endpoints.swift; sourceTree = "<group>"; };
 		51E1B4CA29AE490300D75669 /* Latest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Latest.swift; sourceTree = "<group>"; };
 		51E1B4CD29AE4C7100D75669 /* Historical.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Historical.swift; sourceTree = "<group>"; };
+		51F23C652BA20DF3003A85AE /* PartialPathProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PartialPathProvider.swift; sourceTree = "<group>"; };
+		51F23C692BA20E13003A85AE /* BaseOnTWD.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseOnTWD.swift; sourceTree = "<group>"; };
 		E1133334248A924D00B8E67F /* Archiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Archiver.swift; sourceTree = "<group>"; };
 		E13B274224758ACB00E0A07D /* ImperativeCurrency.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ImperativeCurrency.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		E13B274524758ACB00E0A07D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -592,6 +598,8 @@
 			isa = PBXGroup;
 			children = (
 				519BD8A929BD7E8F00D2CB29 /* EndpointProtocol.swift */,
+				51F23C652BA20DF3003A85AE /* PartialPathProvider.swift */,
+				51F23C692BA20E13003A85AE /* BaseOnTWD.swift */,
 				51E1B4C729AE488900D75669 /* Endpoints.swift */,
 				51E1B4CA29AE490300D75669 /* Latest.swift */,
 				51E1B4CD29AE4C7100D75669 /* Historical.swift */,
@@ -982,6 +990,8 @@
 				514E459E2B2EACF400E1F3EC /* CurrencySelectionModel.swift in Sources */,
 				514C4D0529A0D6570049E192 /* BaseCurrencySelectionTableViewController.swift in Sources */,
 				512495752B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift in Sources */,
+				51F23C6A2BA20E13003A85AE /* BaseOnTWD.swift in Sources */,
+				51F23C662BA20DF3003A85AE /* PartialPathProvider.swift in Sources */,
 				515D3D8729ED8C7400B84F4B /* SupportedSymbols.swift in Sources */,
 				51E1B4CB29AE490300D75669 /* Latest.swift in Sources */,
 				51E1B4C429AE3DE300D75669 /* Rate.swift in Sources */,
@@ -1064,6 +1074,8 @@
 				51E1B4C929AE488900D75669 /* Endpoints.swift in Sources */,
 				512495692B31E89C00FD86D9 /* SupportedCurrencyManager.swift in Sources */,
 				512495762B3489C500FD86D9 /* CurrencySelectionModelProtocol.swift in Sources */,
+				51F23C6B2BA20E13003A85AE /* BaseOnTWD.swift in Sources */,
+				51F23C672BA20DF3003A85AE /* PartialPathProvider.swift in Sources */,
 				514C4D0629A0D6570049E192 /* BaseCurrencySelectionTableViewController.swift in Sources */,
 				515D3D8829ED8C7400B84F4B /* SupportedSymbols.swift in Sources */,
 				51E1B4CC29AE490300D75669 /* Latest.swift in Sources */,

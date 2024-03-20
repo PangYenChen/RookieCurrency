@@ -42,7 +42,7 @@ class BaseResultTableViewController: UITableViewController {
         }
         
         do /*configure table view's data source*/ {
-            dataSource = DataSource(tableView: tableView) { [unowned self] tableView, indexPath, rateStatistic in
+            dataSource = DataSource(tableView: tableView) { tableView, indexPath, rateStatistic in
                 let reusedIdentifier: String = R.reuseIdentifier.currencyCell.identifier
                 let cell: UITableViewCell = tableView.dequeueReusableCell(withIdentifier: reusedIdentifier, for: indexPath)
                 
@@ -164,6 +164,25 @@ extension BaseResultTableViewController {
                     .map(Date.init(timeIntervalSince1970:))?
                     .formatted(.relative(presentation: .named)) ?? "-"
                 refreshStatusBarButtonItem.title = R.string.resultScene.latestUpdateTime(relativeDateString)
+        }
+    }
+    
+    final func presentDataAbsentAlertFor(currencyCodeSet: Set<ResponseDataModel.CurrencyCode>) {
+        let currencyCodeDescriptions: [String] = currencyCodeSet
+            .map(baseResultModel.localizedStringFor(currencyCode:))
+            .sorted()
+        
+        let listedCurrencyCodeDescriptions: String = ListFormatter.localizedString(byJoining: currencyCodeDescriptions)
+        
+        let message: String = R.string.resultScene.dataAbsent(listedCurrencyCodeDescriptions)
+        
+        if let presentingViewController {
+            if presentingViewController is UIAlertController {
+                dismiss(animated: true) { [unowned self] in presentAlert(message: message) }
+            }
+        }
+        else {
+            presentAlert(message: message)
         }
     }
     

@@ -4,9 +4,9 @@ import Combine
 final class ResultModel: BaseResultModel {
     // MARK: - initializer
     init(
-        currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
-        rateManager: RateManagerProtocol = RateManager.shared,
         userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
+        rateManager: RateManagerProtocol = RateManager.shared,
+        currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
         timer: TimerProtocol = TimerProxy()
     ) {
         var userSettingManager: UserSettingManagerProtocol = userSettingManager
@@ -78,7 +78,7 @@ final class ResultModel: BaseResultModel {
             
             let statisticsInfoTuple: AnyPublisher<StatisticsInfoTuple, Never> = statisticsInfoTupleResult.resultSuccess()
             
-            sortedRateStatistics = statisticsInfoTuple
+            rateStatistics = statisticsInfoTuple
                 .map { statisticsInfoTuple in statisticsInfoTuple.statisticsInfo }
                 .combineLatest(order, searchText) { statisticsInfo, order, searchText in
                     Self.sort(statisticsInfo.rateStatistics,
@@ -87,9 +87,9 @@ final class ResultModel: BaseResultModel {
                 }
                 .eraseToAnyPublisher()
             
-            let dataAbsentCurrencyCodeSet = statisticsInfoTuple
+            dataAbsentCurrencyCodeSet = statisticsInfoTuple
                 .map { rateStatisticsTuple in rateStatisticsTuple.statisticsInfo.dataAbsentCurrencyCodeSet }
-            // TODO: 還沒處理分析錯誤，要提示使用者即將刪掉本地的資料，重新從網路上拿
+                .eraseToAnyPublisher()
             
             error = statisticsInfoTupleResult.resultFailure()
             
@@ -117,8 +117,8 @@ final class ResultModel: BaseResultModel {
         
         anyCancellableSet = Set<AnyCancellable>()
         
-        super.init(currencyDescriber: currencyDescriber,
-                   userSettingManager: userSettingManager)
+        super.init(userSettingManager: userSettingManager,
+                   currencyDescriber: currencyDescriber)
         
         do /*subscribe*/ {
             settingFromSettingModel
@@ -158,7 +158,9 @@ final class ResultModel: BaseResultModel {
     private var anyCancellableSet: Set<AnyCancellable>
     
     // MARK: output properties
-    let sortedRateStatistics: AnyPublisher<[RateStatistic], Never>
+    let rateStatistics: AnyPublisher<[RateStatistic], Never>
+    
+    let dataAbsentCurrencyCodeSet: AnyPublisher<Set<ResponseDataModel.CurrencyCode>, Never>
     
     let refreshStatus: AnyPublisher<RefreshStatus, Never>
     

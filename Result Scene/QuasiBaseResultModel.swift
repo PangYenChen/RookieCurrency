@@ -1,15 +1,15 @@
 import Foundation
 
 class QuasiBaseResultModel {
-    init(currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
-         userSettingManager: UserSettingManagerProtocol) {
+    init(userSettingManager: UserSettingManagerProtocol,
+         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
         self.currencyDescriber = currencyDescriber
         initialOrder = userSettingManager.resultOrder
     }
     
     let initialOrder: Order
     
-    private let currencyDescriber: CurrencyDescriberProtocol
+    let currencyDescriber: CurrencyDescriberProtocol
 }
 
 // MARK: - static property
@@ -98,30 +98,6 @@ extension QuasiBaseResultModel {
     
     /// 這是容納換算好的資料的容器
     struct RateStatistic: Hashable {
-        init?(baseCurrencyCode: ResponseDataModel.CurrencyCode,
-              currencyCode: ResponseDataModel.CurrencyCode,
-              currencyDescriber: CurrencyDescriberProtocol,
-              latestRate: ResponseDataModel.LatestRate,
-              historicalRateSet: Set<ResponseDataModel.HistoricalRate>) {
-            self.currencyCode = currencyCode
-            self.localizedString = currencyDescriber.localizedStringFor(currencyCode: currencyCode)
-            
-            guard let latestRate = latestRate.convertOneUnitOf(baseCurrencyCode, to: currencyCode) else { return nil }
-            
-            self.latestRate = latestRate
-            
-            var total: Decimal = 0
-            for historicalRate in historicalRateSet {
-                guard let historicalRate = historicalRate.convertOneUnitOf(baseCurrencyCode, to: currencyCode) else { return nil }
-                
-                total += historicalRate
-            }
-            
-            meanRate = total / Decimal(historicalRateSet.count)
-            
-            fluctuation = (latestRate - meanRate) / meanRate
-        }
-        
         let currencyCode: ResponseDataModel.CurrencyCode
         let localizedString: String
         let latestRate: Decimal
@@ -142,6 +118,32 @@ extension QuasiBaseResultModel {
     enum RefreshStatus {
         case process
         case idle(latestUpdateTimestamp: Int?)
+    }
+}
+
+extension QuasiBaseResultModel.RateStatistic {
+    init?(baseCurrencyCode: ResponseDataModel.CurrencyCode,
+          currencyCode: ResponseDataModel.CurrencyCode,
+          currencyDescriber: CurrencyDescriberProtocol,
+          latestRate: ResponseDataModel.LatestRate,
+          historicalRateSet: Set<ResponseDataModel.HistoricalRate>) {
+        self.currencyCode = currencyCode
+        self.localizedString = currencyDescriber.localizedStringFor(currencyCode: currencyCode)
+        
+        guard let latestRate = latestRate.convertOneUnitOf(baseCurrencyCode, to: currencyCode) else { return nil }
+        
+        self.latestRate = latestRate
+        
+        var total: Decimal = 0
+        for historicalRate in historicalRateSet {
+            guard let historicalRate = historicalRate.convertOneUnitOf(baseCurrencyCode, to: currencyCode) else { return nil }
+            
+            total += historicalRate
+        }
+        
+        meanRate = total / Decimal(historicalRateSet.count)
+        
+        fluctuation = (latestRate - meanRate) / meanRate
     }
 }
 

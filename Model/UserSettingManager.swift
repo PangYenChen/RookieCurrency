@@ -61,7 +61,7 @@ class UserSettingManager: UserSettingManagerProtocol {
     var baseCurrencyCode: ResponseDataModel.CurrencyCode {
         didSet {
             guard oldValue != baseCurrencyCode else { return }
-            userDefaults.set(oldValue, forKey: Key.baseCurrencyCode.rawValue)
+            userDefaults.set(baseCurrencyCode, forKey: Key.baseCurrencyCode.rawValue)
         }
     }
     
@@ -69,7 +69,7 @@ class UserSettingManager: UserSettingManagerProtocol {
     var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> {
         didSet {
             guard oldValue != currencyCodeOfInterest else { return }
-            userDefaults.set(oldValue.sorted(), forKey: Key.currencyCodeOfInterest.rawValue)
+            userDefaults.set(currencyCodeOfInterest.sorted(), forKey: Key.currencyCodeOfInterest.rawValue)
         }
     }
     
@@ -77,7 +77,7 @@ class UserSettingManager: UserSettingManagerProtocol {
     var resultOrder: BaseResultModel.Order {
         didSet {
             guard oldValue != resultOrder else { return }
-            userDefaults.set(oldValue.rawValue, forKey: Key.resultOrder.rawValue)
+            userDefaults.set(resultOrder.rawValue, forKey: Key.resultOrder.rawValue)
         }
     }
 }
