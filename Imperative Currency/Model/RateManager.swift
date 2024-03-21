@@ -135,7 +135,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
             do {
                 let latestRate: ResponseDataModel.LatestRate = try latestRateResult.get()
                 let historicalRateSet: Set<ResponseDataModel.HistoricalRate> = try historicalRateSetResult.get()
-                completionHandler(.success((latestRate: latestRate, 
+                completionHandler(.success((latestRate: latestRate,
                                             historicalRateSet: historicalRateSet)))
             }
             catch {
@@ -147,5 +147,5 @@ class RateManager: BaseRateManager, RateManagerProtocol {
 
 // MARK: - name space
 extension BaseRateManager {
-    typealias CompletionHandler = (Result<RateTuple, Error>) -> Void
+    typealias CompletionHandler = (_ result: Result<RateTuple, Error>) -> Void
 }
