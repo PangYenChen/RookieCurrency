@@ -42,7 +42,7 @@ final class ResultModelTest: XCTestCase {
         sut = nil
     }
     
-    func testPassNumberOfDaysToRateManager() throws {
+    func testAllSucceed() throws {
         // arrange
         let expectedNumberOfDays: Int = Int.random(in: 1...10)
         let userSettingManagerStub: TestDouble.UserSettingManager = userSettingManager
@@ -50,22 +50,6 @@ final class ResultModelTest: XCTestCase {
         
         let rateManagerSpy: TestDouble.RateManager = rateManager
         
-        // act
-        fakeTimer.block?()
-        do /*fake the rate manager result*/ {
-            let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
-            let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
-            let dummyResult: Result<BaseRateManager.RateTuple, Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
-            
-            rateManagerSpy.executeCompletionHandlerWith(result: dummyResult)
-        }
-        
-        // assert
-        XCTAssertEqual(rateManagerSpy.numberOfDays, expectedNumberOfDays)
-    }
-    
-    func testAllSucceed() throws {
-        // arrange
         var expectedRateStatics: [ResultModel.RateStatistic]?
         var expectedDataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>?
         var expectedRefreshStatus: ResultModel.RefreshStatus?
@@ -82,6 +66,8 @@ final class ResultModelTest: XCTestCase {
         fakeTimer.block?()
         
         // assert
+        XCTAssertEqual(rateManagerSpy.numberOfDays, expectedNumberOfDays)
+        
         XCTAssertNil(expectedRateStatics)
         XCTAssertNil(expectedDataAbsentCurrencyCodeSet)
         do {
