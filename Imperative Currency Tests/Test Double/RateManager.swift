@@ -3,13 +3,12 @@ import Foundation
 
 extension TestDouble {
     final class RateManager: RateManagerProtocol {
-        var numberOfDays: Int?
+        private(set) var numberOfDays: Int?
         
-        var result: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ImperativeCurrency.ResponseDataModel.HistoricalRate>), Error>?
+        private var completionHandler: ((Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error>) -> Void)?
         
         init() {
             numberOfDays = nil
-            result = nil
         }
         
         func getRateFor(
@@ -17,9 +16,13 @@ extension TestDouble {
             completionHandlerQueue: DispatchQueue,
             completionHandler: @escaping (Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error>) -> Void) {
                 self.numberOfDays = numberOfDays
-                guard let result else { return }
-                completionHandler(result)
+                self.completionHandler = completionHandler
             }
         // TODO: completion handler 要用 typealias 跟 argument label
+        
+        func executeCompletionHandlerWith(result: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error>) {
+            completionHandler?(result)
+            completionHandler = nil
+        }
     }
 }

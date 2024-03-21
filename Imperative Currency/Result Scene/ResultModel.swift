@@ -136,7 +136,7 @@ extension ResultModel {
 
 // MARK: - name space
 extension ResultModel {
-    typealias RateStatisticsHandlebar = (_ sortedRateStatistics: [RateStatistic]) -> Void
+    typealias RateStatisticsHandlebar = (_ rateStatistics: [RateStatistic]) -> Void
     
     typealias DataAbsentCurrencyCodeSetHandler = (_ dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>) -> Void
     

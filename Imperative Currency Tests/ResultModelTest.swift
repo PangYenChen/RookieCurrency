@@ -49,17 +49,42 @@ final class ResultModelTest: XCTestCase {
         userSettingManagerStub.numberOfDays = expectedNumberOfDays
         
         let rateManagerSpy: TestDouble.RateManager = rateManager
-        do /*set up rate manager spy*/ {
-            let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
-            let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
-            let dummyResult: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
-            rateManagerSpy.result = dummyResult
-        }
         
         // act
         fakeTimer.block?()
+        do /*fake the rate manager result*/ {
+            let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
+            let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
+            let dummyResult: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
+            
+            rateManagerSpy.executeCompletionHandlerWith(result: dummyResult)
+        }
         
         // assert
         XCTAssertEqual(rateManagerSpy.numberOfDays, expectedNumberOfDays)
     }
+    
+//    func testAllSucceed() throws {
+//        // arrange
+//        var expectedRateStatics: [ResultModel.RateStatistic]?
+//        
+//        sut.rateStatisticsHandler = { rateStatics in
+//            expectedRateStatics = rateStatics
+//        }
+//        
+//        // act
+//        fakeTimer.block?()
+//        do /*set up rate manager stub*/ {
+//            let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
+//            let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
+//            let dummyResult: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
+//            rateManager.result = dummyResult
+//        }
+//        
+//        // assert
+//        do {
+//            let expectedRateStatics: [ResultModel.RateStatistic] = try XCTUnwrap(expectedRateStatics)
+//        }
+//        
+//    }
 }
