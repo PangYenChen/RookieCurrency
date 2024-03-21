@@ -20,8 +20,7 @@ final class ImperativeRateManagerTests: XCTestCase {
                           archiver: spyArchiver,
                           concurrentQueue: concurrentQueue)
         
-        var expectedResult: Result<(latestRate: ResponseDataModel.LatestRate,
-                                    historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
+        var expectedResult: Result<BaseRateManager.RateTuple,
                                    Error>?
         let dummyStartingDate = Date(timeIntervalSince1970: 0)
         let numberOfDays = 3

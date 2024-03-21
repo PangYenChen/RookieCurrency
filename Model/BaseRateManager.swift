@@ -1,7 +1,7 @@
 import Foundation
 
 /// 用來獲得各貨幣匯率資料的類別
-class RateManager {
+class BaseRateManager {
     // MARK: - initializer
     init(fetcher: FetcherProtocol = Fetcher.shared,
          archiver: ArchiverProtocol.Type = Archiver.self,
@@ -27,7 +27,7 @@ class RateManager {
 }
 
 // MARK: - instance method
-extension RateManager {
+extension BaseRateManager {
     func historicalRateDateStrings(numberOfDaysAgo: Int, from start: Date) -> Set<String> {
         Set(
             (1...numberOfDaysAgo)
@@ -46,6 +46,12 @@ extension RateManager {
 }
 
 // MARK: - static property
-extension RateManager {
+extension BaseRateManager {
     static let shared: RateManager = .init()
+}
+
+// MARK: - name space
+extension BaseRateManager {
+    typealias RateTuple = (latestRate: ResponseDataModel.LatestRate,
+                           historicalRateSet: Set<ResponseDataModel.HistoricalRate>)
 }

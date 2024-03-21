@@ -41,7 +41,7 @@ class ResultModelTest: XCTestCase {
             do /*set up rate manager spy*/ {
                 let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
                 let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
-                let dummyResult: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
+                let dummyResult: Result<BaseRateManager.RateTuple, Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
                 rateManagerSpy.result = dummyResult
             }
             

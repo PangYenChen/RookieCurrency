@@ -7,14 +7,14 @@ extension TestDouble {
     class RateManager: RateManagerProtocol {
         var numberOfDays: Int?
         
-        var result: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error>?
+        var result: Result<BaseRateManager.RateTuple, Error>?
         
         init() {
             numberOfDays = nil
             result = nil
         }
         
-        func ratePublisher(numberOfDays: Int) -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> {
+        func ratePublisher(numberOfDays: Int) -> AnyPublisher<BaseRateManager.RateTuple, Error> {
             self.numberOfDays = numberOfDays
             guard let result else { return Empty().eraseToAnyPublisher() }
             return result.publisher.eraseToAnyPublisher()

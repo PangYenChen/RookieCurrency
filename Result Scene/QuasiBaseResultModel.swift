@@ -129,7 +129,7 @@ extension QuasiBaseResultModel.RateStatistic {
           historicalRateSet: Set<ResponseDataModel.HistoricalRate>) {
         self.currencyCode = currencyCode
         self.localizedString = currencyDescriber.localizedStringFor(currencyCode: currencyCode)
-        
+        // TODO: 變數名稱要想一下 不能用latest rate
         guard let latestRate = latestRate.convertOneUnitOf(baseCurrencyCode, to: currencyCode) else { return nil }
         
         self.latestRate = latestRate

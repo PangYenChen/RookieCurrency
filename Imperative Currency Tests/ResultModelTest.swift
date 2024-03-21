@@ -55,7 +55,7 @@ final class ResultModelTest: XCTestCase {
         do /*fake the rate manager result*/ {
             let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
             let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
-            let dummyResult: Result<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
+            let dummyResult: Result<BaseRateManager.RateTuple, Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
             
             rateManagerSpy.executeCompletionHandlerWith(result: dummyResult)
         }
@@ -63,6 +63,7 @@ final class ResultModelTest: XCTestCase {
         // assert
         XCTAssertEqual(rateManagerSpy.numberOfDays, expectedNumberOfDays)
     }
+    
     
 //    func testAllSucceed() throws {
 //        // arrange
