@@ -63,6 +63,7 @@ final class ResultModelTest: XCTestCase {
         sut.errorHandler = { error in expectedError = error }
         
         // act
+        sut.resumeAutoRefresh()
         fakeTimer.executeBlock()
         
         // assert
@@ -125,6 +126,7 @@ final class ResultModelTest: XCTestCase {
         sut.errorHandler = { error in receivedError = error }
         
         // act
+        sut.resumeAutoRefresh()
         fakeTimer.executeBlock()
         
         // assert

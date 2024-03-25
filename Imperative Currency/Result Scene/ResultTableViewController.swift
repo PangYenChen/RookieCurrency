@@ -16,8 +16,11 @@ final class ResultTableViewController: BaseResultTableViewController {
         resultModel.refreshStatusHandler = populateRefreshStatusBarButtonItemWith(status:)
         resultModel.dataAbsentCurrencyCodeSetHandler = presentDataAbsentAlertFor(currencyCodeSet:)
         resultModel.errorHandler = presentErrorAlert(error:)
+        
+        resultModel.resumeAutoRefresh()
     }
     
+    // MARK: - life cycle
     override func viewIsAppearing(_ animated: Bool) {
         super.viewIsAppearing(animated)
         
@@ -27,8 +30,6 @@ final class ResultTableViewController: BaseResultTableViewController {
     
     // MARK: - private property
     private let resultModel: ResultModel
-    
-    private var timer: Timer?
     
     // MARK: - override abstract methods
     override func setOrder(_ order: QuasiBaseResultModel.Order) {

@@ -69,6 +69,7 @@ class ResultModelTest: XCTestCase {
             .store(in: &anyCancellableSet)
         
         // act
+        sut.resumeAutoRefresh()
         fakeTimer.publish()
 
         // assert
@@ -150,6 +151,7 @@ class ResultModelTest: XCTestCase {
             .store(in: &anyCancellableSet)
         
         // act
+        sut.resumeAutoRefresh()
         fakeTimer.publish()
         
         // assert

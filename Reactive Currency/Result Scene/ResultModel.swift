@@ -22,7 +22,7 @@ final class ResultModel: BaseResultModel {
             
             order = CurrentValueSubject<Order, Never>(userSettingManager.resultOrder)
             
-            resumeAutoRefresh = CurrentValueSubject<Void, Never>(())
+            resumeAutoRefreshSubject = PassthroughSubject<Void, Never>()
             
             suspendAutoRefresh = PassthroughSubject<Void, Never>()
         }
@@ -37,7 +37,7 @@ final class ResultModel: BaseResultModel {
                 
                 do /*initialize autoRefresh*/ {
                     let timerPublisher: AnyPublisher<AnyPublisher<Void, Never>, Never> = Publishers
-                        .Merge(resumeAutoRefresh,
+                        .Merge(resumeAutoRefreshSubject,
                                settingFromSettingModel.map { _ in })
                         .map { _ in timer.makeTimerPublisher(every: Self.autoRefreshTimeInterval) }
                         .eraseToAnyPublisher()
@@ -161,7 +161,7 @@ final class ResultModel: BaseResultModel {
     
     private let searchText: CurrentValueSubject<String?, Never>
     
-    private let resumeAutoRefresh: CurrentValueSubject<Void, Never>
+    private let resumeAutoRefreshSubject: PassthroughSubject<Void, Never>
     
     private let suspendAutoRefresh: PassthroughSubject<Void, Never>
     
@@ -190,6 +190,10 @@ extension ResultModel {
     func setSearchText(_ searchText: String?) {
         self.searchText.send(searchText)
     }
+    
+    func resumeAutoRefresh() {
+        resumeAutoRefreshSubject.send()
+    }
 }
 
 // MARK: - SettingModelFactory
@@ -198,7 +202,7 @@ extension ResultModel {
         suspendAutoRefresh.send()
         return SettingModel(setting: setting.value,
                             saveSettingSubscriber: AnySubscriber(setting),
-                            cancelSubscriber: AnySubscriber(resumeAutoRefresh))
+                            cancelSubscriber: AnySubscriber(resumeAutoRefreshSubject))
     }
 }
 
