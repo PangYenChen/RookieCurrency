@@ -7,7 +7,7 @@ extension TestDouble {
         init() {}
         
         // MARK: - property
-        var block: (() -> Void)?
+        private var block: (() -> Void)?
     }
 }
 
@@ -18,6 +18,11 @@ extension TestDouble.Timer {
     }
     
     func invalidate() {
+        block = nil
+    }
+    
+    func executeBlock() {
+        block?()
         block = nil
     }
 }

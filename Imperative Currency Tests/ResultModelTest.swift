@@ -63,7 +63,7 @@ final class ResultModelTest: XCTestCase {
         sut.errorHandler = { error in expectedError = error }
         
         // act
-        fakeTimer.block?()
+        fakeTimer.executeBlock()
         
         // assert
         XCTAssertEqual(rateManagerSpy.numberOfDays, expectedNumberOfDays)
@@ -102,5 +102,60 @@ final class ResultModelTest: XCTestCase {
             }
         }
         XCTAssertNil(expectedError)
+    }
+    
+    func testRateManagerResultInError() throws {
+        // arrange
+        let userSettingManagerStub: TestDouble.UserSettingManager = userSettingManager
+        let rateManagerStub: TestDouble.RateManager = rateManager
+        
+        var receivedRateStatics: [ResultModel.RateStatistic]?
+        var receivedDataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>?
+        var receivedRefreshStatus: ResultModel.RefreshStatus?
+        var receivedError: Error?
+        
+        let expectedTimeoutError: URLError = URLError(URLError.Code.timedOut)
+        
+        sut.rateStatisticsHandler = { rateStatistics in receivedRateStatics = rateStatistics }
+        
+        sut.dataAbsentCurrencyCodeSetHandler = { dataAbsentCurrencyCodeSet in receivedDataAbsentCurrencyCodeSet = dataAbsentCurrencyCodeSet }
+        
+        sut.refreshStatusHandler = { refreshStatus in receivedRefreshStatus = refreshStatus }
+            
+        sut.errorHandler = { error in receivedError = error }
+        
+        // act
+        fakeTimer.executeBlock()
+        
+        // assert
+        XCTAssertNil(receivedRateStatics)
+        XCTAssertNil(receivedDataAbsentCurrencyCodeSet)
+        do {
+            let expectedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
+            switch expectedRefreshStatus {
+                case .process: return
+                case .idle: XCTFail("It should be .process")
+            }
+        }
+        XCTAssertNil(receivedError)
+        
+        // act
+        rateManagerStub.executeCompletionHandlerWith(result: .failure(expectedTimeoutError))
+        
+        // assert
+        XCTAssertNil(receivedRateStatics)
+        XCTAssertNil(receivedDataAbsentCurrencyCodeSet)
+        do /*assert received refresh status*/ {
+            let receivedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
+            switch receivedRefreshStatus {
+                case .process: XCTFail("It should be .idle")
+                case .idle: return
+            }
+        }
+        
+        do /*assert received error*/ {
+            let receivedError: URLError = try XCTUnwrap(receivedError as? URLError)
+            XCTAssertEqual(receivedError, expectedTimeoutError)
+        }
     }
 }

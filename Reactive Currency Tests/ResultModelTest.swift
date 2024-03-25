@@ -114,14 +114,14 @@ class ResultModelTest: XCTestCase {
         // arrange
         let userSettingManagerStub: TestDouble.UserSettingManager = TestDouble.UserSettingManager()
         
-        let dummyRateManager: TestDouble.RateManager = TestDouble.RateManager()
+        let rateManagerStub: TestDouble.RateManager = TestDouble.RateManager()
         let fakeTimer: TestDouble.Timer = TestDouble.Timer()
         
         let sut: ResultModel
         do /*initialize sut*/ {
             let dummyCurrencyCodeDescriber: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
             sut = ResultModel(userSettingManager: userSettingManagerStub,
-                              rateManager: dummyRateManager,
+                              rateManager: rateManagerStub,
                               currencyDescriber: dummyCurrencyCodeDescriber,
                               timer: fakeTimer)
         }
@@ -165,20 +165,20 @@ class ResultModelTest: XCTestCase {
         XCTAssertNil(receivedError)
         
         // act
-        dummyRateManager.publish(completion: .failure(expectedTimeoutError))
+        rateManagerStub.publish(completion: .failure(expectedTimeoutError))
         
         // assert
         XCTAssertNil(receivedRateStatics)
         XCTAssertNil(receivedDataAbsentCurrencyCodeSet)
-        do {
-            let expectedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
-            switch expectedRefreshStatus {
+        do /*assert received refresh status*/ {
+            let receivedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
+            switch receivedRefreshStatus {
                 case .process: XCTFail("It should be .idle")
                 case .idle: return
             }
         }
         
-        do {
+        do /*assert received error*/ {
             let receivedError: URLError = try XCTUnwrap(receivedError as? URLError)
             XCTAssertEqual(receivedError, expectedTimeoutError)
         }
