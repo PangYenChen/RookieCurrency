@@ -16,6 +16,16 @@ final class FetcherTests: XCTestCase {
         stubRateSession = nil
     }
     
+    func testNoRetainCycleOccur() {
+        // arrange
+        addTeardownBlock { [weak sut] in
+            // assert
+            XCTAssertNil(sut)
+        }
+        // act
+        sut = nil
+    }
+    
     /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `LatestRate` instance
     func testFetchLatestRate() throws {
         // arrange

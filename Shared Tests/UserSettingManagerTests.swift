@@ -23,7 +23,15 @@ final class UserSettingManagerTests: XCTestCase {
         userDefaultsSpy = nil
     }
     
-    // TODO: 測 retain cycle
+    func testNoRetainCycleOccur() {
+        // arrange
+        addTeardownBlock { [weak sut] in
+            // assert
+            XCTAssertNil(sut)
+        }
+        // act
+        sut = nil
+    }
     
     // MARK: - test number of days
     func testDefaultValueOfNumberOfDays() {
