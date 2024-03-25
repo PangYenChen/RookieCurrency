@@ -25,15 +25,15 @@ final class ReactiveRateManagerTests: XCTestCase {
 //        let dummyStartingDate = Date(timeIntervalSince1970: 0)
 //        let numberOfDays = 3
 //        
-//        var expectedCompletion: Subscribers.Completion<Error>?
-//        var expectedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
+//        var receivedCompletion: Subscribers.Completion<Error>?
+//        var receivedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
 //        
 //        // act
 //        sut
 //            .ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
 //            .sink(
-//                receiveCompletion: { completion in expectedCompletion = completion },
-//                receiveValue: { _, historicalRateSet in expectedHistoricalRateSet = historicalRateSet }
+//                receiveCompletion: { completion in receivedCompletion = completion },
+//                receiveValue: { _, historicalRateSet in receivedHistoricalRateSet = historicalRateSet }
 //            )
 //            .store(in: &anyCancellableSet)
 //        
@@ -46,7 +46,7 @@ final class ReactiveRateManagerTests: XCTestCase {
 //        }
 //        
 //        do {
-//            switch expectedCompletion {
+//            switch receivedCompletion {
 //            case .finished           : break
 //            case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
 //            case .none               : XCTFail("should receive a completion.")
@@ -54,7 +54,7 @@ final class ReactiveRateManagerTests: XCTestCase {
 //        }
 //        
 //        do {
-//            XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
+//            XCTAssertEqual(receivedHistoricalRateSet?.count, numberOfDays)
 //        }
 //    }
 //    
@@ -67,21 +67,21 @@ final class ReactiveRateManagerTests: XCTestCase {
 //        let dummyStartingDate = Date(timeIntervalSince1970: 0)
 //        let numberOfDays = 3
 //        
-//        var expectedCompletion: Subscribers.Completion<Error>?
-//        var expectedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
+//        var receivedCompletion: Subscribers.Completion<Error>?
+//        var receivedHistoricalRateSet: Set<ResponseDataModel.HistoricalRate>?
 //        
 //        // act
 //        sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate)
 //            .flatMap { [unowned self] _ in sut.ratePublisher(numberOfDay: numberOfDays, from: dummyStartingDate) }
 //            .sink(
-//                receiveCompletion: { completion in expectedCompletion = completion },
-//                receiveValue: { _, historicalRateSet in expectedHistoricalRateSet = historicalRateSet }
+//                receiveCompletion: { completion in receivedCompletion = completion },
+//                receiveValue: { _, historicalRateSet in receivedHistoricalRateSet = historicalRateSet }
 //            )
 //            .store(in: &anyCancellableSet)
 //        
 //        // assert
 //        do {
-//            switch expectedCompletion {
+//            switch receivedCompletion {
 //            case .finished           : break
 //            case .failure(let error) : XCTFail("should not receive any failure but receive : \(error)")
 //            case .none               : XCTFail("should receive a completion.")
@@ -89,10 +89,10 @@ final class ReactiveRateManagerTests: XCTestCase {
 //        }
 //        
 //        do {
-//            XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
+//            XCTAssertEqual(receivedHistoricalRateSet?.count, numberOfDays)
 //        }
 //        
-//        XCTAssertEqual(expectedHistoricalRateSet?.count, numberOfDays)
+//        XCTAssertEqual(receivedHistoricalRateSet?.count, numberOfDays)
 //        
 //        sut.concurrentQueue.sync {
 //            XCTAssertEqual(spyArchiver.numberOfArchiveCall, numberOfDays)

@@ -20,7 +20,7 @@ final class ImperativeRateManagerTests: XCTestCase {
 //                          archiver: spyArchiver,
 //                          concurrentQueue: concurrentQueue)
 //        
-//        var expectedResult: Result<BaseRateManager.RateTuple,
+//        var receivedResult: Result<BaseRateManager.RateTuple,
 //                                   Error>?
 //        let dummyStartingDate = Date(timeIntervalSince1970: 0)
 //        let numberOfDays = 3
@@ -28,15 +28,15 @@ final class ImperativeRateManagerTests: XCTestCase {
 //        // act
 //        sut.getRateFor(numberOfDays: numberOfDays,
 //                       from: dummyStartingDate,
-//                       completionHandlerQueue: concurrentQueue) { result in expectedResult = result }
+//                       completionHandlerQueue: concurrentQueue) { result in receivedResult = result }
 //        
 //        concurrentQueue.sync(flags: .barrier) { } // 卡一個空的 work item，等 sut 執行完 completion handler 在繼續
 //        
 //        // assert
 //        do {
-//            let expectedResult = try XCTUnwrap(expectedResult)
+//            let receivedResult = try XCTUnwrap(receivedResult)
 //            
-//            switch expectedResult {
+//            switch receivedResult {
 //            case .success(let (_, historicalRateSet)):
 //                XCTAssertEqual(historicalRateSet.count, numberOfDays)
 //            case .failure(let failure):

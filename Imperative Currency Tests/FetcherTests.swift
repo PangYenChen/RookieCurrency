@@ -29,20 +29,20 @@ final class FetcherTests: XCTestCase {
     /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `LatestRate` instance
     func testFetchLatestRate() throws {
         // arrange
-        var expectedLatestRateResult: Result<ResponseDataModel.LatestRate, Error>?
+        var receivedLatestRateResult: Result<ResponseDataModel.LatestRate, Error>?
         
         do {
             stubRateSession.tuple = try TestingData.SessionData.latestRate()
         }
         
         // act
-        sut.fetch(Endpoints.Latest()) { result in expectedLatestRateResult = result }
+        sut.fetch(Endpoints.Latest()) { result in receivedLatestRateResult = result }
         
         // assert
         do {
-            let expectedLatestRateResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedLatestRateResult)
+            let receivedLatestRateResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedLatestRateResult)
             
-            switch expectedLatestRateResult {
+            switch receivedLatestRateResult {
                 case .success(let latestRate):
                     XCTAssertFalse(latestRate.rates.isEmpty)
                     
@@ -57,7 +57,7 @@ final class FetcherTests: XCTestCase {
     /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `HistoricalRate` instance
     func testFetchHistoricalRate() throws {
         // arrange
-        var expectedHistoricalRateResult: Result<ResponseDataModel.HistoricalRate, Error>?
+        var receivedHistoricalRateResult: Result<ResponseDataModel.HistoricalRate, Error>?
         
         let dummyDateString: ResponseDataModel.CurrencyCode = "1970-01-01"
         
@@ -66,13 +66,13 @@ final class FetcherTests: XCTestCase {
         }
         
         // act
-        sut.fetch(Endpoints.Historical(dateString: dummyDateString)) { result in expectedHistoricalRateResult = result }
+        sut.fetch(Endpoints.Historical(dateString: dummyDateString)) { result in receivedHistoricalRateResult = result }
         
         // assert
         do {
-            let expectedHistoricalRateResult: Result<ResponseDataModel.HistoricalRate, Error> = try XCTUnwrap(expectedHistoricalRateResult)
+            let receivedHistoricalRateResult: Result<ResponseDataModel.HistoricalRate, Error> = try XCTUnwrap(receivedHistoricalRateResult)
             
-            switch expectedHistoricalRateResult {
+            switch receivedHistoricalRateResult {
                 case .success(let historicalRate):
                     XCTAssertFalse(historicalRate.rates.isEmpty)
                     
@@ -88,7 +88,7 @@ final class FetcherTests: XCTestCase {
     /// 當 session 回傳無法 decode 的 json data 時，要能回傳 decoding error
     func testInvalidJSONData() throws {
         // arrange
-        var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         do {
@@ -96,13 +96,13 @@ final class FetcherTests: XCTestCase {
         }
         
         // act
-        sut.fetch(dummyEndpoint) { result in expectedResult = result }
+        sut.fetch(dummyEndpoint) { result in receivedResult = result }
         
         // assert
         do {
-            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
+            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
             
-            switch expectedResult {
+            switch receivedResult {
                 case .success:
                     XCTFail("should fail to decode")
                 case .failure(let error):
@@ -116,7 +116,7 @@ final class FetcherTests: XCTestCase {
     /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
     func testTimeout() throws {
         // arrange
-        var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
@@ -125,12 +125,12 @@ final class FetcherTests: XCTestCase {
         }
         
         // act
-        sut.fetch(dummyEndpoint) { result in expectedResult = result }
+        sut.fetch(dummyEndpoint) { result in receivedResult = result }
         
         // assert
         do {
-            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
-            switch expectedResult {
+            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
+            switch receivedResult {
                 case .success:
                     XCTFail("should time out")
                 case .failure(let error):
@@ -155,7 +155,7 @@ final class FetcherTests: XCTestCase {
         let spyRateSession: SpyRateSession = SpyRateSession()
         sut = Fetcher(rateSession: spyRateSession)
         
-        var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
@@ -172,13 +172,13 @@ final class FetcherTests: XCTestCase {
         }
         
         // act
-        sut.fetch(dummyEndpoint) { result in expectedResult = result }
+        sut.fetch(dummyEndpoint) { result in receivedResult = result }
         
         // assert
         do {
-            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
+            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
             
-            switch expectedResult {
+            switch receivedResult {
                 case .success:
                     XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
                 case .failure:
@@ -193,7 +193,7 @@ final class FetcherTests: XCTestCase {
     /// fetcher 能回傳 api key 額度用罄的 error
     func testTooManyRequestFallBack() throws {
         // arrange
-        var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         do {
@@ -201,13 +201,13 @@ final class FetcherTests: XCTestCase {
         }
         
         // act
-        sut.fetch(dummyEndpoint) { result in expectedResult = result }
+        sut.fetch(dummyEndpoint) { result in receivedResult = result }
         
         // assert
         do {
-            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
+            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
             
-            switch expectedResult {
+            switch receivedResult {
                 case .success:
                     XCTFail("should not receive any instance")
                 case .failure(let error):
@@ -232,7 +232,7 @@ final class FetcherTests: XCTestCase {
         let spyRateSession: SpyRateSession = SpyRateSession()
         sut = Fetcher(rateSession: spyRateSession)
         
-        var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
@@ -249,14 +249,14 @@ final class FetcherTests: XCTestCase {
         }
         
         // act
-        sut.fetch(dummyEndpoint) { result in expectedResult = result
+        sut.fetch(dummyEndpoint) { result in receivedResult = result
         }
         
         // assert
         do {
-            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
+            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
             
-            switch expectedResult {
+            switch receivedResult {
                 case .success:
                     XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
                 case .failure:
@@ -270,7 +270,7 @@ final class FetcherTests: XCTestCase {
     /// 後續的 api key 全都無效，fetcher 能回傳 api key 無效的 error。
     func testInvalidAPIKeyFallBack() throws {
         // arrange
-        var expectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
@@ -279,13 +279,13 @@ final class FetcherTests: XCTestCase {
         }
         
         // act
-        sut.fetch(dummyEndpoint) { result in expectedResult = result }
+        sut.fetch(dummyEndpoint) { result in receivedResult = result }
         
         // assert
         do {
-            let expectedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(expectedResult)
+            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
             
-            switch expectedResult {
+            switch receivedResult {
                 case .success:
                     XCTFail("should not receive any instance")
                 case .failure(let error):
@@ -305,20 +305,20 @@ final class FetcherTests: XCTestCase {
     /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `SupportedSymbols` instance
     func testFetchSupportedSymbols() throws {
         // arrange
-        var expectedResult: Result<ResponseDataModel.SupportedSymbols, Error>?
+        var receivedResult: Result<ResponseDataModel.SupportedSymbols, Error>?
         
         do {
             stubRateSession.tuple = try TestingData.SessionData.supportedSymbols()
         }
         
         // act
-        sut.fetch(Endpoints.SupportedSymbols()) { result in expectedResult = result }
+        sut.fetch(Endpoints.SupportedSymbols()) { result in receivedResult = result }
         
         // assert
         do {
-            let expectedResult: Result<ResponseDataModel.SupportedSymbols, Error> = try XCTUnwrap(expectedResult)
+            let receivedResult: Result<ResponseDataModel.SupportedSymbols, Error> = try XCTUnwrap(receivedResult)
             
-            switch expectedResult {
+            switch receivedResult {
                 case .success(let supportedSymbols):
                     XCTAssertFalse(supportedSymbols.symbols.isEmpty)
                 case .failure(let failure):
@@ -338,12 +338,12 @@ final class FetcherTests: XCTestCase {
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
-        var firstExpectedResult: Result<ResponseDataModel.LatestRate, Error>?
-        var secondExpectedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var firstReceivedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var secondReceivedResult: Result<ResponseDataModel.LatestRate, Error>?
         
         // act
-        sut.fetch(dummyEndpoint) { result in firstExpectedResult = result }
-        sut.fetch(dummyEndpoint) { result in secondExpectedResult = result }
+        sut.fetch(dummyEndpoint) { result in firstReceivedResult = result }
+        sut.fetch(dummyEndpoint) { result in secondReceivedResult = result }
         
         do {
             let tooManyRequestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.tooManyRequest()
@@ -366,8 +366,8 @@ final class FetcherTests: XCTestCase {
             }
             
             // 現階段 fetcher 應該還沒執行過 caller 傳進來的 completion handler
-            XCTAssertNil(firstExpectedResult)
-            XCTAssertNil(secondExpectedResult)
+            XCTAssertNil(firstReceivedResult)
+            XCTAssertNil(secondReceivedResult)
         }
         
         do {
@@ -401,8 +401,8 @@ final class FetcherTests: XCTestCase {
             XCTFail("spy api key session 應該要剛好收到 4 個 request")
         }
         
-        XCTAssertNotNil(firstExpectedResult)
-        XCTAssertNotNil(secondExpectedResult)
+        XCTAssertNotNil(firstReceivedResult)
+        XCTAssertNotNil(secondReceivedResult)
     }
 }
 
