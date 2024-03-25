@@ -51,12 +51,15 @@ final class ResultModel: BaseResultModel {
                         .eraseToAnyPublisher()
                 }
                 
-                refresh = Publishers.Merge(refreshTriggerByUser,
-                                           autoRefresh)
-                .eraseToAnyPublisher()
+                refresh = Publishers
+                    .Merge(refreshTriggerByUser,
+                           autoRefresh)
+                    .share()
+                    .eraseToAnyPublisher()
             }
             
-            let statisticsInfoTupleResult: AnyPublisher<Result<StatisticsInfoTuple, Error>, Never> = refresh.withLatestFrom(setting)
+            let statisticsInfoTupleResult: AnyPublisher<Result<StatisticsInfoTuple, Error>, Never> = refresh
+                .withLatestFrom(setting)
                 .flatMap { _, setting in
                     rateManager
                         .ratePublisher(numberOfDays: setting.numberOfDays)
@@ -76,7 +79,9 @@ final class ResultModel: BaseResultModel {
                 .share()
                 .eraseToAnyPublisher()
             
-            let statisticsInfoTuple: AnyPublisher<StatisticsInfoTuple, Never> = statisticsInfoTupleResult.resultSuccess()
+            let statisticsInfoTuple: AnyPublisher<StatisticsInfoTuple, Never> = statisticsInfoTupleResult
+                .share()
+                .resultSuccess()
             
             rateStatistics = statisticsInfoTuple
                 .map { statisticsInfoTuple in statisticsInfoTuple.statisticsInfo }
@@ -85,13 +90,17 @@ final class ResultModel: BaseResultModel {
                               by: order,
                               filteredIfNeededBy: searchText)
                 }
+                .share()
                 .eraseToAnyPublisher()
             
             dataAbsentCurrencyCodeSet = statisticsInfoTuple
                 .map { rateStatisticsTuple in rateStatisticsTuple.statisticsInfo.dataAbsentCurrencyCodeSet }
+                .share()
                 .eraseToAnyPublisher()
             
-            error = statisticsInfoTupleResult.resultFailure()
+            error = statisticsInfoTupleResult
+                .share()
+                .resultFailure()
             
             do /*initialize refreshStatus*/ {
                 let refreshStatusProcess: AnyPublisher<RefreshStatus, Never> = refresh
@@ -111,6 +120,7 @@ final class ResultModel: BaseResultModel {
                 
                 refreshStatus = Publishers.Merge(refreshStatusProcess,
                                                  refreshStatusIdle)
+                .share()
                     .eraseToAnyPublisher()
             }
         }

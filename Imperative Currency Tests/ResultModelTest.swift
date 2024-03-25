@@ -85,7 +85,7 @@ final class ResultModelTest: XCTestCase {
             let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
             let dummyResult: Result<BaseRateManager.RateTuple, Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
             
-            rateManager.executeCompletionHandlerWith(result: dummyResult)
+            rateManagerSpy.executeCompletionHandlerWith(result: dummyResult)
         }
         
         // assert

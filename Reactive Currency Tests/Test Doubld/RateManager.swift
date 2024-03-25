@@ -5,19 +5,28 @@ import Combine
 
 extension TestDouble {
     class RateManager: RateManagerProtocol {
-        var numberOfDays: Int?
+        private(set) var numberOfDays: Int?
         
-        var result: Result<BaseRateManager.RateTuple, Error>?
+        private var passthroughSubject: PassthroughSubject<BaseRateManager.RateTuple, Error>?
         
         init() {
             numberOfDays = nil
-            result = nil
+            passthroughSubject = nil
         }
         
         func ratePublisher(numberOfDays: Int) -> AnyPublisher<BaseRateManager.RateTuple, Error> {
             self.numberOfDays = numberOfDays
-            guard let result else { return Empty().eraseToAnyPublisher() }
-            return result.publisher.eraseToAnyPublisher()
+            let passthroughSubject: PassthroughSubject<BaseRateManager.RateTuple, Error> = PassthroughSubject<BaseRateManager.RateTuple, Error>()
+            self.passthroughSubject = passthroughSubject
+            
+            return passthroughSubject.eraseToAnyPublisher()
+        }
+        
+        func publish(_ output: BaseRateManager.RateTuple) {
+            passthroughSubject?.send(output)
+            passthroughSubject?.send(completion: .finished)
+            
+            passthroughSubject = nil
         }
     }
 }
