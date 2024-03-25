@@ -28,5 +28,10 @@ extension TestDouble {
             
             passthroughSubject = nil
         }
+        
+        func publish(completion: Subscribers.Completion<any Error>) {
+            passthroughSubject?.send(completion: completion)
+            passthroughSubject = nil
+        }
     }
 }

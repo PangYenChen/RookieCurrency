@@ -109,4 +109,78 @@ class ResultModelTest: XCTestCase {
         }
         XCTAssertNil(expectedError)
     }
+    
+    func testRateManagerResultInError() throws {
+        // arrange
+        let userSettingManagerStub: TestDouble.UserSettingManager = TestDouble.UserSettingManager()
+        
+        let dummyRateManager: TestDouble.RateManager = TestDouble.RateManager()
+        let fakeTimer: TestDouble.Timer = TestDouble.Timer()
+        
+        let sut: ResultModel
+        do /*initialize sut*/ {
+            let dummyCurrencyCodeDescriber: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
+            sut = ResultModel(userSettingManager: userSettingManagerStub,
+                              rateManager: dummyRateManager,
+                              currencyDescriber: dummyCurrencyCodeDescriber,
+                              timer: fakeTimer)
+        }
+        
+        var receivedRateStatics: [ResultModel.RateStatistic]?
+        var receivedDataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>?
+        var receivedRefreshStatus: ResultModel.RefreshStatus?
+        var receivedError: Error?
+        
+        let expectedTimeoutError: URLError = URLError(URLError.Code.timedOut)
+        
+        sut.rateStatistics
+            .sink { rateStatistics in receivedRateStatics = rateStatistics }
+            .store(in: &anyCancellableSet)
+        
+        sut.dataAbsentCurrencyCodeSet
+            .sink { dataAbsentCurrencyCodeSet in receivedDataAbsentCurrencyCodeSet = dataAbsentCurrencyCodeSet }
+            .store(in: &anyCancellableSet)
+        
+        sut.refreshStatus
+            .sink { refreshStatus in receivedRefreshStatus = refreshStatus }
+            .store(in: &anyCancellableSet)
+        
+        sut.error
+            .sink { error in receivedError = error }
+            .store(in: &anyCancellableSet)
+        
+        // act
+        fakeTimer.publish()
+        
+        // assert
+        XCTAssertNil(receivedRateStatics)
+        XCTAssertNil(receivedDataAbsentCurrencyCodeSet)
+        do {
+            let expectedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
+            switch expectedRefreshStatus {
+                case .process: return
+                case .idle: XCTFail("It should be .process")
+            }
+        }
+        XCTAssertNil(receivedError)
+        
+        // act
+        dummyRateManager.publish(completion: .failure(expectedTimeoutError))
+        
+        // assert
+        XCTAssertNil(receivedRateStatics)
+        XCTAssertNil(receivedDataAbsentCurrencyCodeSet)
+        do {
+            let expectedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
+            switch expectedRefreshStatus {
+                case .process: XCTFail("It should be .idle")
+                case .idle: return
+            }
+        }
+        
+        do {
+            let receivedError: URLError = try XCTUnwrap(receivedError as? URLError)
+            XCTAssertEqual(receivedError, expectedTimeoutError)
+        }
+    }
 }
