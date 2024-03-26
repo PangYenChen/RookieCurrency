@@ -8,7 +8,7 @@ class ResultModelTest: XCTestCase {
     func testNoRetainCycleOccur() {
         // arrange
         var sut: ResultModel?
-        do /*set up sut*/ {
+        do /*initialize sut*/ {
             let dummyUserSettingManager: UserSettingManagerProtocol = TestDouble.UserSettingManager()
             let dummyRateManager: RateManagerProtocol = TestDouble.RateManager()
             let dummyCurrencyCodeDescriber: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()

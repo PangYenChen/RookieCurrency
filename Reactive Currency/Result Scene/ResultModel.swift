@@ -95,6 +95,7 @@ final class ResultModel: BaseResultModel {
             
             dataAbsentCurrencyCodeSet = statisticsInfoTuple
                 .map { rateStatisticsTuple in rateStatisticsTuple.statisticsInfo.dataAbsentCurrencyCodeSet }
+                .filter { dataAbsentCurrencyCodeSet in !dataAbsentCurrencyCodeSet.isEmpty }
                 .share()
                 .eraseToAnyPublisher()
             
