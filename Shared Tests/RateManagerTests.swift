@@ -25,6 +25,16 @@ final class RateManagerTests: XCTestCase {
         fakeFetcher = nil
     }
     
+    func testNoRetainCycleOccur() {
+        // arrange
+        addTeardownBlock { [weak sut] in
+            // assert
+            XCTAssertNil(sut)
+        }
+        // act
+        sut = nil
+    }
+    
     /// 測試 RateManager.historicalRateDateStrings(numberOfDaysAgo:from:) method
     /// 模擬從執行當下的時間往前計算日期字串
     func testHistoricalRateDateStrings() throws {

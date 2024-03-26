@@ -129,7 +129,7 @@ extension QuasiBaseResultModel.RateStatistic {
           historicalRateSet: Set<ResponseDataModel.HistoricalRate>) {
         self.currencyCode = currencyCode
         self.localizedString = currencyDescriber.localizedStringFor(currencyCode: currencyCode)
-        
+        // TODO: 變數名稱要想一下 不能用latest rate
         guard let latestRate = latestRate.convertOneUnitOf(baseCurrencyCode, to: currencyCode) else { return nil }
         
         self.latestRate = latestRate
@@ -150,8 +150,8 @@ extension QuasiBaseResultModel.RateStatistic {
 private extension ResponseDataModel.Rate {
     /// api 的資料邏輯是「一單位的基準貨幣等於多少單位的其他貨幣」，app 的邏輯是「一單位的其他貨幣等於多少單位的基準貨幣」。
     func convertOneUnitOf(_ baseCurrencyCode: ResponseDataModel.CurrencyCode, to targetCurrencyCode: ResponseDataModel.CurrencyCode) -> Decimal? {
-        guard let rateForBaseCurrencyCode = self[currencyCode: baseCurrencyCode],
-              let rateForTargetCurrencyCode = self[currencyCode: targetCurrencyCode] else { return nil }
+        guard let rateForBaseCurrencyCode = self[currencyCode: baseCurrencyCode] else { return nil }
+        guard let rateForTargetCurrencyCode = self[currencyCode: targetCurrencyCode] else { return nil }
         
         return rateForBaseCurrencyCode / rateForTargetCurrencyCode
     }

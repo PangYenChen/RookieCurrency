@@ -34,6 +34,8 @@ final class ResultTableViewController: BaseResultTableViewController {
             .receive(on: DispatchQueue.main)
             .sink(receiveValue: presentErrorAlert(error:))
             .store(in: &anyCancellableSet)
+        
+        resultModel.resumeAutoRefresh()
     }
     
     override func viewIsAppearing(_ animated: Bool) {

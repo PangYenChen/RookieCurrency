@@ -4,20 +4,16 @@ protocol RateManagerProtocol {
     func getRateFor(
         numberOfDays: Int,
         completionHandlerQueue: DispatchQueue,
-        completionHandler: @escaping (Result<(latestRate: ResponseDataModel.LatestRate,
-                                              historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
-                                      Error>) -> Void
+        completionHandler: @escaping BaseRateManager.CompletionHandler
     )
 }
 
 // TODO: 這裡的 method 好長 看能不能拆開"
-extension RateManager: RateManagerProtocol {
+class RateManager: BaseRateManager, RateManagerProtocol {
     func getRateFor(
         numberOfDays: Int,
         completionHandlerQueue: DispatchQueue,
-        completionHandler: @escaping (Result<(latestRate: ResponseDataModel.LatestRate,
-                                              historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
-                                      Error>) -> Void) {
+        completionHandler: @escaping CompletionHandler) {
         getRateFor(numberOfDays: numberOfDays,
                    from: Date.now,
                    completionHandlerQueue: completionHandlerQueue,
@@ -28,9 +24,7 @@ extension RateManager: RateManagerProtocol {
         numberOfDays: Int,
         from start: Date,
         completionHandlerQueue: DispatchQueue,
-        completionHandler: @escaping (Result<(latestRate: ResponseDataModel.LatestRate,
-                                              historicalRateSet: Set<ResponseDataModel.HistoricalRate>),
-                                      Error>) -> Void
+        completionHandler: @escaping CompletionHandler
     ) {
         var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error> = .success([])
         
@@ -141,11 +135,17 @@ extension RateManager: RateManagerProtocol {
             do {
                 let latestRate: ResponseDataModel.LatestRate = try latestRateResult.get()
                 let historicalRateSet: Set<ResponseDataModel.HistoricalRate> = try historicalRateSetResult.get()
-                completionHandler(.success((latestRate: latestRate, historicalRateSet: historicalRateSet)))
+                completionHandler(.success((latestRate: latestRate,
+                                            historicalRateSet: historicalRateSet)))
             }
             catch {
                 completionHandler(.failure(error))
             }
         }
     }
+}
+
+// MARK: - name space
+extension BaseRateManager {
+    typealias CompletionHandler = (_ result: Result<RateTuple, Error>) -> Void
 }

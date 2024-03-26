@@ -15,12 +15,10 @@ final class ResultModel: BaseResultModel {
         
         super.init(userSettingManager: userSettingManager,
                    currencyDescriber: currencyDescriber)
-        
-        resumeAutoRefreshing()
     }
     
     deinit {
-        suspendAutoRefreshing()
+        suspendAutoRefresh()
     }
     
     // MARK: - dependencies
@@ -62,9 +60,8 @@ extension ResultModel {
                                       latestRate: latestRate,
                                       historicalRateSet: historicalRateSet)
                     
-                    guard statisticsInfo.dataAbsentCurrencyCodeSet.isEmpty else {
+                    if !statisticsInfo.dataAbsentCurrencyCodeSet.isEmpty {
                         dataAbsentCurrencyCodeSetHandler?(statisticsInfo.dataAbsentCurrencyCodeSet)
-                        return
                     }
                     
                     rateStatistics = statisticsInfo.rateStatistics
@@ -102,13 +99,13 @@ extension ResultModel {
     }
 }
 
-// MARK: - private methods: auto refreshing
-private extension ResultModel {
-    func resumeAutoRefreshing() {
+// MARK: - auto refreshing
+extension ResultModel {
+    func resumeAutoRefresh() {
         timer.scheduledTimer(withTimeInterval: Self.autoRefreshTimeInterval) { [unowned self]  in refresh() }
     }
     
-    func suspendAutoRefreshing() {
+    private func suspendAutoRefresh() {
         timer.invalidate()
     }
 }
@@ -116,7 +113,7 @@ private extension ResultModel {
 // MARK: - SettingModelFactory
 extension ResultModel {
     func makeSettingModel() -> SettingModel {
-        suspendAutoRefreshing()
+        suspendAutoRefresh()
         
         let setting: Setting = (numberOfDays: userSettingManager.numberOfDays,
                                 baseCurrencyCode: userSettingManager.baseCurrencyCode,
@@ -127,16 +124,16 @@ extension ResultModel {
             userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
             userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest
             
-            resumeAutoRefreshing()
+            resumeAutoRefresh()
         } cancelCompletionHandler: { [unowned self] in
-            resumeAutoRefreshing()
+            resumeAutoRefresh()
         }
     }
 }
 
 // MARK: - name space
 extension ResultModel {
-    typealias RateStatisticsHandlebar = (_ sortedRateStatistics: [RateStatistic]) -> Void
+    typealias RateStatisticsHandlebar = (_ rateStatistics: [RateStatistic]) -> Void
     
     typealias DataAbsentCurrencyCodeSetHandler = (_ dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>) -> Void
     

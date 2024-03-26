@@ -22,7 +22,7 @@ final class ResultModel: BaseResultModel {
             
             order = CurrentValueSubject<Order, Never>(userSettingManager.resultOrder)
             
-            resumeAutoRefresh = CurrentValueSubject<Void, Never>(())
+            resumeAutoRefreshSubject = PassthroughSubject<Void, Never>()
             
             suspendAutoRefresh = PassthroughSubject<Void, Never>()
         }
@@ -37,7 +37,7 @@ final class ResultModel: BaseResultModel {
                 
                 do /*initialize autoRefresh*/ {
                     let timerPublisher: AnyPublisher<AnyPublisher<Void, Never>, Never> = Publishers
-                        .Merge(resumeAutoRefresh,
+                        .Merge(resumeAutoRefreshSubject,
                                settingFromSettingModel.map { _ in })
                         .map { _ in timer.makeTimerPublisher(every: Self.autoRefreshTimeInterval) }
                         .eraseToAnyPublisher()
@@ -51,12 +51,15 @@ final class ResultModel: BaseResultModel {
                         .eraseToAnyPublisher()
                 }
                 
-                refresh = Publishers.Merge(refreshTriggerByUser,
-                                           autoRefresh)
-                .eraseToAnyPublisher()
+                refresh = Publishers
+                    .Merge(refreshTriggerByUser,
+                           autoRefresh)
+                    .share()
+                    .eraseToAnyPublisher()
             }
             
-            let statisticsInfoTupleResult: AnyPublisher<Result<StatisticsInfoTuple, Error>, Never> = refresh.withLatestFrom(setting)
+            let statisticsInfoTupleResult: AnyPublisher<Result<StatisticsInfoTuple, Error>, Never> = refresh
+                .withLatestFrom(setting)
                 .flatMap { _, setting in
                     rateManager
                         .ratePublisher(numberOfDays: setting.numberOfDays)
@@ -76,7 +79,9 @@ final class ResultModel: BaseResultModel {
                 .share()
                 .eraseToAnyPublisher()
             
-            let statisticsInfoTuple: AnyPublisher<StatisticsInfoTuple, Never> = statisticsInfoTupleResult.resultSuccess()
+            let statisticsInfoTuple: AnyPublisher<StatisticsInfoTuple, Never> = statisticsInfoTupleResult
+                .share()
+                .resultSuccess()
             
             rateStatistics = statisticsInfoTuple
                 .map { statisticsInfoTuple in statisticsInfoTuple.statisticsInfo }
@@ -85,13 +90,18 @@ final class ResultModel: BaseResultModel {
                               by: order,
                               filteredIfNeededBy: searchText)
                 }
+                .share()
                 .eraseToAnyPublisher()
             
             dataAbsentCurrencyCodeSet = statisticsInfoTuple
                 .map { rateStatisticsTuple in rateStatisticsTuple.statisticsInfo.dataAbsentCurrencyCodeSet }
+                .filter { dataAbsentCurrencyCodeSet in !dataAbsentCurrencyCodeSet.isEmpty }
+                .share()
                 .eraseToAnyPublisher()
             
-            error = statisticsInfoTupleResult.resultFailure()
+            error = statisticsInfoTupleResult
+                .share()
+                .resultFailure()
             
             do /*initialize refreshStatus*/ {
                 let refreshStatusProcess: AnyPublisher<RefreshStatus, Never> = refresh
@@ -111,6 +121,7 @@ final class ResultModel: BaseResultModel {
                 
                 refreshStatus = Publishers.Merge(refreshStatusProcess,
                                                  refreshStatusIdle)
+                .share()
                     .eraseToAnyPublisher()
             }
         }
@@ -151,7 +162,7 @@ final class ResultModel: BaseResultModel {
     
     private let searchText: CurrentValueSubject<String?, Never>
     
-    private let resumeAutoRefresh: CurrentValueSubject<Void, Never>
+    private let resumeAutoRefreshSubject: PassthroughSubject<Void, Never>
     
     private let suspendAutoRefresh: PassthroughSubject<Void, Never>
     
@@ -180,6 +191,10 @@ extension ResultModel {
     func setSearchText(_ searchText: String?) {
         self.searchText.send(searchText)
     }
+    
+    func resumeAutoRefresh() {
+        resumeAutoRefreshSubject.send()
+    }
 }
 
 // MARK: - SettingModelFactory
@@ -188,7 +203,7 @@ extension ResultModel {
         suspendAutoRefresh.send()
         return SettingModel(setting: setting.value,
                             saveSettingSubscriber: AnySubscriber(setting),
-                            cancelSubscriber: AnySubscriber(resumeAutoRefresh))
+                            cancelSubscriber: AnySubscriber(resumeAutoRefreshSubject))
     }
 }
 

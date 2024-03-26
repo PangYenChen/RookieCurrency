@@ -19,7 +19,7 @@ final class QuasiBaseResultModelTests: XCTestCase {
         let baseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
         
         let supportedCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
-        let nonSupportedCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = ["FakeCurrencyInHistoricalRate"]
+        let nonSupportedCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = ["FakeCurrencyCodeInHistoricalRate"]
         let currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = supportedCurrencyCodeSet.union(nonSupportedCurrencyCodeSet)
         
         let latestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
@@ -70,7 +70,7 @@ final class QuasiBaseResultModelTests: XCTestCase {
                                                                                  rateStatisticB,
                                                                                  rateStatisticC]
         
-        let expectedSortedStatistics: [QuasiBaseResultModel.RateStatistic] = [rateStatisticA,
+        let receivedSortedStatistics: [QuasiBaseResultModel.RateStatistic] = [rateStatisticA,
                                                                               rateStatisticB]
         
         // act
@@ -80,7 +80,7 @@ final class QuasiBaseResultModelTests: XCTestCase {
                   filteredIfNeededBy: "Ù")
         
         // assert
-        XCTAssertEqual(sortedRateStatistics, expectedSortedStatistics)
+        XCTAssertEqual(sortedRateStatistics, receivedSortedStatistics)
     }
     
     func testSortByDecreasingOrderWithoutFiltering() {
@@ -111,7 +111,7 @@ final class QuasiBaseResultModelTests: XCTestCase {
                                                                                  rateStatisticB,
                                                                                  rateStatisticC]
         
-        let expectedSortedStatistics: [QuasiBaseResultModel.RateStatistic] = [rateStatisticB,
+        let receivedSortedStatistics: [QuasiBaseResultModel.RateStatistic] = [rateStatisticB,
                                                                               rateStatisticA,
                                                                               rateStatisticC]
         
@@ -122,6 +122,6 @@ final class QuasiBaseResultModelTests: XCTestCase {
                   filteredIfNeededBy: nil)
         
         // assert
-        XCTAssertEqual(sortedRateStatistics, expectedSortedStatistics)
+        XCTAssertEqual(sortedRateStatistics, receivedSortedStatistics)
     }
 }

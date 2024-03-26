@@ -21,11 +21,21 @@ class FetcherTests: XCTestCase {
         anyCancellableSet = Set<AnyCancellable>()
     }
     
+    func testNoRetainCycleOccur() {
+        // arrange
+        addTeardownBlock { [weak sut] in
+            // assert
+            XCTAssertNil(sut)
+        }
+        // act
+        sut = nil
+    }
+    
     /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `LatestRate` instance
     func testPublishLatestRate() throws {
         // arrange
-        var expectedValue: ResponseDataModel.LatestRate?
-        var expectedCompletion: Subscribers.Completion<Error>?
+        var receivedValue: ResponseDataModel.LatestRate?
+        var receivedCompletion: Subscribers.Completion<Error>?
         
         do {
             stubRateSession.outputPublisher = try sessionDataPublisher(TestingData.SessionData.latestRate())
@@ -34,23 +44,23 @@ class FetcherTests: XCTestCase {
         // act
         sut.publisher(for: Endpoints.Latest())
             .sink(
-                receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { latestRate in expectedValue = latestRate }
+                receiveCompletion: { completion in receivedCompletion = completion },
+                receiveValue: { latestRate in receivedValue = latestRate }
             )
             .store(in: &anyCancellableSet)
         
         // assert
         do {
             let dummyCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
-            let expectedLatestRate: ResponseDataModel.LatestRate = try XCTUnwrap(expectedValue)
-            XCTAssertNotNil(expectedLatestRate[currencyCode: dummyCurrencyCode])
-            XCTAssertFalse(expectedLatestRate.rates.isEmpty)
+            let receivedLatestRate: ResponseDataModel.LatestRate = try XCTUnwrap(receivedValue)
+            XCTAssertNotNil(receivedLatestRate[currencyCode: dummyCurrencyCode])
+            XCTAssertFalse(receivedLatestRate.rates.isEmpty)
         }
         
         do {
-            let expectedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(expectedCompletion)
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             
-            switch expectedCompletion {
+            switch receivedCompletion {
                 case .failure(let error): XCTFail("should not receive the .failure \(error)")
                 case .finished: break
             }
@@ -59,8 +69,8 @@ class FetcherTests: XCTestCase {
     /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `HistoricalRate` instance
     func testPublishHistoricalRate() throws {
         // arrange
-        var expectedValue: ResponseDataModel.HistoricalRate?
-        var expectedCompletion: Subscribers.Completion<Error>?
+        var receivedValue: ResponseDataModel.HistoricalRate?
+        var receivedCompletion: Subscribers.Completion<Error>?
         
         let dummyDateString: ResponseDataModel.CurrencyCode = "1970-01-01"
         
@@ -71,16 +81,16 @@ class FetcherTests: XCTestCase {
         // act
         sut.publisher(for: Endpoints.Historical(dateString: dummyDateString))
             .sink(
-                receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { historicalRate in expectedValue = historicalRate }
+                receiveCompletion: { completion in receivedCompletion = completion },
+                receiveValue: { historicalRate in receivedValue = historicalRate }
             )
             .store(in: &anyCancellableSet)
         
         // assert
         do {
-            let expectedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(expectedCompletion)
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             
-            switch expectedCompletion {
+            switch receivedCompletion {
                 case .failure(let error):
                     XCTFail("不應該收到錯誤，但收到\(error)")
                 case .finished:
@@ -89,19 +99,19 @@ class FetcherTests: XCTestCase {
         }
         
         do {
-            let expectedHistoricalRate: ResponseDataModel.HistoricalRate = try XCTUnwrap(expectedValue)
-            XCTAssertFalse(expectedHistoricalRate.rates.isEmpty)
+            let receivedHistoricalRate: ResponseDataModel.HistoricalRate = try XCTUnwrap(receivedValue)
+            XCTAssertFalse(receivedHistoricalRate.rates.isEmpty)
             
             let dummyCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
-            XCTAssertNotNil(expectedHistoricalRate[currencyCode: dummyCurrencyCode])
+            XCTAssertNotNil(receivedHistoricalRate[currencyCode: dummyCurrencyCode])
         }
     }
     
     /// 當 session 回傳無法 decode 的 json data 時，要能回傳 decoding error
     func testInvalidJSONData() throws {
         // arrange
-        var expectedValue: ResponseDataModel.LatestRate?
-        var expectedCompletion: Subscribers.Completion<Error>?
+        var receivedValue: ResponseDataModel.LatestRate?
+        var receivedCompletion: Subscribers.Completion<Error>?
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
@@ -113,15 +123,15 @@ class FetcherTests: XCTestCase {
         sut
             .publisher(for: dummyEndpoint)
             .sink(
-                receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { value in expectedValue = value }
+                receiveCompletion: { completion in receivedCompletion = completion },
+                receiveValue: { value in receivedValue = value }
             )
             .store(in: &anyCancellableSet)
         
         // assert
         do {
-            let expectedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(expectedCompletion)
-            switch expectedCompletion {
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            switch receivedCompletion {
                 case .failure(let error):
                     if !(error is DecodingError) {
                         XCTFail("should not receive error other than decoding error: \(error)")
@@ -132,15 +142,15 @@ class FetcherTests: XCTestCase {
         }
         
         do {
-            XCTAssertNil(expectedValue)
+            XCTAssertNil(receivedValue)
         }
     }
     
     /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
     func testTimeout() throws {
         // arrange
-        var expectedValue: ResponseDataModel.LatestRate?
-        var expectedCompletion: Subscribers.Completion<Error>?
+        var receivedValue: ResponseDataModel.LatestRate?
+        var receivedCompletion: Subscribers.Completion<Error>?
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         do {
@@ -151,15 +161,15 @@ class FetcherTests: XCTestCase {
         sut
             .publisher(for: dummyEndpoint)
             .sink(
-                receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { value in expectedValue = value }
+                receiveCompletion: { completion in receivedCompletion = completion },
+                receiveValue: { value in receivedValue = value }
             )
             .store(in: &anyCancellableSet)
         
         // assert
         do {
-            let expectedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(expectedCompletion)
-            switch expectedCompletion {
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            switch receivedCompletion {
                 case .failure(let error):
                     guard let urlError = error as? URLError else {
                         XCTFail("應該要是 URLError，而不是其他 Error，例如 DecodingError。")
@@ -176,7 +186,7 @@ class FetcherTests: XCTestCase {
         }
         
         do {
-            XCTAssertNil(expectedValue)
+            XCTAssertNil(receivedValue)
         }
     }
     
@@ -188,8 +198,8 @@ class FetcherTests: XCTestCase {
         let spyRateSession: SpyRateSession = SpyRateSession()
         sut = Fetcher(rateSession: spyRateSession)
         
-        var expectedValue: ResponseDataModel.LatestRate?
-        var expectedCompletion: Subscribers.Completion<Error>?
+        var receivedValue: ResponseDataModel.LatestRate?
+        var receivedCompletion: Subscribers.Completion<Error>?
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
@@ -211,16 +221,16 @@ class FetcherTests: XCTestCase {
         sut
             .publisher(for: dummyEndpoint)
             .sink(
-                receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { value in expectedValue = value }
+                receiveCompletion: { completion in receivedCompletion = completion },
+                receiveValue: { value in receivedValue = value }
             )
             .store(in: &anyCancellableSet)
         
         // assert
         do {
-            let expectedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(expectedCompletion)
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             
-            switch expectedCompletion {
+            switch receivedCompletion {
                 case .failure(let error):
                     XCTFail("should not receive error: \(error)")
                 case .finished:
@@ -229,7 +239,7 @@ class FetcherTests: XCTestCase {
         }
         
         do {
-            XCTAssertNotNil(expectedValue)
+            XCTAssertNotNil(receivedValue)
             XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
         }
     }
@@ -240,8 +250,8 @@ class FetcherTests: XCTestCase {
     /// fetcher 能回傳 api key 額度用罄的 error
     func testTooManyRequestFallBack() throws {
         // arrange
-        var expectedValue: ResponseDataModel.LatestRate?
-        var expectedCompletion: Subscribers.Completion<Error>?
+        var receivedValue: ResponseDataModel.LatestRate?
+        var receivedCompletion: Subscribers.Completion<Error>?
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         do {
@@ -252,15 +262,15 @@ class FetcherTests: XCTestCase {
         sut
             .publisher(for: dummyEndpoint)
             .sink(
-                receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { value in expectedValue = value }
+                receiveCompletion: { completion in receivedCompletion = completion },
+                receiveValue: { value in receivedValue = value }
             )
             .store(in: &anyCancellableSet)
         
         // assert
         do {
-            let expectedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(expectedCompletion)
-            switch expectedCompletion {
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            switch receivedCompletion {
                 case .failure(let error):
                     guard let fetcherError = error as? Fetcher.Error else {
                         XCTFail("應該要收到 Fetcher.Error")
@@ -277,7 +287,7 @@ class FetcherTests: XCTestCase {
         }
         
         do {
-            XCTAssertNil(expectedValue)
+            XCTAssertNil(receivedValue)
         }
     }
     
@@ -291,8 +301,8 @@ class FetcherTests: XCTestCase {
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
-        var expectedValue: ResponseDataModel.LatestRate?
-        var expectedCompletion: Subscribers.Completion<Error>?
+        var receivedValue: ResponseDataModel.LatestRate?
+        var receivedCompletion: Subscribers.Completion<Error>?
         
         do {
             // first output
@@ -310,16 +320,16 @@ class FetcherTests: XCTestCase {
         sut
             .publisher(for: dummyEndpoint)
             .sink(
-                receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { value in expectedValue = value }
+                receiveCompletion: { completion in receivedCompletion = completion },
+                receiveValue: { value in receivedValue = value }
             )
             .store(in: &anyCancellableSet)
         
         // assert
         do {
-            let expectedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(expectedCompletion)
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             
-            switch expectedCompletion {
+            switch receivedCompletion {
                 case .finished:
                     break
                 case .failure(let error):
@@ -328,7 +338,7 @@ class FetcherTests: XCTestCase {
         }
         
         do {
-            XCTAssertNotNil(expectedValue)
+            XCTAssertNotNil(receivedValue)
             XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
         }
     }
@@ -338,8 +348,8 @@ class FetcherTests: XCTestCase {
     /// 後續的 api key 全都無效，fetcher 能回傳 api key 無效的 error。
     func testInvalidAPIKeyFallBack() throws {
         // arrange
-        var expectedValue: ResponseDataModel.LatestRate?
-        var expectedCompletion: Subscribers.Completion<Error>?
+        var receivedValue: ResponseDataModel.LatestRate?
+        var receivedCompletion: Subscribers.Completion<Error>?
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
@@ -351,16 +361,16 @@ class FetcherTests: XCTestCase {
         sut
             .publisher(for: dummyEndpoint)
             .sink(
-                receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { value in expectedValue = value }
+                receiveCompletion: { completion in receivedCompletion = completion },
+                receiveValue: { value in receivedValue = value }
             )
             .store(in: &anyCancellableSet)
         
         // assert
         do {
-            let expectedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(expectedCompletion)
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             
-            switch expectedCompletion {
+            switch receivedCompletion {
                 case .failure(let error):
                     guard let fetcherError = error as? Fetcher.Error else {
                         XCTFail("should receive Fetcher.Error")
@@ -377,15 +387,15 @@ class FetcherTests: XCTestCase {
         }
         
         do {
-            XCTAssertNil(expectedValue)
+            XCTAssertNil(receivedValue)
         }
     }
     
     /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `SupportedSymbols` instance
     func testFetchSupportedSymbols() throws {
         // arrange
-        var expectedValue: ResponseDataModel.SupportedSymbols?
-        var expectedCompletion: Subscribers.Completion<Error>?
+        var receivedValue: ResponseDataModel.SupportedSymbols?
+        var receivedCompletion: Subscribers.Completion<Error>?
         
         do {
             stubRateSession.outputPublisher = try sessionDataPublisher(TestingData.SessionData.supportedSymbols())
@@ -394,16 +404,16 @@ class FetcherTests: XCTestCase {
         // act
         sut.publisher(for: Endpoints.SupportedSymbols())
             .sink(
-                receiveCompletion: { completion in expectedCompletion = completion },
-                receiveValue: { value in expectedValue = value }
+                receiveCompletion: { completion in receivedCompletion = completion },
+                receiveValue: { value in receivedValue = value }
             )
             .store(in: &anyCancellableSet)
         
         // assert
         do {
-            let expectedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(expectedCompletion)
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             
-            switch expectedCompletion {
+            switch receivedCompletion {
                 case .finished:
                     break
                 case .failure(let error):
@@ -412,9 +422,9 @@ class FetcherTests: XCTestCase {
         }
         
         do {
-            let expectedSupportedSymbols: ResponseDataModel.SupportedSymbols = try XCTUnwrap(expectedValue)
+            let receivedSupportedSymbols: ResponseDataModel.SupportedSymbols = try XCTUnwrap(receivedValue)
             
-            XCTAssertFalse(expectedSupportedSymbols.symbols.isEmpty)
+            XCTAssertFalse(receivedSupportedSymbols.symbols.isEmpty)
         }
     }
     
@@ -428,24 +438,24 @@ class FetcherTests: XCTestCase {
         
         let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
         
-        var firstExpectedValue: ResponseDataModel.LatestRate?
-        var firstExpectedCompletion: Subscribers.Completion<Error>?
+        var firstReceivedValue: ResponseDataModel.LatestRate?
+        var firstReceivedCompletion: Subscribers.Completion<Error>?
         
-        var secondExpectedValue: ResponseDataModel.LatestRate?
-        var secondExpectedCompletion: Subscribers.Completion<Error>?
+        var secondReceivedValue: ResponseDataModel.LatestRate?
+        var secondReceivedCompletion: Subscribers.Completion<Error>?
         
         // act
         sut.publisher(for: dummyEndpoint)
             .sink(
-                receiveCompletion: { completion in firstExpectedCompletion = completion },
-                receiveValue: { value in firstExpectedValue = value }
+                receiveCompletion: { completion in firstReceivedCompletion = completion },
+                receiveValue: { value in firstReceivedValue = value }
             )
             .store(in: &anyCancellableSet)
         
         sut.publisher(for: dummyEndpoint)
             .sink(
-                receiveCompletion: { completion in secondExpectedCompletion = completion },
-                receiveValue: { value in secondExpectedValue = value }
+                receiveCompletion: { completion in secondReceivedCompletion = completion },
+                receiveValue: { value in secondReceivedValue = value }
             )
             .store(in: &anyCancellableSet)
         
@@ -474,8 +484,8 @@ class FetcherTests: XCTestCase {
             }
             
             // 現階段 fetcher 應該還沒 publish 任何 output
-            XCTAssertNil(firstExpectedValue)
-            XCTAssertNil(secondExpectedValue)
+            XCTAssertNil(firstReceivedValue)
+            XCTAssertNil(secondReceivedValue)
         }
         
         do {
@@ -515,10 +525,10 @@ class FetcherTests: XCTestCase {
         }
         
         do {
-            XCTAssertNotNil(firstExpectedValue)
+            XCTAssertNotNil(firstReceivedValue)
             
-            let firstExpectedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(firstExpectedCompletion)
-            switch firstExpectedCompletion {
+            let firstReceivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(firstReceivedCompletion)
+            switch firstReceivedCompletion {
                 case .finished:
                     break
                 case .failure(let failure):
@@ -527,10 +537,10 @@ class FetcherTests: XCTestCase {
         }
         
         do {
-            XCTAssertNotNil(secondExpectedValue)
+            XCTAssertNotNil(secondReceivedValue)
             
-            let secondExpectedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(secondExpectedCompletion)
-            switch secondExpectedCompletion {
+            let secondReceivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(secondReceivedCompletion)
+            switch secondReceivedCompletion {
                 case .finished:
                     break
                 case .failure(let failure):
@@ -580,10 +590,10 @@ private extension FetcherTests {
         
         var outputPublishers: [AnyPublisher<(data: Data, response: URLResponse), URLError>]
         
-        // MARK: - instance mothed
+        // MARK: - instance method
         func rateDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
-            if let apikey = request.value(forHTTPHeaderField: "apikey") {
-                receivedAPIKeys.append(apikey)
+            if let apiKey = request.value(forHTTPHeaderField: "apikey") {
+                receivedAPIKeys.append(apiKey)
             }
             
             if outputPublishers.isEmpty {

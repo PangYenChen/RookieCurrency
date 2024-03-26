@@ -21,7 +21,7 @@ extension TestDouble {
             numberOfDays = 3
             baseCurrencyCode = "TWD"
             resultOrder = .decreasing
-            currencyCodeOfInterest = ["USD, JPY"]
+            currencyCodeOfInterest = ["USD", "JPY"]
         }
     }
 }

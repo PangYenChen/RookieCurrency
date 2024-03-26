@@ -3,17 +3,17 @@ import Combine
 
 protocol RateManagerProtocol {
     func ratePublisher(numberOfDays: Int)
-    -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error>
+    -> AnyPublisher<BaseRateManager.RateTuple, Error>
 }
 
 // TODO: 這裡的 method 好長 看能不能拆開
-extension RateManager: RateManagerProtocol {
-    func ratePublisher(numberOfDays: Int) -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> {
+class RateManager: BaseRateManager, RateManagerProtocol {
+    func ratePublisher(numberOfDays: Int) -> AnyPublisher<BaseRateManager.RateTuple, Error> {
         ratePublisher(numberOfDays: numberOfDays, from: .now)
     }
     
     func ratePublisher(numberOfDays: Int, from start: Date)
-    -> AnyPublisher<(latestRate: ResponseDataModel.LatestRate, historicalRateSet: Set<ResponseDataModel.HistoricalRate>), Error> {
+    -> AnyPublisher<BaseRateManager.RateTuple, Error> {
         historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .publisher
             .flatMap { [unowned self] dateString -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> in
