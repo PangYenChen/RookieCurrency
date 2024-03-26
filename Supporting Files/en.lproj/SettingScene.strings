@@ -4,10 +4,10 @@
 "cancelAlertDiscardTitle" = "Discard changes";
 "cancelAlertContinueTitle" = "Continue editing";
 "setting" = "Setting";
-"version" = "version：%1$@(%2$@)";
+"version" = "Version：%1$@(%2$@)";
 "versionDate" = "version date：%@";
 "debugInfo" = "debug info";
-"removeFiles" = "remove downloaded data";
-"removeFilesDescription" = "this would remove data which may be unused";
-"dataHaveBeenRemoved" = "data have been remove";
+"removeFiles" = "Remove downloaded data";
+"removeFilesDescription" = "This would remove data which may be unused";
+"dataHaveBeenRemoved" = "Data have been remove";
 "openSettingsURLFailMessage" = "Please switch the language in Settings app.";

@@ -5,6 +5,8 @@ class BaseResultTableViewController: UITableViewController {
     init?(coder: NSCoder, baseResultModel: BaseResultModel) {
         self.baseResultModel = baseResultModel
         
+        hasReceivedResult = false
+        
         super.init(coder: coder)
         
         do /*configure search controller*/ {
@@ -116,10 +118,18 @@ class BaseResultTableViewController: UITableViewController {
         }
     }
     
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        
+        hasReceivedResult ? () : refreshControl?.beginRefreshing()
+    }
+    
     // MARK: - store properties
     @ViewLoading private var dataSource: DataSource
     
     private let baseResultModel: BaseResultModel
+    
+    private var hasReceivedResult: Bool
     
     // MARK: - view
     @ViewLoading @IBOutlet private var refreshStatusBarButtonItem: UIBarButtonItem
@@ -143,6 +153,8 @@ private extension BaseResultTableViewController {
 // MARK: - instance methods
 extension BaseResultTableViewController {
     final func populateTableViewWith(_ rateStatistics: [BaseResultModel.RateStatistic]) {
+        hasReceivedResult = true
+        
         var snapshot: Snapshot = Snapshot()
         snapshot.appendSections([.main])
         snapshot.appendItems(rateStatistics)
@@ -168,6 +180,8 @@ extension BaseResultTableViewController {
     }
     
     final func presentDataAbsentAlertFor(currencyCodeSet: Set<ResponseDataModel.CurrencyCode>) {
+        hasReceivedResult = true
+        
         let currencyCodeDescriptions: [String] = currencyCodeSet
             .map(baseResultModel.localizedStringFor(currencyCode:))
             .sorted()
@@ -187,6 +201,8 @@ extension BaseResultTableViewController {
     }
     
     final func presentErrorAlert(error: Error) {
+        hasReceivedResult = true
+        
         if let presentingViewController {
             if presentingViewController is UIAlertController {
                 dismiss(animated: true) { [unowned self] in presentAlert(error: error) }
