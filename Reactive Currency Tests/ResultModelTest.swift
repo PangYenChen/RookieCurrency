@@ -80,7 +80,7 @@ class ResultModelTest: XCTestCase {
         do {
             let receivedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
             switch receivedRefreshStatus {
-                case .process: return
+                case .process: break
                 case .idle: XCTFail("It should be .process")
             }
         }
@@ -106,7 +106,7 @@ class ResultModelTest: XCTestCase {
             let receivedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
             switch receivedRefreshStatus {
                 case .process: XCTFail("It should be .idle")
-                case .idle: return
+                case .idle: break
             }
         }
         XCTAssertNil(receivedError)
@@ -161,7 +161,7 @@ class ResultModelTest: XCTestCase {
         do {
             let receivedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
             switch receivedRefreshStatus {
-                case .process: return
+                case .process: break
                 case .idle: XCTFail("It should be .process")
             }
         }
@@ -177,7 +177,7 @@ class ResultModelTest: XCTestCase {
             let receivedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
             switch receivedRefreshStatus {
                 case .process: XCTFail("It should be .idle")
-                case .idle: return
+                case .idle: break
             }
         }
         
@@ -239,7 +239,7 @@ class ResultModelTest: XCTestCase {
         do {
             let receivedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
             switch receivedRefreshStatus {
-                case .process: return
+                case .process: break
                 case .idle: XCTFail("It should be .process")
             }
         }
@@ -268,7 +268,7 @@ class ResultModelTest: XCTestCase {
             let receivedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
             switch receivedRefreshStatus {
                 case .process: XCTFail("It should be .idle")
-                case .idle: return
+                case .idle: break
             }
         }
         XCTAssertNil(receivedError)

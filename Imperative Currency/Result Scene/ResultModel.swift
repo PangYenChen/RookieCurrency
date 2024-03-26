@@ -60,9 +60,8 @@ extension ResultModel {
                                       latestRate: latestRate,
                                       historicalRateSet: historicalRateSet)
                     
-                    guard statisticsInfo.dataAbsentCurrencyCodeSet.isEmpty else {
+                    if !statisticsInfo.dataAbsentCurrencyCodeSet.isEmpty {
                         dataAbsentCurrencyCodeSetHandler?(statisticsInfo.dataAbsentCurrencyCodeSet)
-                        return
                     }
                     
                     rateStatistics = statisticsInfo.rateStatistics
