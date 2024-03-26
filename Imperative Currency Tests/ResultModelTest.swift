@@ -48,7 +48,7 @@ final class ResultModelTest: XCTestCase {
         let userSettingManagerStub: TestDouble.UserSettingManager = userSettingManager
         userSettingManagerStub.numberOfDays = receivedNumberOfDays
         
-        let rateManagerSpy: TestDouble.RateManager = rateManager
+        let fakeRateManager: TestDouble.RateManager = rateManager
         
         var receivedRateStatistics: [ResultModel.RateStatistic]?
         var receivedDataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>?
@@ -67,7 +67,7 @@ final class ResultModelTest: XCTestCase {
         fakeTimer.executeBlock()
         
         // assert
-        XCTAssertEqual(rateManagerSpy.numberOfDays, receivedNumberOfDays)
+        XCTAssertEqual(fakeRateManager.numberOfDays, receivedNumberOfDays)
         
         XCTAssertNil(receivedRateStatistics)
         XCTAssertNil(receivedDataAbsentCurrencyCodeSet)
@@ -86,7 +86,7 @@ final class ResultModelTest: XCTestCase {
             let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
             let dummyResult: Result<BaseRateManager.RateTuple, Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
             
-            rateManagerSpy.executeCompletionHandlerWith(result: dummyResult)
+            fakeRateManager.executeCompletionHandlerWith(result: dummyResult)
         }
         
         // assert
@@ -109,7 +109,7 @@ final class ResultModelTest: XCTestCase {
     
     func testRateManagerResultInError() throws {
         // arrange
-        let rateManagerStub: TestDouble.RateManager = rateManager
+        let fakeRateManager: TestDouble.RateManager = rateManager
         
         var receivedRateStatistics: [ResultModel.RateStatistic]?
         var receivedDataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>?
@@ -143,7 +143,7 @@ final class ResultModelTest: XCTestCase {
         XCTAssertNil(receivedError)
         
         // act
-        rateManagerStub.executeCompletionHandlerWith(result: .failure(receivedTimeoutError))
+        fakeRateManager.executeCompletionHandlerWith(result: .failure(receivedTimeoutError))
         
         // assert
         XCTAssertNil(receivedRateStatistics)
@@ -164,13 +164,13 @@ final class ResultModelTest: XCTestCase {
     
     func testDataAbsent() throws {
         // arrange
-        let userSettingManager: TestDouble.UserSettingManager = userSettingManager
+        let userSettingManagerStub: TestDouble.UserSettingManager = userSettingManager
         let currencyCodeInResponseOfLatestAndHistoricalRate: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
         let currencyCodeNotInHistoricalRate: ResponseDataModel.CurrencyCode = "FakeCurrencyCodeInLatestRate"
         let currencyCodeNotInLatestRate: ResponseDataModel.CurrencyCode = "FakeCurrencyCodeInHistoricalRate"
-        userSettingManager.currencyCodeOfInterest = currencyCodeInResponseOfLatestAndHistoricalRate.union([currencyCodeNotInHistoricalRate, currencyCodeNotInLatestRate])
+        userSettingManagerStub.currencyCodeOfInterest = currencyCodeInResponseOfLatestAndHistoricalRate.union([currencyCodeNotInHistoricalRate, currencyCodeNotInLatestRate])
         
-        let rateManagerSpy: TestDouble.RateManager = rateManager
+        let fakeRateManager: TestDouble.RateManager = rateManager
         
         var receivedRateStatistics: [ResultModel.RateStatistic]?
         var receivedDataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>?
@@ -207,7 +207,7 @@ final class ResultModelTest: XCTestCase {
             let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: "1970-01-01")
             let dummyResult: Result<BaseRateManager.RateTuple, Error> = .success((latestRate: dummyLatestRate, historicalRateSet: [dummyHistoricalRate]))
             
-            rateManagerSpy.executeCompletionHandlerWith(result: dummyResult)
+            fakeRateManager.executeCompletionHandlerWith(result: dummyResult)
         }
         
         // assert
