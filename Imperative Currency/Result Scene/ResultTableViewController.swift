@@ -20,14 +20,6 @@ final class ResultTableViewController: BaseResultTableViewController {
         resultModel.resumeAutoRefresh()
     }
     
-    // MARK: - life cycle
-    override func viewIsAppearing(_ animated: Bool) {
-        super.viewIsAppearing(animated)
-        
-        refreshControl?.beginRefreshing()
-        resultModel.refresh()
-    }
-    
     // MARK: - private property
     private let resultModel: ResultModel
     
