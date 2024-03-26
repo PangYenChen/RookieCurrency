@@ -19,7 +19,7 @@ final class QuasiBaseResultModelTests: XCTestCase {
         let baseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
         
         let supportedCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
-        let nonSupportedCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = ["FakeCurrencyInHistoricalRate"]
+        let nonSupportedCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = ["FakeCurrencyCodeInHistoricalRate"]
         let currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = supportedCurrencyCodeSet.union(nonSupportedCurrencyCodeSet)
         
         let latestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()

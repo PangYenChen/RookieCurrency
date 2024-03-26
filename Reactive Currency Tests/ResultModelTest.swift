@@ -47,13 +47,13 @@ class ResultModelTest: XCTestCase {
                               timer: fakeTimer)
         }
         
-        var receivedRateStatics: [ResultModel.RateStatistic]?
+        var receivedRateStatistics: [ResultModel.RateStatistic]?
         var receivedDataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>?
         var receivedRefreshStatus: ResultModel.RefreshStatus?
         var receivedError: Error?
         
         sut.rateStatistics
-            .sink { rateStatistics in receivedRateStatics = rateStatistics }
+            .sink { rateStatistics in receivedRateStatistics = rateStatistics }
             .store(in: &anyCancellableSet)
         
         sut.dataAbsentCurrencyCodeSet
@@ -75,7 +75,7 @@ class ResultModelTest: XCTestCase {
         // assert
         XCTAssertEqual(rateManagerSpy.numberOfDays, receivedNumberOfDays)
         
-        XCTAssertNil(receivedRateStatics)
+        XCTAssertNil(receivedRateStatistics)
         XCTAssertNil(receivedDataAbsentCurrencyCodeSet)
         do {
             let receivedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
@@ -96,10 +96,10 @@ class ResultModelTest: XCTestCase {
         }
         
         // assert
-        do /*assert that received rate statistics is empty*/ {
-            let receivedRateStatics: [ResultModel.RateStatistic] = try XCTUnwrap(receivedRateStatics)
+        do /*assert received rate statistics*/ {
+            let receivedRateStatistics: [ResultModel.RateStatistic] = try XCTUnwrap(receivedRateStatistics)
             XCTAssertEqual(userSettingManagerStub.currencyCodeOfInterest,
-                           Set(receivedRateStatics.map { $0.currencyCode }))
+                           Set(receivedRateStatistics.map { $0.currencyCode }))
         }
         XCTAssertNil(receivedDataAbsentCurrencyCodeSet)
         do /*assert received refresh status is .idle*/ {
@@ -128,7 +128,7 @@ class ResultModelTest: XCTestCase {
                               timer: fakeTimer)
         }
         
-        var receivedRateStatics: [ResultModel.RateStatistic]?
+        var receivedRateStatistics: [ResultModel.RateStatistic]?
         var receivedDataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode>?
         var receivedRefreshStatus: ResultModel.RefreshStatus?
         var receivedError: Error?
@@ -136,7 +136,7 @@ class ResultModelTest: XCTestCase {
         let receivedTimeoutError: URLError = URLError(URLError.Code.timedOut)
         
         sut.rateStatistics
-            .sink { rateStatistics in receivedRateStatics = rateStatistics }
+            .sink { rateStatistics in receivedRateStatistics = rateStatistics }
             .store(in: &anyCancellableSet)
         
         sut.dataAbsentCurrencyCodeSet
@@ -156,7 +156,7 @@ class ResultModelTest: XCTestCase {
         fakeTimer.publish()
         
         // assert
-        XCTAssertNil(receivedRateStatics)
+        XCTAssertNil(receivedRateStatistics)
         XCTAssertNil(receivedDataAbsentCurrencyCodeSet)
         do {
             let receivedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)
@@ -171,7 +171,7 @@ class ResultModelTest: XCTestCase {
         rateManagerStub.publish(completion: .failure(receivedTimeoutError))
         
         // assert
-        XCTAssertNil(receivedRateStatics)
+        XCTAssertNil(receivedRateStatistics)
         XCTAssertNil(receivedDataAbsentCurrencyCodeSet)
         do /*assert received refresh status*/ {
             let receivedRefreshStatus: ResultModel.RefreshStatus = try XCTUnwrap(receivedRefreshStatus)

@@ -33,7 +33,7 @@ class QuasiBaseResultModelRateStatisticTests: XCTestCase {
     
     func testInitBaseCurrencyCodeNotInLatestRate() throws {
         // arrange
-        let baseCurrencyCode: ResponseDataModel.CurrencyCode = "FakeCurrencyInHistoricalRate"
+        let baseCurrencyCode: ResponseDataModel.CurrencyCode = "FakeCurrencyCodeInHistoricalRate"
         let targetCurrencyCode: ResponseDataModel.CurrencyCode = "USD"
         let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         let latestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
@@ -54,7 +54,7 @@ class QuasiBaseResultModelRateStatisticTests: XCTestCase {
     func testInitTargetCurrencyCodeNotInLatestRate() throws {
         // arrange
         let baseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
-        let targetCurrencyCode: ResponseDataModel.CurrencyCode = "FakeCurrencyInHistoricalRate"
+        let targetCurrencyCode: ResponseDataModel.CurrencyCode = "FakeCurrencyCodeInHistoricalRate"
         let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         let latestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
         let dummyDateString: String = "1970-01-01"
@@ -73,7 +73,7 @@ class QuasiBaseResultModelRateStatisticTests: XCTestCase {
     
     func testInitBaseCurrencyCodeNotInHistoricalRate() throws {
         // arrange
-        let baseCurrencyCode: ResponseDataModel.CurrencyCode = "FakeCurrencyInLatestRate"
+        let baseCurrencyCode: ResponseDataModel.CurrencyCode = "FakeCurrencyCodeInLatestRate"
         let targetCurrencyCode: ResponseDataModel.CurrencyCode = "USD"
         let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         let latestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
@@ -94,7 +94,7 @@ class QuasiBaseResultModelRateStatisticTests: XCTestCase {
     func testInitTargetCurrencyCodeNotInHistoricalRate() throws {
         // arrange
         let baseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
-        let targetCurrencyCode: ResponseDataModel.CurrencyCode = "FakeCurrencyInLatestRate"
+        let targetCurrencyCode: ResponseDataModel.CurrencyCode = "FakeCurrencyCodeInLatestRate"
         let currencyDescriberStub: CurrencyDescriberProtocol = TestDouble.CurrencyDescriber()
         let latestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
         let dummyDateString: String = "1970-01-01"
