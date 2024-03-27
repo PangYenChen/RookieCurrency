@@ -34,7 +34,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         
         historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .forEach { historicalRateDateString in
-                if let cacheHistoricalRate = concurrentQueue.sync(execute: { historicalRateDictionary[historicalRateDateString] }) {
+                if let cacheHistoricalRate = historicalRateCache.historicalRateFor(dateString: historicalRateDateString) {
                     // rate controller 本身已經有資料了
                     historicalRateSetResult = historicalRateSetResult
                         .map { historicalRateSet in historicalRateSet.union([cacheHistoricalRate]) }
@@ -63,10 +63,10 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                                 try? archiver.archive(historicalRate: fetchedHistoricalRate)
                             }
                             
+                            historicalRateCache.cache(fetchedHistoricalRate)
                             concurrentQueue.async(qos: .userInitiated, flags: .barrier) { [unowned self] in
                                 historicalRateSetResult = historicalRateSetResult
                                     .map { historicalRateSet in historicalRateSet.union([fetchedHistoricalRate]) }
-                                historicalRateDictionary[fetchedHistoricalRate.dateString] = fetchedHistoricalRate
                                 dispatchGroup.leave()
                             }
                             
@@ -87,10 +87,11 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                 concurrentQueue.async(qos: .userInitiated) { [unowned self] in
                     do {
                         let unarchivedHistoricalRate: ResponseDataModel.HistoricalRate = try archiver.unarchive(historicalRateDateString: historicalRateDateString)
+                        historicalRateCache.cache(unarchivedHistoricalRate)
+                        
                         concurrentQueue.async(qos: .userInitiated, flags: .barrier) { [unowned self] in
                             historicalRateSetResult = historicalRateSetResult
                                 .map { historicalRateSet in historicalRateSet.union([unarchivedHistoricalRate]) }
-                            historicalRateDictionary[historicalRateDateString] = unarchivedHistoricalRate
                             dispatchGroup.leave()
                         }
                     }
@@ -103,11 +104,11 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                                     concurrentQueue.async(qos: .background) { [unowned self] in
                                         try? archiver.archive(historicalRate: fetchedHistoricalRate)
                                     }
+                                    historicalRateCache.cache(fetchedHistoricalRate)
                                     
                                     concurrentQueue.async(qos: .userInitiated, flags: .barrier) { [unowned self] in
                                         historicalRateSetResult = historicalRateSetResult
                                             .map { historicalRateSet in historicalRateSet.union([fetchedHistoricalRate]) }
-                                        historicalRateDictionary[historicalRateDateString] = fetchedHistoricalRate
                                         dispatchGroup.leave()
                                     }
                                 case .failure(let failure):

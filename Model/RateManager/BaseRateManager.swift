@@ -10,20 +10,17 @@ class BaseRateManager {
         self.archiver = archiver
         self.concurrentQueue = concurrentQueue
         
-        historicalRateDictionary = [:]
+        historicalRateCache = HistoricalRateCache()
     }
     
     // MARK: - instance properties
+    let historicalRateCache: HistoricalRateCache
+    let archiver: ArchiverProtocol
     let fetcher: FetcherProtocol
     
-    let archiver: ArchiverProtocol
-    
-    /// 用來
-    /// - 同時讀寫 historicalRateDictionary、
-    /// - archive 和 unarchive 檔案
+    /// dispatch group 要用的 dispatch queue
+    // TODO: 檢查下 reactive 要不要用
     let concurrentQueue: DispatchQueue
-    
-    var historicalRateDictionary: [String: ResponseDataModel.HistoricalRate]
 }
 
 // MARK: - instance method
@@ -40,7 +37,7 @@ extension BaseRateManager {
     }
     
     func removeCachedAndStoredData() {
-        concurrentQueue.async(qos: .background, flags: .barrier) { [unowned self] in historicalRateDictionary = [:] }
+        historicalRateCache.removeAll()
         try? archiver.removeAllStoredFile()
     }
 }
