@@ -4,8 +4,8 @@ import Foundation
 class BaseRateManager {
     // MARK: - initializer
     init(fetcher: FetcherProtocol = Fetcher.shared,
-         archiver: ArchiverProtocol.Type = Archiver.self,
-         concurrentQueue: DispatchQueue = DispatchQueue(label: "rate controller concurrent queue", attributes: .concurrent)) {
+         archiver: ArchiverProtocol = Archiver.shared,
+         concurrentQueue: DispatchQueue = DispatchQueue(label: "rate manager concurrent queue", attributes: .concurrent)) {
         self.fetcher = fetcher
         self.archiver = archiver
         self.concurrentQueue = concurrentQueue
@@ -16,7 +16,7 @@ class BaseRateManager {
     // MARK: - instance properties
     let fetcher: FetcherProtocol
     
-    let archiver: ArchiverProtocol.Type
+    let archiver: ArchiverProtocol
     
     /// 用來
     /// - 同時讀寫 historicalRateDictionary、

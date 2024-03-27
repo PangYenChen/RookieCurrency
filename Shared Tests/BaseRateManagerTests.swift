@@ -10,7 +10,7 @@ import XCTest
 
 /// 這個 test case 測試 rate controller 跟 fetcher 無關的 method
 /// 即時間計算的 method
-final class RateManagerTests: XCTestCase {
+final class BaseRateManagerTests: XCTestCase {
     private var sut: RateManager!
     
     private var fakeFetcher: TestDouble.Fetcher!

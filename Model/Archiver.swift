@@ -1,22 +1,45 @@
 import Foundation
 
 protocol ArchiverProtocol {
-    static func archive(historicalRate: ResponseDataModel.HistoricalRate) throws
+    func archive(historicalRate: ResponseDataModel.HistoricalRate) throws
     
-    static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate
+    func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate
     
-    static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool
+    func hasFileInDisk(historicalRateDateString fileName: String) -> Bool
     
-    static func removeAllStoredFile() throws
+    func removeAllStoredFile() throws
 }
 
-/// 讀寫 Historical Rate 的類別
-enum Archiver {}
+/// 讀寫 Historical Rate 的類別，當使用的 file manager 是 `.default`，這個 class 是 thread safe
+class Archiver {
+    // MARK: - initializer
+    init(fileManager: FileManager = .default) {
+        self.fileManager = fileManager
+        
+        documentsDirectory = URL.documentsDirectory
+        jsonDecoder = ResponseDataModel.jsonDecoder
+        jsonEncoder = ResponseDataModel.jsonEncoder
+        jsonPathExtension = "json"
+    }
+    
+    // MARK: - private property
+    private let fileManager: FileManager
+    
+    private let documentsDirectory: URL
+    private let jsonDecoder: JSONDecoder
+    private let jsonEncoder: JSONEncoder
+    private let jsonPathExtension: String
+}
+
+// MARK: - static property
+extension Archiver {
+    static let shared: Archiver = Archiver()
+}
 
 extension Archiver: ArchiverProtocol {
     /// 寫入資料
     /// - Parameter historicalRate: 要寫入的資料
-    static func archive(historicalRate: ResponseDataModel.HistoricalRate) throws {
+    func archive(historicalRate: ResponseDataModel.HistoricalRate) throws {
         let data: Data = try jsonEncoder.encode(historicalRate)
         let url: URL = documentsDirectory.appending(path: historicalRate.dateString)
             .appendingPathExtension(jsonPathExtension)
@@ -28,7 +51,7 @@ extension Archiver: ArchiverProtocol {
     /// 讀取資料
     /// - Parameter fileName: historical rate 的日期，也是檔案名稱
     /// - Returns: historical rate
-    static func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
+    func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
         let url: URL = documentsDirectory.appending(path: fileName)
             .appendingPathExtension(jsonPathExtension)
         
@@ -44,7 +67,7 @@ extension Archiver: ArchiverProtocol {
             return historicalRate
         }
         catch {
-            try? FileManager.default.removeItem(at: url)
+            try? fileManager.removeItem(at: url)
             throw error
         }
     }
@@ -52,34 +75,20 @@ extension Archiver: ArchiverProtocol {
     /// 查看某 historical rate 是否存於本地
     /// - Parameter fileName: historical rate 的日期字串
     /// - Returns: historical rate 是否存於本地
-    static func hasFileInDisk(historicalRateDateString fileName: String) -> Bool {
+    func hasFileInDisk(historicalRateDateString fileName: String) -> Bool {
         let fileURL: URL = documentsDirectory.appending(path: fileName)
             .appendingPathExtension(jsonPathExtension)
         
-        return FileManager.default.fileExists(atPath: fileURL.path())
+        return fileManager.fileExists(atPath: fileURL.path())
     }
     
     /// 移除全部存於本地的檔案
-    static func removeAllStoredFile() throws {
-        try FileManager.default
+    func removeAllStoredFile() throws {
+        try fileManager
             .contentsOfDirectory(at: documentsDirectory,
                                  includingPropertiesForKeys: nil,
                                  options: .skipsHiddenFiles)
             .filter { fileURL in fileURL.pathExtension == jsonPathExtension }
-            .forEach { fileURL in try FileManager.default.removeItem(at: fileURL) }
+            .forEach { fileURL in try fileManager.removeItem(at: fileURL) }
     }
-}
-
-private extension Archiver {
-    /// app 的路徑
-    static let documentsDirectory: URL = URL.documentsDirectory
-    
-    /// 共用的 decoder
-    static let jsonDecoder: JSONDecoder = ResponseDataModel.jsonDecoder
-    
-    /// 共用的 encoder
-    static let jsonEncoder: JSONEncoder = ResponseDataModel.jsonEncoder
-    
-    /// 儲存的檔案的副檔名
-    static let jsonPathExtension: String = "json"
 }

@@ -2,7 +2,7 @@ import XCTest
 import Combine
 @testable import ReactiveCurrency
 
-final class ReactiveRateManagerTests: XCTestCase {
+final class RateManagerTests: XCTestCase {
     // TODO: "`RateManager` 的 method 太長了，不好測試。等 method 拆解好之後再來寫測試。
     
     private var sut: RateManager!
@@ -11,7 +11,6 @@ final class ReactiveRateManagerTests: XCTestCase {
     
     override func tearDown() {
         sut = nil
-        TestDouble.SpyArchiver.reset()
         anyCancellableSet.forEach { anyCancellable in anyCancellable.cancel() }
         anyCancellableSet = Set<AnyCancellable>()
     }
@@ -104,7 +103,7 @@ final class ReactiveRateManagerTests: XCTestCase {
 }
 
 // MARK: - name space: test double
-extension ReactiveRateManagerTests {
+extension RateManagerTests {
     final class StubFetcher: FetcherProtocol {
         private(set) var numberOfLatestEndpointCall: Int = 0
         
