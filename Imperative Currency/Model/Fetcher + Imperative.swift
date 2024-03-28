@@ -1,7 +1,6 @@
 import Foundation
 
 // MARK: - Fetcher Protocol
-@available(*, deprecated) // TODO: to be removed
 protocol FetcherProtocol {
     func fetch<Endpoint: EndpointProtocol>(
         _ endpoint: Endpoint,

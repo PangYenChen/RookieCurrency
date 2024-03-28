@@ -1,7 +1,6 @@
 import Foundation
 
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
-    // TODO: 這裡應該會有同時性問題，等我讀完 concurrency 之後再處理
     // MARK: - life cycle
     override init(fetcher: FetcherProtocol = Fetcher.shared,
                   locale: Locale = Locale.autoupdatingCurrent) {

@@ -2,7 +2,6 @@ import Foundation
 import Combine
 
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
-    // TODO: 這裡應該會有同時性問題
     private var wrappedSupportedSymbols: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error>?
     
     func supportedCurrency() -> AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> {

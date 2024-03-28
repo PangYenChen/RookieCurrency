@@ -16,18 +16,20 @@ class HistoricalRateCache {
     private let nextHistoricalRateProvider: HistoricalRateProviderProtocol
 }
 
-// TODO: 整個 extension 要刪掉
 extension HistoricalRateCache {
+    @available(*, deprecated) // TODO: to be removed
     func historicalRateFor(dateString: String) -> ResponseDataModel.HistoricalRate? {
         concurrentQueue.sync { historicalRateDirectory[dateString] }
     }
     
+    @available(*, deprecated) // TODO: to be removed
     func cache(_ historicalRate: ResponseDataModel.HistoricalRate) {
         concurrentQueue.async(flags: .barrier) { [unowned self] in
             historicalRateDirectory[historicalRate.dateString] = historicalRate
         }
     }
     
+    @available(*, deprecated) // TODO: to be removed
     func removeAll() {
         concurrentQueue.async(flags: .barrier) { [unowned self] in
             historicalRateDirectory.removeAll()

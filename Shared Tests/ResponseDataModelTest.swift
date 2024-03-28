@@ -31,13 +31,13 @@ final class ResponseDataModelTest: XCTestCase {
         // arrange
         let latestData: Data = try XCTUnwrap(TestingData.TestingData.latestData)
 
-        // act // TODO: 這邊好像怪怪的
-        let historicalRate: ResponseDataModel.LatestRate = try ResponseDataModel.jsonDecoder
+        // act
+        let latestRate: ResponseDataModel.LatestRate = try ResponseDataModel.jsonDecoder
             .decode(ResponseDataModel.LatestRate.self,
                     from: latestData)
         
         // assert
-        XCTAssertFalse(historicalRate.rates.isEmpty)
+        XCTAssertFalse(latestRate.rates.isEmpty)
     }
     
     /// 先將 historical rate encode 再 decode，檢查前後是否一致
