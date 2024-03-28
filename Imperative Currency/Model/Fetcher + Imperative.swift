@@ -1,6 +1,7 @@
 import Foundation
 
 // MARK: - Fetcher Protocol
+@available(*, deprecated) // TODO: to be removed
 protocol FetcherProtocol {
     func fetch<Endpoint: EndpointProtocol>(
         _ endpoint: Endpoint,
@@ -72,9 +73,15 @@ extension Fetcher: FetcherProtocol {
     }
 }
 
-extension Fetcher: HistoricalRateProvider {
+extension Fetcher: HistoricalRateProviderProtocol {
     func historicalRateFor(dateString: String,
-                           completionHandler: @escaping (Result<ResponseDataModel.HistoricalRate, Swift.Error>) -> Void) {
-        fetch(Endpoints.Historical(dateString: dateString), completionHandler: completionHandler)
+                           historicalRateHandler: @escaping HistoricalRateHandler) {
+        fetch(Endpoints.Historical(dateString: dateString), completionHandler: historicalRateHandler)
+    }
+}
+
+extension Fetcher: LatestRateProviderProtocol {
+    func latestRate(latestRateHandler: @escaping LatestRateHandler) {
+        fetch(Endpoints.Latest(), completionHandler: latestRateHandler)
     }
 }

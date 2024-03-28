@@ -2,7 +2,7 @@ import Foundation
 
 class HistoricalRateCache {
     // MARK: - initializer
-    init(historicalRateProvider: HistoricalRateProvider = Archiver.shared) {
+    init(historicalRateProvider: HistoricalRateProviderProtocol = Archiver.shared) {
         nextHistoricalRateProvider = historicalRateProvider
         
         historicalRateDirectory = [:]
@@ -13,7 +13,7 @@ class HistoricalRateCache {
     private var historicalRateDirectory: [String: ResponseDataModel.HistoricalRate]
     private let concurrentQueue: DispatchQueue
     
-    private let nextHistoricalRateProvider: HistoricalRateProvider
+    private let nextHistoricalRateProvider: HistoricalRateProviderProtocol
 }
 
 // TODO: 整個 extension 要刪掉
@@ -36,11 +36,11 @@ extension HistoricalRateCache {
 }
 
 // MARK: - instance method
-extension HistoricalRateCache: HistoricalRateProvider {
+extension HistoricalRateCache: HistoricalRateProviderProtocol {
     func historicalRateFor(dateString: String, 
-                           completionHandler: @escaping (Result<ResponseDataModel.HistoricalRate, any Error>) -> Void) {
+                           historicalRateHandler: @escaping HistoricalRateHandler) {
         if let cachedHistoricalRate = concurrentQueue.sync(execute: { historicalRateDirectory[dateString] }) {
-            completionHandler(.success(cachedHistoricalRate))
+            historicalRateHandler(.success(cachedHistoricalRate))
         }
         else {
             nextHistoricalRateProvider.historicalRateFor(dateString: dateString) { [unowned self] result in
@@ -49,7 +49,7 @@ extension HistoricalRateCache: HistoricalRateProvider {
                         historicalRateDirectory[historicalRate.dateString] = historicalRate
                     }
                 }
-                completionHandler(result)
+                historicalRateHandler(result)
             }
         }
     }

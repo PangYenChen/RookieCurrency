@@ -28,7 +28,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
     ) {
         var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
         
-        let dispatchGroup: DispatchGroup = DispatchGroup() // TODO: 試試看全部都從cache來會不會crash
+        let dispatchGroup: DispatchGroup = DispatchGroup() // TODO: 試試看historical全部都從cache來，會不會還沒進latest之前就crash
         
         historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .forEach { historicalRateDateString in
@@ -58,7 +58,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         
         dispatchGroup.enter()
         
-        fetcher.fetch(Endpoints.Latest()) { result in
+        latestRateProvider.latestRate { result in
             latestRateResult = result
         
             dispatchGroup.leave()

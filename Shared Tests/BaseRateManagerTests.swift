@@ -11,18 +11,28 @@ import XCTest
 /// 這個 test case 測試 rate controller 跟 fetcher 無關的 method
 /// 即時間計算的 method
 final class BaseRateManagerTests: XCTestCase {
-    private var sut: RateManager!
+    private var sut: BaseRateManager!
     
-    private var fakeFetcher: TestDouble.Fetcher!
+    private var historicalRateProvider: HistoricalRateProviderProtocol!
+    private var latestRateProvider: LatestRateProviderProtocol!
+    private var concurrentQueue: DispatchQueue!
     
     override func setUp() {
-        fakeFetcher = TestDouble.Fetcher()
-        sut = RateManager(fetcher: fakeFetcher)
+        historicalRateProvider = TestDouble.HistoricalRateProvider()
+        latestRateProvider = TestDouble.LatestRateProvider()
+        concurrentQueue = DispatchQueue(label: "base.rate.manager.test", attributes: .concurrent)
+        
+        sut = BaseRateManager(historicalRateProvider: historicalRateProvider,
+                              latestRateProvider: latestRateProvider,
+                              concurrentQueue: concurrentQueue)
     }
     
     override func tearDown() {
         sut = nil
-        fakeFetcher = nil
+        
+        historicalRateProvider = nil
+        latestRateProvider = nil
+        concurrentQueue = nil
     }
     
     func testNoRetainCycleOccur() {
@@ -46,6 +56,5 @@ final class BaseRateManagerTests: XCTestCase {
         
         // assert
         XCTAssertEqual(historicalDateStrings, Set(["1969-12-31", "1969-12-30", "1969-12-29"]))
-        XCTAssertEqual(fakeFetcher.numberOfMethodCall, 0)
     }
 }

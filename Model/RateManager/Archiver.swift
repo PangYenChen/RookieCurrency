@@ -14,7 +14,7 @@ protocol ArchiverProtocol {
 class Archiver {
     // MARK: - initializer
     init(fileManager: FileManager = .default,
-         nextHistoricalRateProvider: HistoricalRateProvider = Fetcher.shared) {
+         nextHistoricalRateProvider: HistoricalRateProviderProtocol = Fetcher.shared) {
         self.fileManager = fileManager
         self.nextHistoricalRateProvider = nextHistoricalRateProvider
         
@@ -27,7 +27,7 @@ class Archiver {
     // MARK: - private property
     // MARK: - dependencies
     private let fileManager: FileManager
-    private let nextHistoricalRateProvider: HistoricalRateProvider
+    private let nextHistoricalRateProvider: HistoricalRateProviderProtocol
     
     private let documentsDirectory: URL
     private let jsonDecoder: JSONDecoder
@@ -97,12 +97,12 @@ extension Archiver: ArchiverProtocol {
     }
 }
 
-extension Archiver: HistoricalRateProvider {
+extension Archiver: HistoricalRateProviderProtocol {
     func historicalRateFor(dateString: String,
-                           completionHandler: @escaping (Result<ResponseDataModel.HistoricalRate, any Error>) -> Void) {
+                           historicalRateHandler: @escaping HistoricalRateHandler) {
         do {
             let unarchivedHistoricalRate: ResponseDataModel.HistoricalRate = try unarchive(historicalRateDateString: dateString)
-            completionHandler(.success(unarchivedHistoricalRate))
+            historicalRateHandler(.success(unarchivedHistoricalRate))
         }
         catch {
             nextHistoricalRateProvider.historicalRateFor(dateString: dateString) { result in
@@ -112,7 +112,7 @@ extension Archiver: HistoricalRateProvider {
                     }
                 }
                 
-                completionHandler(result)
+                historicalRateHandler(result)
             }
         }
     }
