@@ -68,6 +68,8 @@
 		5143C88C2A7B864400EDEFFF /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5143C88B2A7B864400EDEFFF /* Fetcher.swift */; };
 		5145AC1D2BB4A413001783AF /* HistoricalRateCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5145AC1C2BB4A413001783AF /* HistoricalRateCache.swift */; };
 		5145AC1E2BB4A413001783AF /* HistoricalRateCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5145AC1C2BB4A413001783AF /* HistoricalRateCache.swift */; };
+		5145AC202BB4C136001783AF /* HistoricalRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5145AC1F2BB4C136001783AF /* HistoricalRateProvider.swift */; };
+		5145AC212BB4C136001783AF /* HistoricalRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5145AC1F2BB4C136001783AF /* HistoricalRateProvider.swift */; };
 		5149A1AC2B08E2B2005D2B04 /* SettingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5149A1AB2B08E2B2005D2B04 /* SettingModel.swift */; };
 		5149A1AE2B09A344005D2B04 /* BaseSettingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5149A1AD2B09A344005D2B04 /* BaseSettingModel.swift */; };
 		5149A1B02B09A3D6005D2B04 /* BaseSettingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5149A1AD2B09A344005D2B04 /* BaseSettingModel.swift */; };
@@ -226,6 +228,7 @@
 		5143C8862A7B855700EDEFFF /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
 		5143C88B2A7B864400EDEFFF /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
 		5145AC1C2BB4A413001783AF /* HistoricalRateCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateCache.swift; sourceTree = "<group>"; };
+		5145AC1F2BB4C136001783AF /* HistoricalRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateProvider.swift; sourceTree = "<group>"; };
 		5149A1AB2B08E2B2005D2B04 /* SettingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingModel.swift; sourceTree = "<group>"; };
 		5149A1AD2B09A344005D2B04 /* BaseSettingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSettingModel.swift; sourceTree = "<group>"; };
 		514C4CFD29A07A7B0049E192 /* Publisher + Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher + Helper.swift"; sourceTree = "<group>"; };
@@ -453,6 +456,7 @@
 			isa = PBXGroup;
 			children = (
 				E1CE96AD248555E10029ED73 /* BaseRateManager.swift */,
+				5145AC1F2BB4C136001783AF /* HistoricalRateProvider.swift */,
 				5145AC1C2BB4A413001783AF /* HistoricalRateCache.swift */,
 				E1133334248A924D00B8E67F /* Archiver.swift */,
 			);
@@ -961,6 +965,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5145AC202BB4C136001783AF /* HistoricalRateProvider.swift in Sources */,
 				512087A929A9F10A005ED87A /* Fetcher + Imperative.swift in Sources */,
 				5120879829A8DC71005ED87A /* DebugInfoViewController.swift in Sources */,
 				512087A329A9EE85005ED87A /* RateManager.swift in Sources */,
@@ -1045,6 +1050,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5145AC212BB4C136001783AF /* HistoricalRateProvider.swift in Sources */,
 				512087AE29A9F4A7005ED87A /* Fetcher + Reactive.swift in Sources */,
 				5120879929A8DC71005ED87A /* DebugInfoViewController.swift in Sources */,
 				51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */,

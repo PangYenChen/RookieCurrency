@@ -5,21 +5,30 @@ class BaseRateManager {
     // MARK: - initializer
     init(fetcher: FetcherProtocol = Fetcher.shared,
          archiver: ArchiverProtocol = Archiver.shared,
+         historicalRateProvider: HistoricalRateProvider = HistoricalRateCache.shared,
          concurrentQueue: DispatchQueue = DispatchQueue(label: "rate manager concurrent queue", attributes: .concurrent)) {
         self.fetcher = fetcher
         self.archiver = archiver
         self.concurrentQueue = concurrentQueue
         
         historicalRateCache = HistoricalRateCache()
+        
+        self.historicalRateProvider = historicalRateProvider
     }
     
     // MARK: - instance properties
+    @available(*, deprecated) // TODO: to be removed
     let historicalRateCache: HistoricalRateCache
+    @available(*, deprecated) // TODO: to be removed
     let archiver: ArchiverProtocol
+    @available(*, deprecated) // TODO: to be removed
     let fetcher: FetcherProtocol
+    
+    let historicalRateProvider: HistoricalRateProvider
     
     /// dispatch group 要用的 dispatch queue
     // TODO: 檢查下 reactive 要不要用
+    // TODO: 想一下是不是用 serial queue 就好了
     let concurrentQueue: DispatchQueue
 }
 

@@ -13,8 +13,10 @@ protocol ArchiverProtocol {
 /// 讀寫 Historical Rate 的類別，當使用的 file manager 是 `.default`，這個 class 是 thread safe
 class Archiver {
     // MARK: - initializer
-    init(fileManager: FileManager = .default) {
+    init(fileManager: FileManager = .default,
+         nextHistoricalRateProvider: HistoricalRateProvider = Fetcher.shared) {
         self.fileManager = fileManager
+        self.nextHistoricalRateProvider = nextHistoricalRateProvider
         
         documentsDirectory = URL.documentsDirectory
         jsonDecoder = ResponseDataModel.jsonDecoder
@@ -23,7 +25,9 @@ class Archiver {
     }
     
     // MARK: - private property
+    // MARK: - dependencies
     private let fileManager: FileManager
+    private let nextHistoricalRateProvider: HistoricalRateProvider
     
     private let documentsDirectory: URL
     private let jsonDecoder: JSONDecoder
@@ -90,5 +94,26 @@ extension Archiver: ArchiverProtocol {
                                  options: .skipsHiddenFiles)
             .filter { fileURL in fileURL.pathExtension == jsonPathExtension }
             .forEach { fileURL in try fileManager.removeItem(at: fileURL) }
+    }
+}
+
+extension Archiver: HistoricalRateProvider {
+    func historicalRateFor(dateString: String,
+                           completionHandler: @escaping (Result<ResponseDataModel.HistoricalRate, any Error>) -> Void) {
+        do {
+            let unarchivedHistoricalRate: ResponseDataModel.HistoricalRate = try unarchive(historicalRateDateString: dateString)
+            completionHandler(.success(unarchivedHistoricalRate))
+        }
+        catch {
+            nextHistoricalRateProvider.historicalRateFor(dateString: dateString) { result in
+                if let fetchedHistoricalRate = try? result.get() {
+                    DispatchQueue.global().async { [unowned self] in
+                        try? archive(historicalRate: fetchedHistoricalRate)
+                    }
+                }
+                
+                completionHandler(result)
+            }
+        }
     }
 }

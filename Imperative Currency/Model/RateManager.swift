@@ -26,116 +26,56 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         completionHandlerQueue: DispatchQueue,
         completionHandler: @escaping CompletionHandler
     ) {
-        var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error> = .success([])
+        var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
         
-        var dateStringsOfHistoricalRateInDisk: Set<String> = []
-        
-        var dateStringsOfHistoricalRateToFetch: Set<String> = []
+        let dispatchGroup: DispatchGroup = DispatchGroup() // TODO: 試試看全部都從cache來會不會crash
         
         historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .forEach { historicalRateDateString in
-                if let cacheHistoricalRate = historicalRateCache.historicalRateFor(dateString: historicalRateDateString) {
-                    // rate controller 本身已經有資料了
-                    historicalRateSetResult = historicalRateSetResult
-                        .map { historicalRateSet in historicalRateSet.union([cacheHistoricalRate]) }
-                }
-                else if archiver.hasFileInDisk(historicalRateDateString: historicalRateDateString) {
-                    // rate controller 沒資料，但硬碟裡有，叫 archiver 讀出來
-                    dateStringsOfHistoricalRateInDisk.insert(historicalRateDateString)
-                }
-                else {
-                    // 這台裝置上沒有資料，跟伺服器拿資料
-                    dateStringsOfHistoricalRateToFetch.insert(historicalRateDateString)
-                }
-            }
-        
-        let dispatchGroup: DispatchGroup = DispatchGroup()
-        
-        // fetch historical rate
-        dateStringsOfHistoricalRateToFetch
-            .forEach { historicalRateDateString in
                 dispatchGroup.enter()
                 
-                fetcher.fetch(Endpoints.Historical(dateString: historicalRateDateString)) { [unowned self] result in
+                historicalRateProvider.historicalRateFor(dateString: historicalRateDateString) { [unowned self] result in
                     switch result {
-                        case .success(let fetchedHistoricalRate):
-                            concurrentQueue.async(qos: .background) { [unowned self] in
-                                try? archiver.archive(historicalRate: fetchedHistoricalRate)
-                            }
-                            
-                            historicalRateCache.cache(fetchedHistoricalRate)
-                            concurrentQueue.async(qos: .userInitiated, flags: .barrier) { [unowned self] in
-                                historicalRateSetResult = historicalRateSetResult
-                                    .map { historicalRateSet in historicalRateSet.union([fetchedHistoricalRate]) }
+                        case .success(let historicalRate):
+                            concurrentQueue.async(flags: .barrier) {
+                                historicalRateSetResult = historicalRateSetResult ?? .success([])
+                                    .map { historicalRateSet in historicalRateSet.union([historicalRate]) }
+                                
                                 dispatchGroup.leave()
                             }
                             
                         case .failure(let failure):
-                            concurrentQueue.async(qos: .userInitiated, flags: .barrier) {
+                            concurrentQueue.async(flags: .barrier) {
                                 historicalRateSetResult = .failure(failure)
+                                
                                 dispatchGroup.leave()
                             }
                     }
                 }
             }
         
-        // read the file in disk
-        dateStringsOfHistoricalRateInDisk
-            .forEach { historicalRateDateString in
-                dispatchGroup.enter()
-                
-                concurrentQueue.async(qos: .userInitiated) { [unowned self] in
-                    do {
-                        let unarchivedHistoricalRate: ResponseDataModel.HistoricalRate = try archiver.unarchive(historicalRateDateString: historicalRateDateString)
-                        historicalRateCache.cache(unarchivedHistoricalRate)
-                        
-                        concurrentQueue.async(qos: .userInitiated, flags: .barrier) { [unowned self] in
-                            historicalRateSetResult = historicalRateSetResult
-                                .map { historicalRateSet in historicalRateSet.union([unarchivedHistoricalRate]) }
-                            dispatchGroup.leave()
-                        }
-                    }
-                    catch {
-                        // TODO: 這段需要 unit test
-                        // fall back to fetch
-                        fetcher.fetch(Endpoints.Historical(dateString: historicalRateDateString)) { [unowned self] result in
-                            switch result {
-                                case .success(let fetchedHistoricalRate):
-                                    concurrentQueue.async(qos: .background) { [unowned self] in
-                                        try? archiver.archive(historicalRate: fetchedHistoricalRate)
-                                    }
-                                    historicalRateCache.cache(fetchedHistoricalRate)
-                                    
-                                    concurrentQueue.async(qos: .userInitiated, flags: .barrier) { [unowned self] in
-                                        historicalRateSetResult = historicalRateSetResult
-                                            .map { historicalRateSet in historicalRateSet.union([fetchedHistoricalRate]) }
-                                        dispatchGroup.leave()
-                                    }
-                                case .failure(let failure):
-                                    concurrentQueue.async(qos: .userInitiated, flags: .barrier) {
-                                        historicalRateSetResult = .failure(failure)
-                                        dispatchGroup.leave()
-                                    }
-                            }
-                        }
-                    }
-                }
-            }
-        
-        // fetch latest rate
-        var latestRateResult: Result<ResponseDataModel.LatestRate, Error>!
+        var latestRateResult: Result<ResponseDataModel.LatestRate, Error>?
         
         dispatchGroup.enter()
+        
         fetcher.fetch(Endpoints.Latest()) { result in
             latestRateResult = result
+        
             dispatchGroup.leave()
         }
         
         // all enters have been set synchronously
         dispatchGroup.notify(queue: completionHandlerQueue) {
             do {
-                let latestRate: ResponseDataModel.LatestRate = try latestRateResult.get()
+                guard let historicalRateSetResult,
+                      let latestRateResult else {
+                    assertionFailure("###, \(#function), \(self), 使用 dispatch group 的方式錯了")
+                    return
+                }
+                
                 let historicalRateSet: Set<ResponseDataModel.HistoricalRate> = try historicalRateSetResult.get()
+                let latestRate: ResponseDataModel.LatestRate = try latestRateResult.get()
+                
                 completionHandler(.success((latestRate: latestRate,
                                             historicalRateSet: historicalRateSet)))
             }

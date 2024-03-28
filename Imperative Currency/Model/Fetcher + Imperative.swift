@@ -71,3 +71,10 @@ extension Fetcher: FetcherProtocol {
         }
     }
 }
+
+extension Fetcher: HistoricalRateProvider {
+    func historicalRateFor(dateString: String,
+                           completionHandler: @escaping (Result<ResponseDataModel.HistoricalRate, Swift.Error>) -> Void) {
+        fetch(Endpoints.Historical(dateString: dateString), completionHandler: completionHandler)
+    }
+}
