@@ -44,6 +44,7 @@
 		51290BBB2B9A4F7E005BE201 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290BB82B9A4F50005BE201 /* UserDefaults.swift */; };
 		51290BBC2B9A4F7F005BE201 /* UserDefaults.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51290BB82B9A4F50005BE201 /* UserDefaults.swift */; };
 		5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */; };
+		512C8E6F2BB6F8C200303B06 /* HistoricalRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5145AC3F2BB6F6E8001783AF /* HistoricalRateProvider.swift */; };
 		512CE8CF2B35EA9700019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8CE2B35EA9700019B20 /* RateSession.swift */; };
 		512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D32B35F52D00019B20 /* RateSession.swift */; };
 		512CE8D92B36F9D000019B20 /* UserSettingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D82B36F9D000019B20 /* UserSettingManager.swift */; };
@@ -234,6 +235,7 @@
 		5145AC242BB5FA1A001783AF /* LatestRateProviderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestRateProviderProtocol.swift; sourceTree = "<group>"; };
 		5145AC272BB5FEF2001783AF /* HistoricalRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateProvider.swift; sourceTree = "<group>"; };
 		5145AC2A2BB60021001783AF /* LatestRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestRateProvider.swift; sourceTree = "<group>"; };
+		5145AC3F2BB6F6E8001783AF /* HistoricalRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateProvider.swift; sourceTree = "<group>"; };
 		5149A1AB2B08E2B2005D2B04 /* SettingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingModel.swift; sourceTree = "<group>"; };
 		5149A1AD2B09A344005D2B04 /* BaseSettingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSettingModel.swift; sourceTree = "<group>"; };
 		514C4CFD29A07A7B0049E192 /* Publisher + Helper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Publisher + Helper.swift"; sourceTree = "<group>"; };
@@ -463,6 +465,7 @@
 			children = (
 				E1CE96AD248555E10029ED73 /* BaseRateManager.swift */,
 				5145AC1F2BB4C136001783AF /* HistoricalRateProviderProtocol.swift */,
+				5145AC3F2BB6F6E8001783AF /* HistoricalRateProvider.swift */,
 				5145AC242BB5FA1A001783AF /* LatestRateProviderProtocol.swift */,
 				5145AC1C2BB4A413001783AF /* HistoricalRateCache.swift */,
 				E1133334248A924D00B8E67F /* Archiver.swift */,
@@ -979,6 +982,7 @@
 				51290B7E2B90526D005BE201 /* TimerProtocol.swift in Sources */,
 				514C4CFE29A07A7B0049E192 /* Publisher + Helper.swift in Sources */,
 				512CE8CF2B35EA9700019B20 /* RateSession.swift in Sources */,
+				512C8E6F2BB6F8C200303B06 /* HistoricalRateProvider.swift in Sources */,
 				51119A1A2999D79C002758B3 /* PresentWithNavigationController.swift in Sources */,
 				5124955D2B31CACF00FD86D9 /* BaseSupportedCurrencyManager.swift in Sources */,
 				518F31072AD524D800146818 /* ResultModel.swift in Sources */,

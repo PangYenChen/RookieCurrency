@@ -4,7 +4,7 @@ import Foundation
 class BaseRateManager {
     // MARK: - initializer
     init(
-        historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateCache.shared,
+        historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateProvider.shared,
         latestRateProvider: LatestRateProviderProtocol = Fetcher.shared,
         concurrentQueue: DispatchQueue = DispatchQueue(label: "rate manager concurrent queue",
                                                        attributes: .concurrent)
