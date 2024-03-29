@@ -99,10 +99,10 @@ extension Archiver: ArchiverProtocol {
 
 extension Archiver: HistoricalRateProviderProtocol {
     func historicalRateFor(dateString: String,
-                           historicalRateHandler: @escaping HistoricalRateHandler) {
+                           historicalRateResultHandler: @escaping HistoricalRateResultHandler) {
         do {
             let unarchivedHistoricalRate: ResponseDataModel.HistoricalRate = try unarchive(historicalRateDateString: dateString)
-            historicalRateHandler(.success(unarchivedHistoricalRate))
+            historicalRateResultHandler(.success(unarchivedHistoricalRate))
         }
         catch {
             nextHistoricalRateProvider.historicalRateFor(dateString: dateString) { result in
@@ -112,7 +112,7 @@ extension Archiver: HistoricalRateProviderProtocol {
                     }
                 }
                 
-                historicalRateHandler(result)
+                historicalRateResultHandler(result)
             }
         }
     }

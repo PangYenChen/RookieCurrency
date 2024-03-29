@@ -38,7 +38,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                     switch result {
                         case .success(let historicalRate):
                             concurrentQueue.async(flags: .barrier) {
-                                historicalRateSetResult = historicalRateSetResult ?? .success([])
+                                historicalRateSetResult = (historicalRateSetResult ?? .success([]))
                                     .map { historicalRateSet in historicalRateSet.union([historicalRate]) }
                                 
                                 dispatchGroup.leave()

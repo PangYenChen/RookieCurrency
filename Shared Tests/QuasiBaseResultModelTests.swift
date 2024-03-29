@@ -48,22 +48,22 @@ final class QuasiBaseResultModelTests: XCTestCase {
         let rateStatisticA: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
             .RateStatistic(currencyCode: "code-ù",
                            localizedString: "localized-A",
-                           latestRate: 1,
-                           meanRate: 1,
+                           latestExchangeRate: 1,
+                           meanExchangeRate: 1,
                            fluctuation: 0)
         
         let rateStatisticB: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
             .RateStatistic(currencyCode: "code-b",
                            localizedString: "localized-Ù",
-                           latestRate: 2,
-                           meanRate: 1,
+                           latestExchangeRate: 2,
+                           meanExchangeRate: 1,
                            fluctuation: -0.5)
         
         let rateStatisticC: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
             .RateStatistic(currencyCode: "code-",
                            localizedString: "localized-",
-                           latestRate: 1,
-                           meanRate: 2,
+                           latestExchangeRate: 1,
+                           meanExchangeRate: 2,
                            fluctuation: 1)
         
         let rateStatisticsToBeSorted: Set<QuasiBaseResultModel.RateStatistic> = [rateStatisticA,
@@ -89,22 +89,22 @@ final class QuasiBaseResultModelTests: XCTestCase {
         let rateStatisticA: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
             .RateStatistic(currencyCode: "code-ù",
                            localizedString: "localized-A",
-                           latestRate: 1,
-                           meanRate: 1,
+                           latestExchangeRate: 1,
+                           meanExchangeRate: 1,
                            fluctuation: 0)
         
         let rateStatisticB: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
             .RateStatistic(currencyCode: "code-b",
                            localizedString: "localized-Ù",
-                           latestRate: 2,
-                           meanRate: 1,
+                           latestExchangeRate: 2,
+                           meanExchangeRate: 1,
                            fluctuation: -0.5)
         
         let rateStatisticC: QuasiBaseResultModel.RateStatistic = QuasiBaseResultModel
             .RateStatistic(currencyCode: "code-",
                            localizedString: "localized-",
-                           latestRate: 1,
-                           meanRate: 2,
+                           latestExchangeRate: 1,
+                           meanExchangeRate: 2,
                            fluctuation: 1)
         
         let rateStatisticsToBeSorted: Set<QuasiBaseResultModel.RateStatistic> = [rateStatisticA,

@@ -3,7 +3,21 @@ import Foundation
 
 extension TestDouble {
     class LatestRateProvider: LatestRateProviderProtocol {
-        func latestRate(latestRateHandler: @escaping LatestRateHandler) {
+        // MARK: - initializer
+        init() {
+            latestRateResultHandler = nil
+        }
+        
+        // MARK: - private property
+        private var latestRateResultHandler: LatestRateResultHandler?
+        
+        func latestRate(latestRateResultHandler: @escaping LatestRateResultHandler) {
+            self.latestRateResultHandler = latestRateResultHandler
+        }
+        
+        func executeLatestRateResultHandler(with result: Result<ResponseDataModel.LatestRate, Error>) {
+            latestRateResultHandler?(result)
+            latestRateResultHandler = nil
         }
     }
 }

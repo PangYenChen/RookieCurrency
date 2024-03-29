@@ -2,9 +2,9 @@ import Foundation
 
 protocol HistoricalRateProviderProtocol {
     func historicalRateFor(dateString: String,
-                           historicalRateHandler: @escaping HistoricalRateHandler)
+                           historicalRateResultHandler: @escaping HistoricalRateResultHandler)
 }
 
 extension HistoricalRateProviderProtocol {
-    typealias HistoricalRateHandler = (_ result: Result<ResponseDataModel.HistoricalRate, Error>) -> Void
+    typealias HistoricalRateResultHandler = (_ result: Result<ResponseDataModel.HistoricalRate, Error>) -> Void
 }

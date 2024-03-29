@@ -74,13 +74,13 @@ extension Fetcher: FetcherProtocol {
 
 extension Fetcher: HistoricalRateProviderProtocol {
     func historicalRateFor(dateString: String,
-                           historicalRateHandler: @escaping HistoricalRateHandler) {
-        fetch(Endpoints.Historical(dateString: dateString), completionHandler: historicalRateHandler)
+                           historicalRateResultHandler: @escaping HistoricalRateResultHandler) {
+        fetch(Endpoints.Historical(dateString: dateString), completionHandler: historicalRateResultHandler)
     }
 }
 
 extension Fetcher: LatestRateProviderProtocol {
-    func latestRate(latestRateHandler: @escaping LatestRateHandler) {
-        fetch(Endpoints.Latest(), completionHandler: latestRateHandler)
+    func latestRate(latestRateResultHandler: @escaping LatestRateResultHandler) {
+        fetch(Endpoints.Latest(), completionHandler: latestRateResultHandler)
     }
 }

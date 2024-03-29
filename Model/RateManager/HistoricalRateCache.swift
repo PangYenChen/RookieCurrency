@@ -16,33 +16,12 @@ class HistoricalRateCache {
     private let nextHistoricalRateProvider: HistoricalRateProviderProtocol
 }
 
-extension HistoricalRateCache {
-    @available(*, deprecated) // TODO: to be removed
-    func historicalRateFor(dateString: String) -> ResponseDataModel.HistoricalRate? {
-        concurrentQueue.sync { historicalRateDirectory[dateString] }
-    }
-    
-    @available(*, deprecated) // TODO: to be removed
-    func cache(_ historicalRate: ResponseDataModel.HistoricalRate) {
-        concurrentQueue.async(flags: .barrier) { [unowned self] in
-            historicalRateDirectory[historicalRate.dateString] = historicalRate
-        }
-    }
-    
-    @available(*, deprecated) // TODO: to be removed
-    func removeAll() {
-        concurrentQueue.async(flags: .barrier) { [unowned self] in
-            historicalRateDirectory.removeAll()
-        }
-    }
-}
-
 // MARK: - instance method
 extension HistoricalRateCache: HistoricalRateProviderProtocol {
-    func historicalRateFor(dateString: String, 
-                           historicalRateHandler: @escaping HistoricalRateHandler) {
+    func historicalRateFor(dateString: String,
+                           historicalRateResultHandler: @escaping HistoricalRateResultHandler) {
         if let cachedHistoricalRate = concurrentQueue.sync(execute: { historicalRateDirectory[dateString] }) {
-            historicalRateHandler(.success(cachedHistoricalRate))
+            historicalRateResultHandler(.success(cachedHistoricalRate))
         }
         else {
             nextHistoricalRateProvider.historicalRateFor(dateString: dateString) { [unowned self] result in
@@ -51,7 +30,7 @@ extension HistoricalRateCache: HistoricalRateProviderProtocol {
                         historicalRateDirectory[historicalRate.dateString] = historicalRate
                     }
                 }
-                historicalRateHandler(result)
+                historicalRateResultHandler(result)
             }
         }
     }

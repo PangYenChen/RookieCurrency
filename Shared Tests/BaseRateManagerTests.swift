@@ -49,10 +49,10 @@ final class BaseRateManagerTests: XCTestCase {
     /// 模擬從執行當下的時間往前計算日期字串
     func testHistoricalRateDateStrings() throws {
         // arrange
-        let startDay: Date = Date(timeIntervalSince1970: 0)
+        let startDate: Date = Date(timeIntervalSince1970: 0)
         
         // act
-        let historicalDateStrings: Set<String> = sut.historicalRateDateStrings(numberOfDaysAgo: 3, from: startDay)
+        let historicalDateStrings: Set<String> = sut.historicalRateDateStrings(numberOfDaysAgo: 3, from: startDate)
         
         // assert
         XCTAssertEqual(historicalDateStrings, Set(["1969-12-31", "1969-12-30", "1969-12-29"]))

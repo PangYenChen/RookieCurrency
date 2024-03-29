@@ -1,9 +1,9 @@
 import Foundation
 
 protocol LatestRateProviderProtocol {
-    func latestRate(latestRateHandler: @escaping LatestRateHandler)
+    func latestRate(latestRateResultHandler: @escaping LatestRateResultHandler)
 }
 
 extension LatestRateProviderProtocol {
-    typealias LatestRateHandler = (Result<ResponseDataModel.LatestRate, Error>) -> Void
+    typealias LatestRateResultHandler = (_ latestRateResult: Result<ResponseDataModel.LatestRate, Error>) -> Void
 }
