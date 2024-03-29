@@ -1,5 +1,7 @@
 import Foundation
 
+/// 實作的邏輯類似於 chain of responsibility，不過 chain 是固定的
+/// HistoricalRateProvider > HistoricalRateCache > Archiver > Fetcher
 class HistoricalRateProvider: HistoricalRateProviderProtocol {
     // MARK: - initializer
     init() {

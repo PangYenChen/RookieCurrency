@@ -26,9 +26,9 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         completionHandlerQueue: DispatchQueue,
         completionHandler: @escaping CompletionHandler
     ) {
-        var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
+        let dispatchGroup: DispatchGroup = DispatchGroup()
         
-        let dispatchGroup: DispatchGroup = DispatchGroup() // TODO: 試試看historical全部都從cache來，會不會還沒進latest之前就crash
+        var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
         
         historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .forEach { historicalRateDateString in
@@ -56,12 +56,14 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         
         var latestRateResult: Result<ResponseDataModel.LatestRate, Error>?
         
-        dispatchGroup.enter()
-        
-        latestRateProvider.latestRate { result in
-            latestRateResult = result
-        
-            dispatchGroup.leave()
+        do /*request latest rate*/ {
+            dispatchGroup.enter()
+            
+            latestRateProvider.latestRate { result in
+                latestRateResult = result
+                
+                dispatchGroup.leave()
+            }
         }
         
         // all enters have been set synchronously
