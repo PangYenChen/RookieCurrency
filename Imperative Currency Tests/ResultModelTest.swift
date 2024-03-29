@@ -116,7 +116,7 @@ final class ResultModelTest: XCTestCase {
         var receivedRefreshStatus: ResultModel.RefreshStatus?
         var receivedError: Error?
         
-        let receivedTimeoutError: URLError = URLError(URLError.Code.timedOut)
+        let expectedTimeOutError: URLError = URLError(URLError.Code.timedOut)
         
         sut.rateStatisticsHandler = { rateStatistics in receivedRateStatistics = rateStatistics }
         
@@ -143,7 +143,7 @@ final class ResultModelTest: XCTestCase {
         XCTAssertNil(receivedError)
         
         // act
-        fakeRateManager.executeCompletionHandlerWith(result: .failure(receivedTimeoutError))
+        fakeRateManager.executeCompletionHandlerWith(result: .failure(expectedTimeOutError))
         
         // assert
         XCTAssertNil(receivedRateStatistics)
@@ -158,7 +158,7 @@ final class ResultModelTest: XCTestCase {
         
         do /*assert received error*/ {
             let receivedError: URLError = try XCTUnwrap(receivedError as? URLError)
-            XCTAssertEqual(receivedError, receivedTimeoutError)
+            XCTAssertEqual(receivedError, expectedTimeOutError)
         }
     }
     
