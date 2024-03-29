@@ -3,16 +3,13 @@ import Foundation
 /// 用來獲得各貨幣匯率資料的類別
 class BaseRateManager {
     // MARK: - initializer
-    init(
-        historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateProvider.shared,
-        latestRateProvider: LatestRateProviderProtocol = Fetcher.shared,
-        concurrentQueue: DispatchQueue = DispatchQueue(label: "rate manager concurrent queue",
-                                                       attributes: .concurrent)
-    ) {
+    init(historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateProvider.shared,
+        latestRateProvider: LatestRateProviderProtocol = Fetcher.shared) {
         self.historicalRateProvider = historicalRateProvider
         self.latestRateProvider = latestRateProvider
         
-        self.concurrentQueue = concurrentQueue
+        self.concurrentQueue = DispatchQueue(label: "rate manager concurrent queue",
+                                             attributes: .concurrent)
     }
     
     // MARK: - instance properties

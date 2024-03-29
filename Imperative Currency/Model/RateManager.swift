@@ -8,24 +8,20 @@ protocol RateManagerProtocol {
     )
 }
 
-// TODO: 這裡的 method 好長 看能不能拆開"
 class RateManager: BaseRateManager, RateManagerProtocol {
-    func getRateFor(
-        numberOfDays: Int,
-        completionHandlerQueue: DispatchQueue,
-        completionHandler: @escaping CompletionHandler) {
+    func getRateFor(numberOfDays: Int,
+                    completionHandlerQueue: DispatchQueue,
+                    completionHandler: @escaping CompletionHandler) {
         getRateFor(numberOfDays: numberOfDays,
                    from: Date.now,
                    completionHandlerQueue: completionHandlerQueue,
                    completionHandler: completionHandler)
     }
     
-    func getRateFor(
-        numberOfDays: Int,
-        from start: Date,
-        completionHandlerQueue: DispatchQueue,
-        completionHandler: @escaping CompletionHandler
-    ) {
+    func getRateFor(numberOfDays: Int,
+                    from start: Date,
+                    completionHandlerQueue: DispatchQueue,
+                    completionHandler: @escaping CompletionHandler) {
         let dispatchGroup: DispatchGroup = DispatchGroup()
         
         var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?

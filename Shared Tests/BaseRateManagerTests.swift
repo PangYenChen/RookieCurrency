@@ -23,8 +23,7 @@ final class BaseRateManagerTests: XCTestCase {
         concurrentQueue = DispatchQueue(label: "base.rate.manager.test", attributes: .concurrent)
         
         sut = BaseRateManager(historicalRateProvider: historicalRateProvider,
-                              latestRateProvider: latestRateProvider,
-                              concurrentQueue: concurrentQueue)
+                              latestRateProvider: latestRateProvider)
     }
     
     override func tearDown() {
