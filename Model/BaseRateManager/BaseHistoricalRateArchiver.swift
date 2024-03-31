@@ -1,7 +1,7 @@
 import Foundation
 
 /// 讀寫 Historical Rate 的類別，當使用的 file manager 是 `.default`，這個 class 是 thread safe
-class HistoricalRateArchiver {
+class BaseHistoricalRateArchiver {
     // MARK: - initializer
     init(fileManager: FileManager = .default,
          nextHistoricalRateProvider: HistoricalRateProviderProtocol = Fetcher.shared) {
@@ -17,7 +17,7 @@ class HistoricalRateArchiver {
     // MARK: - private property
     // MARK: dependencies
     private let fileManager: FileManager
-    private let nextHistoricalRateProvider: HistoricalRateProviderProtocol
+    let nextHistoricalRateProvider: HistoricalRateProviderProtocol
     
     private let documentsDirectory: URL
     private let jsonDecoder: JSONDecoder
@@ -30,8 +30,8 @@ extension HistoricalRateArchiver {
     static let shared: HistoricalRateArchiver = HistoricalRateArchiver()
 }
 
-// MARK: - private instance methods
-private extension HistoricalRateArchiver {
+// MARK: - instance methods
+extension BaseHistoricalRateArchiver {
     /// 寫入資料
     /// - Parameter historicalRate: 要寫入的資料
     func archive(historicalRate: ResponseDataModel.HistoricalRate) throws {
@@ -56,7 +56,7 @@ private extension HistoricalRateArchiver {
             AppUtility.prettyPrint(data)
             
             let historicalRate: ResponseDataModel.HistoricalRate = try jsonDecoder.decode(ResponseDataModel.HistoricalRate.self, from: data)
-        
+            
             print("###", self, #function, "讀取資料:\n\t", historicalRate)
             
             return historicalRate
@@ -85,40 +85,5 @@ private extension HistoricalRateArchiver {
                                  options: .skipsHiddenFiles)
             .filter { fileURL in fileURL.pathExtension == jsonPathExtension }
             .forEach { fileURL in try fileManager.removeItem(at: fileURL) }
-    }
-}
-
-// MARK: - conforms to HistoricalRateProviderProtocol
-extension HistoricalRateArchiver: HistoricalRateProviderProtocol {
-    func historicalRateFor(dateString: String,
-                           historicalRateResultHandler: @escaping HistoricalRateResultHandler) {
-        if hasFileInDisk(historicalRateDateString: dateString) {
-            do {
-                let unarchivedHistoricalRate: ResponseDataModel.HistoricalRate = try unarchive(historicalRateDateString: dateString)
-                historicalRateResultHandler(.success(unarchivedHistoricalRate))
-            }
-            catch {
-                nextHistoricalRateProvider.historicalRateFor(dateString: dateString) { result in
-                    if let fetchedHistoricalRate = try? result.get() {
-                        DispatchQueue.global().async { [unowned self] in
-                            try? archive(historicalRate: fetchedHistoricalRate)
-                        }
-                    }
-                    
-                    historicalRateResultHandler(result)
-                }
-            }
-        }
-        else {
-            nextHistoricalRateProvider.historicalRateFor(dateString: dateString) { result in
-                if let fetchedHistoricalRate = try? result.get() {
-                    DispatchQueue.global().async { [unowned self] in
-                        try? archive(historicalRate: fetchedHistoricalRate)
-                    }
-                }
-                
-                historicalRateResultHandler(result)
-            }
-        }
     }
 }

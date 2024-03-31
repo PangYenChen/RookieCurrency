@@ -1,20 +1,6 @@
 import Foundation
 
-class HistoricalRateCache {
-    // MARK: - initializer
-    init(historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateArchiver.shared) {
-        nextHistoricalRateProvider = historicalRateProvider
-        
-        historicalRateDirectory = [:]
-        concurrentQueue = DispatchQueue(label: "historical.rate.cache", attributes: .concurrent)
-    }
-    
-    // MARK: - private property
-    private var historicalRateDirectory: [String: ResponseDataModel.HistoricalRate]
-    private let concurrentQueue: DispatchQueue
-    
-    private let nextHistoricalRateProvider: HistoricalRateProviderProtocol
-}
+class HistoricalRateCache: BaseHistoricalRateCache {}
 
 // MARK: - instance method
 extension HistoricalRateCache: HistoricalRateProviderProtocol {
@@ -34,9 +20,4 @@ extension HistoricalRateCache: HistoricalRateProviderProtocol {
             }
         }
     }
-}
-
-// MARK: - static property
-extension HistoricalRateCache {
-    static let shared: HistoricalRateCache = HistoricalRateCache()
 }
