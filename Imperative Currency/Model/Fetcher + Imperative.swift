@@ -50,7 +50,7 @@ extension Fetcher: FetcherProtocol {
                     AppUtility.prettyPrint(data)
                     // 這是一切正常的情況，將 data decode
                     do {
-                        let rate = try jsonDecoder.decode(Endpoint.ResponseType.self, from: data)
+                        let rate: Endpoint.ResponseType = try jsonDecoder.decode(Endpoint.ResponseType.self, from: data)
                         completionHandler(.success(rate))
                     }
                     catch {

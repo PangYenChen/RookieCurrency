@@ -2,7 +2,7 @@ import Foundation
 
 class HistoricalRateCache {
     // MARK: - initializer
-    init(historicalRateProvider: HistoricalRateProviderProtocol = Archiver.shared) {
+    init(historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateArchiver.shared) {
         nextHistoricalRateProvider = historicalRateProvider
         
         historicalRateDirectory = [:]

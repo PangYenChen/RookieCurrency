@@ -1,7 +1,7 @@
 import Foundation
 
 /// 實作的邏輯類似於 chain of responsibility，不過 chain 是固定的
-/// HistoricalRateProvider > HistoricalRateCache > Archiver > Fetcher
+/// HistoricalRateProvider > HistoricalRateCache > HistoricalArchiver > Fetcher
 class HistoricalRateProvider: HistoricalRateProviderProtocol {
     // MARK: - initializer
     init() {
@@ -17,7 +17,7 @@ extension HistoricalRateProvider {
     func historicalRateFor(dateString: String,
                            historicalRateResultHandler: @escaping HistoricalRateResultHandler) {
         historicalRateCache.historicalRateFor(dateString: dateString,
-                                              historicalRateResultHandler:  historicalRateResultHandler)
+                                              historicalRateResultHandler: historicalRateResultHandler)
     }
 }
 
