@@ -12,9 +12,9 @@ extension TestDouble {
         private var dateStringAndHistoricalRateResultHandler: [String: HistoricalRateResultHandler]
         
         // MARK: - instance property
-        func historicalRateFor(dateString: String,
-                               historicalRateResultHandler: @escaping HistoricalRateResultHandler) {
-            dateStringAndHistoricalRateResultHandler[dateString] = historicalRateResultHandler
+        func rateFor(dateString: String,
+                     resultHandler: @escaping HistoricalRateResultHandler) {
+            dateStringAndHistoricalRateResultHandler[dateString] = resultHandler
         }
         
         func executeHistoricalRateResultHandlerFor(dateString: String,

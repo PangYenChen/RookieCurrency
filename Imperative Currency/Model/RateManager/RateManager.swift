@@ -30,7 +30,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
             .forEach { historicalRateDateString in
                 dispatchGroup.enter()
                 
-                historicalRateProvider.historicalRateFor(dateString: historicalRateDateString) { [unowned self] result in
+                historicalRateProvider.rateFor(dateString: historicalRateDateString) { [unowned self] result in
                     switch result {
                         case .success(let historicalRate):
                             concurrentQueue.async(flags: .barrier) {
@@ -55,7 +55,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         do /*request latest rate*/ {
             dispatchGroup.enter()
             
-            latestRateProvider.latestRate { result in
+            latestRateProvider.rate { result in
                 latestRateResult = result
                 
                 dispatchGroup.leave()

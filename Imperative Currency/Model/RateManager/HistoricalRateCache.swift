@@ -4,19 +4,19 @@ class HistoricalRateCache: BaseHistoricalRateCache {}
 
 // MARK: - instance method
 extension HistoricalRateCache: HistoricalRateProviderProtocol {
-    func historicalRateFor(dateString: String,
-                           historicalRateResultHandler: @escaping HistoricalRateResultHandler) {
+    func rateFor(dateString: String,
+                 resultHandler: @escaping HistoricalRateResultHandler) {
         if let cachedHistoricalRate = concurrentQueue.sync(execute: { historicalRateDirectory[dateString] }) {
-            historicalRateResultHandler(.success(cachedHistoricalRate))
+            resultHandler(.success(cachedHistoricalRate))
         }
         else {
-            nextHistoricalRateProvider.historicalRateFor(dateString: dateString) { [unowned self] result in
+            nextHistoricalRateProvider.rateFor(dateString: dateString) { [unowned self] result in
                 if let historicalRate = try? result.get() {
                     concurrentQueue.async(flags: .barrier) {
                         historicalRateDirectory[historicalRate.dateString] = historicalRate
                     }
                 }
-                historicalRateResultHandler(result)
+                resultHandler(result)
             }
         }
     }

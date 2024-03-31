@@ -4,9 +4,9 @@ class HistoricalRateProvider: BaseHistoricalRateProvider {}
 
 // MARK: - instance method
 extension HistoricalRateProvider: HistoricalRateProviderProtocol {
-    func historicalRateFor(dateString: String,
-                           historicalRateResultHandler: @escaping HistoricalRateResultHandler) {
-        historicalRateCache.historicalRateFor(dateString: dateString,
-                                              historicalRateResultHandler: historicalRateResultHandler)
+    func rateFor(dateString: String,
+                 resultHandler: @escaping HistoricalRateResultHandler) {
+        historicalRateCache.rateFor(dateString: dateString,
+                                    resultHandler: resultHandler)
     }
 }

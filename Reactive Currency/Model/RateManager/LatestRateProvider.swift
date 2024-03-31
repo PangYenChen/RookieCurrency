@@ -1,5 +1,6 @@
 import Foundation
+import Combine
 
-protocol LatestRateProvider {
-    
+protocol LatestRateProviderProtocol {
+    func publisher() -> AnyPublisher<ResponseDataModel.LatestRate, Error>
 }
