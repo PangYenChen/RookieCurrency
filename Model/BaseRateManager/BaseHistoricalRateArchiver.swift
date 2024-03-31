@@ -34,19 +34,19 @@ extension HistoricalRateArchiver {
 extension BaseHistoricalRateArchiver {
     /// 寫入資料
     /// - Parameter historicalRate: 要寫入的資料
-    func archive(historicalRate: ResponseDataModel.HistoricalRate) throws {
-        let data: Data = try jsonEncoder.encode(historicalRate)
-        let url: URL = documentsDirectory.appending(path: historicalRate.dateString)
+    func archive(_ rate: ResponseDataModel.HistoricalRate) throws {
+        let data: Data = try jsonEncoder.encode(rate)
+        let url: URL = documentsDirectory.appending(path: rate.dateString)
             .appendingPathExtension(jsonPathExtension)
         try data.write(to: url)
         
-        print("###", self, #function, "寫入資料:\n\t", historicalRate)
+        print("###", self, #function, "寫入資料:\n\t", rate)
     }
     
     /// 讀取資料
     /// - Parameter fileName: historical rate 的日期，也是檔案名稱
     /// - Returns: historical rate
-    func unarchive(historicalRateDateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
+    func unarchiveRateWith(dateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
         let url: URL = documentsDirectory.appending(path: fileName)
             .appendingPathExtension(jsonPathExtension)
         
@@ -55,11 +55,11 @@ extension BaseHistoricalRateArchiver {
             
             AppUtility.prettyPrint(data)
             
-            let historicalRate: ResponseDataModel.HistoricalRate = try jsonDecoder.decode(ResponseDataModel.HistoricalRate.self, from: data)
+            let rate: ResponseDataModel.HistoricalRate = try jsonDecoder.decode(ResponseDataModel.HistoricalRate.self, from: data)
             
-            print("###", self, #function, "讀取資料:\n\t", historicalRate)
+            print("###", self, #function, "讀取資料:\n\t", rate)
             
-            return historicalRate
+            return rate
         }
         catch {
             try? fileManager.removeItem(at: url)
@@ -70,7 +70,7 @@ extension BaseHistoricalRateArchiver {
     /// 查看某 historical rate 是否存於本地
     /// - Parameter fileName: historical rate 的日期字串
     /// - Returns: historical rate 是否存於本地
-    func hasFileInDisk(historicalRateDateString fileName: String) -> Bool {
+    func hasFileInDiskWith(dateString fileName: String) -> Bool {
         let fileURL: URL = documentsDirectory.appending(path: fileName)
             .appendingPathExtension(jsonPathExtension)
         

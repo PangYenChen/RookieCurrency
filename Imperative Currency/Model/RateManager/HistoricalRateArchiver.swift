@@ -6,16 +6,16 @@ class HistoricalRateArchiver: BaseHistoricalRateArchiver {}
 extension HistoricalRateArchiver: HistoricalRateProviderProtocol {
     func rateFor(dateString: String,
                  resultHandler: @escaping HistoricalRateResultHandler) {
-        if hasFileInDisk(historicalRateDateString: dateString) {
+        if hasFileInDiskWith(dateString: dateString) {
             do {
-                let unarchivedHistoricalRate: ResponseDataModel.HistoricalRate = try unarchive(historicalRateDateString: dateString)
-                resultHandler(.success(unarchivedHistoricalRate))
+                let unarchivedRate: ResponseDataModel.HistoricalRate = try unarchiveRateWith(dateString: dateString)
+                resultHandler(.success(unarchivedRate))
             }
             catch {
                 nextHistoricalRateProvider.rateFor(dateString: dateString) { result in
-                    if let fetchedHistoricalRate = try? result.get() {
+                    if let fetchedRate = try? result.get() {
                         DispatchQueue.global().async { [unowned self] in
-                            try? archive(historicalRate: fetchedHistoricalRate)
+                            try? archive(fetchedRate)
                         }
                     }
                     
@@ -25,9 +25,9 @@ extension HistoricalRateArchiver: HistoricalRateProviderProtocol {
         }
         else {
             nextHistoricalRateProvider.rateFor(dateString: dateString) { result in
-                if let fetchedHistoricalRate = try? result.get() {
+                if let fetchedRate = try? result.get() {
                     DispatchQueue.global().async { [unowned self] in
-                        try? archive(historicalRate: fetchedHistoricalRate)
+                        try? archive(fetchedRate)
                     }
                 }
                 

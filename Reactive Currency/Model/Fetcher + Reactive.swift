@@ -69,7 +69,7 @@ extension Fetcher: FetcherProtocol {
 }
 
 extension Fetcher: HistoricalRateProviderProtocol {
-    func historicalRatePublisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Swift.Error> {
+    func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Swift.Error> {
         publisher(for: Endpoints.Historical(dateString: dateString))
     }
 }

@@ -5,12 +5,12 @@ class BaseHistoricalRateCache {
     init(historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateArchiver.shared) {
         nextHistoricalRateProvider = historicalRateProvider
         
-        historicalRateDirectory = [:]
+        dateStringAndRateDirectory = [:]
         concurrentQueue = DispatchQueue(label: "historical.rate.cache", attributes: .concurrent)
     }
     
     // MARK: - private property
-    var historicalRateDirectory: [String: ResponseDataModel.HistoricalRate]
+    var dateStringAndRateDirectory: [String: ResponseDataModel.HistoricalRate]
     let concurrentQueue: DispatchQueue
     
     let nextHistoricalRateProvider: HistoricalRateProviderProtocol

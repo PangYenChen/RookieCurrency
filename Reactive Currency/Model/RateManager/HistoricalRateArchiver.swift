@@ -4,11 +4,11 @@ import Combine
 class HistoricalRateArchiver: BaseHistoricalRateArchiver {}
 
 extension HistoricalRateArchiver: HistoricalRateProviderProtocol {
-    func historicalRatePublisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> {
-        if hasFileInDisk(historicalRateDateString: dateString) {
+    func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> {
+        if hasFileInDiskWith(dateString: dateString) {
             return Future<ResponseDataModel.HistoricalRate, Error> { [unowned self] promise in
                 do {
-                    let unarchivedHistoricalRate = try unarchive(historicalRateDateString: dateString)
+                    let unarchivedHistoricalRate = try unarchiveRateWith(dateString: dateString)
                     promise(.success(unarchivedHistoricalRate))
                 }
                 catch {
@@ -17,18 +17,18 @@ extension HistoricalRateArchiver: HistoricalRateProviderProtocol {
             }
             .catch { [unowned self] _ in
                 nextHistoricalRateProvider
-                    .historicalRatePublisherFor(dateString: dateString)
+                    .publisherFor(dateString: dateString)
                     .handleEvents(
-                        receiveOutput: { [unowned self] historicalRate in try? archive(historicalRate: historicalRate) }
+                        receiveOutput: { [unowned self] historicalRate in try? archive(historicalRate) }
                     )
             }
             .eraseToAnyPublisher()
         }
         else {
             return nextHistoricalRateProvider
-                .historicalRatePublisherFor(dateString: dateString)
+                .publisherFor(dateString: dateString)
                 .handleEvents(
-                    receiveOutput: { [unowned self] historicalRate in try? archive(historicalRate: historicalRate) }
+                    receiveOutput: { [unowned self] historicalRate in try? archive(historicalRate) }
                 )
                 .eraseToAnyPublisher()
         }

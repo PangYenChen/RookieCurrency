@@ -6,14 +6,14 @@ class HistoricalRateCache: BaseHistoricalRateCache {}
 extension HistoricalRateCache: HistoricalRateProviderProtocol {
     func rateFor(dateString: String,
                  resultHandler: @escaping HistoricalRateResultHandler) {
-        if let cachedHistoricalRate = concurrentQueue.sync(execute: { historicalRateDirectory[dateString] }) {
-            resultHandler(.success(cachedHistoricalRate))
+        if let cachedRate = concurrentQueue.sync(execute: { dateStringAndRateDirectory[dateString] }) {
+            resultHandler(.success(cachedRate))
         }
         else {
             nextHistoricalRateProvider.rateFor(dateString: dateString) { [unowned self] result in
                 if let historicalRate = try? result.get() {
                     concurrentQueue.async(flags: .barrier) {
-                        historicalRateDirectory[historicalRate.dateString] = historicalRate
+                        dateStringAndRateDirectory[historicalRate.dateString] = historicalRate
                     }
                 }
                 resultHandler(result)

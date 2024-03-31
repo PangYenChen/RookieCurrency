@@ -14,7 +14,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
     func ratePublisher(numberOfDays: Int, from start: Date) -> AnyPublisher<BaseRateManager.RateTuple, Error> {
         historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .publisher
-            .flatMap(historicalRateProvider.historicalRatePublisherFor(dateString:))
+            .flatMap(historicalRateProvider.publisherFor(dateString:))
             .collect(numberOfDays)
             .combineLatest(latestRateProvider.publisher()) { (latestRate: $1, historicalRateSet: Set($0)) }
             .eraseToAnyPublisher()

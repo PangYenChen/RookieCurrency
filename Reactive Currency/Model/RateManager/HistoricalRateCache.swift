@@ -4,17 +4,17 @@ import Combine
 class HistoricalRateCache: BaseHistoricalRateCache {}
 
 extension HistoricalRateCache: HistoricalRateProviderProtocol {
-    func historicalRatePublisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, any Error> {
-        if let cachedHistoricalRate = concurrentQueue.sync(execute: { historicalRateDirectory[dateString] }) {
-            return Just(cachedHistoricalRate)
+    func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, any Error> {
+        if let cachedRate = concurrentQueue.sync(execute: { dateStringAndRateDirectory[dateString] }) {
+            return Just(cachedRate)
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
         }
         else {
-            return nextHistoricalRateProvider.historicalRatePublisherFor(dateString: dateString)
-                .handleEvents(receiveOutput: { [unowned self] historicalRate in
+            return nextHistoricalRateProvider.publisherFor(dateString: dateString)
+                .handleEvents(receiveOutput: { [unowned self] rate in
                     concurrentQueue.async(flags: .barrier) {
-                        historicalRateDirectory[historicalRate.dateString] = historicalRate
+                        dateStringAndRateDirectory[rate.dateString] = rate
                     }
                 })
                 .eraseToAnyPublisher()
