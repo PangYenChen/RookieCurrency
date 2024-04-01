@@ -93,6 +93,7 @@ final class RateManagerTests: XCTestCase {
         
         var receivedResult: Result<BaseRateManager.RateTuple, Error>?
         let expectedTimeOutError: URLError = URLError(URLError.Code.timedOut)
+        
         let startDate: Date = Date(timeIntervalSince1970: 0)
         let numberOfDays: Int = 3
         let historicalRateDateStrings: Set<String> = sut.historicalRateDateStrings(numberOfDaysAgo: numberOfDays,
@@ -145,6 +146,7 @@ final class RateManagerTests: XCTestCase {
         
         var receivedResult: Result<BaseRateManager.RateTuple, Error>?
         let expectedTimeOutError: URLError = URLError(URLError.Code.timedOut)
+        
         let startDate: Date = Date(timeIntervalSince1970: 0)
         let numberOfDays: Int = 3
         let historicalRateDateStrings: Set<String> = sut.historicalRateDateStrings(numberOfDaysAgo: numberOfDays,

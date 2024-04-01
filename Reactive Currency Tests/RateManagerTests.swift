@@ -128,4 +128,52 @@ final class RateManagerTests: XCTestCase {
             }
         }
     }
+    
+    func testLatestRateFailure() throws {
+        // arrange
+        let fakeHistoricalRateProvider: TestDouble.HistoricalRateProvider = historicalRateProvider
+        let fakeLatestRateProvider: TestDouble.LatestRateProvider = latestRateProvider
+        
+        var receivedRateTuple: BaseRateManager.RateTuple?
+        var receivedCompletion: Subscribers.Completion<Error>?
+        let expectedTimeOutError: URLError = URLError(URLError.Code.timedOut)
+        
+        let startDate: Date = Date(timeIntervalSince1970: 0)
+        let numberOfDays: Int = 3
+        let historicalRateDateStrings: Set<String> = sut.historicalRateDateStrings(numberOfDaysAgo: numberOfDays,
+                                                                                   from: startDate)
+        
+        // act
+        sut
+            .ratePublisher(numberOfDays: numberOfDays,
+                           from: startDate)
+            .sink(receiveCompletion: { completion in receivedCompletion = completion },
+                  receiveValue: { rateTuple in receivedRateTuple = rateTuple })
+            .store(in: &anyCancellableSet)
+        
+        do /*simulate historical rate provider's result*/ {
+            try historicalRateDateStrings
+                .forEach { historicalRateDateString in
+                    let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: historicalRateDateString)
+                    fakeHistoricalRateProvider.publish(dummyHistoricalRate, for: historicalRateDateString)
+                    fakeHistoricalRateProvider.publish(completion: .finished, for: historicalRateDateString)
+                }
+        }
+        
+        do /*simulate latest rate provider's result*/ {
+            fakeLatestRateProvider.publish(completion: .failure(expectedTimeOutError))
+        }
+        
+        // assert
+        do {
+            XCTAssertNil(receivedRateTuple)
+            
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            
+            switch receivedCompletion {
+                case .finished: XCTFail("should not finished normally")
+                case .failure(let failure): XCTAssertEqual(failure as? URLError, expectedTimeOutError)
+            }
+        }
+    }
 }
