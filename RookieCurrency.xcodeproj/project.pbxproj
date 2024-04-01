@@ -121,6 +121,8 @@
 		516DD0232BB9F55400D0B593 /* BaseHistoricalRateArchiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD01C2BB9F15F00D0B593 /* BaseHistoricalRateArchiver.swift */; };
 		516DD0252BB9F79F00D0B593 /* HistoricalRateArchiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD0242BB9F79F00D0B593 /* HistoricalRateArchiver.swift */; };
 		516DD0272BB9FC9D00D0B593 /* HistoricalRateCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD0262BB9FC9D00D0B593 /* HistoricalRateCache.swift */; };
+		516DD0302BBA2E1F00D0B593 /* HistoricalRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD02E2BBA2DBC00D0B593 /* HistoricalRateProvider.swift */; };
+		516DD0322BBA2F9E00D0B593 /* LatestRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD0312BBA2F9E00D0B593 /* LatestRateProvider.swift */; };
 		516FF51C2B01014000576177 /* SettingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FF51A2B01014000576177 /* SettingModel.swift */; };
 		51869FD829D9D31D00EFA13D /* BaseRateManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */; };
 		51869FD929D9D31D00EFA13D /* BaseRateManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */; };
@@ -279,6 +281,8 @@
 		516DD01E2BB9F51500D0B593 /* HistoricalRateProviderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateProviderProtocol.swift; sourceTree = "<group>"; };
 		516DD0242BB9F79F00D0B593 /* HistoricalRateArchiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateArchiver.swift; sourceTree = "<group>"; };
 		516DD0262BB9FC9D00D0B593 /* HistoricalRateCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateCache.swift; sourceTree = "<group>"; };
+		516DD02E2BBA2DBC00D0B593 /* HistoricalRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateProvider.swift; sourceTree = "<group>"; };
+		516DD0312BBA2F9E00D0B593 /* LatestRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestRateProvider.swift; sourceTree = "<group>"; };
 		516FF51A2B01014000576177 /* SettingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingModel.swift; sourceTree = "<group>"; };
 		51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRateManagerTests.swift; sourceTree = "<group>"; };
 		5189F9CF29DAD630004234D3 /* RateManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateManagerTests.swift; sourceTree = "<group>"; };
@@ -467,6 +471,8 @@
 				51C02C0D2B39B84A00B757FA /* RateManager.swift */,
 				5143C88B2A7B864400EDEFFF /* Fetcher.swift */,
 				51290B912B90689E005BE201 /* Timer.swift */,
+				516DD02E2BBA2DBC00D0B593 /* HistoricalRateProvider.swift */,
+				516DD0312BBA2F9E00D0B593 /* LatestRateProvider.swift */,
 			);
 			path = "Test Doubld";
 			sourceTree = "<group>";
@@ -1171,11 +1177,13 @@
 				51290BBB2B9A4F7E005BE201 /* UserDefaults.swift in Sources */,
 				51869FD929D9D31D00EFA13D /* BaseRateManagerTests.swift in Sources */,
 				51290BB62B9A4ED1005BE201 /* UserSettingManagerTests.swift in Sources */,
+				516DD0302BBA2E1F00D0B593 /* HistoricalRateProvider.swift in Sources */,
 				51E1B4BA29ADADD800D75669 /* TestingData For Data.swift in Sources */,
 				51290B9C2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift in Sources */,
 				51362E4F29B4D93500E3CE89 /* Rate Instance.swift in Sources */,
 				5143C88C2A7B864400EDEFFF /* Fetcher.swift in Sources */,
 				515DE3742AA31FE6005E719C /* Session Output.swift in Sources */,
+				516DD0322BBA2F9E00D0B593 /* LatestRateProvider.swift in Sources */,
 				512CE8E22B37259200019B20 /* UserSettingManager.swift in Sources */,
 				51E731C929B4DCFE00C1DB2B /* ResponseDataModelTest.swift in Sources */,
 				5121216929E2D59F001D234B /* RateManagerTests.swift in Sources */,
