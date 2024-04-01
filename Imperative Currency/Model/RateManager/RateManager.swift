@@ -26,14 +26,16 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         
         var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
         
+        let serialDispatchQueue: DispatchQueue = DispatchQueue(label: "rate.manager")
+        
         historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .forEach { historicalRateDateString in
                 dispatchGroup.enter()
                 
-                historicalRateProvider.rateFor(dateString: historicalRateDateString) { [unowned self] result in
+                historicalRateProvider.rateFor(dateString: historicalRateDateString) { result in
                     switch result {
                         case .success(let historicalRate):
-                            concurrentQueue.async(flags: .barrier) {
+                            serialDispatchQueue.async {
                                 historicalRateSetResult = (historicalRateSetResult ?? .success([]))
                                     .map { historicalRateSet in historicalRateSet.union([historicalRate]) }
                                 
@@ -41,7 +43,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                             }
                             
                         case .failure(let failure):
-                            concurrentQueue.async(flags: .barrier) {
+                            serialDispatchQueue.async {
                                 historicalRateSetResult = .failure(failure)
                                 
                                 dispatchGroup.leave()

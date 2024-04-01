@@ -1,6 +1,6 @@
 import Foundation
 
-protocol HistoricalRateProviderProtocol {
+protocol HistoricalRateProviderProtocol: BaseHistoricalRateProviderProtocol {
     func rateFor(dateString: String,
                  resultHandler: @escaping HistoricalRateResultHandler)
 }

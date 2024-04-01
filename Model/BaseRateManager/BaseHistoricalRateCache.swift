@@ -16,6 +16,14 @@ class BaseHistoricalRateCache {
     let nextHistoricalRateProvider: HistoricalRateProviderProtocol
 }
 
+extension BaseHistoricalRateCache: BaseHistoricalRateProviderProtocol {
+    func removeCachedAndStoredRate() {
+        concurrentQueue.async(flags: .barrier) { [unowned self] in dateStringAndRateDirectory.removeAll() }
+        
+        nextHistoricalRateProvider.removeCachedAndStoredRate()
+    }
+}
+
 // MARK: - static property
 extension HistoricalRateCache {
     static let shared: HistoricalRateCache = HistoricalRateCache()

@@ -1,18 +1,34 @@
 import Foundation
 
-/// 實作的邏輯類似於 chain of responsibility，不過 chain 是固定的
-/// HistoricalRateProvider > HistoricalRateCache > HistoricalArchiver > Fetcher
+protocol BaseHistoricalRateProviderProtocol {
+    func removeCachedAndStoredRate()
+}
+
 class BaseHistoricalRateProvider {
     // MARK: - initializer
-    init() {
-        historicalRateCache = HistoricalRateCache.shared
+    init(nextHistoricalRateProvider: HistoricalRateProviderProtocol) {
+        self.nextHistoricalRateProvider = nextHistoricalRateProvider
     }
     
     // MARK: - instance property
-    let historicalRateCache: HistoricalRateCache
+    let nextHistoricalRateProvider: HistoricalRateProviderProtocol
+}
+
+// MARK: - instance method
+extension BaseHistoricalRateProvider: BaseHistoricalRateProviderProtocol {
+    func removeCachedAndStoredRate() {
+        nextHistoricalRateProvider.removeCachedAndStoredRate()
+    }
 }
 
 // MARK: - static property
 extension HistoricalRateProvider {
-    static let shared: HistoricalRateProvider = HistoricalRateProvider()
+    /// 實作的邏輯類似於 chain of responsibility，不過 chain 是固定的
+    /// HistoricalRateProvider > HistoricalRateCache > HistoricalArchiver > Fetcher
+    static let shared: HistoricalRateProvider = {
+        let rateArchiver: HistoricalRateArchiver = HistoricalRateArchiver(nextHistoricalRateProvider: Fetcher.shared)
+        let rateCache: HistoricalRateCache = HistoricalRateCache(historicalRateProvider: rateArchiver)
+        
+        return HistoricalRateProvider(nextHistoricalRateProvider: rateCache)
+    }()
 }

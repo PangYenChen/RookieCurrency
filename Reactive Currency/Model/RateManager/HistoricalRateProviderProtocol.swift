@@ -1,6 +1,6 @@
 import Foundation
 import Combine
 
-protocol HistoricalRateProviderProtocol {
+protocol HistoricalRateProviderProtocol: BaseHistoricalRateProviderProtocol {
     func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Error>
 }

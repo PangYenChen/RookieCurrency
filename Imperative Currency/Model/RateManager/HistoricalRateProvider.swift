@@ -6,7 +6,7 @@ class HistoricalRateProvider: BaseHistoricalRateProvider {}
 extension HistoricalRateProvider: HistoricalRateProviderProtocol {
     func rateFor(dateString: String,
                  resultHandler: @escaping HistoricalRateResultHandler) {
-        historicalRateCache.rateFor(dateString: dateString,
-                                    resultHandler: resultHandler)
+        nextHistoricalRateProvider.rateFor(dateString: dateString,
+                                           resultHandler: resultHandler)
     }
 }
