@@ -8,7 +8,7 @@ extension HistoricalRateArchiver: HistoricalRateProviderProtocol {
         if hasFileInDiskWith(dateString: dateString) {
             return Future<ResponseDataModel.HistoricalRate, Error> { [unowned self] promise in
                 do {
-                    let unarchivedRate = try unarchiveRateWith(dateString: dateString)
+                    let unarchivedRate: ResponseDataModel.HistoricalRate = try unarchiveRateWith(dateString: dateString)
                     promise(.success(unarchivedRate))
                 }
                 catch {
@@ -18,9 +18,7 @@ extension HistoricalRateArchiver: HistoricalRateProviderProtocol {
             .catch { [unowned self] _ in
                 nextHistoricalRateProvider
                     .publisherFor(dateString: dateString)
-                    .handleEvents(
-                        receiveOutput: { [unowned self] rate in try? archive(rate) }
-                    )
+                    .handleEvents(receiveOutput: { [unowned self] rate in try? archive(rate) })
             }
             .eraseToAnyPublisher()
         }

@@ -4,7 +4,7 @@ import Foundation
 class BaseRateManager {
     // MARK: - initializer
     init(historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateProvider.shared,
-        latestRateProvider: LatestRateProviderProtocol = Fetcher.shared) {
+         latestRateProvider: LatestRateProviderProtocol = Fetcher.shared) {
         self.historicalRateProvider = historicalRateProvider
         self.latestRateProvider = latestRateProvider
     }

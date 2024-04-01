@@ -12,7 +12,7 @@ extension TestDouble {
 // MARK: - TimerProtocol
 extension TestDouble.Timer: TimerProtocol {
     func makeTimerPublisher(every interval: TimeInterval) -> AnyPublisher<Void, Never> {
-        let wrappedSubject = PassthroughSubject<Void, Never>()
+        let wrappedSubject: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         self.wrappedSubject = wrappedSubject
         
         return wrappedSubject

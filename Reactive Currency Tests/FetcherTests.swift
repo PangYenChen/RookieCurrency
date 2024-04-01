@@ -632,4 +632,3 @@ private extension FetcherTests {
         }
     }
 }
-

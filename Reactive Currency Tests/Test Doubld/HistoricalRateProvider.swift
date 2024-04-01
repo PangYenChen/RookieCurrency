@@ -26,7 +26,7 @@ extension TestDouble {
         }
         
         func publish(completion: Subscribers.Completion<Error>, for dateString: String) {
-            dateStringAndSubjectDictionary[dateString]?.send(completion: completion)
+            dateStringAndSubjectDictionary.removeValue(forKey: dateString)?.send(completion: completion)
         }
     }
 }

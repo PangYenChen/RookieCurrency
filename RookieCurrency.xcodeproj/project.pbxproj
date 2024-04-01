@@ -123,7 +123,7 @@
 		516DD0302BBA2E1F00D0B593 /* HistoricalRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD02E2BBA2DBC00D0B593 /* HistoricalRateProvider.swift */; };
 		516DD0322BBA2F9E00D0B593 /* LatestRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD0312BBA2F9E00D0B593 /* LatestRateProvider.swift */; };
 		516DD03E2BBB26B400D0B593 /* HistoricalRateProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD03D2BBB26B400D0B593 /* HistoricalRateProviderTests.swift */; };
-		516DD0482BBB34C000D0B593 /* HistoricalRateProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD0472BBB34C000D0B593 /* HistoricalRateProvider.swift */; };
+		516DD0482BBB34C000D0B593 /* HistoricalRateProviderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD0472BBB34C000D0B593 /* HistoricalRateProviderTests.swift */; };
 		516FF51C2B01014000576177 /* SettingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FF51A2B01014000576177 /* SettingModel.swift */; };
 		51869FD829D9D31D00EFA13D /* BaseRateManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */; };
 		51869FD929D9D31D00EFA13D /* BaseRateManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */; };
@@ -284,7 +284,7 @@
 		516DD02E2BBA2DBC00D0B593 /* HistoricalRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateProvider.swift; sourceTree = "<group>"; };
 		516DD0312BBA2F9E00D0B593 /* LatestRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestRateProvider.swift; sourceTree = "<group>"; };
 		516DD03D2BBB26B400D0B593 /* HistoricalRateProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateProviderTests.swift; sourceTree = "<group>"; };
-		516DD0472BBB34C000D0B593 /* HistoricalRateProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateProvider.swift; sourceTree = "<group>"; };
+		516DD0472BBB34C000D0B593 /* HistoricalRateProviderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateProviderTests.swift; sourceTree = "<group>"; };
 		516FF51A2B01014000576177 /* SettingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingModel.swift; sourceTree = "<group>"; };
 		51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRateManagerTests.swift; sourceTree = "<group>"; };
 		5189F9CF29DAD630004234D3 /* RateManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateManagerTests.swift; sourceTree = "<group>"; };
@@ -537,7 +537,7 @@
 			isa = PBXGroup;
 			children = (
 				5121216829E2D59F001D234B /* RateManagerTests.swift */,
-				516DD0472BBB34C000D0B593 /* HistoricalRateProvider.swift */,
+				516DD0472BBB34C000D0B593 /* HistoricalRateProviderTests.swift */,
 			);
 			path = RateManagerTests;
 			sourceTree = "<group>";
@@ -1192,7 +1192,7 @@
 				51290B922B90689E005BE201 /* Timer.swift in Sources */,
 				51C02C132B39B91000B757FA /* ResultModelTest.swift in Sources */,
 				E15BA6C524FCA66900CA5B1B /* FetcherTests.swift in Sources */,
-				516DD0482BBB34C000D0B593 /* HistoricalRateProvider.swift in Sources */,
+				516DD0482BBB34C000D0B593 /* HistoricalRateProviderTests.swift in Sources */,
 				51290BA72B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift in Sources */,
 				512CE8F12B373D5700019B20 /* CurrencyDescriber.swift in Sources */,
 				51290BBB2B9A4F7E005BE201 /* UserDefaults.swift in Sources */,
