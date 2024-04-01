@@ -7,23 +7,26 @@ extension TestDouble {
     class HistoricalRateProvider: HistoricalRateProviderProtocol {
         // MARK: - initializer
         init() {
-            passthroughSubject = PassthroughSubject<ResponseDataModel.HistoricalRate, Error>()
+            dateStringAndSubjectDictionary = [:]
         }
         
         // MARK: - private property
-        private let passthroughSubject: PassthroughSubject<ResponseDataModel.HistoricalRate, Error>
+        private var dateStringAndSubjectDictionary: [String: PassthroughSubject<ResponseDataModel.HistoricalRate, Error>]
         
         // MARK: - instance method
         func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> {
-            passthroughSubject.eraseToAnyPublisher()
+            let subject: PassthroughSubject<ResponseDataModel.HistoricalRate, Error> = PassthroughSubject<ResponseDataModel.HistoricalRate, Error>()
+            
+            dateStringAndSubjectDictionary[dateString] = subject
+            return subject.eraseToAnyPublisher()
         }
         
-        func publish(_ output: ResponseDataModel.HistoricalRate) {
-            passthroughSubject.send(output)
+        func publish(_ output: ResponseDataModel.HistoricalRate, for dateString: String) {
+            dateStringAndSubjectDictionary[dateString]?.send(output)
         }
         
-        func publish(completion: Subscribers.Completion<Error>) {
-            passthroughSubject.send(completion: completion)
+        func publish(completion: Subscribers.Completion<Error>, for dateString: String) {
+            dateStringAndSubjectDictionary[dateString]?.send(completion: completion)
         }
     }
 }
