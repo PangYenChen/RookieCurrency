@@ -13,24 +13,24 @@ import XCTest
 final class BaseRateManagerTests: XCTestCase {
     private var sut: BaseRateManager!
     
-    private var historicalRateProvider: HistoricalRateProviderProtocol!
-    private var latestRateProvider: LatestRateProviderProtocol!
+    private var dummyHistoricalRateProvider: HistoricalRateProviderProtocol!
+    private var dummyLatestRateProvider: LatestRateProviderProtocol!
     private var concurrentQueue: DispatchQueue!
     
     override func setUp() {
-        historicalRateProvider = TestDouble.HistoricalRateProvider()
-        latestRateProvider = TestDouble.LatestRateProvider()
+        dummyHistoricalRateProvider = TestDouble.HistoricalRateProvider()
+        dummyLatestRateProvider = TestDouble.LatestRateProvider()
         concurrentQueue = DispatchQueue(label: "base.rate.manager.test", attributes: .concurrent)
         
-        sut = BaseRateManager(historicalRateProvider: historicalRateProvider,
-                              latestRateProvider: latestRateProvider)
+        sut = BaseRateManager(historicalRateProvider: dummyHistoricalRateProvider,
+                              latestRateProvider: dummyLatestRateProvider)
     }
     
     override func tearDown() {
         sut = nil
         
-        historicalRateProvider = nil
-        latestRateProvider = nil
+        dummyHistoricalRateProvider = nil
+        dummyLatestRateProvider = nil
         concurrentQueue = nil
     }
     

@@ -63,7 +63,6 @@
 		513E106529F424D0000E1A87 /* AlertPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 513E106329F424D0000E1A87 /* AlertPresenter.swift */; };
 		51433D33298FD7BF00F2B4E6 /* RswiftLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 51433D32298FD7BF00F2B4E6 /* RswiftLibrary */; };
 		51433D3B298FD8C400F2B4E6 /* RswiftLibrary in Frameworks */ = {isa = PBXBuildFile; productRef = 51433D3A298FD8C400F2B4E6 /* RswiftLibrary */; };
-		5143C88C2A7B864400EDEFFF /* Fetcher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5143C88B2A7B864400EDEFFF /* Fetcher.swift */; };
 		5145AC1D2BB4A413001783AF /* HistoricalRateCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5145AC1C2BB4A413001783AF /* HistoricalRateCache.swift */; };
 		5145AC202BB4C136001783AF /* HistoricalRateProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5145AC1F2BB4C136001783AF /* HistoricalRateProviderProtocol.swift */; };
 		5145AC252BB5FA1A001783AF /* LatestRateProviderProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5145AC242BB5FA1A001783AF /* LatestRateProviderProtocol.swift */; };
@@ -235,7 +234,6 @@
 		513803212998746A00D54E46 /* SettingTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingTableViewController.swift; sourceTree = "<group>"; };
 		5138032729988BC300D54E46 /* CurrencySelectionTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySelectionTableViewController.swift; sourceTree = "<group>"; };
 		513E106329F424D0000E1A87 /* AlertPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlertPresenter.swift; sourceTree = "<group>"; };
-		5143C88B2A7B864400EDEFFF /* Fetcher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Fetcher.swift; sourceTree = "<group>"; };
 		5145AC1C2BB4A413001783AF /* HistoricalRateCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateCache.swift; sourceTree = "<group>"; };
 		5145AC1F2BB4C136001783AF /* HistoricalRateProviderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateProviderProtocol.swift; sourceTree = "<group>"; };
 		5145AC242BB5FA1A001783AF /* LatestRateProviderProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LatestRateProviderProtocol.swift; sourceTree = "<group>"; };
@@ -457,8 +455,8 @@
 		5143C8832A7B848B00EDEFFF /* Test Double */ = {
 			isa = PBXGroup;
 			children = (
-				51290B872B9059A7005BE201 /* Timer.swift */,
 				512CE8E52B37284D00019B20 /* RateManager.swift */,
+				51290B872B9059A7005BE201 /* Timer.swift */,
 				5145AC272BB5FEF2001783AF /* HistoricalRateProvider.swift */,
 				5145AC2A2BB60021001783AF /* LatestRateProvider.swift */,
 			);
@@ -469,7 +467,6 @@
 			isa = PBXGroup;
 			children = (
 				51C02C0D2B39B84A00B757FA /* RateManager.swift */,
-				5143C88B2A7B864400EDEFFF /* Fetcher.swift */,
 				51290B912B90689E005BE201 /* Timer.swift */,
 				516DD02E2BBA2DBC00D0B593 /* HistoricalRateProvider.swift */,
 				516DD0312BBA2F9E00D0B593 /* LatestRateProvider.swift */,
@@ -1181,7 +1178,6 @@
 				51E1B4BA29ADADD800D75669 /* TestingData For Data.swift in Sources */,
 				51290B9C2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift in Sources */,
 				51362E4F29B4D93500E3CE89 /* Rate Instance.swift in Sources */,
-				5143C88C2A7B864400EDEFFF /* Fetcher.swift in Sources */,
 				515DE3742AA31FE6005E719C /* Session Output.swift in Sources */,
 				516DD0322BBA2F9E00D0B593 /* LatestRateProvider.swift in Sources */,
 				512CE8E22B37259200019B20 /* UserSettingManager.swift in Sources */,

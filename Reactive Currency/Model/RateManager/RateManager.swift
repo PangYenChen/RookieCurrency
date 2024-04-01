@@ -16,7 +16,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
             .publisher
             .flatMap(historicalRateProvider.publisherFor(dateString:))
             .collect(numberOfDays)
-            .combineLatest(latestRateProvider.publisher()) { (latestRate: $1, historicalRateSet: Set($0)) }
+            .combineLatest(latestRateProvider.publisher()) { historicalRateArray, latestRate in (latestRate: latestRate, historicalRateSet: Set(historicalRateArray)) }
             .eraseToAnyPublisher()
     }
 }
