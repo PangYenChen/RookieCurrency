@@ -8,8 +8,8 @@ extension HistoricalRateArchiver: HistoricalRateProviderProtocol {
         if hasFileInDiskWith(dateString: dateString) {
             return Future<ResponseDataModel.HistoricalRate, Error> { [unowned self] promise in
                 do {
-                    let unarchivedHistoricalRate = try unarchiveRateWith(dateString: dateString)
-                    promise(.success(unarchivedHistoricalRate))
+                    let unarchivedRate = try unarchiveRateWith(dateString: dateString)
+                    promise(.success(unarchivedRate))
                 }
                 catch {
                     promise(.failure(error))
@@ -19,7 +19,7 @@ extension HistoricalRateArchiver: HistoricalRateProviderProtocol {
                 nextHistoricalRateProvider
                     .publisherFor(dateString: dateString)
                     .handleEvents(
-                        receiveOutput: { [unowned self] historicalRate in try? archive(historicalRate) }
+                        receiveOutput: { [unowned self] rate in try? archive(rate) }
                     )
             }
             .eraseToAnyPublisher()
@@ -27,9 +27,7 @@ extension HistoricalRateArchiver: HistoricalRateProviderProtocol {
         else {
             return nextHistoricalRateProvider
                 .publisherFor(dateString: dateString)
-                .handleEvents(
-                    receiveOutput: { [unowned self] historicalRate in try? archive(historicalRate) }
-                )
+                .handleEvents(receiveOutput: { [unowned self] rate in try? archive(rate) })
                 .eraseToAnyPublisher()
         }
     }
