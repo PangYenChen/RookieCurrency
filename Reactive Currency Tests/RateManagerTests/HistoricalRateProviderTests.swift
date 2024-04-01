@@ -6,13 +6,13 @@ import Combine
 final class HistoricalRateProviderTests: XCTestCase {
     private var sut: HistoricalRateProvider!
     
-    private var historicalRateProviderStub: TestDouble.HistoricalRateProvider!
+    private var historicalRateProviderSpy: TestDouble.HistoricalRateProvider!
     private var anyCancellableSet: Set<AnyCancellable>!
     
     override func setUp() {
-        historicalRateProviderStub = TestDouble.HistoricalRateProvider()
+        historicalRateProviderSpy = TestDouble.HistoricalRateProvider()
         
-        sut = HistoricalRateProvider(nextHistoricalRateProvider: historicalRateProviderStub)
+        sut = HistoricalRateProvider(nextHistoricalRateProvider: historicalRateProviderSpy)
         
         anyCancellableSet = Set<AnyCancellable>()
     }
@@ -20,7 +20,7 @@ final class HistoricalRateProviderTests: XCTestCase {
     override func tearDown() {
         sut = nil
         
-        historicalRateProviderStub = nil
+        historicalRateProviderSpy = nil
         
         anyCancellableSet.forEach { anyCancellable in anyCancellable.cancel() }
         anyCancellableSet = nil
@@ -39,8 +39,8 @@ final class HistoricalRateProviderTests: XCTestCase {
             .store(in: &anyCancellableSet)
             
         // act
-        historicalRateProviderStub.publish(expectedRate, for: dateString)
-        historicalRateProviderStub.publish(completion: .finished, for: dateString)
+        historicalRateProviderSpy.publish(expectedRate, for: dateString)
+        historicalRateProviderSpy.publish(completion: .finished, for: dateString)
         
         // assert
         do /*assertion about received rate*/ {
@@ -70,7 +70,7 @@ final class HistoricalRateProviderTests: XCTestCase {
             .store(in: &anyCancellableSet)
         
         // act
-        historicalRateProviderStub.publish(completion: .failure(expectedTimeOut), for: dateString)
+        historicalRateProviderSpy.publish(completion: .failure(expectedTimeOut), for: dateString)
         
         // assert
         do /*assertion about received rate*/ {
@@ -84,5 +84,15 @@ final class HistoricalRateProviderTests: XCTestCase {
                 case .failure(let receivedFailure): XCTAssertEqual(receivedFailure as? URLError, expectedTimeOut)
             }
         }
+    }
+    
+    func testRemoveCachedAndStoredRate() {
+        // arrange, do nothing
+        
+        // act
+        sut.removeCachedAndStoredRate()
+        
+        // assert
+        XCTAssertEqual(historicalRateProviderSpy.numberOfCallOfRemoveCachedAndStoredRate, 1)
     }
 }

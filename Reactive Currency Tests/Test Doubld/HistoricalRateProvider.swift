@@ -8,10 +8,12 @@ extension TestDouble {
         // MARK: - initializer
         init() {
             dateStringAndSubjectDictionary = [:]
+            numberOfCallOfRemoveCachedAndStoredRate = 0
         }
         
         // MARK: - private property
         private var dateStringAndSubjectDictionary: [String: PassthroughSubject<ResponseDataModel.HistoricalRate, Error>]
+        private(set) var numberOfCallOfRemoveCachedAndStoredRate: Int
         
         // MARK: - instance method
         func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> {
@@ -20,6 +22,8 @@ extension TestDouble {
             dateStringAndSubjectDictionary[dateString] = subject
             return subject.eraseToAnyPublisher()
         }
+        
+        func removeCachedAndStoredRate() { numberOfCallOfRemoveCachedAndStoredRate += 1 }
         
         func publish(_ output: ResponseDataModel.HistoricalRate, for dateString: String) {
             dateStringAndSubjectDictionary[dateString]?.send(output)

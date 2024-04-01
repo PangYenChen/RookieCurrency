@@ -69,6 +69,8 @@ class Fetcher: BaseFetcher, FetcherProtocol {
 }
 
 extension Fetcher: HistoricalRateProviderProtocol {
+    func removeCachedAndStoredRate() { /*do nothing*/ }
+    
     func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Swift.Error> {
         publisher(for: Endpoints.Historical(dateString: dateString))
     }

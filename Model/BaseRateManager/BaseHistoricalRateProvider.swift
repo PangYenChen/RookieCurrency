@@ -1,5 +1,9 @@
 import Foundation
 
+protocol BaseHistoricalRateProviderProtocol {
+    func removeCachedAndStoredRate()
+}
+
 class BaseHistoricalRateProvider {
     // MARK: - initializer
     init(nextHistoricalRateProvider: HistoricalRateProviderProtocol) {
@@ -8,6 +12,13 @@ class BaseHistoricalRateProvider {
     
     // MARK: - instance property
     let nextHistoricalRateProvider: HistoricalRateProviderProtocol
+}
+
+// MARK: - instance method
+extension BaseHistoricalRateProvider: BaseHistoricalRateProviderProtocol {
+    func removeCachedAndStoredRate() {
+        nextHistoricalRateProvider.removeCachedAndStoredRate()
+    }
 }
 
 // MARK: - static property

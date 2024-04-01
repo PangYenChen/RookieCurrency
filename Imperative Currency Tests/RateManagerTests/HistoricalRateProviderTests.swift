@@ -1,22 +1,21 @@
-import Foundation
 import XCTest
 @testable import ImperativeCurrency
 
 class HistoricalRateProviderTests: XCTestCase {
     private var sut: HistoricalRateProvider!
     
-    private var historicalRateProviderStub: TestDouble.HistoricalRateProvider!
+    private var historicalRateProviderSpy: TestDouble.HistoricalRateProvider!
     
     override func setUp() {
-        historicalRateProviderStub = TestDouble.HistoricalRateProvider()
+        historicalRateProviderSpy = TestDouble.HistoricalRateProvider()
         
-        sut = HistoricalRateProvider(nextHistoricalRateProvider: historicalRateProviderStub)
+        sut = HistoricalRateProvider(nextHistoricalRateProvider: historicalRateProviderSpy)
     }
     
     override func tearDown() {
         sut = nil
         
-        historicalRateProviderStub = nil
+        historicalRateProviderSpy = nil
     }
     
     func testPassingSuccess() throws {
@@ -28,7 +27,7 @@ class HistoricalRateProviderTests: XCTestCase {
         sut.rateFor(dateString: dateString) { historicalRateResult in receivedRateResult = historicalRateResult }
         
         // act
-        historicalRateProviderStub.executeHistoricalRateResultHandlerFor(dateString: dateString,
+        historicalRateProviderSpy.executeHistoricalRateResultHandlerFor(dateString: dateString,
                                                                          with: .success(expectedRate))
         
         // assert
@@ -50,7 +49,7 @@ class HistoricalRateProviderTests: XCTestCase {
         sut.rateFor(dateString: dateString) { historicalRateResult in receivedRateResult = historicalRateResult }
         
         // act
-        historicalRateProviderStub.executeHistoricalRateResultHandlerFor(dateString: dateString,
+        historicalRateProviderSpy.executeHistoricalRateResultHandlerFor(dateString: dateString,
                                                                          with: .failure(expectedTimeOut))
         
         // assert

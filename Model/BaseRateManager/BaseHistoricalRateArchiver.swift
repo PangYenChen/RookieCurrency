@@ -76,14 +76,17 @@ extension BaseHistoricalRateArchiver {
         
         return fileManager.fileExists(atPath: fileURL.path())
     }
-    
-    /// 移除全部存於本地的檔案
-    func removeAllStoredFile() throws {
-        try fileManager
+}
+
+extension BaseHistoricalRateArchiver: BaseHistoricalRateProviderProtocol {
+    func removeCachedAndStoredRate() {
+        try? fileManager
             .contentsOfDirectory(at: documentsDirectory,
                                  includingPropertiesForKeys: nil,
                                  options: .skipsHiddenFiles)
             .filter { fileURL in fileURL.pathExtension == jsonPathExtension }
             .forEach { fileURL in try fileManager.removeItem(at: fileURL) }
+        
+        nextHistoricalRateProvider.removeCachedAndStoredRate()
     }
 }

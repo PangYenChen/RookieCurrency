@@ -29,9 +29,7 @@ extension BaseRateManager {
     }
     
     func removeCachedAndStoredData() {
-        // TODO: 現在的 historical rate provider 還沒有清除的機制
-//        historicalRateCache.removeAll()
-//        try? archiver.removeAllStoredFile()
+        historicalRateProvider.removeCachedAndStoredRate()
     }
 }
 
