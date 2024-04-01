@@ -36,9 +36,11 @@ class SettingTableViewController: BaseSettingTableViewController {
             .sink(receiveValue: self.updateFor(hasModificationsToSave:))
             .store(in: &anyCancellableSet)
         
-        settingModel.cancellationConfirmation
+        settingModel.cancellationNeedsToBeConfirmed
             .receive(on: DispatchQueue.main)
-            .sink { [unowned self] in presentDismissalConfirmation(withSaveOption: false) }
+            .sink { [unowned self] cancellationNeedsToBeConfirmed in
+                cancellationNeedsToBeConfirmed ? presentDismissalConfirmation(withSaveOption: false) : cancel()
+            }
             .store(in: &anyCancellableSet)
     }
     

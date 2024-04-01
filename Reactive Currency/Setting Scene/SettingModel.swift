@@ -51,8 +51,8 @@ class SettingModel {
         
         attemptToCancelSubject = PassthroughSubject<Void, Never>()
         
-        cancellationConfirmation = attemptToCancelSubject.withLatestFrom(hasModificationsToSave)
-            .compactMap { _, hasModificationsToSave in hasModificationsToSave ? () : nil }
+        cancellationNeedsToBeConfirmed = attemptToCancelSubject.withLatestFrom(hasModificationsToSave)
+            .map { _, hasModificationsToSave in hasModificationsToSave }
             .eraseToAnyPublisher()
         
         cancelSubject = PassthroughSubject<Void, Never>()
@@ -87,7 +87,7 @@ class SettingModel {
     
     private let attemptToCancelSubject: PassthroughSubject<Void, Never>
     
-    let cancellationConfirmation: AnyPublisher<Void, Never>
+    let cancellationNeedsToBeConfirmed: AnyPublisher<Bool, Never>
     
     let currencyDescriber: CurrencyDescriberProtocol
     
