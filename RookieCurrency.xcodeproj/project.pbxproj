@@ -742,8 +742,8 @@
 			isa = PBXGroup;
 			children = (
 				5143C8832A7B848B00EDEFFF /* Test Double */,
-				E13B275C24758ACF00E0A07D /* FetcherTests.swift */,
 				516DD03B2BBB269500D0B593 /* RateManagerTests */,
+				E13B275C24758ACF00E0A07D /* FetcherTests.swift */,
 				512CE8DB2B3724AC00019B20 /* ResultModelTest.swift */,
 			);
 			path = "Imperative Currency Tests";
@@ -765,8 +765,8 @@
 			isa = PBXGroup;
 			children = (
 				5143C8892A7B861D00EDEFFF /* Test Doubld */,
-				E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */,
 				516DD0452BBB34A400D0B593 /* RateManagerTests */,
+				E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */,
 				51C02C122B39B91000B757FA /* ResultModelTest.swift */,
 			);
 			path = "Reactive Currency Tests";
