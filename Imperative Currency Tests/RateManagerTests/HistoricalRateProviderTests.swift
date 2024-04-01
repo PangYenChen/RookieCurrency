@@ -61,4 +61,14 @@ class HistoricalRateProviderTests: XCTestCase {
             }
         }
     }
+    
+    func testRemoveCachedAndStoredRate() {
+        // arrange, do nothing
+        
+        // act
+        sut.removeCachedAndStoredRate()
+        
+        // assert
+        XCTAssertEqual(historicalRateProviderSpy.numberOfCallOfRemoveCachedAndStoredRate, 1)
+    }
 }

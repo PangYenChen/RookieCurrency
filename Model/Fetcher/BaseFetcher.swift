@@ -103,6 +103,10 @@ extension BaseFetcher {
     }
 }
 
+extension BaseFetcher: BaseHistoricalRateProviderProtocol {
+    func removeCachedAndStoredRate() { /*do nothing*/ }
+}
+
 // MARK: - name space
 extension BaseFetcher {
     enum Error: LocalizedError {
