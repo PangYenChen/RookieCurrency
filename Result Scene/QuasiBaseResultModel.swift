@@ -100,8 +100,8 @@ extension QuasiBaseResultModel {
     struct RateStatistic: Hashable {
         let currencyCode: ResponseDataModel.CurrencyCode
         let localizedString: String
-        let latestRate: Decimal
-        let meanRate: Decimal
+        let latestExchangeRate: Decimal
+        let meanExchangeRate: Decimal
         let fluctuation: Decimal
         
         func hash(into hasher: inout Hasher) {
@@ -129,10 +129,10 @@ extension QuasiBaseResultModel.RateStatistic {
           historicalRateSet: Set<ResponseDataModel.HistoricalRate>) {
         self.currencyCode = currencyCode
         self.localizedString = currencyDescriber.localizedStringFor(currencyCode: currencyCode)
-        // TODO: 變數名稱要想一下 不能用latest rate
-        guard let latestRate = latestRate.convertOneUnitOf(baseCurrencyCode, to: currencyCode) else { return nil }
         
-        self.latestRate = latestRate
+        guard let latestExchangeRate = latestRate.convertOneUnitOf(baseCurrencyCode, to: currencyCode) else { return nil }
+        
+        self.latestExchangeRate = latestExchangeRate
         
         var total: Decimal = 0
         for historicalRate in historicalRateSet {
@@ -141,9 +141,9 @@ extension QuasiBaseResultModel.RateStatistic {
             total += historicalRate
         }
         
-        meanRate = total / Decimal(historicalRateSet.count)
+        meanExchangeRate = total / Decimal(historicalRateSet.count)
         
-        fluctuation = (latestRate - meanRate) / meanRate
+        fluctuation = (latestExchangeRate - meanExchangeRate) / meanExchangeRate
     }
 }
 

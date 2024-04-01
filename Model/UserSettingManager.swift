@@ -49,7 +49,7 @@ class UserSettingManager: UserSettingManagerProtocol {
     // MARK: - instance property
     private let userDefaults: UserDefaultsProtocol
 
-    let defaultNumberOfDays: Int // TODO: 改成 UInt
+    let defaultNumberOfDays: Int
     var numberOfDays: Int {
         didSet {
             guard oldValue != numberOfDays else { return }

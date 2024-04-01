@@ -67,3 +67,15 @@ extension Fetcher: FetcherProtocol {
             .eraseToAnyPublisher()
     }
 }
+
+extension Fetcher: HistoricalRateProviderProtocol {
+    func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Swift.Error> {
+        publisher(for: Endpoints.Historical(dateString: dateString))
+    }
+}
+
+extension Fetcher: LatestRateProviderProtocol {
+    func publisher() -> AnyPublisher<ResponseDataModel.LatestRate, Swift.Error> {
+        publisher(for: Endpoints.Latest())
+    }
+}

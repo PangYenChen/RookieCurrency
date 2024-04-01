@@ -50,7 +50,7 @@ extension Fetcher: FetcherProtocol {
                     AppUtility.prettyPrint(data)
                     // 這是一切正常的情況，將 data decode
                     do {
-                        let rate = try jsonDecoder.decode(Endpoint.ResponseType.self, from: data)
+                        let rate: Endpoint.ResponseType = try jsonDecoder.decode(Endpoint.ResponseType.self, from: data)
                         completionHandler(.success(rate))
                     }
                     catch {
@@ -69,5 +69,18 @@ extension Fetcher: FetcherProtocol {
                 completionHandler(.failure(Error.unknownError))
             }
         }
+    }
+}
+
+extension Fetcher: HistoricalRateProviderProtocol {
+    func rateFor(dateString: String,
+                 resultHandler: @escaping HistoricalRateResultHandler) {
+        fetch(Endpoints.Historical(dateString: dateString), completionHandler: resultHandler)
+    }
+}
+
+extension Fetcher: LatestRateProviderProtocol {
+    func rate(resultHandler latestRateResultHandler: @escaping LatestRateResultHandler) {
+        fetch(Endpoints.Latest(), completionHandler: latestRateResultHandler)
     }
 }

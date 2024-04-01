@@ -10,19 +10,28 @@ import XCTest
 
 /// 這個 test case 測試 rate controller 跟 fetcher 無關的 method
 /// 即時間計算的 method
-final class RateManagerTests: XCTestCase {
-    private var sut: RateManager!
+final class BaseRateManagerTests: XCTestCase {
+    private var sut: BaseRateManager!
     
-    private var fakeFetcher: TestDouble.Fetcher!
+    private var dummyHistoricalRateProvider: HistoricalRateProviderProtocol!
+    private var dummyLatestRateProvider: LatestRateProviderProtocol!
+    private var concurrentQueue: DispatchQueue!
     
     override func setUp() {
-        fakeFetcher = TestDouble.Fetcher()
-        sut = RateManager(fetcher: fakeFetcher)
+        dummyHistoricalRateProvider = TestDouble.HistoricalRateProvider()
+        dummyLatestRateProvider = TestDouble.LatestRateProvider()
+        concurrentQueue = DispatchQueue(label: "base.rate.manager.test", attributes: .concurrent)
+        
+        sut = BaseRateManager(historicalRateProvider: dummyHistoricalRateProvider,
+                              latestRateProvider: dummyLatestRateProvider)
     }
     
     override func tearDown() {
         sut = nil
-        fakeFetcher = nil
+        
+        dummyHistoricalRateProvider = nil
+        dummyLatestRateProvider = nil
+        concurrentQueue = nil
     }
     
     func testNoRetainCycleOccur() {
@@ -39,13 +48,12 @@ final class RateManagerTests: XCTestCase {
     /// 模擬從執行當下的時間往前計算日期字串
     func testHistoricalRateDateStrings() throws {
         // arrange
-        let startDay: Date = Date(timeIntervalSince1970: 0)
+        let startDate: Date = Date(timeIntervalSince1970: 0)
         
         // act
-        let historicalDateStrings: Set<String> = sut.historicalRateDateStrings(numberOfDaysAgo: 3, from: startDay)
+        let historicalDateStrings: Set<String> = sut.historicalRateDateStrings(numberOfDaysAgo: 3, from: startDate)
         
         // assert
         XCTAssertEqual(historicalDateStrings, Set(["1969-12-31", "1969-12-30", "1969-12-29"]))
-        XCTAssertEqual(fakeFetcher.numberOfMethodCall, 0)
     }
 }

@@ -68,8 +68,8 @@ class BaseResultTableViewController: UITableViewController {
                 }
                 
                 do /*configure secondary text*/ {
-                    let meanString: String = rateStatistic.meanRate.formatted()
-                    let latestString: String = rateStatistic.latestRate.formatted()
+                    let meanString: String = rateStatistic.meanExchangeRate.formatted()
+                    let latestString: String = rateStatistic.latestExchangeRate.formatted()
                     
                     contentConfiguration.secondaryText = R.string.resultScene.currencyCellDetail(meanString, latestString)
                     contentConfiguration.secondaryTextProperties.adjustsFontForContentSizeCategory = true
