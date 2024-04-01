@@ -1,9 +1,9 @@
 import Foundation
 
 /// 跟伺服器拿資料的物件
-class Fetcher {
+class BaseFetcher {
     // MARK: - initializer
-    init(rateSession: RateSession = Fetcher.rateSession) {
+    init(rateSession: RateSession = BaseFetcher.rateSession) {
         self.rateSession = rateSession
         
         jsonDecoder = ResponseDataModel.jsonDecoder
@@ -35,7 +35,7 @@ class Fetcher {
 }
 
 // MARK: - static properties
-extension Fetcher {
+extension BaseFetcher {
     /// singleton object
     static let shared: Fetcher = .init()
     
@@ -51,7 +51,7 @@ extension Fetcher {
 }
 
 // MARK: - static property
-extension Fetcher {
+extension BaseFetcher {
     /// 不暫存的 session
     private static let rateSession: URLSession = {
         let configuration: URLSessionConfiguration = URLSessionConfiguration.default
@@ -62,7 +62,7 @@ extension Fetcher {
 }
 
 // MARK: - helper method
-extension Fetcher {
+extension BaseFetcher {
     /// 產生 timeout 時限為 5 秒，且帶上 api key 的 `URLRequest`
     /// - Parameter url: The URL to be retrieved.
     /// - Returns: The new url request.
@@ -104,7 +104,7 @@ extension Fetcher {
 }
 
 // MARK: - name space
-extension Fetcher {
+extension BaseFetcher {
     enum Error: LocalizedError {
         case unknownError
         case tooManyRequest

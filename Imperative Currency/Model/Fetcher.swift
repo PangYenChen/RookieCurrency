@@ -8,7 +8,7 @@ protocol FetcherProtocol {
     )
 }
 
-extension Fetcher: FetcherProtocol {
+class Fetcher: BaseFetcher, FetcherProtocol {
     /// 向服務商伺服器索取資料
     /// - Parameters:
     ///   - endpoint: The end point to be retrieved.
