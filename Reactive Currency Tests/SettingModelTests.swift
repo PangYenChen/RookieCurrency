@@ -58,7 +58,7 @@ final class SettingModelTests: XCTestCase {
         sut.set(numberOfDays: 4)
         
         // assert
-        do {
+        do /*assert about received has modifications to save*/ {
             let receivedHasModificationsToSave: Bool = try XCTUnwrap(receivedHasModificationsToSave)
             XCTAssert(receivedHasModificationsToSave)
         }
@@ -73,7 +73,7 @@ final class SettingModelTests: XCTestCase {
         sut.set(numberOfDays: 3)
         
         // assert
-        do {
+        do /*assert about received has modifications to save*/ {
             let receivedHasModificationsToSave: Bool = try XCTUnwrap(receivedHasModificationsToSave)
             XCTAssertFalse(receivedHasModificationsToSave)
         }
@@ -81,12 +81,99 @@ final class SettingModelTests: XCTestCase {
         XCTAssertNotNil(receivedNumberOfDaysDidChange)
     }
 
-    func testSave() {
+    func testSave() throws {
+        // arrange
+        var receivedSetting: BaseResultModel.Setting?
+        var receivedCancel: Void?
+        let expectedNumberOfDays: Int = 4
         
+        saveSettingSubject
+            .sink { setting in receivedSetting = setting }
+            .store(in: &anyCancellableSet)
+        
+        cancelSubject
+            .sink { cancel in receivedCancel = cancel }
+            .store(in: &anyCancellableSet)
+        
+        // act
+        sut.set(numberOfDays: expectedNumberOfDays)
+        sut.save()
+        
+        // assert
+        do /*assert about received setting*/ {
+            let receivedSetting: BaseResultModel.Setting = try XCTUnwrap(receivedSetting)
+            XCTAssertEqual(receivedSetting.numberOfDays, expectedNumberOfDays)
+        }
+        XCTAssertNil(receivedCancel)
     }
     
-    func testCancel() {
+    func testCancelWithoutModificationToSave() throws {
+        // arrange
+        var receivedSetting: BaseResultModel.Setting?
+        var receivedCancellationNeedsToBeConfirmed: Bool?
+        var receivedCancel: Void?
         
+        saveSettingSubject
+            .sink { setting in receivedSetting = setting }
+            .store(in: &anyCancellableSet)
+        
+        sut.cancellationNeedsToBeConfirmed
+            .sink { cancellationNeedsToBeConfirmed in receivedCancellationNeedsToBeConfirmed = cancellationNeedsToBeConfirmed }
+            .store(in: &anyCancellableSet)
+        
+        cancelSubject
+            .sink { cancel in receivedCancel = cancel }
+            .store(in: &anyCancellableSet)
+        
+        // act
+        sut.attemptToCancel()
+        
+        // assert
+        XCTAssertNil(receivedSetting)
+        do /*assert about received cancellation needs to be confirmed*/ {
+            let receivedCancellationNeedsToBeConfirmed: Bool = try XCTUnwrap(receivedCancellationNeedsToBeConfirmed)
+            XCTAssertFalse(receivedCancellationNeedsToBeConfirmed)
+        }
+        XCTAssertNil(receivedCancel)
+        
+        // act
+        receivedCancellationNeedsToBeConfirmed = nil
+        sut.cancel()
+        
+        // assert
+        XCTAssertNil(receivedSetting)
+        XCTAssertNil(receivedCancellationNeedsToBeConfirmed)
+        XCTAssertNotNil(receivedCancel)
     }
-
+    
+    func testCancelWithModificationToSave() throws {
+        // arrange
+        var receivedSetting: BaseResultModel.Setting?
+        var receivedCancellationNeedsToBeConfirmed: Bool?
+        var receivedCancel: Void?
+        
+        saveSettingSubject
+            .sink { setting in receivedSetting = setting }
+            .store(in: &anyCancellableSet)
+        
+        sut.cancellationNeedsToBeConfirmed
+            .sink { cancellationNeedsToBeConfirmed in receivedCancellationNeedsToBeConfirmed = cancellationNeedsToBeConfirmed }
+            .store(in: &anyCancellableSet)
+        
+        cancelSubject
+            .sink { cancel in receivedCancel = cancel }
+            .store(in: &anyCancellableSet)
+        
+        // act
+        sut.set(numberOfDays: 4)
+        sut.attemptToCancel()
+        
+        // assert
+        XCTAssertNil(receivedSetting)
+        do /*assert about received cancellation needs to be confirmed*/ {
+            let receivedCancellationNeedsToBeConfirmed: Bool = try XCTUnwrap(receivedCancellationNeedsToBeConfirmed)
+            XCTAssertTrue(receivedCancellationNeedsToBeConfirmed)
+        }
+        XCTAssertNil(receivedCancel)
+    }
 }
