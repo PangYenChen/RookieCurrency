@@ -1,9 +1,9 @@
 import Foundation
 
-class HistoricalRateProvider: BaseHistoricalRateProvider {}
+class HistoricalRateProviderChain: BaseHistoricalRateProviderChain {}
 
 // MARK: - instance method
-extension HistoricalRateProvider: HistoricalRateProviderProtocol {
+extension HistoricalRateProviderChain: HistoricalRateProviderProtocol {
     func rateFor(dateString: String,
                  resultHandler: @escaping HistoricalRateResultHandler) {
         nextHistoricalRateProvider.rateFor(dateString: dateString,

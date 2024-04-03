@@ -2,14 +2,14 @@ import XCTest
 @testable import ImperativeCurrency
 
 class HistoricalRateProviderTests: XCTestCase {
-    private var sut: HistoricalRateProvider!
+    private var sut: HistoricalRateProviderChain!
     
     private var historicalRateProviderSpy: TestDouble.HistoricalRateProvider!
     
     override func setUp() {
         historicalRateProviderSpy = TestDouble.HistoricalRateProvider()
         
-        sut = HistoricalRateProvider(nextHistoricalRateProvider: historicalRateProviderSpy)
+        sut = HistoricalRateProviderChain(nextHistoricalRateProvider: historicalRateProviderSpy)
     }
     
     override func tearDown() {

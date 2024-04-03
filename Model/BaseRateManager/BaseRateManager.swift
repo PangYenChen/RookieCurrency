@@ -3,7 +3,7 @@ import Foundation
 /// 用來獲得各貨幣匯率資料的類別
 class BaseRateManager {
     // MARK: - initializer
-    init(historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateProvider.shared,
+    init(historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateProviderChain.shared,
          latestRateProvider: LatestRateProviderProtocol = Fetcher.shared) {
         self.historicalRateProvider = historicalRateProvider
         self.latestRateProvider = latestRateProvider
