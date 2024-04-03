@@ -11,21 +11,27 @@ class SettingModel {
         
         do /*initialize number of days*/ {
             numberOfDaysSubject = CurrentValueSubject<Int, Never>(setting.numberOfDays)
-            numberOfDaysDidChange = numberOfDaysSubject.removeDuplicates()
+            numberOfDaysDidChange = numberOfDaysSubject
+                .removeDuplicates()
+                .dropFirst()
                 .map { _ in }
                 .eraseToAnyPublisher()
         }
         
         do /*initialize base currency code*/ {
             baseCurrencyCodeSubject = CurrentValueSubject<ResponseDataModel.CurrencyCode, Never>(setting.baseCurrencyCode)
-            baseCurrencyCodeDidChange = baseCurrencyCodeSubject.removeDuplicates()
+            baseCurrencyCodeDidChange = baseCurrencyCodeSubject
+                .removeDuplicates()
+                .dropFirst()
                 .map { _ in }
                 .eraseToAnyPublisher()
         }
         
         do /*initialize currency of interest*/ {
             currencyCodeOfInterestSubject = CurrentValueSubject<Set<ResponseDataModel.CurrencyCode>, Never>(setting.currencyCodeOfInterest)
-            currencyCodeOfInterestDidChange = currencyCodeOfInterestSubject.removeDuplicates()
+            currencyCodeOfInterestDidChange = currencyCodeOfInterestSubject
+                .removeDuplicates()
+                .dropFirst()
                 .map { _ in }
                 .eraseToAnyPublisher()
         }

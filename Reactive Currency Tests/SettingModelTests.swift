@@ -7,18 +7,25 @@ final class SettingModelTests: XCTestCase {
     private var sut: SettingModel!
     
     private var dummySetting: BaseResultModel.Setting!
-    private var saveSettingSubject: PassthroughSubject<BaseResultModel.Setting, Never>!
-    private var cancelSubject: PassthroughSubject<Void, Never>!
     private var dummyCurrencyDescriber: CurrencyDescriberProtocol!
     
+    private var receivedNumberOfDaysDidChange: Void?
+    private var receivedBaseCurrencyCodeDidChange: Void?
+    private var receivedCurrencyCodeOfInterestDidChange: Void?
+    private var receivedHasModificationsToSave: Bool?
+    private var receivedCancellationNeedsToBeConfirmed: Bool?
+    
+    private var receivedSetting: BaseResultModel.Setting?
+    private var receivedCancel: Void?
+        
     private var anyCancellableSet: Set<AnyCancellable>!
-
+    
     override func setUp() {
         dummySetting = (numberOfDays: 3,
-                   baseCurrencyCode: "TWD",
-                   currencyCodeOfInterest: ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"])
-        saveSettingSubject = PassthroughSubject<BaseResultModel.Setting, Never>()
-        cancelSubject = PassthroughSubject<Void, Never>()
+                        baseCurrencyCode: "TWD",
+                        currencyCodeOfInterest: ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"])
+        let saveSettingSubject: PassthroughSubject<BaseResultModel.Setting, Never> = PassthroughSubject<BaseResultModel.Setting, Never>()
+        let cancelSubject: PassthroughSubject<Void, Never> = PassthroughSubject<Void, Never>()
         dummyCurrencyDescriber = TestDouble.CurrencyDescriber()
         
         sut = SettingModel(setting: dummySetting,
@@ -27,6 +34,34 @@ final class SettingModelTests: XCTestCase {
                            currencyDescriber: dummyCurrencyDescriber)
         
         anyCancellableSet = Set<AnyCancellable>()
+        
+        saveSettingSubject
+            .sink { [unowned self] setting in receivedSetting = setting }
+            .store(in: &anyCancellableSet)
+        
+        cancelSubject
+            .sink { [unowned self] cancel in receivedCancel = cancel }
+            .store(in: &anyCancellableSet)
+        
+        sut.numberOfDaysDidChange
+            .sink { [unowned self] numberOfDaysDidChange in receivedNumberOfDaysDidChange = numberOfDaysDidChange }
+            .store(in: &anyCancellableSet)
+        
+        sut.baseCurrencyCodeDidChange
+            .sink { [unowned self] baseCurrencyCodeDidChange in receivedBaseCurrencyCodeDidChange = baseCurrencyCodeDidChange }
+            .store(in: &anyCancellableSet)
+        
+        sut.currencyCodeOfInterestDidChange
+            .sink { [unowned self] currencyCodeOfInterestDidChange in receivedCurrencyCodeOfInterestDidChange = currencyCodeOfInterestDidChange }
+            .store(in: &anyCancellableSet)
+        
+        sut.hasModificationsToSave
+            .sink { [unowned self] hasModificationsToSave in receivedHasModificationsToSave = hasModificationsToSave }
+            .store(in: &anyCancellableSet)
+        
+        sut.cancellationNeedsToBeConfirmed
+            .sink { [unowned self] cancellationNeedsToBeConfirmed in receivedCancellationNeedsToBeConfirmed = cancellationNeedsToBeConfirmed }
+            .store(in: &anyCancellableSet)
     }
 
     override func tearDown() {
@@ -36,144 +71,149 @@ final class SettingModelTests: XCTestCase {
         sut = nil
         
         dummyCurrencyDescriber = nil
-        cancelSubject = nil
-        saveSettingSubject = nil
         dummySetting = nil
+        clearUpReceivedValue()
     }
-
+    
     func testNumberOfDaysChanges() throws {
-        // arrange
-        var receivedHasModificationsToSave: Bool?
-        var receivedNumberOfDaysDidChange: Void?
-        
-        sut.numberOfDaysDidChange
-            .sink { numberOfDaysDidChange in receivedNumberOfDaysDidChange = numberOfDaysDidChange }
-            .store(in: &anyCancellableSet)
-        
-        sut.hasModificationsToSave
-            .sink { modificationsToSave in receivedHasModificationsToSave = modificationsToSave }
-            .store(in: &anyCancellableSet)
-        
+        // arrange is done in `setUp`
+
         // act
         sut.set(numberOfDays: 4)
         
         // assert
-        do /*assert about received has modifications to save*/ {
-            let receivedHasModificationsToSave: Bool = try XCTUnwrap(receivedHasModificationsToSave)
-            XCTAssert(receivedHasModificationsToSave)
-        }
-        XCTAssertEqual(sut.numberOfDays, 4)
-        XCTAssertNotNil(receivedNumberOfDaysDidChange)
+        assert(expectedNumberOfDaysDidChange: (),
+               expectedHasModificationsToSave: true,
+               expectedNumberOfDays: 4)
         
         // arrange
-        receivedHasModificationsToSave = nil
-        receivedNumberOfDaysDidChange = nil
+        clearUpReceivedValue()
         
         // act
         sut.set(numberOfDays: 3)
         
         // assert
-        do /*assert about received has modifications to save*/ {
-            let receivedHasModificationsToSave: Bool = try XCTUnwrap(receivedHasModificationsToSave)
-            XCTAssertFalse(receivedHasModificationsToSave)
-        }
-        XCTAssertEqual(sut.numberOfDays, 3)
-        XCTAssertNotNil(receivedNumberOfDaysDidChange)
+        assert(expectedNumberOfDaysDidChange: (),
+               expectedHasModificationsToSave: false,
+               expectedNumberOfDays: 3)
     }
 
     func testSave() throws {
         // arrange
-        var receivedSetting: BaseResultModel.Setting?
-        var receivedCancel: Void?
         let expectedNumberOfDays: Int = 4
-        
-        saveSettingSubject
-            .sink { setting in receivedSetting = setting }
-            .store(in: &anyCancellableSet)
-        
-        cancelSubject
-            .sink { cancel in receivedCancel = cancel }
-            .store(in: &anyCancellableSet)
         
         // act
         sut.set(numberOfDays: expectedNumberOfDays)
         sut.save()
         
         // assert
-        do /*assert about received setting*/ {
-            let receivedSetting: BaseResultModel.Setting = try XCTUnwrap(receivedSetting)
-            XCTAssertEqual(receivedSetting.numberOfDays, expectedNumberOfDays)
+        do {
+            var expectedSetting: BaseResultModel.Setting = dummySetting
+            expectedSetting.numberOfDays = expectedNumberOfDays
+            assert(expectedNumberOfDaysDidChange: (),
+                   expectedHasModificationsToSave: true,
+                   expectedSetting: expectedSetting,
+                   expectedNumberOfDays: expectedNumberOfDays)
         }
-        XCTAssertNil(receivedCancel)
     }
     
     func testCancelWithoutModificationToSave() throws {
-        // arrange
-        var receivedSetting: BaseResultModel.Setting?
-        var receivedCancellationNeedsToBeConfirmed: Bool?
-        var receivedCancel: Void?
-        
-        saveSettingSubject
-            .sink { setting in receivedSetting = setting }
-            .store(in: &anyCancellableSet)
-        
-        sut.cancellationNeedsToBeConfirmed
-            .sink { cancellationNeedsToBeConfirmed in receivedCancellationNeedsToBeConfirmed = cancellationNeedsToBeConfirmed }
-            .store(in: &anyCancellableSet)
-        
-        cancelSubject
-            .sink { cancel in receivedCancel = cancel }
-            .store(in: &anyCancellableSet)
+        // arrange is done in `setUp`
         
         // act
         sut.attemptToCancel()
         
         // assert
-        XCTAssertNil(receivedSetting)
-        do /*assert about received cancellation needs to be confirmed*/ {
-            let receivedCancellationNeedsToBeConfirmed: Bool = try XCTUnwrap(receivedCancellationNeedsToBeConfirmed)
-            XCTAssertFalse(receivedCancellationNeedsToBeConfirmed)
-        }
-        XCTAssertNil(receivedCancel)
+        assert(expectedHasModificationsToSave: false,
+               expectedCancellationNeedsToBeConfirmed: false,
+               expectedNumberOfDays: dummySetting.numberOfDays)
         
         // act
-        receivedCancellationNeedsToBeConfirmed = nil
+        clearUpReceivedValue()
         sut.cancel()
         
         // assert
-        XCTAssertNil(receivedSetting)
-        XCTAssertNil(receivedCancellationNeedsToBeConfirmed)
-        XCTAssertNotNil(receivedCancel)
+        assert(expectedCancel: (),
+               expectedNumberOfDays: dummySetting.numberOfDays)
     }
     
     func testCancelWithModificationToSave() throws {
         // arrange
-        var receivedSetting: BaseResultModel.Setting?
-        var receivedCancellationNeedsToBeConfirmed: Bool?
-        var receivedCancel: Void?
-        
-        saveSettingSubject
-            .sink { setting in receivedSetting = setting }
-            .store(in: &anyCancellableSet)
-        
-        sut.cancellationNeedsToBeConfirmed
-            .sink { cancellationNeedsToBeConfirmed in receivedCancellationNeedsToBeConfirmed = cancellationNeedsToBeConfirmed }
-            .store(in: &anyCancellableSet)
-        
-        cancelSubject
-            .sink { cancel in receivedCancel = cancel }
-            .store(in: &anyCancellableSet)
+        let expectedNumberOfDays: Int = 4
         
         // act
-        sut.set(numberOfDays: 4)
+        sut.set(numberOfDays: expectedNumberOfDays)
         sut.attemptToCancel()
         
         // assert
-        XCTAssertNil(receivedSetting)
-        do /*assert about received cancellation needs to be confirmed*/ {
-            let receivedCancellationNeedsToBeConfirmed: Bool = try XCTUnwrap(receivedCancellationNeedsToBeConfirmed)
-            XCTAssertTrue(receivedCancellationNeedsToBeConfirmed)
+        assert(expectedNumberOfDaysDidChange: (),
+               expectedHasModificationsToSave: true,
+               expectedCancellationNeedsToBeConfirmed: true,
+               expectedNumberOfDays: expectedNumberOfDays)
+    }
+}
+
+// MARK: - private method
+private extension SettingModelTests {
+    func clearUpReceivedValue() {
+        receivedNumberOfDaysDidChange = nil
+        receivedBaseCurrencyCodeDidChange = nil
+        receivedCurrencyCodeOfInterestDidChange = nil
+        receivedHasModificationsToSave = nil
+        receivedCancellationNeedsToBeConfirmed = nil
+        
+        receivedSetting = nil
+        receivedCancel = nil
+    }
+    
+    func assert(expectedNumberOfDaysDidChange: Void? = nil,
+                expectedBaseCurrencyCodeDidChange: Void? = nil,
+                expectedCurrencyCodeOfInterestDidChange: Void? = nil,
+                expectedHasModificationsToSave: Bool? = nil,
+                expectedCancellationNeedsToBeConfirmed: Bool? = nil,
+                expectedSetting: BaseResultModel.Setting? = nil,
+                expectedCancel: Void? = nil,
+                expectedNumberOfDays: Int) {
+        if expectedNumberOfDaysDidChange == nil {
+            XCTAssertNil(receivedNumberOfDaysDidChange)
         }
-        XCTAssertNil(receivedCancel)
+        else {
+            XCTAssertNotNil(receivedNumberOfDaysDidChange)
+        }
+        
+        if expectedBaseCurrencyCodeDidChange == nil {
+            XCTAssertNil(receivedBaseCurrencyCodeDidChange)
+        }
+        else {
+            XCTAssertNotNil(receivedBaseCurrencyCodeDidChange)
+        }
+        
+        if expectedCurrencyCodeOfInterestDidChange == nil {
+            XCTAssertNil(receivedCurrencyCodeOfInterestDidChange)
+        }
+        else {
+            XCTAssertNotNil(receivedCurrencyCodeOfInterestDidChange)
+        }
+        
+        XCTAssertEqual(expectedHasModificationsToSave, receivedHasModificationsToSave)
+        XCTAssertEqual(expectedCancellationNeedsToBeConfirmed, receivedCancellationNeedsToBeConfirmed)
+        
+        if let expectedSetting {
+            XCTAssertEqual(expectedSetting.numberOfDays, receivedSetting?.numberOfDays)
+            XCTAssertEqual(expectedSetting.baseCurrencyCode, receivedSetting?.baseCurrencyCode)
+            XCTAssertEqual(expectedSetting.currencyCodeOfInterest, receivedSetting?.currencyCodeOfInterest)
+        }
+        else {
+            XCTAssertNil(receivedSetting)
+        }
+        
+        if expectedCancel == nil {
+            XCTAssertNil(receivedCancel)
+        }
+        else {
+            XCTAssertNotNil(receivedCancel)
+        }
+        
+        XCTAssertEqual(expectedNumberOfDays, sut.numberOfDays)
     }
 }
