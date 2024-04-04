@@ -2,7 +2,7 @@ import Foundation
 
 final class BaseCurrencySelectionStrategy: CurrencySelectionStrategy {
     init(baseCurrencyCode: ResponseDataModel.CurrencyCode,
-         completionHandler: @escaping (ResponseDataModel.CurrencyCode) -> Void) {
+         completionHandler: @escaping BaseCurrencyCodeSelectionHandler) {
         title = R.string.share.baseCurrency()
         allowsMultipleSelection = false
         
@@ -31,4 +31,8 @@ final class BaseCurrencySelectionStrategy: CurrencySelectionStrategy {
     func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
         currencyCode == baseCurrencyCode
     }
+}
+
+extension BaseCurrencySelectionStrategy {
+    typealias BaseCurrencyCodeSelectionHandler = (ResponseDataModel.CurrencyCode) -> Void
 }
