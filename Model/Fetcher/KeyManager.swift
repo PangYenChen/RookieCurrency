@@ -66,5 +66,11 @@ extension KeyManager {
 extension KeyManager {
     enum Error: LocalizedError {
         case runOutOfKey
+        
+        var localizedDescription: String {
+            switch self {
+                case .runOutOfKey: return "" // TODO:
+            }
+        }
     }
 }

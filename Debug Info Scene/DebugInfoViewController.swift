@@ -5,7 +5,7 @@ class DebugInfoViewController: UIViewController {
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        apiKeyUsageProgressView.setProgress(Float(Fetcher.shared.apiKeysUsageRatio), animated: true)
+        apiKeyUsageProgressView.setProgress(Float(KeyManager.shared.apiKeysUsageRatio), animated: true)
         homeDirectoryTextView.text = NSHomeDirectory()
     }
     
