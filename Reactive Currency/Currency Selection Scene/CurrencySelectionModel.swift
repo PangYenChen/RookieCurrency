@@ -1,7 +1,7 @@
 import Foundation
 import Combine
 
-class CurrencySelectionModel: CurrencySelectionModelProtocol {
+class CurrencySelectionModel: CurrencySelectionModelProtocol, BaseCurrencySelectionModelProtocol {
     // MARK: - initializer
     init(
         currencySelectionStrategy: CurrencySelectionStrategy,

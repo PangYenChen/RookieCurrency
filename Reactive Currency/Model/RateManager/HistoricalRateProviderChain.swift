@@ -1,9 +1,9 @@
 import Foundation
 import Combine
 
-class HistoricalRateProvider: BaseHistoricalRateProvider {}
+class HistoricalRateProviderChain: BaseHistoricalRateProviderChain {}
 
-extension HistoricalRateProvider: HistoricalRateProviderProtocol {
+extension HistoricalRateProviderChain: HistoricalRateProviderProtocol {
     func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, any Error> {
         nextHistoricalRateProvider.publisherFor(dateString: dateString)
     }

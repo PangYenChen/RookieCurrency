@@ -4,7 +4,7 @@ import Combine
 @testable import ReactiveCurrency
 
 final class HistoricalRateProviderTests: XCTestCase {
-    private var sut: HistoricalRateProvider!
+    private var sut: HistoricalRateProviderChain!
     
     private var historicalRateProviderSpy: TestDouble.HistoricalRateProvider!
     private var anyCancellableSet: Set<AnyCancellable>!
@@ -12,7 +12,7 @@ final class HistoricalRateProviderTests: XCTestCase {
     override func setUp() {
         historicalRateProviderSpy = TestDouble.HistoricalRateProvider()
         
-        sut = HistoricalRateProvider(nextHistoricalRateProvider: historicalRateProviderSpy)
+        sut = HistoricalRateProviderChain(nextHistoricalRateProvider: historicalRateProviderSpy)
         
         anyCancellableSet = Set<AnyCancellable>()
     }

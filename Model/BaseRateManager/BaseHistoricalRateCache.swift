@@ -2,7 +2,7 @@ import Foundation
 
 class BaseHistoricalRateCache {
     // MARK: - initializer
-    init(historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateArchiver.shared) {
+    init(historicalRateProvider: HistoricalRateProviderProtocol) {
         nextHistoricalRateProvider = historicalRateProvider
         
         dateStringAndRateDirectory = [:]
@@ -22,9 +22,4 @@ extension BaseHistoricalRateCache: BaseHistoricalRateProviderProtocol {
         
         nextHistoricalRateProvider.removeCachedAndStoredRate()
     }
-}
-
-// MARK: - static property
-extension HistoricalRateCache {
-    static let shared: HistoricalRateCache = HistoricalRateCache()
 }

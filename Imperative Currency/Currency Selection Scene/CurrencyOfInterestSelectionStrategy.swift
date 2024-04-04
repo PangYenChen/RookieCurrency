@@ -3,7 +3,7 @@ import Foundation
 final class CurrencyOfInterestSelectionStrategy: CurrencySelectionStrategy {
     // MARK: - initializer
     init(currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
-         completionHandler: @escaping (Set<ResponseDataModel.CurrencyCode>) -> Void) {
+         completionHandler: @escaping CurrencyCodeOfInterestSelectionHandler) {
         title = R.string.share.currencyOfInterest()
         allowsMultipleSelection = true
         
@@ -36,4 +36,8 @@ extension CurrencyOfInterestSelectionStrategy {
     func isCurrencyCodeSelected(_ currencyCode: ResponseDataModel.CurrencyCode) -> Bool {
         currencyCodeOfInterest.contains(currencyCode)
     }
+}
+
+extension CurrencyOfInterestSelectionStrategy {
+    typealias CurrencyCodeOfInterestSelectionHandler = (_ currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>) -> Void
 }

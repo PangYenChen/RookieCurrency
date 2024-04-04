@@ -1,11 +1,10 @@
 import Foundation
 
-class CurrencySelectionModel: CurrencySelectionModelProtocol {
+class CurrencySelectionModel: CurrencySelectionModelProtocol, BaseCurrencySelectionModelProtocol {
     // MARK: - initializer
     init(currencySelectionStrategy: CurrencySelectionStrategy,
          supportedCurrencyManager: SupportedCurrencyManager = .shared) {
         self.currencySelectionStrategy = currencySelectionStrategy
-        
         self.supportedCurrencyManager = supportedCurrencyManager
         self.currencyCodeDescriptionDictionarySorter = CurrencyCodeDescriptionDictionarySorter(currencyDescriber: supportedCurrencyManager)
         
@@ -24,7 +23,7 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol {
     
     private var searchText: String?
     
-    var resultHandler: ((Result<[ResponseDataModel.CurrencyCode], Error>) -> Void)?
+    var sortedCurrencyCodeResultHandler: SortedCurrencyCodeResultHandler?
     
     let currencySelectionStrategy: CurrencySelectionStrategy
     
@@ -58,14 +57,19 @@ private extension CurrencySelectionModel {
         supportedCurrencyManager.fetchSupportedCurrency { [weak self] result in
             guard let self else { return }
             
-            let newResult = result.map { currencyCodeDescriptionDictionary in
-                self.currencyCodeDescriptionDictionarySorter.sort(currencyCodeDescriptionDictionary,
-                                                                  bySortingMethod: self.sortingMethod,
-                                                                  andSortingOrder: self.sortingOrder,
-                                                                  thenFilterIfNeedBySearchTextBy: self.searchText)
-            }
+            let newResult: Result<[ResponseDataModel.CurrencyCode], Error> = result
+                .map { currencyCodeDescriptionDictionary in
+                    self.currencyCodeDescriptionDictionarySorter.sort(currencyCodeDescriptionDictionary,
+                                                                      bySortingMethod: self.sortingMethod,
+                                                                      andSortingOrder: self.sortingOrder,
+                                                                      thenFilterIfNeedBySearchTextBy: self.searchText)
+                }
             
-            resultHandler?(newResult)
+            sortedCurrencyCodeResultHandler?(newResult)
         }
     }
+}
+
+extension CurrencySelectionModel {
+    typealias SortedCurrencyCodeResultHandler = (_ sortedCurrencyCodeResult: Result<[ResponseDataModel.CurrencyCode], Error>) -> Void
 }

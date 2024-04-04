@@ -4,7 +4,7 @@ import Foundation
 class BaseHistoricalRateArchiver {
     // MARK: - initializer
     init(fileManager: FileManager = .default,
-         nextHistoricalRateProvider: HistoricalRateProviderProtocol = Fetcher.shared) {
+         nextHistoricalRateProvider: HistoricalRateProviderProtocol) {
         self.fileManager = fileManager
         self.nextHistoricalRateProvider = nextHistoricalRateProvider
         
@@ -23,11 +23,6 @@ class BaseHistoricalRateArchiver {
     private let jsonDecoder: JSONDecoder
     private let jsonEncoder: JSONEncoder
     private let jsonPathExtension: String
-}
-
-// MARK: - static property
-extension HistoricalRateArchiver {
-    static let shared: HistoricalRateArchiver = HistoricalRateArchiver()
 }
 
 // MARK: - instance methods

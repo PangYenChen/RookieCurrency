@@ -1,11 +1,11 @@
 import Foundation
 
-protocol CurrencySelectionModelProtocol: BaseCurrencySelectionModelProtocol {
+protocol CurrencySelectionModelProtocol {
     var currencySelectionStrategy: CurrencySelectionStrategy { get }
     var supportedCurrencyManager: SupportedCurrencyManager { get }
 }
 
-extension CurrencySelectionModelProtocol {
+extension BaseCurrencySelectionModelProtocol where Self: CurrencySelectionModelProtocol {
     var title: String { currencySelectionStrategy.title }
     
     var allowsMultipleSelection: Bool { currencySelectionStrategy.allowsMultipleSelection }

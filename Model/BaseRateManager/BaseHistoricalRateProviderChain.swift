@@ -4,7 +4,9 @@ protocol BaseHistoricalRateProviderProtocol {
     func removeCachedAndStoredRate()
 }
 
-class BaseHistoricalRateProvider {
+/// 實作的邏輯類似於 chain of responsibility，不過 chain 是固定的
+/// HistoricalRateProviderChain > HistoricalRateCache > HistoricalArchiver > Fetcher
+class BaseHistoricalRateProviderChain {
     // MARK: - initializer
     init(nextHistoricalRateProvider: HistoricalRateProviderProtocol) {
         self.nextHistoricalRateProvider = nextHistoricalRateProvider
@@ -15,20 +17,18 @@ class BaseHistoricalRateProvider {
 }
 
 // MARK: - instance method
-extension BaseHistoricalRateProvider: BaseHistoricalRateProviderProtocol {
+extension BaseHistoricalRateProviderChain: BaseHistoricalRateProviderProtocol {
     func removeCachedAndStoredRate() {
         nextHistoricalRateProvider.removeCachedAndStoredRate()
     }
 }
 
 // MARK: - static property
-extension HistoricalRateProvider {
-    /// 實作的邏輯類似於 chain of responsibility，不過 chain 是固定的
-    /// HistoricalRateProvider > HistoricalRateCache > HistoricalArchiver > Fetcher
-    static let shared: HistoricalRateProvider = {
+extension HistoricalRateProviderChain {
+    static let shared: HistoricalRateProviderChain = {
         let rateArchiver: HistoricalRateArchiver = HistoricalRateArchiver(nextHistoricalRateProvider: Fetcher.shared)
         let rateCache: HistoricalRateCache = HistoricalRateCache(historicalRateProvider: rateArchiver)
         
-        return HistoricalRateProvider(nextHistoricalRateProvider: rateCache)
+        return HistoricalRateProviderChain(nextHistoricalRateProvider: rateCache)
     }()
 }
