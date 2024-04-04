@@ -10,7 +10,7 @@ final class CurrencySelectionTableViewController: BaseCurrencySelectionTableView
     
     // MARK: - life cycle
     override func viewDidLoad() {
-        currencySelectionModel.resultHandler = updateUIFor(result:)
+        currencySelectionModel.sortedCurrencyCodeResultHandler = updateUIFor(result:)
         
         super.viewDidLoad()
     }
