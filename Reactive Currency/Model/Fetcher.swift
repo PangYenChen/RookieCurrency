@@ -9,7 +9,7 @@ class Fetcher: BaseFetcher {
         func dataTaskPublisherWithLimitHandling(for endpoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> {
             switch keyManager.getUsingAPIKey() {
                 case .success(let apiKey):
-                    return rateSession.rateDataTaskPublisher(for: createRequest(url: endpoint.url, withAPIKey: apiKey))
+                    return currencySession.rateDataTaskPublisher(for: createRequest(url: endpoint.url, withAPIKey: apiKey))
                         .mapError { $0 }
                         .flatMap { [unowned self] data, response -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> in
                             if let httpURLResponse = response as? HTTPURLResponse {

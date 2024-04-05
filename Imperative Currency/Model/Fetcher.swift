@@ -13,7 +13,7 @@ class Fetcher: BaseFetcher {
             case .success(let apiKey):
                 let urlRequest: URLRequest = createRequest(url: endpoint.url, withAPIKey: apiKey)
                 
-                rateSession.rateDataTask(with: urlRequest) { [unowned self] data, response, error in
+                currencySession.rateDataTask(with: urlRequest) { [unowned self] data, response, error in
                     if let httpURLResponse = response as? HTTPURLResponse, let data {
                         if httpURLResponse.statusCode == 401 {
                             // status code 是 401 表示 api key 無效，要更新 api key 後重新打

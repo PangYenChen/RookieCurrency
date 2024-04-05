@@ -2,7 +2,7 @@ import Foundation
 import XCTest
 
 extension TestingData {
-    enum SessionData {
+    enum CurrencySessionTuple {
         static func latestRate() throws -> (data: Data?, response: URLResponse?, error: Error?) {
             let data: Data? = TestingData.latestData
             let url: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))

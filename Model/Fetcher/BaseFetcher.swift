@@ -3,9 +3,9 @@ import Foundation
 /// 跟伺服器拿資料的物件
 class BaseFetcher {
     // MARK: - initializer
-    init(rateSession: RateSession = BaseFetcher.rateSession,
+    init(currencySession: CurrencySessionProtocol = BaseFetcher.currencySession,
          keyManager: KeyManager = KeyManager.shared) {
-        self.rateSession = rateSession
+        self.currencySession = currencySession
         self.keyManager = keyManager
         
         jsonDecoder = ResponseDataModel.jsonDecoder
@@ -13,7 +13,7 @@ class BaseFetcher {
     }
     
     // MARK: - instance properties
-    let rateSession: RateSession
+    let currencySession: CurrencySessionProtocol
 
     let jsonDecoder: JSONDecoder
     
@@ -41,7 +41,7 @@ extension BaseFetcher {
 // MARK: - static property
 extension BaseFetcher {
     /// 不暫存的 session
-    private static let rateSession: URLSession = {
+    private static let currencySession: URLSession = {
         let configuration: URLSessionConfiguration = URLSessionConfiguration.default
         configuration.urlCache = nil
         
