@@ -1,12 +1,7 @@
 import Foundation
 import Combine
 
-// MARK: - Fetcher Protocol
-protocol FetcherProtocol {
-    func publisher<Endpoint: EndpointProtocol>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error>
-}
-
-class Fetcher: BaseFetcher, FetcherProtocol {
+class Fetcher: BaseFetcher {
     /// 像服務商的伺服器索取資料。
     /// - Parameter endPoint: The end point to be retrieved.
     /// - Returns: The publisher publishes decoded instance when the task completes, or terminates if the task fails with an error.
@@ -81,5 +76,11 @@ extension Fetcher: HistoricalRateProviderProtocol {
 extension Fetcher: LatestRateProviderProtocol {
     func publisher() -> AnyPublisher<ResponseDataModel.LatestRate, Swift.Error> {
         publisher(for: Endpoints.Latest())
+    }
+}
+
+extension Fetcher: SupportedCurrencyProviderProtocol {
+    func supportedCurrency() -> AnyPublisher<ResponseDataModel.SupportedSymbols, Swift.Error> {
+        publisher(for: Endpoints.SupportedSymbols())
     }
 }

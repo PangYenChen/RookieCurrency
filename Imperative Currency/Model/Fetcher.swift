@@ -1,14 +1,6 @@
 import Foundation
 
-// MARK: - Fetcher Protocol
-protocol FetcherProtocol {
-    func fetch<Endpoint: EndpointProtocol>(
-        _ endpoint: Endpoint,
-        completionHandler: @escaping (Result<Endpoint.ResponseType, Swift.Error>) -> Void
-    )
-}
-
-class Fetcher: BaseFetcher, FetcherProtocol {
+class Fetcher: BaseFetcher {
     /// 向服務商伺服器索取資料
     /// - Parameters:
     ///   - endpoint: The end point to be retrieved.
