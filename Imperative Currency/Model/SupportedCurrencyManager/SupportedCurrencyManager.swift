@@ -2,16 +2,17 @@ import Foundation
 
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     // MARK: - life cycle
-    override init(fetcher: FetcherProtocol = Fetcher.shared,
+    override init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol = Fetcher.shared,
                   locale: Locale = Locale.autoupdatingCurrent) {
         completionHandlers = []
         
-        super.init(fetcher: fetcher, locale: locale)
+        super.init(supportedCurrencyProvider: supportedCurrencyProvider,
+                   locale: locale)
     }
     
     private var completionHandlers: [(Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void]
     
-    func fetchSupportedCurrency(completionHandler: @escaping (Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void) {
+    func getSupportedCurrency(completionHandler: @escaping (Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void) {
         if let supportedCurrencyDescriptionDictionary {
             completionHandler(.success(supportedCurrencyDescriptionDictionary))
         }
@@ -20,7 +21,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
             
             guard !completionHandlers.isEmpty else { return }
             
-            fetcher.fetch(Endpoints.SupportedSymbols()) { [unowned self] result in
+            supportedCurrencyProvider.supportedCurrency { [unowned self] result in
                 if case .success(let supportedSymbols) = result {
                     supportedCurrencyDescriptionDictionary = supportedSymbols.symbols
                 }
@@ -32,7 +33,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     }
     
     func prefetchSupportedCurrency() {
-        fetchSupportedCurrency { _ in }
+        getSupportedCurrency { _ in }
     }
 }
 

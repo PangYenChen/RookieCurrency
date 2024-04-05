@@ -6,14 +6,14 @@ protocol CurrencyDescriberProtocol {
 
 class BaseSupportedCurrencyManager {
     // MARK: - initializer
-    init(fetcher: FetcherProtocol = Fetcher.shared,
+    init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol = Fetcher.shared,
          locale: Locale = Locale.autoupdatingCurrent) {
-        self.fetcher = fetcher
+        self.supportedCurrencyProvider = supportedCurrencyProvider
         self.locale = locale
     }
 
     // MARK: - instance properties
-    let fetcher: FetcherProtocol
+    let supportedCurrencyProvider: SupportedCurrencyProviderProtocol
     
     private let locale: Locale
     

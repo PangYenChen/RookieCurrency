@@ -88,3 +88,9 @@ extension Fetcher: LatestRateProviderProtocol {
         fetch(Endpoints.Latest(), completionHandler: latestRateResultHandler)
     }
 }
+
+extension Fetcher: SupportedCurrencyProviderProtocol {
+    func supportedCurrency(completionHandler: @escaping SupportedCurrencyHandler) {
+        fetch(Endpoints.SupportedSymbols(), completionHandler: completionHandler)
+    }
+}

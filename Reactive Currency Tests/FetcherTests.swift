@@ -7,18 +7,23 @@ class FetcherTests: XCTestCase {
     
     private var stubRateSession: StubRateSession!
     
-    private var anyCancellableSet: Set<AnyCancellable> = Set<AnyCancellable>()
+    private var anyCancellableSet: Set<AnyCancellable>!
     
     override func setUp() {
         stubRateSession = StubRateSession()
+        
         sut = Fetcher(rateSession: stubRateSession)
+        
+        anyCancellableSet = Set<AnyCancellable>()
     }
     
     override func tearDown() {
         sut = nil
+        
         stubRateSession = nil
+        
         anyCancellableSet.forEach { anyCancellable in anyCancellable.cancel() }
-        anyCancellableSet = Set<AnyCancellable>()
+        anyCancellableSet = nil
     }
     
     func testNoRetainCycleOccur() {

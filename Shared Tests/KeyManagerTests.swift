@@ -29,6 +29,16 @@ final class KeyManagerTests: XCTestCase {
         concurrentQueue = nil
     }
     
+    func testNoRetainCycleOccur() {
+        // arrange
+        addTeardownBlock { [weak sut] in
+            // assert
+            XCTAssertNil(sut)
+        }
+        // act
+        sut = nil
+    }
+    
     func testRunOutOfKeys() throws {
         // arrange, do nothing
         
@@ -81,6 +91,8 @@ final class KeyManagerTests: XCTestCase {
         for _ in 0..<(unusedAPIKeys.count / 2) {
             concurrentQueue.async { [unowned self] in sut.getUsingAPIKeyAfterDeprecating(usingAPIKey) }
         }
+        
+        concurrentQueue.sync(flags: .barrier) { /*intentionally left blank*/ }
         
         // assert
         let currentUsingAPIKey: String = try sut.getUsingAPIKey().get()
