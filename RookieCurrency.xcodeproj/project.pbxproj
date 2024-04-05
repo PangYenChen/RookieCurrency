@@ -128,6 +128,8 @@
 		516DD05A2BBC905200D0B593 /* SettingModelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD0592BBC905200D0B593 /* SettingModelTests.swift */; };
 		516DD07D2BBF29F100D0B593 /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD07C2BBF29F100D0B593 /* KeyManager.swift */; };
 		516DD07E2BBF29F100D0B593 /* KeyManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD07C2BBF29F100D0B593 /* KeyManager.swift */; };
+		516DD0882BBF556800D0B593 /* KeyManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD0872BBF556800D0B593 /* KeyManagerTests.swift */; };
+		516DD0892BBF556800D0B593 /* KeyManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516DD0872BBF556800D0B593 /* KeyManagerTests.swift */; };
 		516FF51C2B01014000576177 /* SettingModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 516FF51A2B01014000576177 /* SettingModel.swift */; };
 		51869FD829D9D31D00EFA13D /* BaseRateManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */; };
 		51869FD929D9D31D00EFA13D /* BaseRateManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */; };
@@ -292,6 +294,7 @@
 		516DD0542BBC786C00D0B593 /* SettingModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingModelTests.swift; sourceTree = "<group>"; };
 		516DD0592BBC905200D0B593 /* SettingModelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingModelTests.swift; sourceTree = "<group>"; };
 		516DD07C2BBF29F100D0B593 /* KeyManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManager.swift; sourceTree = "<group>"; };
+		516DD0872BBF556800D0B593 /* KeyManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyManagerTests.swift; sourceTree = "<group>"; };
 		516FF51A2B01014000576177 /* SettingModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingModel.swift; sourceTree = "<group>"; };
 		51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRateManagerTests.swift; sourceTree = "<group>"; };
 		5189F9CF29DAD630004234D3 /* RateManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateManagerTests.swift; sourceTree = "<group>"; };
@@ -438,6 +441,7 @@
 			children = (
 				519A643429B4615B00918B84 /* ResponseDataModelTest.swift */,
 				51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */,
+				516DD0872BBF556800D0B593 /* KeyManagerTests.swift */,
 				51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */,
 				51290BA52B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift */,
 				51290BB42B9A4ED1005BE201 /* UserSettingManagerTests.swift */,
@@ -1130,6 +1134,7 @@
 				5145AC282BB5FEF2001783AF /* HistoricalRateProvider.swift in Sources */,
 				51E1B4B929ADADD800D75669 /* TestingData For Data.swift in Sources */,
 				5121216C29E2D60C001D234B /* TestDouble.swift in Sources */,
+				516DD0882BBF556800D0B593 /* KeyManagerTests.swift in Sources */,
 				5189F9D029DAD630004234D3 /* RateManagerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1223,6 +1228,7 @@
 				5121216929E2D59F001D234B /* RateManagerTests.swift in Sources */,
 				5121216D29E2D60C001D234B /* TestDouble.swift in Sources */,
 				51C02C142B39B92000B757FA /* RateManager.swift in Sources */,
+				516DD0892BBF556800D0B593 /* KeyManagerTests.swift in Sources */,
 				519A643929B462AE00918B84 /* TestingData.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
