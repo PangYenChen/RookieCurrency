@@ -35,19 +35,20 @@ final class KeyManagerTests: XCTestCase {
         // act, do nothing
         
         // assert
-        var usingAPIKey: String = try XCTUnwrap(sut.getUsingAPIKey().get())
+        var usingAPIKey: String = try sut.getUsingAPIKey().get()
         
         for _ in 0..<(unusedAPIKeys.count - 1) {
             usingAPIKey = try sut.getUsingAPIKeyAfterDeprecating(usingAPIKey).get()
         }
         
-        XCTAssertNil(try? sut.getUsingAPIKeyAfterDeprecating(usingAPIKey).get())
+        XCTAssertThrowsError(try sut.getUsingAPIKeyAfterDeprecating(usingAPIKey).get())
     }
     
     func testRunOutOfKeysConcurrently() throws {
         // arrange
-        let concurrentQueue: DispatchQueue = DispatchQueue(label: "test.run.out.of.keys.concurrently", attributes: .concurrent)
-        
+        let concurrentQueue: DispatchQueue = DispatchQueue(label: "test.run.out.of.keys.concurrently",
+                                                           attributes: .concurrent)
+        // act
         for _ in 0..<(unusedAPIKeys.count - 1) {
             concurrentQueue.async { [unowned self] in
                 switch sut.getUsingAPIKey() {
@@ -64,5 +65,25 @@ final class KeyManagerTests: XCTestCase {
         }
         
         concurrentQueue.sync(flags: .barrier) { /*intentionally left blank*/ }
+        
+        // assert, should not crash
+    }
+    
+    func testDeprecatingSameAPIKey() throws {
+        // arrange
+        let usingAPIKey: String = try sut.getUsingAPIKey().get()
+        let concurrentQueue: DispatchQueue = DispatchQueue(label: "test.deprecating.same.api.key",
+                                                           attributes: .concurrent)
+        
+        let newUsingAPIKey: String = try sut.getUsingAPIKeyAfterDeprecating(usingAPIKey).get()
+        
+        // act
+        for _ in 0..<(unusedAPIKeys.count / 2) {
+            concurrentQueue.async { [unowned self] in sut.getUsingAPIKeyAfterDeprecating(usingAPIKey) }
+        }
+        
+        // assert
+        let currentUsingAPIKey: String = try sut.getUsingAPIKey().get()
+        XCTAssertEqual(newUsingAPIKey, currentUsingAPIKey)
     }
 }
