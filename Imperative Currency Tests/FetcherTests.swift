@@ -66,7 +66,9 @@ final class FetcherTests: XCTestCase {
         sut.rateFor(dateString: expectedDateString) { result in receivedHistoricalRateResult = result }
         
         do {
-            let historicalRateTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.CurrencySessionTuple.historicalRate(dateString: expectedDateString)
+            let historicalRateTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .historicalRate(dateString: expectedDateString)
             currencySession.executeCompletionHandler(with: historicalRateTuple.data,
                                                      historicalRateTuple.response,
                                                      historicalRateTuple.error)
@@ -88,34 +90,40 @@ final class FetcherTests: XCTestCase {
             }
         }
     }
-    //
-    //    /// 當 session 回傳無法 decode 的 json data 時，要能回傳 decoding error
-    //    func testInvalidJSONData() throws {
-    //        // arrange
-    //        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
-    //
-    //        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-    //        do {
-    //            stubRateSession.tuple = try TestingData.SessionData.noContent()
-    //        }
-    //
-    //        // act
-    //        sut.fetch(dummyEndpoint) { result in receivedResult = result }
-    //
-    //        // assert
-    //        do {
-    //            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
-    //
-    //            switch receivedResult {
-    //                case .success:
-    //                    XCTFail("should fail to decode")
-    //                case .failure(let error):
-    //                    if !(error is DecodingError) {
-    //                        XCTFail("get an error other than decoding error: \(error)")
-    //                    }
-    //            }
-    //        }
-    //    }
+    
+    func testInvalidJSONData() throws {
+        // arrange
+        var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
+        
+        let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            return Endpoints.TestEndpoint(url: dummyURL)
+        }()
+        
+        // act
+        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        
+        do {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.CurrencySessionTuple.noContent()
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
+        // assert
+        do {
+            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
+            
+            switch receivedResult {
+                case .success:
+                    XCTFail("should fail to decode")
+                case .failure(let error):
+                    if !(error is DecodingError) {
+                        XCTFail("get an error other than decoding error: \(error)")
+                    }
+            }
+        }
+    }
     //
     //    /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
     //    func testTimeout() throws {
