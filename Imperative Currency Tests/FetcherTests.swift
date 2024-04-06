@@ -97,6 +97,35 @@ final class FetcherTests: XCTestCase {
         }
     }
     
+    func testFetchSupportedSymbols() throws {
+        // arrange
+        var receivedResult: Result<ResponseDataModel.SupportedSymbols, Error>?
+        
+        // act
+        sut.supportedCurrency { result in receivedResult = result }
+        do {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .supportedSymbols()
+            
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
+        // assert
+        do {
+            let receivedResult: Result<ResponseDataModel.SupportedSymbols, Error> = try XCTUnwrap(receivedResult)
+            
+            switch receivedResult {
+                case .success(let supportedSymbols):
+                    XCTAssertFalse(supportedSymbols.symbols.isEmpty)
+                case .failure(let failure):
+                    XCTFail("should not receive any failure, but receive: \(failure)")
+            }
+        }
+    }
+    
     func testInvalidJSONData() throws {
         // arrange
         var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
@@ -330,30 +359,7 @@ final class FetcherTests: XCTestCase {
     //        }
     //    }
     //
-    //    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `SupportedSymbols` instance
-    //    func testFetchSupportedSymbols() throws {
-    //        // arrange
-    //        var receivedResult: Result<ResponseDataModel.SupportedSymbols, Error>?
-    //
-    //        do {
-    //            stubRateSession.tuple = try TestingData.SessionData.supportedSymbols()
-    //        }
-    //
-    //        // act
-    //        sut.fetch(Endpoints.SupportedSymbols()) { result in receivedResult = result }
-    //
-    //        // assert
-    //        do {
-    //            let receivedResult: Result<ResponseDataModel.SupportedSymbols, Error> = try XCTUnwrap(receivedResult)
-    //
-    //            switch receivedResult {
-    //                case .success(let supportedSymbols):
-    //                    XCTAssertFalse(supportedSymbols.symbols.isEmpty)
-    //                case .failure(let failure):
-    //                    XCTFail("should not receive any failure, but receive: \(failure)")
-    //            }
-    //        }
-    //    }
+    
     //
     //    /// 同時 call 兩次 session 的 method，
     //    /// 都回應 api key 的額度用罄，
