@@ -44,7 +44,6 @@ class FetcherTests: XCTestCase {
         sut = nil
     }
     
-    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `LatestRate` instance
     func testPublishLatestRate() throws {
         // arrange
         var receivedValue: ResponseDataModel.LatestRate?
@@ -60,7 +59,7 @@ class FetcherTests: XCTestCase {
                 .CurrencySessionTuple
                 .latestRate()
             try currencySession.publish((XCTUnwrap(tuple.data),
-                                         XCTUnwrap(tuple.response))) 
+                                         XCTUnwrap(tuple.response)))
         }
         
         // assert
@@ -80,46 +79,48 @@ class FetcherTests: XCTestCase {
             }
         }
     }
-    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `HistoricalRate` instance
-//    func testPublishHistoricalRate() throws {
-//        // arrange
-//        var receivedValue: ResponseDataModel.HistoricalRate?
-//        var receivedCompletion: Subscribers.Completion<Error>?
-//        
-//        let dummyDateString: ResponseDataModel.CurrencyCode = "1970-01-01"
-//        
-//        do {
-//            stubRateSession.outputPublisher = try sessionDataPublisher(TestingData.SessionData.historicalRate(dateString: dummyDateString))
-//        }
-//        
-//        // act
-//        sut.publisher(for: Endpoints.Historical(dateString: dummyDateString))
-//            .sink(
-//                receiveCompletion: { completion in receivedCompletion = completion },
-//                receiveValue: { historicalRate in receivedValue = historicalRate }
-//            )
-//            .store(in: &anyCancellableSet)
-//        
-//        // assert
-//        do {
-//            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
-//            
-//            switch receivedCompletion {
-//                case .failure(let error):
-//                    XCTFail("不應該收到錯誤，但收到\(error)")
-//                case .finished:
-//                    break
-//            }
-//        }
-//        
-//        do {
-//            let receivedHistoricalRate: ResponseDataModel.HistoricalRate = try XCTUnwrap(receivedValue)
-//            XCTAssertFalse(receivedHistoricalRate.rates.isEmpty)
-//            
-//            let dummyCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
-//            XCTAssertNotNil(receivedHistoricalRate[currencyCode: dummyCurrencyCode])
-//        }
-//    }
+    
+    func testPublishHistoricalRate() throws {
+        // arrange
+        var receivedValue: ResponseDataModel.HistoricalRate?
+        var receivedCompletion: Subscribers.Completion<Error>?
+        
+        // act
+        do {
+            let dummyDateString: ResponseDataModel.CurrencyCode = "1970-01-01"
+            sut.publisherFor(dateString: dummyDateString)
+                .sink(receiveCompletion: { completion in receivedCompletion = completion },
+                      receiveValue: { historicalRate in receivedValue = historicalRate })
+                .store(in: &anyCancellableSet)
+            do /*currency session act*/ {
+                let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                    .CurrencySessionTuple
+                    .historicalRate(dateString: dummyDateString)
+                try currencySession.publish((XCTUnwrap(tuple.data),
+                                             XCTUnwrap(tuple.response)))
+            }
+        }
+        
+        // assert
+        do {
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            
+            switch receivedCompletion {
+                case .failure(let error):
+                    XCTFail("不應該收到錯誤，但收到\(error)")
+                case .finished:
+                    break
+            }
+        }
+        
+        do {
+            let receivedHistoricalRate: ResponseDataModel.HistoricalRate = try XCTUnwrap(receivedValue)
+            XCTAssertFalse(receivedHistoricalRate.rates.isEmpty)
+            
+            let dummyCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
+            XCTAssertNotNil(receivedHistoricalRate[currencyCode: dummyCurrencyCode])
+        }
+    }
 //    
 //    /// 當 session 回傳無法 decode 的 json data 時，要能回傳 decoding error
 //    func testInvalidJSONData() throws {
