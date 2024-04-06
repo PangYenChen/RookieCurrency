@@ -121,8 +121,44 @@ class FetcherTests: XCTestCase {
             XCTAssertNotNil(receivedHistoricalRate[currencyCode: dummyCurrencyCode])
         }
     }
-//    
-//    /// 當 session 回傳無法 decode 的 json data 時，要能回傳 decoding error
+    
+    func testFetchSupportedSymbols() throws {
+        // arrange
+        var receivedValue: ResponseDataModel.SupportedSymbols?
+        var receivedCompletion: Subscribers.Completion<Error>?
+        
+        // act
+        sut.supportedCurrency()
+            .sink(receiveCompletion: { completion in receivedCompletion = completion },
+                  receiveValue: { value in receivedValue = value })
+            .store(in: &anyCancellableSet)
+        do /*currency session act*/ {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .supportedSymbols()
+            try currencySession.publish((XCTUnwrap(tuple.data),
+                                         XCTUnwrap(tuple.response)))
+        }
+        
+        // assert
+        do {
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            
+            switch receivedCompletion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    XCTFail("should not receive any error, but receive: \(error)")
+            }
+        }
+        
+        do {
+            let receivedSupportedSymbols: ResponseDataModel.SupportedSymbols = try XCTUnwrap(receivedValue)
+            
+            XCTAssertFalse(receivedSupportedSymbols.symbols.isEmpty)
+        }
+    }
+    
 //    func testInvalidJSONData() throws {
 //        // arrange
 //        var receivedValue: ResponseDataModel.LatestRate?
@@ -160,7 +196,7 @@ class FetcherTests: XCTestCase {
 //            XCTAssertNil(receivedValue)
 //        }
 //    }
-//    
+    
 //    /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
 //    func testTimeout() throws {
 //        // arrange
@@ -406,42 +442,7 @@ class FetcherTests: XCTestCase {
 //        }
 //    }
 //    
-//    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `SupportedSymbols` instance
-//    func testFetchSupportedSymbols() throws {
-//        // arrange
-//        var receivedValue: ResponseDataModel.SupportedSymbols?
-//        var receivedCompletion: Subscribers.Completion<Error>?
-//        
-//        do {
-//            stubRateSession.outputPublisher = try sessionDataPublisher(TestingData.SessionData.supportedSymbols())
-//        }
-//        
-//        // act
-//        sut.publisher(for: Endpoints.SupportedSymbols())
-//            .sink(
-//                receiveCompletion: { completion in receivedCompletion = completion },
-//                receiveValue: { value in receivedValue = value }
-//            )
-//            .store(in: &anyCancellableSet)
-//        
-//        // assert
-//        do {
-//            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
-//            
-//            switch receivedCompletion {
-//                case .finished:
-//                    break
-//                case .failure(let error):
-//                    XCTFail("should not receive any error, but receive: \(error)")
-//            }
-//        }
-//        
-//        do {
-//            let receivedSupportedSymbols: ResponseDataModel.SupportedSymbols = try XCTUnwrap(receivedValue)
-//            
-//            XCTAssertFalse(receivedSupportedSymbols.symbols.isEmpty)
-//        }
-//    }
+//
 //    
 //    /// 同時 call 兩次 session 的 method，
 //    /// 都回應 api key 的額度用罄，
