@@ -17,16 +17,20 @@ extension TestDouble {
             else {
                 usingAPIKeyResult = .failure(Error.runOutOfKey)
             }
+            
+            usedAPIKeys = []
         }
         
         private var unusedAPIKeys: Set<String>
         private var usingAPIKeyResult: Result<String, Swift.Error>
+        private(set) var usedAPIKeys: Set<String>
         
         func getUsingAPIKeyAfterDeprecating(_ apiKeyToBeDeprecated: String) -> Result<String, Swift.Error> {
             guard case let .success(usingAPIKey) = usingAPIKeyResult else { return .failure(Error.runOutOfKey) }
             guard apiKeyToBeDeprecated == usingAPIKey else { return .success(usingAPIKey) }
             
             if let unusedAPIKey = unusedAPIKeys.popFirst() {
+                usedAPIKeys.insert(apiKeyToBeDeprecated)
                 usingAPIKeyResult = .success(unusedAPIKey)
             }
             else {

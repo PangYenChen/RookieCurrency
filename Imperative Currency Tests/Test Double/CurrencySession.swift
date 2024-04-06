@@ -4,17 +4,20 @@ import Foundation
 
 extension TestDouble {
     class CurrencySession: CurrencySessionProtocol {
+        init() {
+            completionHandlers = []
+        }
         
-        private var completionHandler: ((Data?, URLResponse?, Error?) -> Void)?
+        private var completionHandlers: [(Data?, URLResponse?, Error?) -> Void]
         
-        func rateDataTask(with request: URLRequest, 
+        func rateDataTask(with request: URLRequest,
                           completionHandler: @escaping (Data?, URLResponse?, (any Error)?) -> Void) {
-            self.completionHandler = completionHandler
+            completionHandlers.append(completionHandler)
         }
         
         func executeCompletionHandler(with data: Data?, _ urlResponse: URLResponse?, _ error: Error?) {
-            completionHandler?(data, urlResponse, error)
-            completionHandler = nil
+            guard !completionHandlers.isEmpty else { return }
+            completionHandlers.removeFirst()(data, urlResponse, error)
         }
     }
 }

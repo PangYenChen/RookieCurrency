@@ -571,6 +571,12 @@ Invalid authentication credentials
   }
 }
 """.data(using: .utf8)
+        
+        static let testData: Data? = """
+{
+    "foo": 3
+}
+""".data(using: .utf8)
     }
 }
 

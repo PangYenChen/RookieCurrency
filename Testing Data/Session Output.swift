@@ -82,5 +82,18 @@ extension TestingData {
             
             return (data: data, response: response, error: nil)
         }
+        
+        static func testTuple() throws -> (data: Data?, response: URLResponse?, error: Error?) {
+            let data: Data? = TestingData.testData
+            let url: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            let statusCode: Int = 200
+            
+            let response: HTTPURLResponse? = HTTPURLResponse(url: url,
+                                                             statusCode: statusCode,
+                                                             httpVersion: nil,
+                                                             headerFields: nil)
+            
+            return (data: data, response: response, error: nil)
+        }
     }
 }
