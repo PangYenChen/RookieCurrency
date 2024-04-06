@@ -79,6 +79,7 @@ extension BaseFetcher {
             }
         }
         else {
+            // 這個專案的 request 都是 http request，依照文件所說，收到的 response 可以 down cast 成 http url response。
             return .failure(.unknownError)
         }
     }

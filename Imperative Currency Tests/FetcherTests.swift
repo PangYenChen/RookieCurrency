@@ -19,7 +19,10 @@ final class FetcherTests: XCTestCase {
     
     override func tearDown() {
         sut = nil
+        
         currencySession = nil
+        keyManager = nil
+        dummyAPIKeys = nil
     }
     
     func testNoRetainCycleOccur() {

@@ -12,49 +12,35 @@ class Fetcher: BaseFetcher {
                     return currencySession.rateDataTaskPublisher(for: createRequest(url: endpoint.url, withAPIKey: apiKey))
                         .mapError { $0 }
                         .flatMap { [unowned self] data, urlResponse -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> in
-                            if let httpURLResponse = urlResponse as? HTTPURLResponse {
-                                if httpURLResponse.statusCode == 401 {
-                                    // server 回應 status code 401，表示 api key 無效
-                                    switch keyManager.getUsingAPIKeyAfterDeprecating(apiKey) {
-                                        case .success:
-                                            // 更新完 api key 後重新打 api
-                                            return dataTaskPublisherWithLimitHandling(for: endpoint)
-                                                .eraseToAnyPublisher()
-                                        case .failure:
-                                            // 沒有有效 api key 可用
-                                            return Fail(error: Fetcher.Error.invalidAPIKey)
-                                                .eraseToAnyPublisher()
-                                    }
-                                }
-                                else if httpURLResponse.statusCode == 429 {
-                                    // server 回應 status code 429，表示 api key 額度用完
-                                    switch keyManager.getUsingAPIKeyAfterDeprecating(apiKey) {
-                                        case .success:
-                                            // 更新完 api key 後重新打 api
-                                            return dataTaskPublisherWithLimitHandling(for: endpoint)
-                                                .eraseToAnyPublisher()
-                                        case .failure:
-                                            // 已經沒有還有額度的 api key 可以用了
-                                            return Fail(error: Fetcher.Error.runOutOfQuota)
-                                                .eraseToAnyPublisher()
-                                    }
-                                }
-                                else {
+                            switch venderResultFor(data: data, urlResponse: urlResponse) {
+                                case .success:
                                     // 這是一切都正常的情況，把 data 跟 response 往下傳
                                     return Just((data: data, response: urlResponse))
                                         .setFailureType(to: Swift.Error.self)
                                         .eraseToAnyPublisher()
-                                }
-                            }
-                            else {
-                                assertionFailure("###, \(#function), \(self), response 不是 HttpURLResponse，常理來說都不會發生。")
-                                return Fail(error: Error.unknownError)
-                                    .eraseToAnyPublisher()
+                                case .failure(let error):
+                                    switch error {
+                                        case .invalidAPIKey, .runOutOfQuota:
+                                            switch keyManager.getUsingAPIKeyAfterDeprecating(apiKey) {
+                                                case .success:
+                                                    // 更新完 api key 後重新打 api
+                                                    return dataTaskPublisherWithLimitHandling(for: endpoint)
+                                                        .eraseToAnyPublisher()
+                                                case .failure:
+                                                    // 沒有 api key 可用了
+                                                    return Fail(error: error)
+                                                        .eraseToAnyPublisher()
+                                            }
+                                        case .unknownError:
+                                            assertionFailure("###, \(#function), \(self), response 不是 HttpURLResponse，常理來說都不會發生。")
+                                            return Fail(error: Error.unknownError)
+                                                .eraseToAnyPublisher()
+                                    }
                             }
                         }
                         .eraseToAnyPublisher()
                 case .failure(let failure):
-                    return Fail(error: Error.invalidAPIKey)
+                    return Fail(error: failure)
                         .eraseToAnyPublisher()
             }
         }
