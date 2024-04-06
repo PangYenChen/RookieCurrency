@@ -227,7 +227,7 @@ final class FetcherTests: XCTestCase {
                                                      tuple.error)
         }
         
-        do /*session result in too many request*/ {
+        do /*session result in success*/ {
             let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
                 .CurrencySessionTuple
                 .testTuple()
@@ -298,57 +298,52 @@ final class FetcherTests: XCTestCase {
         }
     }
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-        /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
-        /// fetcher 更換新的 api key 後再次 call session 的 method，
-        /// 新的 api key 有效， session 回應正常資料。
-//    func testInvalidAPIKeyRecovery() throws {
-//            // arrange
-//            let spyRateSession: SpyRateSession = SpyRateSession()
-//            sut = Fetcher(rateSession: spyRateSession)
-//    
-//            var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
-//    
-//            let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-//    
-//            do {
-//                // first response
-//                let invalidAPIKeyTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.invalidAPIKey()
-//                spyRateSession.outputs.append(invalidAPIKeyTuple)
-//            }
-//    
-//            do {
-//                // second response
-//                let latestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.latestRate()
-//                spyRateSession.outputs.append(latestTuple)
-//            }
-//    
-//            // act
-//            sut.fetch(dummyEndpoint) { result in receivedResult = result
-//            }
-//    
-//            // assert
-//            do {
-//                let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
-//    
-//                switch receivedResult {
-//                    case .success:
-//                        XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
-//                    case .failure:
-//                        XCTFail("should not receive any error")
-//                }
-//            }
-//        }
+    /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
+    /// fetcher 能通知 key manager，key manager 更新 key 之後
+    /// fetcher 重新打 api，
+    /// 新的 api key 有效， session 回應正常資料。
+    func testInvalidAPIKeyRecovery() throws {
+        // arrange
+        var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
+        
+        let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            return Endpoints.TestEndpoint(url: dummyURL)
+        }()
+        
+        // act
+        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        
+        do /*session result in invalid api key*/ {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .invalidAPIKey()
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
+        do /*session result in success*/ {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .testTuple()
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
+        // assert
+        do {
+            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
+            
+            switch receivedResult {
+                case .success:
+                    XCTAssertEqual(keyManager.usedAPIKeys.count, 1)
+                case .failure:
+                    XCTFail("should not receive any error")
+            }
+        }
+    }
     
         /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
         /// fetcher 更換新的 api key 後再次 call session 的 method，
