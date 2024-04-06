@@ -249,6 +249,54 @@ final class FetcherTests: XCTestCase {
         }
     }
     
+    /// session 回應正在使用的 api key 額度用罄，
+    /// fetcher 能通知 key manager，key manager 更新 key 之後
+    /// fetcher 重新打 api，
+    /// 新的 api key 額度依舊用罄，
+    /// fetcher 能回傳 api key 額度用罄的 error
+    func testTooManyRequestFallBack() throws {
+        // arrange
+        var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
+        
+        let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            return Endpoints.TestEndpoint(url: dummyURL)
+        }()
+        
+        // act
+        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        
+        do /*session result in too many request*/ {
+            for _ in 0..<dummyAPIKeys.count {
+                let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                    .CurrencySessionTuple
+                    .tooManyRequest()
+                currencySession.executeCompletionHandler(with: tuple.data,
+                                                         tuple.response,
+                                                         tuple.error)
+            }
+        }
+        
+        // assert
+        do {
+            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
+            
+            switch receivedResult {
+                case .success:
+                    XCTFail("should not receive any instance")
+                case .failure(let error):
+                    guard let fetcherError = error as? Fetcher.Error else {
+                        XCTFail("應該要收到 Fetcher.Error")
+                        return
+                    }
+                    
+                    guard fetcherError == Fetcher.Error.tooManyRequest else {
+                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                        return
+                    }
+            }
+        }
+    }
     
     
     
@@ -260,42 +308,6 @@ final class FetcherTests: XCTestCase {
     
     
     
-        /// session 回應正在使用的 api key 額度用罄，
-        /// fetcher 更新 api key，
-        /// 新的 api key 額度依舊用罄，
-        /// fetcher 能回傳 api key 額度用罄的 error
-//        func testTooManyRequestFallBack() throws {
-//            // arrange
-//            var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
-//    
-//            let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-//            do {
-//                stubRateSession.tuple = try TestingData.SessionData.tooManyRequest()
-//            }
-//    
-//            // act
-//            sut.fetch(dummyEndpoint) { result in receivedResult = result }
-//    
-//            // assert
-//            do {
-//                let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
-//    
-//                switch receivedResult {
-//                    case .success:
-//                        XCTFail("should not receive any instance")
-//                    case .failure(let error):
-//                        guard let fetcherError = error as? Fetcher.Error else {
-//                            XCTFail("應該要收到 Fetcher.Error")
-//                            return
-//                        }
-//    
-//                        guard fetcherError == Fetcher.Error.tooManyRequest else {
-//                            XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
-//                            return
-//                        }
-//                }
-//            }
-//        }
     
         /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
         /// fetcher 更換新的 api key 後再次 call session 的 method，
