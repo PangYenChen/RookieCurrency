@@ -104,7 +104,9 @@ final class FetcherTests: XCTestCase {
         sut.fetch(dummyEndpoint) { result in receivedResult = result }
         
         do {
-            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.CurrencySessionTuple.noContent()
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .noContent()
             currencySession.executeCompletionHandler(with: tuple.data,
                                                      tuple.response,
                                                      tuple.error)
@@ -124,41 +126,49 @@ final class FetcherTests: XCTestCase {
             }
         }
     }
-    //
-    //    /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
-    //    func testTimeout() throws {
-    //        // arrange
-    //        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
-    //
-    //        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-    //
-    //        do {
-    //            stubRateSession.tuple = try TestingData.SessionData.timeout()
-    //        }
-    //
-    //        // act
-    //        sut.fetch(dummyEndpoint) { result in receivedResult = result }
-    //
-    //        // assert
-    //        do {
-    //            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
-    //            switch receivedResult {
-    //                case .success:
-    //                    XCTFail("should time out")
-    //                case .failure(let error):
-    //                    guard let urlError = error as? URLError else {
-    //                        XCTFail("應該要是 URLError，而不是其他 Error，例如 DecodingError。")
-    //                        return
-    //                    }
-    //
-    //                    guard urlError.code.rawValue == URLError.timedOut.rawValue else {
-    //                        XCTFail("get an error other than timedOut: \(error)")
-    //                        return
-    //                    }
-    //            }
-    //        }
-    //    }
-    //
+    
+    /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
+    func testTimeout() throws {
+        // arrange
+        var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
+        
+        let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            return Endpoints.TestEndpoint(url: dummyURL)
+        }()
+        
+        // act
+        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        
+        do {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .timeout()
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
+        // assert
+        do {
+            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
+            switch receivedResult {
+                case .success:
+                    XCTFail("should time out")
+                case .failure(let error):
+                    guard let urlError = error as? URLError else {
+                        XCTFail("應該要是 URLError，而不是其他 Error，例如 DecodingError。")
+                        return
+                    }
+                    
+                    guard urlError.code.rawValue == URLError.timedOut.rawValue else {
+                        XCTFail("get an error other than timedOut: \(error)")
+                        return
+                    }
+            }
+        }
+    }
+    
     //    /// 當 session 回應正在使用的 api key 的額度用罄時，
     //    /// fetcher 能更換新的 api key 後重新 call session 的 method，
     //    /// 且新的 api key 尚有額度，session 正常回應。
@@ -419,7 +429,7 @@ final class FetcherTests: XCTestCase {
 }
 
 // MARK: - name space: test double
-extension FetcherTests {
+extension FetcherTests { // TODO: to be removed
     private final class StubRateSession: CurrencySessionProtocol {
         var tuple: (data: Data?, response: URLResponse?, error: Error?)
         
