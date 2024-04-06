@@ -20,7 +20,7 @@ class KeyManager {
     private let concurrentQueue: DispatchQueue
     
     private var unusedAPIKeys: Set<String>
-    private var usingAPIKeyResult: Result<String, Error>
+    private var usingAPIKeyResult: Result<String, Swift.Error>
     private var usedAPIKeys: Set<String> = []
     
 #if DEBUG
@@ -31,10 +31,10 @@ class KeyManager {
 #endif
 }
 
-extension KeyManager {
-    func getUsingAPIKeyAfterDeprecating(_ apiKeyToBeDeprecated: String) -> Result<String, Error> {
+extension KeyManager: KeyManagerProtocol {
+    func getUsingAPIKeyAfterDeprecating(_ apiKeyToBeDeprecated: String) -> Result<String, Swift.Error> {
         concurrentQueue.sync(flags: .barrier) {
-            guard case let .success(usingAPIKey) = usingAPIKeyResult else { return .failure(.runOutOfKey) }
+            guard case let .success(usingAPIKey) = usingAPIKeyResult else { return .failure(Error.runOutOfKey) }
             guard apiKeyToBeDeprecated == usingAPIKey else { return .success(usingAPIKey) }
             
             if let unusedAPIKey = unusedAPIKeys.popFirst() {
@@ -42,14 +42,14 @@ extension KeyManager {
                 usingAPIKeyResult = .success(unusedAPIKey)
             }
             else {
-                usingAPIKeyResult = .failure(.runOutOfKey)
+                usingAPIKeyResult = .failure(Error.runOutOfKey)
             }
             
             return usingAPIKeyResult
         }
     }
     
-    func getUsingAPIKey() -> Result<String, Error> {
+    func getUsingAPIKey() -> Result<String, Swift.Error> {
         concurrentQueue.sync { usingAPIKeyResult }
     }
 }

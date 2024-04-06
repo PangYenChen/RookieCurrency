@@ -575,7 +575,7 @@ private extension FetcherTests {
 
 // MARK: - name space: test double
 private extension FetcherTests {
-    private class StubRateSession: RateSession {
+    private class StubRateSession: CurrencySessionProtocol {
         var outputPublisher: AnyPublisher<(data: Data, response: URLResponse), URLError>!
         
         func rateDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
@@ -583,7 +583,7 @@ private extension FetcherTests {
         }
     }
     
-    class SpyRateSession: RateSession {
+    class SpyRateSession: CurrencySessionProtocol {
         // MARK: - initializer
         init() {
             receivedAPIKeys = []
@@ -612,7 +612,7 @@ private extension FetcherTests {
         }
     }
     
-    final class SpyAPIKeyRateSession: RateSession {
+    final class SpyAPIKeyRateSession: CurrencySessionProtocol {
         // MARK: - initializer
         init() {
             receivedAPIKeys = []

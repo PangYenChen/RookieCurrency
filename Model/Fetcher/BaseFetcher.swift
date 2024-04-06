@@ -4,7 +4,7 @@ import Foundation
 class BaseFetcher {
     // MARK: - initializer
     init(currencySession: CurrencySessionProtocol = BaseFetcher.currencySession,
-         keyManager: KeyManager = KeyManager.shared) {
+         keyManager: KeyManagerProtocol = KeyManager.shared) {
         self.currencySession = currencySession
         self.keyManager = keyManager
         
@@ -19,7 +19,7 @@ class BaseFetcher {
     
     private let concurrentQueue: DispatchQueue
     
-    let keyManager: KeyManager
+    let keyManager: KeyManagerProtocol
 }
 
 // MARK: - static properties
