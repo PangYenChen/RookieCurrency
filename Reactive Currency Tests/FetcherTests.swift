@@ -159,43 +159,44 @@ class FetcherTests: XCTestCase {
         }
     }
     
-//    func testInvalidJSONData() throws {
-//        // arrange
-//        var receivedValue: ResponseDataModel.LatestRate?
-//        var receivedCompletion: Subscribers.Completion<Error>?
-//        
-//        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-//        
-//        do {
-//            stubRateSession.outputPublisher = try sessionDataPublisher(TestingData.SessionData.noContent())
-//        }
-//        
-//        // act
-//        sut
-//            .publisher(for: dummyEndpoint)
-//            .sink(
-//                receiveCompletion: { completion in receivedCompletion = completion },
-//                receiveValue: { value in receivedValue = value }
-//            )
-//            .store(in: &anyCancellableSet)
-//        
-//        // assert
-//        do {
-//            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
-//            switch receivedCompletion {
-//                case .failure(let error):
-//                    if !(error is DecodingError) {
-//                        XCTFail("should not receive error other than decoding error: \(error)")
-//                    }
-//                case .finished:
-//                    XCTFail("should not complete normally")
-//            }
-//        }
-//        
-//        do {
-//            XCTAssertNil(receivedValue)
-//        }
-//    }
+    func testInvalidJSONData() throws {
+        // arrange
+        var receivedValue: ResponseDataModel.TestDataModel?
+        var receivedCompletion: Subscribers.Completion<Error>?
+        
+        // act
+        do {
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            sut
+                .publisher(for: Endpoints.TestEndpoint(url: dummyURL))
+                .sink(receiveCompletion: { completion in receivedCompletion = completion },
+                      receiveValue: { value in receivedValue = value })
+                .store(in: &anyCancellableSet)
+            
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .noContent()
+            try currencySession.publish((XCTUnwrap(tuple.data),
+                                         XCTUnwrap(tuple.response)))
+        }
+        
+        // assert
+        do {
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            switch receivedCompletion {
+                case .failure(let error):
+                    if !(error is DecodingError) {
+                        XCTFail("should not receive error other than decoding error: \(error)")
+                    }
+                case .finished:
+                    XCTFail("should not complete normally")
+            }
+        }
+        
+        do {
+            XCTAssertNil(receivedValue)
+        }
+    }
     
 //    /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
 //    func testTimeout() throws {
