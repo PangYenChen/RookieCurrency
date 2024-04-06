@@ -13,8 +13,8 @@ final class FetcherTests: XCTestCase {
         keyManager = TestDouble.KeyManager(unusedAPIKeys: dummyAPIKeys)
         currencySession = TestDouble.CurrencySession()
         
-        sut = Fetcher(currencySession: currencySession,
-                      keyManager: keyManager)
+        sut = Fetcher(keyManager: keyManager,
+                      currencySession: currencySession)
     }
     
     override func tearDown() {
@@ -206,7 +206,7 @@ final class FetcherTests: XCTestCase {
     /// 當 session 回應正在使用的 api key 的額度用罄時，
     /// fetcher 能通知 key manager，key manager 更新 key 之後
     /// fetcher 重新打 api，session 正常回應。
-    func testTooManyRequestRecovery() throws {
+    func testRunOutOfQuotaRecovery() throws {
         // arrange
         var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
         
@@ -254,7 +254,7 @@ final class FetcherTests: XCTestCase {
     /// fetcher 重新打 api，
     /// 新的 api key 額度依舊用罄，
     /// fetcher 能回傳 api key 額度用罄的 error
-    func testTooManyRequestFallBack() throws {
+    func testRunOutOfQuotaFallBack() throws {
         // arrange
         var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
         
@@ -290,8 +290,8 @@ final class FetcherTests: XCTestCase {
                         return
                     }
                     
-                    guard fetcherError == Fetcher.Error.tooManyRequest else {
-                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                    guard fetcherError == Fetcher.Error.runOutOfQuota else {
+                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
                         return
                     }
             }
@@ -386,7 +386,7 @@ final class FetcherTests: XCTestCase {
                     }
 
                     guard fetcherError == Fetcher.Error.invalidAPIKey else {
-                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
                         return
                     }
             }

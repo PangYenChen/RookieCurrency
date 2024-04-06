@@ -11,8 +11,8 @@ class Fetcher: BaseFetcher {
                 case .success(let apiKey):
                     return currencySession.rateDataTaskPublisher(for: createRequest(url: endpoint.url, withAPIKey: apiKey))
                         .mapError { $0 }
-                        .flatMap { [unowned self] data, response -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> in
-                            if let httpURLResponse = response as? HTTPURLResponse {
+                        .flatMap { [unowned self] data, urlResponse -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> in
+                            if let httpURLResponse = urlResponse as? HTTPURLResponse {
                                 if httpURLResponse.statusCode == 401 {
                                     // server 回應 status code 401，表示 api key 無效
                                     switch keyManager.getUsingAPIKeyAfterDeprecating(apiKey) {
@@ -35,13 +35,13 @@ class Fetcher: BaseFetcher {
                                                 .eraseToAnyPublisher()
                                         case .failure:
                                             // 已經沒有還有額度的 api key 可以用了
-                                            return Fail(error: Fetcher.Error.tooManyRequest)
+                                            return Fail(error: Fetcher.Error.runOutOfQuota)
                                                 .eraseToAnyPublisher()
                                     }
                                 }
                                 else {
                                     // 這是一切都正常的情況，把 data 跟 response 往下傳
-                                    return Just((data: data, response: response))
+                                    return Just((data: data, response: urlResponse))
                                         .setFailureType(to: Swift.Error.self)
                                         .eraseToAnyPublisher()
                                 }

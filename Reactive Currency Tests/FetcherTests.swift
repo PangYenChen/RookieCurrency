@@ -198,7 +198,7 @@ class FetcherTests: XCTestCase {
     /// 當 session 回應正在使用的 api key 的額度用罄時，
     /// fetcher 能更換新的 api key 後重新 call session 的 method，
     /// 且新的 api key 尚有額度，session 正常回應。
-    func testTooManyRequestRecovery() throws {
+    func testRunOutOfQuotaRecovery() throws {
         // arrange
         let spyRateSession: SpyRateSession = SpyRateSession()
         sut = Fetcher(rateSession: spyRateSession)
@@ -253,7 +253,7 @@ class FetcherTests: XCTestCase {
     /// fetcher 更新 api key，
     /// 新的 api key 額度依舊用罄，
     /// fetcher 能回傳 api key 額度用罄的 error
-    func testTooManyRequestFallBack() throws {
+    func testRunOutOfQuotaFallBack() throws {
         // arrange
         var receivedValue: ResponseDataModel.LatestRate?
         var receivedCompletion: Subscribers.Completion<Error>?
@@ -282,8 +282,8 @@ class FetcherTests: XCTestCase {
                         return
                     }
                     
-                    guard fetcherError == Fetcher.Error.tooManyRequest else {
-                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                    guard fetcherError == Fetcher.Error.runOutOfQuota else {
+                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
                         return
                     }
                 case .finished:
@@ -383,7 +383,7 @@ class FetcherTests: XCTestCase {
                     }
                     
                     guard fetcherError == Fetcher.Error.invalidAPIKey else {
-                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
                         return
                     }
                 case .finished:
@@ -436,7 +436,7 @@ class FetcherTests: XCTestCase {
     /// 同時 call 兩次 session 的 method，
     /// 都回應 api key 的額度用罄，
     /// fetcher 要只更新 api key 一次。
-    func testTooManyRequestSimultaneously() throws {
+    func testRunOutOfQuotaSimultaneously() throws {
         // arrange
         let spyAPIKeySession: SpyAPIKeyRateSession = SpyAPIKeyRateSession()
         sut = Fetcher(rateSession: spyAPIKeySession)
@@ -468,11 +468,11 @@ class FetcherTests: XCTestCase {
             let tooManyRequestTuple: (data: Data?, response: URLResponse?, error: Error?) = try XCTUnwrap(TestingData.SessionData.tooManyRequest())
             
             let data: Data = try XCTUnwrap(tooManyRequestTuple.data)
-            let response: URLResponse = try XCTUnwrap(tooManyRequestTuple.response)
+            let urlResponse: URLResponse = try XCTUnwrap(tooManyRequestTuple.response)
             
             // session publish 第一個 output
             if let firstOutputSubject = spyAPIKeySession.outputSubjects.first {
-                firstOutputSubject.send((data, response))
+                firstOutputSubject.send((data, urlResponse))
                 firstOutputSubject.send(completion: .finished)
             }
             else {
@@ -481,7 +481,7 @@ class FetcherTests: XCTestCase {
             // session publish 第二個 output
             if spyAPIKeySession.outputSubjects.count >= 2 {
                 let secondOutputSubject: PassthroughSubject<(data: Data, response: URLResponse), URLError> = spyAPIKeySession.outputSubjects[1]
-                secondOutputSubject.send((data, response))
+                secondOutputSubject.send((data, urlResponse))
                 secondOutputSubject.send(completion: .finished)
             }
             else {
@@ -497,12 +497,12 @@ class FetcherTests: XCTestCase {
             let latestRateTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.latestRate()
             
             let data: Data = try XCTUnwrap(latestRateTuple.data)
-            let response: URLResponse = try XCTUnwrap(latestRateTuple.response)
+            let urlResponse: URLResponse = try XCTUnwrap(latestRateTuple.response)
             
             // session publish 第三個 output
             if spyAPIKeySession.outputSubjects.count >= 3 {
                 let thirdOutputSubject: PassthroughSubject<(data: Data, response: URLResponse), URLError> = spyAPIKeySession.outputSubjects[2]
-                thirdOutputSubject.send((data, response))
+                thirdOutputSubject.send((data, urlResponse))
                 thirdOutputSubject.send(completion: .finished)
             }
             else {
@@ -512,7 +512,7 @@ class FetcherTests: XCTestCase {
             // session publish 第四個 output
             if spyAPIKeySession.outputSubjects.count >= 4 {
                 let fourthOutputSubject: PassthroughSubject<(data: Data, response: URLResponse), URLError> = spyAPIKeySession.outputSubjects[3]
-                fourthOutputSubject.send((data, response))
+                fourthOutputSubject.send((data, urlResponse))
                 fourthOutputSubject.send(completion: .finished)
             }
             else {
@@ -564,9 +564,9 @@ private extension FetcherTests {
         }
         else {
             let data: Data = try XCTUnwrap(tuple.data)
-            let response: URLResponse = try XCTUnwrap(tuple.response)
+            let urlResponse: URLResponse = try XCTUnwrap(tuple.response)
             
-            return Just((data: data, response: response))
+            return Just((data: data, response: urlResponse))
                 .setFailureType(to: URLError.self)
                 .eraseToAnyPublisher()
         }

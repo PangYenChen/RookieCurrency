@@ -28,7 +28,7 @@ class HistoricalRateProviderTests: XCTestCase {
         
         // act
         historicalRateProviderSpy.executeHistoricalRateResultHandlerFor(dateString: dateString,
-                                                                         with: .success(expectedRate))
+                                                                        with: .success(expectedRate))
         
         // assert
         do {
@@ -50,7 +50,7 @@ class HistoricalRateProviderTests: XCTestCase {
         
         // act
         historicalRateProviderSpy.executeHistoricalRateResultHandlerFor(dateString: dateString,
-                                                                         with: .failure(expectedTimeOut))
+                                                                        with: .failure(expectedTimeOut))
         
         // assert
         do {

@@ -3,23 +3,19 @@ import Foundation
 /// 跟伺服器拿資料的物件
 class BaseFetcher {
     // MARK: - initializer
-    init(currencySession: CurrencySessionProtocol = BaseFetcher.currencySession,
-         keyManager: KeyManagerProtocol = KeyManager.shared) {
-        self.currencySession = currencySession
+    init(keyManager: KeyManagerProtocol = KeyManager.shared,
+         currencySession: CurrencySessionProtocol = BaseFetcher.currencySession) {
         self.keyManager = keyManager
+        self.currencySession = currencySession
         
         jsonDecoder = ResponseDataModel.jsonDecoder
-        concurrentQueue = DispatchQueue(label: "read write lock for api keys")
     }
     
     // MARK: - instance properties
-    let currencySession: CurrencySessionProtocol
-
-    let jsonDecoder: JSONDecoder
-    
-    private let concurrentQueue: DispatchQueue
-    
     let keyManager: KeyManagerProtocol
+    let currencySession: CurrencySessionProtocol
+    
+    let jsonDecoder: JSONDecoder
 }
 
 // MARK: - static properties
@@ -55,7 +51,8 @@ extension BaseFetcher {
     /// - Parameter url: The URL to be retrieved.
     /// - Returns: The new url request.
     func createRequest(url: URL, withAPIKey apiKey: String) -> URLRequest {
-        var urlRequest: URLRequest = URLRequest(url: url, timeoutInterval: 5)
+        let timeoutInterval: TimeInterval = 5
+        var urlRequest: URLRequest = URLRequest(url: url, timeoutInterval: timeoutInterval)
         urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
         return urlRequest
     }
@@ -65,18 +62,40 @@ extension BaseFetcher: BaseHistoricalRateProviderProtocol {
     func removeCachedAndStoredRate() { /*do nothing*/ }
 }
 
+extension BaseFetcher {
+    func venderResultFor(data: Data, urlResponse: URLResponse) -> Result<Data, Error> {
+        let statusCodeForInvalidAPIKey: Int = 401
+        let statusCodeForRunOutOfQuota: Int = 429
+        
+        if let httpURLResponse = urlResponse as? HTTPURLResponse {
+            if httpURLResponse.statusCode == statusCodeForInvalidAPIKey {
+                return .failure(.invalidAPIKey)
+            }
+            else if httpURLResponse.statusCode == statusCodeForRunOutOfQuota {
+                return .failure(.runOutOfQuota)
+            }
+            else {
+                return .success(data)
+            }
+        }
+        else {
+            return .failure(.unknownError)
+        }
+    }
+}
+
 // MARK: - name space
 extension BaseFetcher {
     enum Error: LocalizedError {
-        case unknownError
-        case tooManyRequest
         case invalidAPIKey
+        case runOutOfQuota
+        case unknownError
         
         var localizedDescription: String {
             switch self {
-                case .unknownError: R.string.share.noDataNoError()
-                case .tooManyRequest: R.string.share.tooManyRequest()
                 case .invalidAPIKey: R.string.share.invalidAPIKey()
+                case .runOutOfQuota: R.string.share.runOutOfQuota()
+                case .unknownError: R.string.share.noDataNoError()
             }
         }
         
