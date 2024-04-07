@@ -102,7 +102,15 @@ class FetcherTests: XCTestCase {
         }
         
         // assert
-        do {
+        do /*assert receivedHistoricalRate*/ {
+            let receivedHistoricalRate: ResponseDataModel.HistoricalRate = try XCTUnwrap(receivedValue)
+            XCTAssertFalse(receivedHistoricalRate.rates.isEmpty)
+            
+            let dummyCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
+            XCTAssertNotNil(receivedHistoricalRate[currencyCode: dummyCurrencyCode])
+        }
+        
+        do /*assert receivedCompletion*/ {
             let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             
             switch receivedCompletion {
@@ -111,14 +119,6 @@ class FetcherTests: XCTestCase {
                 case .finished:
                     break
             }
-        }
-        
-        do {
-            let receivedHistoricalRate: ResponseDataModel.HistoricalRate = try XCTUnwrap(receivedValue)
-            XCTAssertFalse(receivedHistoricalRate.rates.isEmpty)
-            
-            let dummyCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
-            XCTAssertNotNil(receivedHistoricalRate[currencyCode: dummyCurrencyCode])
         }
     }
     
@@ -141,7 +141,13 @@ class FetcherTests: XCTestCase {
         }
         
         // assert
-        do {
+        do /*assert receivedSupportedSymbols*/ {
+            let receivedSupportedSymbols: ResponseDataModel.SupportedSymbols = try XCTUnwrap(receivedValue)
+            
+            XCTAssertFalse(receivedSupportedSymbols.symbols.isEmpty)
+        }
+        
+        do /*assert receivedCompletion*/ {
             let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             
             switch receivedCompletion {
@@ -150,12 +156,6 @@ class FetcherTests: XCTestCase {
                 case .failure(let error):
                     XCTFail("should not receive any error, but receive: \(error)")
             }
-        }
-        
-        do {
-            let receivedSupportedSymbols: ResponseDataModel.SupportedSymbols = try XCTUnwrap(receivedValue)
-            
-            XCTAssertFalse(receivedSupportedSymbols.symbols.isEmpty)
         }
     }
     
@@ -181,7 +181,9 @@ class FetcherTests: XCTestCase {
         }
         
         // assert
-        do {
+        XCTAssertNil(receivedValue)
+        
+        do /*assert receivedCompletion*/ {
             let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             switch receivedCompletion {
                 case .failure(let error):
@@ -191,10 +193,6 @@ class FetcherTests: XCTestCase {
                 case .finished:
                     XCTFail("should not complete normally")
             }
-        }
-        
-        do {
-            XCTAssertNil(receivedValue)
         }
     }
     
@@ -219,7 +217,9 @@ class FetcherTests: XCTestCase {
         }
         
         // assert
-        do {
+        XCTAssertNil(receivedValue)
+        
+        do /*assert receivedCompletion*/ {
             let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             switch receivedCompletion {
                 case .failure(let error):
@@ -235,10 +235,6 @@ class FetcherTests: XCTestCase {
                 case .finished:
                     XCTFail("should not complete normally")
             }
-        }
-        
-        do {
-            XCTAssertNil(receivedValue)
         }
     }
 
@@ -276,7 +272,9 @@ class FetcherTests: XCTestCase {
         }
         
         // assert
-        do {
+        XCTAssertNotNil(receivedValue)
+        
+        do /*assert receivedCompletion*/ {
             let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             
             switch receivedCompletion {
@@ -287,10 +285,7 @@ class FetcherTests: XCTestCase {
             }
         }
         
-        do {
-            XCTAssertNotNil(receivedValue)
-            XCTAssertEqual(keyManager.usedAPIKeys.count, 1)
-        }
+        XCTAssertEqual(keyManager.usedAPIKeys.count, 1)
     }
     
     /// session 回應正在使用的 api key 額度用罄，
@@ -323,7 +318,9 @@ class FetcherTests: XCTestCase {
         }
         
         // assert
-        do {
+        XCTAssertNil(receivedValue)
+        
+        do /*assert receivedCompletion*/ {
             let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             switch receivedCompletion {
                 case .failure(let error):
@@ -341,62 +338,59 @@ class FetcherTests: XCTestCase {
             }
         }
         
-        do {
-            XCTAssertNil(receivedValue)
-        }
+        XCTAssertEqual(keyManager.usedAPIKeys.count, dummyAPIKeys.count)
     }
     
-//    /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
-//    /// fetcher 更換新的 api key 後再次 call session 的 method，
-//    /// 新的 api key 有效， session 回應正常資料。
-//    func testInvalidAPIKeyRecovery() throws {
-//        // arrange
-//        let spyRateSession: SpyRateSession = SpyRateSession()
-//        sut = Fetcher(rateSession: spyRateSession)
-//        
-//        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-//        
-//        var receivedValue: ResponseDataModel.LatestRate?
-//        var receivedCompletion: Subscribers.Completion<Error>?
-//        
-//        do {
-//            // first output
-//            let outputPublisher: AnyPublisher<(data: Data, response: URLResponse), URLError> = try sessionDataPublisher(TestingData.SessionData.invalidAPIKey())
-//            spyRateSession.outputPublishers.append(outputPublisher)
-//        }
-//        
-//        do {
-//            // second output
-//            let outputPublisher: AnyPublisher<(data: Data, response: URLResponse), URLError> = try sessionDataPublisher(TestingData.SessionData.latestRate())
-//            spyRateSession.outputPublishers.append(outputPublisher)
-//        }
-//        
-//        // act
-//        sut
-//            .publisher(for: dummyEndpoint)
-//            .sink(
-//                receiveCompletion: { completion in receivedCompletion = completion },
-//                receiveValue: { value in receivedValue = value }
-//            )
-//            .store(in: &anyCancellableSet)
-//        
-//        // assert
-//        do {
-//            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
-//            
-//            switch receivedCompletion {
-//                case .finished:
-//                    break
-//                case .failure(let error):
-//                    XCTFail("should not receive any error:\(error)")
-//            }
-//        }
-//        
-//        do {
-//            XCTAssertNotNil(receivedValue)
-//            XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
-//        }
-//    }
+    /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
+    /// fetcher 能通知 key manager，key manager 更新 key 之後
+    /// fetcher 重新打 api，
+    /// 新的 api key 有效， session 回應正常資料。
+    func testInvalidAPIKeyRecovery() throws {
+        // arrange
+        var receivedValue: ResponseDataModel.TestDataModel?
+        var receivedCompletion: Subscribers.Completion<Error>?
+        
+        // act
+        do {
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            sut
+                .publisher(for: Endpoints.TestEndpoint(url: dummyURL))
+                .sink(receiveCompletion: { completion in receivedCompletion = completion },
+                      receiveValue: { value in receivedValue = value })
+                .store(in: &anyCancellableSet)
+            do /*session result in invalid api key*/ {
+                let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                    .CurrencySessionTuple
+                    .invalidAPIKey()
+                try currencySession.publish((XCTUnwrap(tuple.data),
+                                             XCTUnwrap(tuple.response)))
+            }
+            
+            do /*session result in success*/ {
+                let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                    .CurrencySessionTuple
+                    .testTuple()
+                try currencySession.publish((XCTUnwrap(tuple.data),
+                                             XCTUnwrap(tuple.response)))
+            }
+        }
+        
+        // assert
+        XCTAssertNotNil(receivedValue)
+        
+        do /*assert receivedCompletion*/ {
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            
+            switch receivedCompletion {
+                case .finished:
+                    break
+                case .failure(let error):
+                    XCTFail("should not receive any error:\(error)")
+            }
+        }
+        
+        XCTAssertEqual(keyManager.usedAPIKeys.count, 1)
+    }
 //    
 //    /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
 //    /// fetcher 更換新的 api key 後再次 call session 的 method，

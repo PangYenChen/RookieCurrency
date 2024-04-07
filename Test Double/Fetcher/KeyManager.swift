@@ -30,12 +30,12 @@ extension TestDouble {
             guard apiKeyToBeDeprecated == usingAPIKey else { return .success(usingAPIKey) }
             
             if let unusedAPIKey = unusedAPIKeys.popFirst() {
-                usedAPIKeys.insert(apiKeyToBeDeprecated)
                 usingAPIKeyResult = .success(unusedAPIKey)
             }
             else {
                 usingAPIKeyResult = .failure(Error.runOutOfKey)
             }
+            usedAPIKeys.insert(apiKeyToBeDeprecated)
             
             return usingAPIKeyResult
         }
