@@ -198,7 +198,6 @@ class FetcherTests: XCTestCase {
         }
     }
     
-
     func testTimeout() throws {
         // arrange
         var receivedValue: ResponseDataModel.TestDataModel?
@@ -242,66 +241,63 @@ class FetcherTests: XCTestCase {
             XCTAssertNil(receivedValue)
         }
     }
-//
-//    /// 當 session 回應正在使用的 api key 的額度用罄時，
-//    /// fetcher 能更換新的 api key 後重新 call session 的 method，
-//    /// 且新的 api key 尚有額度，session 正常回應。
-//    func testRunOutOfQuotaRecovery() throws {
-//        // arrange
-//        let spyRateSession: SpyRateSession = SpyRateSession()
-//        sut = Fetcher(rateSession: spyRateSession)
-//        
-//        var receivedValue: ResponseDataModel.LatestRate?
-//        var receivedCompletion: Subscribers.Completion<Error>?
-//        
-//        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-//        
-//        do {
-//            // first response
-//            let outputPublisher: AnyPublisher<(data: Data, response: URLResponse), URLError> = try sessionDataPublisher(TestingData.SessionData.tooManyRequest())
-//            
-//            spyRateSession.outputPublishers.append(outputPublisher)
-//        }
-//        
-//        do {
-//            // second response
-//            let outputPublisher: AnyPublisher<(data: Data, response: URLResponse), URLError> = try sessionDataPublisher(TestingData.SessionData.latestRate())
-//            
-//            spyRateSession.outputPublishers.append(outputPublisher)
-//        }
-//        
-//        // act
-//        sut
-//            .publisher(for: dummyEndpoint)
-//            .sink(
-//                receiveCompletion: { completion in receivedCompletion = completion },
-//                receiveValue: { value in receivedValue = value }
-//            )
-//            .store(in: &anyCancellableSet)
-//        
-//        // assert
-//        do {
-//            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
-//            
-//            switch receivedCompletion {
-//                case .failure(let error):
-//                    XCTFail("should not receive error: \(error)")
-//                case .finished:
-//                    break
-//            }
-//        }
-//        
-//        do {
-//            XCTAssertNotNil(receivedValue)
-//            XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
-//        }
-//    }
-//    
-//    /// session 回應正在使用的 api key 額度用罄，
-//    /// fetcher 更新 api key，
-//    /// 新的 api key 額度依舊用罄，
-//    /// fetcher 能回傳 api key 額度用罄的 error
-//    func testRunOutOfQuotaFallBack() throws {
+
+    /// 當 session 回應正在使用的 api key 的額度用罄時，
+    /// fetcher 能通知 key manager，key manager 更新 key 之後
+    /// fetcher 重新打 api，session 正常回應。
+    func testRunOutOfQuotaRecovery() throws {
+        // arrange
+        var receivedValue: ResponseDataModel.TestDataModel?
+        var receivedCompletion: Subscribers.Completion<Error>?
+        
+        // act
+        do {
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            sut
+                .publisher(for: Endpoints.TestEndpoint(url: dummyURL))
+                .sink(receiveCompletion: { completion in receivedCompletion = completion },
+                      receiveValue: { value in receivedValue = value })
+                .store(in: &anyCancellableSet)
+            do /*session result in too many request*/ {
+                let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                    .CurrencySessionTuple
+                    .tooManyRequest()
+                try currencySession.publish((XCTUnwrap(tuple.data),
+                                             XCTUnwrap(tuple.response)))
+            }
+            
+            do /*session result in success*/ {
+                let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                    .CurrencySessionTuple
+                    .testTuple()
+                try currencySession.publish((XCTUnwrap(tuple.data),
+                                             XCTUnwrap(tuple.response)))
+            }
+        }
+        
+        // assert
+        do {
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            
+            switch receivedCompletion {
+                case .failure(let error):
+                    XCTFail("should not receive error: \(error)")
+                case .finished:
+                    break
+            }
+        }
+        
+        do {
+            XCTAssertNotNil(receivedValue)
+            XCTAssertEqual(keyManager.usedAPIKeys.count, 1)
+        }
+    }
+    
+/// session 回應正在使用的 api key 額度用罄，
+/// fetcher 能通知 key manager，key manager 更新 key 之後
+/// fetcher 重新打 api，
+/// 新的 api key 額度依舊用罄，
+/// fetcher 能回傳 api key 額度用罄的 error//    func testRunOutOfQuotaFallBack() throws {
 //        // arrange
 //        var receivedValue: ResponseDataModel.LatestRate?
 //        var receivedCompletion: Subscribers.Completion<Error>?
