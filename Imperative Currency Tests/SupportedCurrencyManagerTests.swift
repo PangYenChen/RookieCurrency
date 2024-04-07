@@ -71,4 +71,35 @@ final class SupportedCurrencyManagerTests: XCTestCase {
             XCTAssertEqual(receivedFirstSupportedCurrency, receivedSecondSupportedCurrency)
         }
     }
+    
+    func testTwoCallSiteSequentially() throws {
+        // arrange
+        var receivedFirstResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?
+        var receivedSecondResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?
+        
+        // act
+        sut.getSupportedCurrency { result in  receivedFirstResult = result }
+        
+        do {
+            let supportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
+                .Instance
+                .supportedSymbols()
+            supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
+        }
+        
+        sut.getSupportedCurrency { result in receivedSecondResult = result }
+        
+        // assert
+        XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
+        
+        do {
+            let receivedFirstSupportedCurrency: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedFirstResult?.get())
+            XCTAssertFalse(receivedFirstSupportedCurrency.isEmpty)
+            
+            let receivedSecondSupportedCurrency: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedSecondResult?.get())
+            XCTAssertFalse(receivedSecondSupportedCurrency.isEmpty)
+            
+            XCTAssertEqual(receivedFirstSupportedCurrency, receivedSecondSupportedCurrency)
+        }
+    }
 }
