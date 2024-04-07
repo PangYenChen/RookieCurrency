@@ -52,6 +52,7 @@ final class KeyManagerTests: XCTestCase {
         }
         
         XCTAssertThrowsError(try sut.getUsingAPIKeyAfterDeprecating(usingAPIKey).get())
+        XCTAssertThrowsError(try sut.getUsingAPIKey().get())
     }
     
     func testRunOutOfKeysConcurrently() throws {

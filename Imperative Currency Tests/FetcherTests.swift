@@ -249,6 +249,8 @@ final class FetcherTests: XCTestCase {
                 case .failure:
                     XCTFail("should not get any error")
             }
+            
+            XCTAssertEqual(keyManager.usedAPIKeys.count, 1)
         }
     }
     
@@ -298,6 +300,8 @@ final class FetcherTests: XCTestCase {
                         return
                     }
             }
+            
+            XCTAssertEqual(keyManager.usedAPIKeys.count, dummyAPIKeys.count)
         }
     }
     
@@ -345,6 +349,8 @@ final class FetcherTests: XCTestCase {
                 case .failure:
                     XCTFail("should not receive any error")
             }
+            
+            XCTAssertEqual(keyManager.usedAPIKeys.count, 1)
         }
     }
     
@@ -393,6 +399,8 @@ final class FetcherTests: XCTestCase {
                         return
                     }
             }
+            
+            XCTAssertEqual(keyManager.usedAPIKeys.count, dummyAPIKeys.count)
         }
     }
 }
