@@ -39,8 +39,3 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
             .subscribe(Subscribers.Sink(receiveCompletion: { _ in }, receiveValue: { _ in }))
     }
 }
-
-// MARK: - static property
-extension SupportedCurrencyManager {
-    static let shared: SupportedCurrencyManager = SupportedCurrencyManager()
-}

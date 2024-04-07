@@ -36,8 +36,3 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
         getSupportedCurrency { _ in }
     }
 }
-
-// MARK: - static property
-extension SupportedCurrencyManager {
-    static let shared: SupportedCurrencyManager = SupportedCurrencyManager()
-}

@@ -27,3 +27,8 @@ extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {
         currencyCode
     }
 }
+
+// MARK: - static property
+extension SupportedCurrencyManager {
+    static let shared: SupportedCurrencyManager = SupportedCurrencyManager()
+}
