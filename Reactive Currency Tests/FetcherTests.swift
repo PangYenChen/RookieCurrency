@@ -198,50 +198,51 @@ class FetcherTests: XCTestCase {
         }
     }
     
-//    /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
-//    func testTimeout() throws {
-//        // arrange
-//        var receivedValue: ResponseDataModel.LatestRate?
-//        var receivedCompletion: Subscribers.Completion<Error>?
-//        
-//        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-//        do {
-//            stubRateSession.outputPublisher = try sessionDataPublisher(TestingData.SessionData.timeout())
-//        }
-//        
-//        // act
-//        sut
-//            .publisher(for: dummyEndpoint)
-//            .sink(
-//                receiveCompletion: { completion in receivedCompletion = completion },
-//                receiveValue: { value in receivedValue = value }
-//            )
-//            .store(in: &anyCancellableSet)
-//        
-//        // assert
-//        do {
-//            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
-//            switch receivedCompletion {
-//                case .failure(let error):
-//                    guard let urlError = error as? URLError else {
-//                        XCTFail("應該要是 URLError，而不是其他 Error，例如 DecodingError。")
-//                        return
-//                    }
-//                    
-//                    guard urlError.code.rawValue == URLError.timedOut.rawValue else {
-//                        XCTFail("get an error other than timedOut: \(error)")
-//                        return
-//                    }
-//                case .finished:
-//                    XCTFail("should not complete normally")
-//            }
-//        }
-//        
-//        do {
-//            XCTAssertNil(receivedValue)
-//        }
-//    }
-//    
+
+    func testTimeout() throws {
+        // arrange
+        var receivedValue: ResponseDataModel.TestDataModel?
+        var receivedCompletion: Subscribers.Completion<Error>?
+        
+        // act
+        do {
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            sut
+                .publisher(for: Endpoints.TestEndpoint(url: dummyURL))
+                .sink(receiveCompletion: { completion in receivedCompletion = completion },
+                      receiveValue: { value in receivedValue = value })
+                .store(in: &anyCancellableSet)
+            
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .timeout()
+            try currencySession.publish(completion: .failure(XCTUnwrap(tuple.error as? URLError)))
+        }
+        
+        // assert
+        do {
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            switch receivedCompletion {
+                case .failure(let error):
+                    guard let urlError = error as? URLError else {
+                        XCTFail("應該要是 URLError，而不是其他 Error，例如 DecodingError。")
+                        return
+                    }
+                    
+                    guard urlError.code.rawValue == URLError.timedOut.rawValue else {
+                        XCTFail("get an error other than timedOut: \(error)")
+                        return
+                    }
+                case .finished:
+                    XCTFail("should not complete normally")
+            }
+        }
+        
+        do {
+            XCTAssertNil(receivedValue)
+        }
+    }
+//
 //    /// 當 session 回應正在使用的 api key 的額度用罄時，
 //    /// fetcher 能更換新的 api key 後重新 call session 的 method，
 //    /// 且新的 api key 尚有額度，session 正常回應。
