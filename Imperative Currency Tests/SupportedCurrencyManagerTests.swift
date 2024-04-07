@@ -2,9 +2,9 @@ import XCTest
 @testable import ImperativeCurrency
 
 final class SupportedCurrencyManagerTests: XCTestCase {
-    var sut: SupportedCurrencyManager!
+    private var sut: SupportedCurrencyManager!
     
-    var supportedCurrencyProvider: TestDouble.SupportedCurrencyProvider!
+    private var supportedCurrencyProvider: TestDouble.SupportedCurrencyProvider!
 
     override func setUp() {
         supportedCurrencyProvider = TestDouble.SupportedCurrencyProvider()
@@ -38,6 +38,37 @@ final class SupportedCurrencyManagerTests: XCTestCase {
                 case .success(let supportedCurrency): XCTAssertFalse(supportedCurrency.isEmpty)
                 case .failure(let failure): XCTFail("should not receive failure, but receive: \(failure)")
             }
+        }
+    }
+    
+    func testTwoCallSiteSimultaneously() throws {
+        // arrange
+        var receivedFirstResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?
+        var receivedSecondResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?
+        
+        // act
+        sut.getSupportedCurrency { result in  receivedFirstResult = result }
+        
+        sut.getSupportedCurrency { result in receivedSecondResult = result }
+        
+        do {
+            let supportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
+                .Instance
+                .supportedSymbols()
+            supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
+        }
+        
+        // assert
+        XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
+        
+        do {
+            let receivedFirstSupportedCurrency: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedFirstResult?.get())
+            XCTAssertFalse(receivedFirstSupportedCurrency.isEmpty)
+            
+            let receivedSecondSupportedCurrency: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedSecondResult?.get())
+            XCTAssertFalse(receivedSecondSupportedCurrency.isEmpty)
+            
+            XCTAssertEqual(receivedFirstSupportedCurrency, receivedSecondSupportedCurrency)
         }
     }
 }
