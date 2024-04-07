@@ -4,16 +4,25 @@ import XCTest
 final class FetcherTests: XCTestCase {
     private var sut: Fetcher!
     
-    private var stubRateSession: StubRateSession!
+    private var currencySession: TestDouble.CurrencySession!
+    private var keyManager: TestDouble.KeyManager!
+    private var dummyAPIKeys: Set<String>!
     
     override func setUp() {
-        stubRateSession = StubRateSession()
-        sut = Fetcher(rateSession: stubRateSession)
+        dummyAPIKeys = ["a", "b", "c"]
+        keyManager = TestDouble.KeyManager(unusedAPIKeys: dummyAPIKeys)
+        currencySession = TestDouble.CurrencySession()
+        
+        sut = Fetcher(keyManager: keyManager,
+                      currencySession: currencySession)
     }
     
     override func tearDown() {
         sut = nil
-        stubRateSession = nil
+        
+        currencySession = nil
+        keyManager = nil
+        dummyAPIKeys = nil
     }
     
     func testNoRetainCycleOccur() {
@@ -26,17 +35,19 @@ final class FetcherTests: XCTestCase {
         sut = nil
     }
     
-    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `LatestRate` instance
     func testFetchLatestRate() throws {
         // arrange
         var receivedLatestRateResult: Result<ResponseDataModel.LatestRate, Error>?
         
-        do {
-            stubRateSession.tuple = try TestingData.SessionData.latestRate()
-        }
-        
         // act
-        sut.fetch(Endpoints.Latest()) { result in receivedLatestRateResult = result }
+        sut.rate { result in receivedLatestRateResult = result }
+        
+        do {
+            let latestRateTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.CurrencySessionTuple.latestRate()
+            currencySession.executeCompletionHandler(with: latestRateTuple.data,
+                                                     latestRateTuple.response,
+                                                     latestRateTuple.error)
+        }
         
         // assert
         do {
@@ -54,19 +65,23 @@ final class FetcherTests: XCTestCase {
         }
     }
     
-    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `HistoricalRate` instance
     func testFetchHistoricalRate() throws {
         // arrange
         var receivedHistoricalRateResult: Result<ResponseDataModel.HistoricalRate, Error>?
         
-        let dummyDateString: ResponseDataModel.CurrencyCode = "1970-01-01"
-        
-        do {
-            stubRateSession.tuple = try TestingData.SessionData.historicalRate(dateString: dummyDateString)
-        }
+        let expectedDateString: ResponseDataModel.CurrencyCode = "1970-01-01"
         
         // act
-        sut.fetch(Endpoints.Historical(dateString: dummyDateString)) { result in receivedHistoricalRateResult = result }
+        sut.rateFor(dateString: expectedDateString) { result in receivedHistoricalRateResult = result }
+        
+        do {
+            let historicalRateTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .historicalRate(dateString: expectedDateString)
+            currencySession.executeCompletionHandler(with: historicalRateTuple.data,
+                                                     historicalRateTuple.response,
+                                                     historicalRateTuple.error)
+        }
         
         // assert
         do {
@@ -85,22 +100,59 @@ final class FetcherTests: XCTestCase {
         }
     }
     
-    /// 當 session 回傳無法 decode 的 json data 時，要能回傳 decoding error
+    func testFetchSupportedSymbols() throws {
+        // arrange
+        var receivedResult: Result<ResponseDataModel.SupportedSymbols, Error>?
+        
+        // act
+        sut.supportedCurrency { result in receivedResult = result }
+        do {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .supportedSymbols()
+            
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
+        // assert
+        do {
+            let receivedResult: Result<ResponseDataModel.SupportedSymbols, Error> = try XCTUnwrap(receivedResult)
+            
+            switch receivedResult {
+                case .success(let supportedSymbols):
+                    XCTAssertFalse(supportedSymbols.symbols.isEmpty)
+                case .failure(let failure):
+                    XCTFail("should not receive any failure, but receive: \(failure)")
+            }
+        }
+    }
+    
     func testInvalidJSONData() throws {
         // arrange
-        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
         
-        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-        do {
-            stubRateSession.tuple = try TestingData.SessionData.noContent()
-        }
+        let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            return Endpoints.TestEndpoint(url: dummyURL)
+        }()
         
         // act
         sut.fetch(dummyEndpoint) { result in receivedResult = result }
         
+        do {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .noContent()
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
         // assert
         do {
-            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
+            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
             
             switch receivedResult {
                 case .success:
@@ -113,23 +165,30 @@ final class FetcherTests: XCTestCase {
         }
     }
     
-    /// 當 session 回傳 timeout 時，fetcher 能確實回傳 timeout
     func testTimeout() throws {
         // arrange
-        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
         
-        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-        
-        do {
-            stubRateSession.tuple = try TestingData.SessionData.timeout()
-        }
+        let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            return Endpoints.TestEndpoint(url: dummyURL)
+        }()
         
         // act
         sut.fetch(dummyEndpoint) { result in receivedResult = result }
         
+        do /*session result in timeout*/ {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .timeout()
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
         // assert
         do {
-            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
+            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
             switch receivedResult {
                 case .success:
                     XCTFail("should time out")
@@ -148,64 +207,84 @@ final class FetcherTests: XCTestCase {
     }
     
     /// 當 session 回應正在使用的 api key 的額度用罄時，
-    /// fetcher 能更換新的 api key 後重新 call session 的 method，
-    /// 且新的 api key 尚有額度，session 正常回應。
-    func testTooManyRequestRecovery() throws {
+    /// fetcher 能通知 key manager，key manager 更新 key 之後
+    /// fetcher 重新打 api，session 正常回應。
+    func testRunOutOfQuotaRecovery() throws {
         // arrange
-        let spyRateSession: SpyRateSession = SpyRateSession()
-        sut = Fetcher(rateSession: spyRateSession)
+        var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
         
-        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
-        
-        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-        
-        do {
-            // first response
-            let tooManyRequestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.tooManyRequest()
-            spyRateSession.outputs.append(tooManyRequestTuple)
-        }
-        
-        do {
-            // second response
-            let latestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.latestRate()
-            spyRateSession.outputs.append(latestTuple)
-        }
+        let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            return Endpoints.TestEndpoint(url: dummyURL)
+        }()
         
         // act
         sut.fetch(dummyEndpoint) { result in receivedResult = result }
         
+        do /*session result in too many request*/ {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .tooManyRequest()
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
+        do /*session result in success*/ {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .testTuple()
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
         // assert
         do {
-            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
+            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
             
             switch receivedResult {
                 case .success:
-                    XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
+                    XCTAssertEqual(keyManager.usedAPIKeys.count, 1)
                 case .failure:
                     XCTFail("should not get any error")
             }
+            
+            XCTAssertEqual(keyManager.usedAPIKeys.count, 1)
         }
     }
     
     /// session 回應正在使用的 api key 額度用罄，
-    /// fetcher 更新 api key，
+    /// fetcher 能通知 key manager，key manager 更新 key 之後
+    /// fetcher 重新打 api，
     /// 新的 api key 額度依舊用罄，
     /// fetcher 能回傳 api key 額度用罄的 error
-    func testTooManyRequestFallBack() throws {
+    func testRunOutOfQuotaFallBack() throws {
         // arrange
-        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
+        var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
         
-        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-        do {
-            stubRateSession.tuple = try TestingData.SessionData.tooManyRequest()
-        }
+        let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            return Endpoints.TestEndpoint(url: dummyURL)
+        }()
         
         // act
         sut.fetch(dummyEndpoint) { result in receivedResult = result }
         
+        do /*session result in too many request*/ {
+            for _ in 0..<dummyAPIKeys.count {
+                let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                    .CurrencySessionTuple
+                    .tooManyRequest()
+                currencySession.executeCompletionHandler(with: tuple.data,
+                                                         tuple.response,
+                                                         tuple.error)
+            }
+        }
+        
         // assert
         do {
-            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
+            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
             
             switch receivedResult {
                 case .success:
@@ -216,75 +295,96 @@ final class FetcherTests: XCTestCase {
                         return
                     }
                     
-                    guard fetcherError == Fetcher.Error.tooManyRequest else {
-                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                    guard fetcherError == Fetcher.Error.runOutOfQuota else {
+                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
                         return
                     }
             }
+            
+            XCTAssertEqual(keyManager.usedAPIKeys.count, dummyAPIKeys.count)
         }
     }
     
     /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
-    /// fetcher 更換新的 api key 後再次 call session 的 method，
+    /// fetcher 能通知 key manager，key manager 更新 key 之後
+    /// fetcher 重新打 api，
     /// 新的 api key 有效， session 回應正常資料。
     func testInvalidAPIKeyRecovery() throws {
         // arrange
-        let spyRateSession: SpyRateSession = SpyRateSession()
-        sut = Fetcher(rateSession: spyRateSession)
+        var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
         
-        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
-        
-        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-        
-        do {
-            // first response
-            let invalidAPIKeyTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.invalidAPIKey()
-            spyRateSession.outputs.append(invalidAPIKeyTuple)
-        }
-        
-        do {
-            // second response
-            let latestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.latestRate()
-            spyRateSession.outputs.append(latestTuple)
-        }
-        
-        // act
-        sut.fetch(dummyEndpoint) { result in receivedResult = result
-        }
-        
-        // assert
-        do {
-            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
-            
-            switch receivedResult {
-                case .success:
-                    XCTAssertEqual(spyRateSession.receivedAPIKeys.count, 2)
-                case .failure:
-                    XCTFail("should not receive any error")
-            }
-        }
-    }
-    
-    /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
-    /// fetcher 更換新的 api key 後再次 call session 的 method，
-    /// 後續的 api key 全都無效，fetcher 能回傳 api key 無效的 error。
-    func testInvalidAPIKeyFallBack() throws {
-        // arrange
-        var receivedResult: Result<ResponseDataModel.LatestRate, Error>?
-        
-        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-        
-        do {
-            stubRateSession.tuple = try TestingData.SessionData.invalidAPIKey()
-        }
+        let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            return Endpoints.TestEndpoint(url: dummyURL)
+        }()
         
         // act
         sut.fetch(dummyEndpoint) { result in receivedResult = result }
         
+        do /*session result in invalid api key*/ {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .invalidAPIKey()
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
+        do /*session result in success*/ {
+            let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                .CurrencySessionTuple
+                .testTuple()
+            currencySession.executeCompletionHandler(with: tuple.data,
+                                                     tuple.response,
+                                                     tuple.error)
+        }
+        
         // assert
         do {
-            let receivedResult: Result<ResponseDataModel.LatestRate, Error> = try XCTUnwrap(receivedResult)
+            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
             
+            switch receivedResult {
+                case .success:
+                    XCTAssertEqual(keyManager.usedAPIKeys.count, 1)
+                case .failure:
+                    XCTFail("should not receive any error")
+            }
+            
+            XCTAssertEqual(keyManager.usedAPIKeys.count, 1)
+        }
+    }
+    
+    /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
+    /// fetcher 能通知 key manager，key manager 更新 key 之後
+    /// fetcher 重新打 api，
+    /// 後續的 api key 全都無效，fetcher 能回傳 api key 無效的 error。
+    func testInvalidAPIKeyFallBack() throws {
+        // arrange
+        var receivedResult: Result<ResponseDataModel.TestDataModel, Error>?
+        
+        let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            return Endpoints.TestEndpoint(url: dummyURL)
+        }()
+        
+        // act
+        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        
+        do /*session result in invalid api key*/ {
+            for _ in 0..<dummyAPIKeys.count {
+                let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                    .CurrencySessionTuple
+                    .invalidAPIKey()
+                currencySession.executeCompletionHandler(with: tuple.data,
+                                                         tuple.response,
+                                                         tuple.error)
+            }
+        }
+        
+        // assert
+        do {
+            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
+
             switch receivedResult {
                 case .success:
                     XCTFail("should not receive any instance")
@@ -293,174 +393,14 @@ final class FetcherTests: XCTestCase {
                         XCTFail("should receive Fetcher.Error")
                         return
                     }
-                    
+
                     guard fetcherError == Fetcher.Error.invalidAPIKey else {
-                        XCTFail("receive error other than Fetcher.Error.tooManyRequest: \(error)")
+                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
                         return
                     }
             }
-        }
-    }
-    
-    /// 測試 fetcher 可以在最正常的情況(status code 200，data 對應到 data model)下，回傳 `SupportedSymbols` instance
-    func testFetchSupportedSymbols() throws {
-        // arrange
-        var receivedResult: Result<ResponseDataModel.SupportedSymbols, Error>?
-        
-        do {
-            stubRateSession.tuple = try TestingData.SessionData.supportedSymbols()
-        }
-        
-        // act
-        sut.fetch(Endpoints.SupportedSymbols()) { result in receivedResult = result }
-        
-        // assert
-        do {
-            let receivedResult: Result<ResponseDataModel.SupportedSymbols, Error> = try XCTUnwrap(receivedResult)
             
-            switch receivedResult {
-                case .success(let supportedSymbols):
-                    XCTAssertFalse(supportedSymbols.symbols.isEmpty)
-                case .failure(let failure):
-                    XCTFail("should not receive any failure, but receive: \(failure)")
-            }
-        }
-    }
-    
-    /// 同時 call 兩次 session 的 method，
-    /// 都回應 api key 的額度用罄，
-    /// fetcher 要只更新 api key 一次。
-    func testTooManyRequestSimultaneously() throws {
-        // arrange
-        
-        let spyAPIKeySession: SpyAPIKeyRateSession = SpyAPIKeyRateSession()
-        sut = Fetcher(rateSession: spyAPIKeySession)
-        
-        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-        
-        var firstReceivedResult: Result<ResponseDataModel.LatestRate, Error>?
-        var secondReceivedResult: Result<ResponseDataModel.LatestRate, Error>?
-        
-        // act
-        sut.fetch(dummyEndpoint) { result in firstReceivedResult = result }
-        sut.fetch(dummyEndpoint) { result in secondReceivedResult = result }
-        
-        do {
-            let tooManyRequestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.tooManyRequest()
-            
-            // session 執行第一個 completion handler
-            if let firstFetcherCompletionHandler = spyAPIKeySession.completionHandlers.first {
-                firstFetcherCompletionHandler(tooManyRequestTuple.data, tooManyRequestTuple.response, tooManyRequestTuple.error)
-            }
-            else {
-                XCTFail("arrange 失誤，第一次 call `sut.fetch(:)` 應該會給 spy api key session 一個 completion handler")
-            }
-            
-            // session 執行第二個 completion handler
-            if spyAPIKeySession.completionHandlers.count >= 2 {
-                let secondFetcherCompletionHandler: (Data?, URLResponse?, Error?) -> Void = spyAPIKeySession.completionHandlers[1]
-                secondFetcherCompletionHandler(tooManyRequestTuple.data, tooManyRequestTuple.response, tooManyRequestTuple.error)
-            }
-            else {
-                XCTFail("arrange 失誤，第二次 call `sut.fetch(:)` 應該會給 spy api key session 第二個 completion handler")
-            }
-            
-            // 現階段 fetcher 應該還沒執行過 caller 傳進來的 completion handler
-            XCTAssertNil(firstReceivedResult)
-            XCTAssertNil(secondReceivedResult)
-        }
-        
-        do {
-            let latestTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.SessionData.latestRate()
-            
-            // session 執行第三個 completion handler
-            if spyAPIKeySession.completionHandlers.count >= 3 {
-                let thirdFetcherCompletionHandler: (Data?, URLResponse?, Error?) -> Void = spyAPIKeySession.completionHandlers[2]
-                thirdFetcherCompletionHandler(latestTuple.data, latestTuple.response, latestTuple.error)
-            }
-            else {
-                XCTFail("arrange 失誤，spy api key session 對於第一個 call 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 call 一次 session 的 method，此時 spy api key session 會收到第三個 completion handler")
-            }
-            
-            // session 執行第四個 completion handler
-            if spyAPIKeySession.completionHandlers.count >= 4 {
-                let fourthFetcherCompletionHandler: (Data?, URLResponse?, Error?) -> Void = spyAPIKeySession.completionHandlers[3]
-                fourthFetcherCompletionHandler(latestTuple.data, latestTuple.response, latestTuple.error)
-            }
-            else {
-                XCTFail("arrange 失誤，spy api key session 對於第二個 call 回傳 too many request 給 fetcher，fetcher 換完 api key 後會重新 call 一次 session 的 method，此時 spy api key session 會收到第四個 completion handler")
-            }
-        }
-        
-        // assert
-        if spyAPIKeySession.receivedAPIKeys.count == 4 {
-            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[0], spyAPIKeySession.receivedAPIKeys[1])
-            XCTAssertEqual(spyAPIKeySession.receivedAPIKeys[2], spyAPIKeySession.receivedAPIKeys[3])
-        }
-        else {
-            XCTFail("spy api key session 應該要剛好收到 4 個 request")
-        }
-        
-        XCTAssertNotNil(firstReceivedResult)
-        XCTAssertNotNil(secondReceivedResult)
-    }
-}
-
-// MARK: - name space: test double
-extension FetcherTests {
-    private final class StubRateSession: RateSession {
-        var tuple: (data: Data?, response: URLResponse?, error: Error?)
-        
-        func rateDataTask(with request: URLRequest,
-                          completionHandler: (Data?, URLResponse?, Error?) -> Void) {
-            completionHandler(tuple.data, tuple.response, tuple.error)
-        }
-    }
-    
-    private final class SpyRateSession: RateSession {
-        // MARK: - initializer
-        init() {
-            outputs = []
-            receivedAPIKeys = []
-        }
-        
-        // MARK: - instance properties
-        var outputs: [(data: Data?, response: URLResponse?, error: Error?)]
-        
-        private(set) var receivedAPIKeys: [String]
-        
-        // MARK: - instance method
-        func rateDataTask(with request: URLRequest,
-                          completionHandler: (Data?, URLResponse?, Error?) -> Void) {
-            if let receivedAPIKey = request.value(forHTTPHeaderField: "apikey") {
-                receivedAPIKeys.append(receivedAPIKey)
-            }
-            
-            guard !(outputs.isEmpty) else { return }
-            
-            let output: (data: Data?, response: URLResponse?, error: Error?) = outputs.removeFirst()
-            completionHandler(output.data, output.response, output.error)
-        }
-    }
-    
-    private final class SpyAPIKeyRateSession: RateSession {
-        // MARK: - initializer
-        init() {
-            completionHandlers = []
-            receivedAPIKeys = []
-        }
-        
-        // MARK: - instance properties
-        private(set) var completionHandlers: [(Data?, URLResponse?, Error?) -> Void]
-        
-        private(set) var receivedAPIKeys: [String]
-        
-        // MARK: - instance method
-        func rateDataTask(with request: URLRequest, completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
-            completionHandlers.append(completionHandler)
-            if let receivedAPIKey = request.value(forHTTPHeaderField: "apikey") {
-                receivedAPIKeys.append(receivedAPIKey)
-            }
+            XCTAssertEqual(keyManager.usedAPIKeys.count, dummyAPIKeys.count)
         }
     }
 }

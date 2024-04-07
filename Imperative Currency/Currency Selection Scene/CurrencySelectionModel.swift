@@ -54,7 +54,7 @@ extension CurrencySelectionModel {
 
 private extension CurrencySelectionModel {
     func fetchSupportedCurrency() {
-        supportedCurrencyManager.fetchSupportedCurrency { [weak self] result in
+        supportedCurrencyManager.getSupportedCurrency { [weak self] result in
             guard let self else { return }
             
             let newResult: Result<[ResponseDataModel.CurrencyCode], Error> = result

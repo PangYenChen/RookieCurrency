@@ -1,7 +1,6 @@
 import Foundation
 
-// MARK: - RateSession
-protocol RateSession {
+protocol CurrencySessionProtocol {
     /// 把 URLSession 包一層起來，在測試的時候抽換掉。
     /// - Parameters:
     ///   - request: A URL request object that provides the URL, cache policy, request type, body data or body stream, and so on.
@@ -10,8 +9,7 @@ protocol RateSession {
                       completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void)
 }
 
-// MARK: - make url session confirm RateSession
-extension URLSession: RateSession {
+extension URLSession: CurrencySessionProtocol {
     func rateDataTask(with request: URLRequest,
                       completionHandler: @escaping (Data?, URLResponse?, Error?) -> Void) {
         dataTask(with: request, completionHandler: completionHandler).resume()

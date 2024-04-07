@@ -15,7 +15,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
                 return wrappedSupportedSymbols
             }
             else {
-                let wrappedSupportedSymbols: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> = Fetcher.shared.publisher(for: Endpoints.SupportedSymbols())
+                let wrappedSupportedSymbols: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> = supportedCurrencyProvider.supportedCurrency()
                     .map { $0.symbols }
                     .handleEvents(
                         receiveOutput: { supportedCurrencyDescriptionDictionary in
