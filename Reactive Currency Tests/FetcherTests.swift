@@ -293,53 +293,59 @@ class FetcherTests: XCTestCase {
         }
     }
     
-/// session 回應正在使用的 api key 額度用罄，
-/// fetcher 能通知 key manager，key manager 更新 key 之後
-/// fetcher 重新打 api，
-/// 新的 api key 額度依舊用罄，
-/// fetcher 能回傳 api key 額度用罄的 error//    func testRunOutOfQuotaFallBack() throws {
-//        // arrange
-//        var receivedValue: ResponseDataModel.LatestRate?
-//        var receivedCompletion: Subscribers.Completion<Error>?
-//        
-//        let dummyEndpoint: Endpoints.Latest = Endpoints.Latest()
-//        do {
-//            stubRateSession.outputPublisher = try sessionDataPublisher(TestingData.SessionData.tooManyRequest())
-//        }
-//        
-//        // act
-//        sut
-//            .publisher(for: dummyEndpoint)
-//            .sink(
-//                receiveCompletion: { completion in receivedCompletion = completion },
-//                receiveValue: { value in receivedValue = value }
-//            )
-//            .store(in: &anyCancellableSet)
-//        
-//        // assert
-//        do {
-//            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
-//            switch receivedCompletion {
-//                case .failure(let error):
-//                    guard let fetcherError = error as? Fetcher.Error else {
-//                        XCTFail("應該要收到 Fetcher.Error")
-//                        return
-//                    }
-//                    
-//                    guard fetcherError == Fetcher.Error.runOutOfQuota else {
-//                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
-//                        return
-//                    }
-//                case .finished:
-//                    XCTFail("should not complete normally")
-//            }
-//        }
-//        
-//        do {
-//            XCTAssertNil(receivedValue)
-//        }
-//    }
-//    
+    /// session 回應正在使用的 api key 額度用罄，
+    /// fetcher 能通知 key manager，key manager 更新 key 之後
+    /// fetcher 重新打 api，
+    /// 新的 api key 額度依舊用罄，
+    /// fetcher 能回傳 api key 額度用罄的 error
+    func testRunOutOfQuotaFallBack() throws {
+        // arrange
+        var receivedValue: ResponseDataModel.TestDataModel?
+        var receivedCompletion: Subscribers.Completion<Error>?
+        
+        // act
+        do {
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            sut
+                .publisher(for: Endpoints.TestEndpoint(url: dummyURL))
+                .sink(receiveCompletion: { completion in receivedCompletion = completion },
+                      receiveValue: { value in receivedValue = value })
+                .store(in: &anyCancellableSet)
+            do /*session result in too many request*/ {
+                for _ in 0..<dummyAPIKeys.count {
+                    let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
+                        .CurrencySessionTuple
+                        .tooManyRequest()
+                    try currencySession.publish((XCTUnwrap(tuple.data),
+                                                 XCTUnwrap(tuple.response)))
+                }
+            }
+        }
+        
+        // assert
+        do {
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            switch receivedCompletion {
+                case .failure(let error):
+                    guard let fetcherError = error as? Fetcher.Error else {
+                        XCTFail("應該要收到 Fetcher.Error")
+                        return
+                    }
+                    
+                    guard fetcherError == Fetcher.Error.runOutOfQuota else {
+                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
+                        return
+                    }
+                case .finished:
+                    XCTFail("should not complete normally")
+            }
+        }
+        
+        do {
+            XCTAssertNil(receivedValue)
+        }
+    }
+    
 //    /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
 //    /// fetcher 更換新的 api key 後再次 call session 的 method，
 //    /// 新的 api key 有效， session 回應正常資料。
