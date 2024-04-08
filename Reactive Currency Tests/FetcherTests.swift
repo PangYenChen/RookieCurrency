@@ -50,7 +50,7 @@ class FetcherTests: XCTestCase {
         var receivedCompletion: Subscribers.Completion<Error>?
         
         // act
-        sut.publisher()
+        sut.latestRatePublisher()
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { latestRate in receivedValue = latestRate })
             .store(in: &anyCancellableSet)
@@ -88,7 +88,7 @@ class FetcherTests: XCTestCase {
         // act
         do {
             let dummyDateString: ResponseDataModel.CurrencyCode = "1970-01-01"
-            sut.publisherFor(dateString: dummyDateString)
+            sut.historicalRatePublisherFor(dateString: dummyDateString)
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { historicalRate in receivedValue = historicalRate })
                 .store(in: &anyCancellableSet)
@@ -128,7 +128,7 @@ class FetcherTests: XCTestCase {
         var receivedCompletion: Subscribers.Completion<Error>?
         
         // act
-        sut.supportedCurrency()
+        sut.supportedCurrencyPublisher()
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)

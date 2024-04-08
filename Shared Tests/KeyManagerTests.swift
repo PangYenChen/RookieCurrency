@@ -11,14 +11,14 @@ import XCTest
 final class KeyManagerTests: XCTestCase {
     private var sut: KeyManager!
     
-    private var concurrentQueue: DispatchQueue!
+    private var concurrentDispatchQueue: DispatchQueue!
     private var unusedAPIKeys: Set<String>!
     
     override func setUp() {
-        concurrentQueue = DispatchQueue(label: "key.manager.tests", attributes: .concurrent)
+        concurrentDispatchQueue = DispatchQueue(label: "key.manager.tests", attributes: .concurrent)
         unusedAPIKeys = Set((0..<100).map { _ in UUID().uuidString })
         
-        sut = KeyManager(concurrentQueue: concurrentQueue,
+        sut = KeyManager(concurrentDispatchQueue: concurrentDispatchQueue,
                          unusedAPIKeys: unusedAPIKeys)
     }
     
@@ -26,7 +26,7 @@ final class KeyManagerTests: XCTestCase {
         sut = nil
         
         unusedAPIKeys = nil
-        concurrentQueue = nil
+        concurrentDispatchQueue = nil
     }
     
     func testNoRetainCycleOccur() {
@@ -57,11 +57,11 @@ final class KeyManagerTests: XCTestCase {
     
     func testRunOutOfKeysConcurrently() throws {
         // arrange
-        let concurrentQueue: DispatchQueue = DispatchQueue(label: "test.run.out.of.keys.concurrently",
-                                                           attributes: .concurrent)
+        let concurrentDispatchQueue: DispatchQueue = DispatchQueue(label: "test.run.out.of.keys.concurrently",
+                                                                   attributes: .concurrent)
         // act
         for _ in 0..<(unusedAPIKeys.count - 1) {
-            concurrentQueue.async { [unowned self] in
+            concurrentDispatchQueue.async { [unowned self] in
                 switch sut.getUsingAPIKey() {
                     case .success(let usingAPIKey):
                         switch sut.getUsingAPIKeyAfterDeprecating(usingAPIKey) {
@@ -75,7 +75,7 @@ final class KeyManagerTests: XCTestCase {
             }
         }
         
-        concurrentQueue.sync(flags: .barrier) { /*intentionally left blank*/ }
+        concurrentDispatchQueue.sync(flags: .barrier) { /*intentionally left blank*/ }
         
         // assert, should not crash
     }
@@ -83,17 +83,17 @@ final class KeyManagerTests: XCTestCase {
     func testDeprecatingSameAPIKey() throws {
         // arrange
         let usingAPIKey: String = try sut.getUsingAPIKey().get()
-        let concurrentQueue: DispatchQueue = DispatchQueue(label: "test.deprecating.same.api.key",
-                                                           attributes: .concurrent)
+        let concurrentDispatchQueue: DispatchQueue = DispatchQueue(label: "test.deprecating.same.api.key",
+                                                                   attributes: .concurrent)
         
         let newUsingAPIKey: String = try sut.getUsingAPIKeyAfterDeprecating(usingAPIKey).get()
         
         // act
         for _ in 0..<(unusedAPIKeys.count / 2) {
-            concurrentQueue.async { [unowned self] in sut.getUsingAPIKeyAfterDeprecating(usingAPIKey) }
+            concurrentDispatchQueue.async { [unowned self] in sut.getUsingAPIKeyAfterDeprecating(usingAPIKey) }
         }
         
-        concurrentQueue.sync(flags: .barrier) { /*intentionally left blank*/ }
+        concurrentDispatchQueue.sync(flags: .barrier) { /*intentionally left blank*/ }
         
         // assert
         let currentUsingAPIKey: String = try sut.getUsingAPIKey().get()

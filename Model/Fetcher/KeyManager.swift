@@ -1,9 +1,9 @@
 import Foundation
 
 class KeyManager {
-    init(concurrentQueue: DispatchQueue = DispatchQueue(label: "key.manager", attributes: .concurrent),
+    init(concurrentDispatchQueue: DispatchQueue = DispatchQueue(label: "key.manager", attributes: .concurrent),
          unusedAPIKeys: Set<String> = KeyManager.unusedAPIKeys) {
-        self.concurrentQueue = concurrentQueue
+        self.concurrentDispatchQueue = concurrentDispatchQueue
         
         self.unusedAPIKeys = unusedAPIKeys
         
@@ -17,7 +17,7 @@ class KeyManager {
         self.usedAPIKeys = []
     }
     
-    private let concurrentQueue: DispatchQueue
+    private let concurrentDispatchQueue: DispatchQueue
     
     private var unusedAPIKeys: Set<String>
     private var usingAPIKeyResult: Result<String, Swift.Error>
@@ -33,7 +33,7 @@ class KeyManager {
 
 extension KeyManager: KeyManagerProtocol {
     func getUsingAPIKeyAfterDeprecating(_ apiKeyToBeDeprecated: String) -> Result<String, Swift.Error> {
-        concurrentQueue.sync(flags: .barrier) {
+        concurrentDispatchQueue.sync(flags: .barrier) {
             guard case let .success(usingAPIKey) = usingAPIKeyResult else { return .failure(Error.runOutOfKey) }
             guard apiKeyToBeDeprecated == usingAPIKey else { return .success(usingAPIKey) }
             
@@ -43,14 +43,14 @@ extension KeyManager: KeyManagerProtocol {
             else {
                 usingAPIKeyResult = .failure(Error.runOutOfKey)
             }
-            usedAPIKeys.insert(apiKeyToBeDeprecated) // TODO: test case 漏測了
+            usedAPIKeys.insert(apiKeyToBeDeprecated)
             
             return usingAPIKeyResult
         }
     }
     
     func getUsingAPIKey() -> Result<String, Swift.Error> {
-        concurrentQueue.sync { usingAPIKeyResult }
+        concurrentDispatchQueue.sync { usingAPIKeyResult }
     }
 }
 
@@ -69,7 +69,7 @@ extension KeyManager {
         
         var localizedDescription: String {
             switch self {
-                case .runOutOfKey: return "" // TODO:
+                case .runOutOfKey: return R.string.share.runOutOfAPIKey()
             }
         }
     }

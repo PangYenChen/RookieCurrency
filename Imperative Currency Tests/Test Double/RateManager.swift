@@ -5,7 +5,7 @@ extension TestDouble {
     final class RateManager: RateManagerProtocol {
         private(set) var numberOfDays: Int?
         
-        private var completionHandler: ((Result<BaseRateManager.RateTuple, Error>) -> Void)?
+        private var completionHandler: BaseRateManager.CompletionHandler?
         
         init() {
             numberOfDays = nil
@@ -14,7 +14,7 @@ extension TestDouble {
         func getRateFor(
             numberOfDays: Int,
             completionHandlerQueue: DispatchQueue,
-            completionHandler: @escaping (Result<BaseRateManager.RateTuple, Error>) -> Void) {
+            completionHandler: @escaping BaseRateManager.CompletionHandler) {
                 self.numberOfDays = numberOfDays
                 self.completionHandler = completionHandler
             }

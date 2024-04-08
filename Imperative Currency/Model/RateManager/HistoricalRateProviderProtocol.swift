@@ -1,8 +1,8 @@
 import Foundation
 
 protocol HistoricalRateProviderProtocol: BaseHistoricalRateProviderProtocol {
-    func rateFor(dateString: String,
-                 resultHandler: @escaping HistoricalRateResultHandler)
+    func historicalRateFor(dateString: String,
+                           resultHandler: @escaping HistoricalRateResultHandler)
 }
 
 extension HistoricalRateProviderProtocol {

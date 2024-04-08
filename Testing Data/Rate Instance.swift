@@ -20,5 +20,12 @@ extension TestingData {
             let latestRateData: Data = try XCTUnwrap(TestingData.latestData)
             return try ResponseDataModel.jsonDecoder.decode(ResponseDataModel.LatestRate.self, from: latestRateData)
         }
+        
+        static func supportedSymbols() throws -> ResponseDataModel.SupportedSymbols {
+            try ResponseDataModel
+                .jsonDecoder
+                .decode(ResponseDataModel.SupportedSymbols.self, 
+                        from: XCTUnwrap(TestingData.supportedSymbols))
+        }
     }
 }

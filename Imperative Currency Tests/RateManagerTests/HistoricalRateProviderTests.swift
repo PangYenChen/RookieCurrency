@@ -24,7 +24,7 @@ class HistoricalRateProviderTests: XCTestCase {
         let dateString: String = "1970-01-01"
         let expectedRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: dateString)
         
-        sut.rateFor(dateString: dateString) { historicalRateResult in receivedRateResult = historicalRateResult }
+        sut.historicalRateFor(dateString: dateString) { historicalRateResult in receivedRateResult = historicalRateResult }
         
         // act
         historicalRateProviderSpy.executeHistoricalRateResultHandlerFor(dateString: dateString,
@@ -46,7 +46,7 @@ class HistoricalRateProviderTests: XCTestCase {
         let dateString: String = "1970-01-01"
         let expectedTimeOut: URLError = URLError(URLError.Code.timedOut)
         
-        sut.rateFor(dateString: dateString) { historicalRateResult in receivedRateResult = historicalRateResult }
+        sut.historicalRateFor(dateString: dateString) { historicalRateResult in receivedRateResult = historicalRateResult }
         
         // act
         historicalRateProviderSpy.executeHistoricalRateResultHandlerFor(dateString: dateString,

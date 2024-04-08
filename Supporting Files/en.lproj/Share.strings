@@ -8,3 +8,4 @@
 "runOutOfQuota" = "You have exceeded your daily/monthly API rate limit.";
 "invalidAPIKey" = "Invalid authentication credentials";
 "serverDateStringError" = "the date string return by server is invalid:%1$@";
+"runOutOfAPIKey" = "Run out of API key.";

@@ -16,7 +16,7 @@ extension TestDouble {
         private(set) var numberOfCallOfRemoveCachedAndStoredRate: Int
         
         // MARK: - instance method
-        func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> {
+        func historicalRatePublisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> {
             let subject: PassthroughSubject<ResponseDataModel.HistoricalRate, Error> = PassthroughSubject<ResponseDataModel.HistoricalRate, Error>()
             
             dateStringAndSubjectDictionary[dateString] = subject

@@ -15,12 +15,10 @@ final class BaseRateManagerTests: XCTestCase {
     
     private var dummyHistoricalRateProvider: HistoricalRateProviderProtocol!
     private var dummyLatestRateProvider: LatestRateProviderProtocol!
-    private var concurrentQueue: DispatchQueue!
     
     override func setUp() {
         dummyHistoricalRateProvider = TestDouble.HistoricalRateProvider()
         dummyLatestRateProvider = TestDouble.LatestRateProvider()
-        concurrentQueue = DispatchQueue(label: "base.rate.manager.test", attributes: .concurrent)
         
         sut = BaseRateManager(historicalRateProvider: dummyHistoricalRateProvider,
                               latestRateProvider: dummyLatestRateProvider)
@@ -31,7 +29,6 @@ final class BaseRateManagerTests: XCTestCase {
         
         dummyHistoricalRateProvider = nil
         dummyLatestRateProvider = nil
-        concurrentQueue = nil
     }
     
     func testNoRetainCycleOccur() {

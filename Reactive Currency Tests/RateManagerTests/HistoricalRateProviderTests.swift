@@ -33,7 +33,7 @@ final class HistoricalRateProviderTests: XCTestCase {
         let dateString: String = "1970-01-01"
         let expectedRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: dateString)
         
-        sut.publisherFor(dateString: dateString)
+        sut.historicalRatePublisherFor(dateString: dateString)
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { rate in receivedRate = rate })
             .store(in: &anyCancellableSet)
@@ -64,7 +64,7 @@ final class HistoricalRateProviderTests: XCTestCase {
         let dateString: String = "1970-01-01"
         let expectedTimeOut: URLError = URLError(URLError.Code.timedOut)
         
-        sut.publisherFor(dateString: dateString)
+        sut.historicalRatePublisherFor(dateString: dateString)
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { rate in receivedRate = rate })
             .store(in: &anyCancellableSet)

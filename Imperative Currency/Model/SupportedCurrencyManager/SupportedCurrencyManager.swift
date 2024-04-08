@@ -19,7 +19,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
         else {
             completionHandlers.append(completionHandler)
             
-            guard !completionHandlers.isEmpty else { return }
+            guard 1 == completionHandlers.count else { return }
             
             supportedCurrencyProvider.supportedCurrency { [unowned self] result in
                 if case .success(let supportedSymbols) = result {
@@ -35,9 +35,4 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     func prefetchSupportedCurrency() {
         getSupportedCurrency { _ in }
     }
-}
-
-// MARK: - static property
-extension SupportedCurrencyManager {
-    static let shared: SupportedCurrencyManager = SupportedCurrencyManager()
 }
