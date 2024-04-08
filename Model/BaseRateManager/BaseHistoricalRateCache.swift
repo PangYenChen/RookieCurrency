@@ -5,21 +5,16 @@ class BaseHistoricalRateCache {
     init(historicalRateProvider: HistoricalRateProviderProtocol) {
         nextHistoricalRateProvider = historicalRateProvider
         
-        dateStringAndRateDirectory = [:]
-        concurrentDispatchQueue = DispatchQueue(label: "historical.rate.cache", attributes: .concurrent)
+        dateStringAndRateDirectoryWrapper = ThreadSafeWrapper<[String: ResponseDataModel.HistoricalRate]>(wrappedValue: [:])
     }
     
-    // MARK: - private property
-    var dateStringAndRateDirectory: [String: ResponseDataModel.HistoricalRate]
-    let concurrentDispatchQueue: DispatchQueue
+    let dateStringAndRateDirectoryWrapper: ThreadSafeWrapper<[String: ResponseDataModel.HistoricalRate]>
     
     let nextHistoricalRateProvider: HistoricalRateProviderProtocol
 }
 
 extension BaseHistoricalRateCache: BaseHistoricalRateProviderProtocol {
     func removeCachedAndStoredRate() {
-        concurrentDispatchQueue.async(flags: .barrier) { [unowned self] in dateStringAndRateDirectory.removeAll() }
-        
-        nextHistoricalRateProvider.removeCachedAndStoredRate()
+        dateStringAndRateDirectoryWrapper.writeAsynchronously { _ in [:] }
     }
 }
