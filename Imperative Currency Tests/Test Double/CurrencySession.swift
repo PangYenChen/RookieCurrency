@@ -10,8 +10,8 @@ extension TestDouble {
         
         private var completionHandlers: [(Data?, URLResponse?, Error?) -> Void]
         
-        func rateDataTask(with request: URLRequest,
-                          completionHandler: @escaping (Data?, URLResponse?, (any Error)?) -> Void) {
+        func currencyDataTask(with request: URLRequest,
+                              completionHandler: @escaping (Data?, URLResponse?, (any Error)?) -> Void) {
             completionHandlers.append(completionHandler)
         }
         

@@ -9,7 +9,7 @@ class Fetcher: BaseFetcher {
         func dataTaskPublisherWithLimitHandling(for endpoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> {
             switch keyManager.getUsingAPIKey() {
                 case .success(let apiKey):
-                    return currencySession.rateDataTaskPublisher(for: createRequest(url: endpoint.url, withAPIKey: apiKey))
+                    return currencySession.currencyDataTaskPublisher(for: createRequest(url: endpoint.url, withAPIKey: apiKey))
                         .mapError { $0 }
                         .flatMap { [unowned self] data, urlResponse -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> in
                             switch venderResultFor(data: data, urlResponse: urlResponse) {
@@ -54,19 +54,19 @@ class Fetcher: BaseFetcher {
 }
 
 extension Fetcher: HistoricalRateProviderProtocol {
-    func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Swift.Error> {
+    func historicalRatePublisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Swift.Error> {
         publisher(for: Endpoints.Historical(dateString: dateString))
     }
 }
 
 extension Fetcher: LatestRateProviderProtocol {
-    func publisher() -> AnyPublisher<ResponseDataModel.LatestRate, Swift.Error> {
+    func latestRatePublisher() -> AnyPublisher<ResponseDataModel.LatestRate, Swift.Error> {
         publisher(for: Endpoints.Latest())
     }
 }
 
 extension Fetcher: SupportedCurrencyProviderProtocol {
-    func supportedCurrency() -> AnyPublisher<ResponseDataModel.SupportedSymbols, Swift.Error> {
+    func supportedCurrencyPublisher() -> AnyPublisher<ResponseDataModel.SupportedSymbols, Swift.Error> {
         publisher(for: Endpoints.SupportedSymbols())
     }
 }

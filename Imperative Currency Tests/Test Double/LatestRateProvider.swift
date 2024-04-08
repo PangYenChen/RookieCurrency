@@ -11,7 +11,7 @@ extension TestDouble {
         // MARK: - private property
         private var latestRateResultHandler: LatestRateResultHandler?
         
-        func rate(resultHandler: @escaping LatestRateResultHandler) {
+        func latestRate(resultHandler: @escaping LatestRateResultHandler) {
             self.latestRateResultHandler = resultHandler
         }
         

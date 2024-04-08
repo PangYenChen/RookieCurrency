@@ -13,7 +13,7 @@ class Fetcher: BaseFetcher {
             case .success(let apiKey):
                 let urlRequest: URLRequest = createRequest(url: endpoint.url, withAPIKey: apiKey)
                 
-                currencySession.rateDataTask(with: urlRequest) { [unowned self] data, urlResponse, error in
+                currencySession.currencyDataTask(with: urlRequest) { [unowned self] data, urlResponse, error in
                     if let data, let urlResponse {
                         switch venderResultFor(data: data, urlResponse: urlResponse) {
                             case .success(let data):
@@ -62,14 +62,14 @@ class Fetcher: BaseFetcher {
 }
 
 extension Fetcher: HistoricalRateProviderProtocol {
-    func rateFor(dateString: String,
-                 resultHandler: @escaping HistoricalRateResultHandler) {
+    func historicalRateFor(dateString: String,
+                           resultHandler: @escaping HistoricalRateResultHandler) {
         fetch(Endpoints.Historical(dateString: dateString), completionHandler: resultHandler)
     }
 }
 
 extension Fetcher: LatestRateProviderProtocol {
-    func rate(resultHandler latestRateResultHandler: @escaping LatestRateResultHandler) {
+    func latestRate(resultHandler latestRateResultHandler: @escaping LatestRateResultHandler) {
         fetch(Endpoints.Latest(), completionHandler: latestRateResultHandler)
     }
 }

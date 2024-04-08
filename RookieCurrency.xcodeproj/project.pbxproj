@@ -59,7 +59,7 @@
 		5129D7A3298FA3D9005F5DE5 /* ResultTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */; };
 		512C8E6F2BB6F8C200303B06 /* HistoricalRateProviderChain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5145AC3F2BB6F6E8001783AF /* HistoricalRateProviderChain.swift */; };
 		512CE8CF2B35EA9700019B20 /* CurrencySessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8CE2B35EA9700019B20 /* CurrencySessionProtocol.swift */; };
-		512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D32B35F52D00019B20 /* RateSession.swift */; };
+		512CE8D42B35F52D00019B20 /* RateSessionProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D32B35F52D00019B20 /* RateSessionProtocol.swift */; };
 		512CE8D92B36F9D000019B20 /* UserSettingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D82B36F9D000019B20 /* UserSettingManager.swift */; };
 		512CE8DA2B36F9D000019B20 /* UserSettingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8D82B36F9D000019B20 /* UserSettingManager.swift */; };
 		512CE8E22B37259200019B20 /* UserSettingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 512CE8E02B37252400019B20 /* UserSettingManager.swift */; };
@@ -260,7 +260,7 @@
 		51290BB82B9A4F50005BE201 /* UserDefaults.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserDefaults.swift; sourceTree = "<group>"; };
 		5129D7A2298FA3D9005F5DE5 /* ResultTableViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultTableViewController.swift; sourceTree = "<group>"; };
 		512CE8CE2B35EA9700019B20 /* CurrencySessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySessionProtocol.swift; sourceTree = "<group>"; };
-		512CE8D32B35F52D00019B20 /* RateSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSession.swift; sourceTree = "<group>"; };
+		512CE8D32B35F52D00019B20 /* RateSessionProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateSessionProtocol.swift; sourceTree = "<group>"; };
 		512CE8D82B36F9D000019B20 /* UserSettingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingManager.swift; sourceTree = "<group>"; };
 		512CE8DB2B3724AC00019B20 /* ResultModelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultModelTest.swift; sourceTree = "<group>"; };
 		512CE8E02B37252400019B20 /* UserSettingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingManager.swift; sourceTree = "<group>"; };
@@ -434,9 +434,8 @@
 				51290B8A2B9060F4005BE201 /* Timer */,
 				516DD00F2BB9ED8800D0B593 /* RateManager */,
 				512087AD29A9F4A7005ED87A /* Fetcher.swift */,
-				512CE8D32B35F52D00019B20 /* RateSession.swift */,
-				512495682B31E89C00FD86D9 /* SupportedCurrencyManager.swift */,
-				518F7F022BC0925800B1FF44 /* SupportedCurrencyProviderProtocol.swift */,
+				512CE8D32B35F52D00019B20 /* RateSessionProtocol.swift */,
+				516017552BC4508900817732 /* SupportedCurrencyManager */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -446,9 +445,9 @@
 			children = (
 				51290B7C2B90525B005BE201 /* Timer */,
 				516DD00D2BB9E76600D0B593 /* RateManager */,
+				516DD08A2BC08CEB00D0B593 /* SupportedCurrencyManager */,
 				512087A829A9F10A005ED87A /* Fetcher.swift */,
 				512CE8CE2B35EA9700019B20 /* CurrencySessionProtocol.swift */,
-				516DD08A2BC08CEB00D0B593 /* SupportedCurrencyManager */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -537,6 +536,15 @@
 				5149A1AB2B08E2B2005D2B04 /* SettingModel.swift */,
 			);
 			path = "Setting Scene";
+			sourceTree = "<group>";
+		};
+		516017552BC4508900817732 /* SupportedCurrencyManager */ = {
+			isa = PBXGroup;
+			children = (
+				512495682B31E89C00FD86D9 /* SupportedCurrencyManager.swift */,
+				518F7F022BC0925800B1FF44 /* SupportedCurrencyProviderProtocol.swift */,
+			);
+			path = SupportedCurrencyManager;
 			sourceTree = "<group>";
 		};
 		516DD00D2BB9E76600D0B593 /* RateManager */ = {
@@ -1221,7 +1229,7 @@
 				51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */,
 				51290B8D2B906107005BE201 /* TimerProtocol.swift in Sources */,
 				E1FB993F24FF554C0096FE2C /* ResultTableViewController.swift in Sources */,
-				512CE8D42B35F52D00019B20 /* RateSession.swift in Sources */,
+				512CE8D42B35F52D00019B20 /* RateSessionProtocol.swift in Sources */,
 				E1FB9944250084760096FE2C /* BaseRateManager.swift in Sources */,
 				516DD01F2BB9F51500D0B593 /* HistoricalRateProviderProtocol.swift in Sources */,
 				5124955E2B31CACF00FD86D9 /* BaseSupportedCurrencyManager.swift in Sources */,

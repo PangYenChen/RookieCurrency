@@ -5,14 +5,13 @@ import Foundation
 
 extension TestDouble {
     class CurrencySession: CurrencySessionProtocol {
-        
         init() {
             passthroughSubjects = []
         }
         
         private var passthroughSubjects: [PassthroughSubject<(data: Data, response: URLResponse), URLError>]
         
-        func rateDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
+        func currencyDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
             let passthroughSubject = PassthroughSubject<(data: Data, response: URLResponse), URLError>()
             passthroughSubjects.append(passthroughSubject)
             

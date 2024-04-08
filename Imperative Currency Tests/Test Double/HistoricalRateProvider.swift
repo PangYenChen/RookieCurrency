@@ -14,8 +14,8 @@ extension TestDouble {
         private(set) var numberOfCallOfRemoveCachedAndStoredRate: Int
         
         // MARK: - instance property
-        func rateFor(dateString: String,
-                     resultHandler: @escaping HistoricalRateResultHandler) {
+        func historicalRateFor(dateString: String,
+                               resultHandler: @escaping HistoricalRateResultHandler) {
             dateStringAndHistoricalRateResultHandler[dateString] = resultHandler
         }
         

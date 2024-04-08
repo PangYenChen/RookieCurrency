@@ -4,7 +4,7 @@ import Combine
 class HistoricalRateCache: BaseHistoricalRateCache {}
 
 extension HistoricalRateCache: HistoricalRateProviderProtocol {
-    func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, any Error> {
+    func historicalRatePublisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, any Error> {
         let cachedRate: ResponseDataModel.HistoricalRate? = dateStringAndRateDirectoryWrapper
             .readSynchronously { dateStringAndRateDirectory in dateStringAndRateDirectory[dateString] }
         
@@ -14,7 +14,7 @@ extension HistoricalRateCache: HistoricalRateProviderProtocol {
                 .eraseToAnyPublisher()
         }
         else {
-            return nextHistoricalRateProvider.publisherFor(dateString: dateString)
+            return nextHistoricalRateProvider.historicalRatePublisherFor(dateString: dateString)
                 .handleEvents(receiveOutput: { [unowned self] rate in
                     dateStringAndRateDirectoryWrapper.writeAsynchronously { dateStringAndRateDirectory in
                         var dateStringAndRateDirectory: [String: ResponseDataModel.HistoricalRate] = dateStringAndRateDirectory

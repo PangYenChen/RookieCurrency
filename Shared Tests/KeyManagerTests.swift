@@ -58,7 +58,7 @@ final class KeyManagerTests: XCTestCase {
     func testRunOutOfKeysConcurrently() throws {
         // arrange
         let concurrentDispatchQueue: DispatchQueue = DispatchQueue(label: "test.run.out.of.keys.concurrently",
-                                                           attributes: .concurrent)
+                                                                   attributes: .concurrent)
         // act
         for _ in 0..<(unusedAPIKeys.count - 1) {
             concurrentDispatchQueue.async { [unowned self] in
@@ -84,7 +84,7 @@ final class KeyManagerTests: XCTestCase {
         // arrange
         let usingAPIKey: String = try sut.getUsingAPIKey().get()
         let concurrentDispatchQueue: DispatchQueue = DispatchQueue(label: "test.deprecating.same.api.key",
-                                                           attributes: .concurrent)
+                                                                   attributes: .concurrent)
         
         let newUsingAPIKey: String = try sut.getUsingAPIKeyAfterDeprecating(usingAPIKey).get()
         

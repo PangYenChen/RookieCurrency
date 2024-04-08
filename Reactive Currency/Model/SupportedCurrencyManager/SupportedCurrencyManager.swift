@@ -15,7 +15,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
                 return wrappedSupportedSymbols
             }
             else {
-                let wrappedSupportedSymbols: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> = supportedCurrencyProvider.supportedCurrency()
+                let wrappedSupportedSymbols: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> = supportedCurrencyProvider.supportedCurrencyPublisher()
                     .map { $0.symbols }
                     .handleEvents(
                         receiveOutput: { supportedCurrencyDescriptionDictionary in

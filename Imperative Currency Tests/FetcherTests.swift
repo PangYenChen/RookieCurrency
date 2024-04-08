@@ -40,7 +40,7 @@ final class FetcherTests: XCTestCase {
         var receivedLatestRateResult: Result<ResponseDataModel.LatestRate, Error>?
         
         // act
-        sut.rate { result in receivedLatestRateResult = result }
+        sut.latestRate { result in receivedLatestRateResult = result }
         
         do {
             let latestRateTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.CurrencySessionTuple.latestRate()
@@ -72,7 +72,7 @@ final class FetcherTests: XCTestCase {
         let expectedDateString: ResponseDataModel.CurrencyCode = "1970-01-01"
         
         // act
-        sut.rateFor(dateString: expectedDateString) { result in receivedHistoricalRateResult = result }
+        sut.historicalRateFor(dateString: expectedDateString) { result in receivedHistoricalRateResult = result }
         
         do {
             let historicalRateTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
