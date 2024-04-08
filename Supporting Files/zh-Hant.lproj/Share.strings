@@ -8,3 +8,4 @@
 "runOutOfQuota" = "查詢資料的額度已用罄";
 "invalidAPIKey" = "權限不足";
 "serverDateStringError" = "伺服器回傳的日期字串無效：%1$@";
+"runOutOfAPIKey" = "API key用罄。";

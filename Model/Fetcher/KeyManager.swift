@@ -43,7 +43,7 @@ extension KeyManager: KeyManagerProtocol {
             else {
                 usingAPIKeyResult = .failure(Error.runOutOfKey)
             }
-            usedAPIKeys.insert(apiKeyToBeDeprecated) // TODO: test case 漏測了
+            usedAPIKeys.insert(apiKeyToBeDeprecated)
             
             return usingAPIKeyResult
         }
@@ -69,7 +69,7 @@ extension KeyManager {
         
         var localizedDescription: String {
             switch self {
-                case .runOutOfKey: return "" // TODO:
+                case .runOutOfKey: return R.string.share.runOutOfAPIKey()
             }
         }
     }
