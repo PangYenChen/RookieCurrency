@@ -6,19 +6,19 @@ class BaseHistoricalRateCache {
         nextHistoricalRateProvider = historicalRateProvider
         
         dateStringAndRateDirectory = [:]
-        concurrentQueue = DispatchQueue(label: "historical.rate.cache", attributes: .concurrent)
+        concurrentDispatchQueue = DispatchQueue(label: "historical.rate.cache", attributes: .concurrent)
     }
     
     // MARK: - private property
     var dateStringAndRateDirectory: [String: ResponseDataModel.HistoricalRate]
-    let concurrentQueue: DispatchQueue
+    let concurrentDispatchQueue: DispatchQueue
     
     let nextHistoricalRateProvider: HistoricalRateProviderProtocol
 }
 
 extension BaseHistoricalRateCache: BaseHistoricalRateProviderProtocol {
     func removeCachedAndStoredRate() {
-        concurrentQueue.async(flags: .barrier) { [unowned self] in dateStringAndRateDirectory.removeAll() }
+        concurrentDispatchQueue.async(flags: .barrier) { [unowned self] in dateStringAndRateDirectory.removeAll() }
         
         nextHistoricalRateProvider.removeCachedAndStoredRate()
     }

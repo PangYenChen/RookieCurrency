@@ -5,7 +5,7 @@ class HistoricalRateCache: BaseHistoricalRateCache {}
 
 extension HistoricalRateCache: HistoricalRateProviderProtocol {
     func publisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, any Error> {
-        if let cachedRate = concurrentQueue.sync(execute: { dateStringAndRateDirectory[dateString] }) {
+        if let cachedRate = concurrentDispatchQueue.sync(execute: { dateStringAndRateDirectory[dateString] }) {
             return Just(cachedRate)
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
@@ -13,7 +13,7 @@ extension HistoricalRateCache: HistoricalRateProviderProtocol {
         else {
             return nextHistoricalRateProvider.publisherFor(dateString: dateString)
                 .handleEvents(receiveOutput: { [unowned self] rate in
-                    concurrentQueue.async(flags: .barrier) {
+                    concurrentDispatchQueue.async(flags: .barrier) {
                         dateStringAndRateDirectory[rate.dateString] = rate
                     }
                 })
