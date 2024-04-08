@@ -7,7 +7,7 @@ class Fetcher: BaseFetcher {
     ///   - completionHandler: The completion handler to call when the load request is complete.
     func fetch<Endpoint: EndpointProtocol>(
         _ endpoint: Endpoint,
-        completionHandler: @escaping (Result<Endpoint.ResponseType, Swift.Error>) -> Void
+        completionHandler: @escaping CompletionHandler<Endpoint.ResponseType>
     ) {
         switch keyManager.getUsingAPIKey() {
             case .success(let apiKey):
@@ -78,4 +78,8 @@ extension Fetcher: SupportedCurrencyProviderProtocol {
     func supportedCurrency(completionHandler: @escaping SupportedCurrencyHandler) {
         fetch(Endpoints.SupportedSymbols(), completionHandler: completionHandler)
     }
+}
+
+extension Fetcher {
+    typealias CompletionHandler<ResponseType> = (_ result: Result<ResponseType, Swift.Error>) -> Void
 }
