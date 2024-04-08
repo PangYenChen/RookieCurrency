@@ -14,10 +14,10 @@ extension HistoricalRateCache: HistoricalRateProviderProtocol {
         }
         else {
             nextHistoricalRateProvider.rateFor(dateString: dateString) { [unowned self] result in
-                if let historicalRate = try? result.get() {
+                if let rate = try? result.get() {
                     dateStringAndRateDirectoryWrapper.writeAsynchronously { dateStringAndRateDirectory in
                         var dateStringAndRateDirectory: [String: ResponseDataModel.HistoricalRate] = dateStringAndRateDirectory
-                        dateStringAndRateDirectory[historicalRate.dateString] = historicalRate
+                        dateStringAndRateDirectory[rate.dateString] = rate
                         
                         return dateStringAndRateDirectory
                     }
