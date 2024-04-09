@@ -11,11 +11,11 @@ import XCTest
 final class BaseFetcherTests: XCTestCase {
     private var sut: BaseFetcher!
     
-    private var keyManager: TestDouble.KeyManager!
+    private var keyManager: KeyManager!
     private var currencySession: TestDouble.CurrencySession!
     
     override func setUp() {
-        keyManager = TestDouble.KeyManager(unusedAPIKeys: [""])
+        keyManager = KeyManager(unusedAPIKeys: [""])
         currencySession = TestDouble.CurrencySession()
         
         sut = BaseFetcher(keyManager: keyManager,

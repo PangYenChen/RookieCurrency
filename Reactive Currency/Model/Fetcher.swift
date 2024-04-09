@@ -7,7 +7,10 @@ class Fetcher: BaseFetcher {
     /// - Returns: The publisher publishes decoded instance when the task completes, or terminates if the task fails with an error.
     func publisher<Endpoint: EndpointProtocol>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error> {
         func dataTaskPublisherWithLimitHandling(for endpoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> {
-            switch keyManager.getUsingAPIKey() {
+            let usingAPIKeyResult: Result<String, Swift.Error> = threadSafeKeyManager
+                .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
+            
+            switch usingAPIKeyResult {
                 case .success(let apiKey):
                     return currencySession.currencyDataTaskPublisher(for: createRequest(url: endpoint.url, withAPIKey: apiKey))
                         .mapError { $0 }
@@ -21,7 +24,15 @@ class Fetcher: BaseFetcher {
                                 case .failure(let error):
                                     switch error {
                                         case .invalidAPIKey, .runOutOfQuota:
-                                            switch keyManager.getUsingAPIKeyAfterDeprecating(apiKey) {
+                                            threadSafeKeyManager.writeAsynchronously { keyManager in
+                                                keyManager.deprecate(apiKey)
+                                                return keyManager
+                                            }
+                                            
+                                            let usingAPIKeyResult: Result<String, Swift.Error> = threadSafeKeyManager
+                                                .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
+                                            
+                                            switch usingAPIKeyResult {
                                                 case .success:
                                                     // 更新完 api key 後重新打 api
                                                     return dataTaskPublisherWithLimitHandling(for: endpoint)

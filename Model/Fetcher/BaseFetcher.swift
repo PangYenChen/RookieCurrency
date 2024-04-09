@@ -3,16 +3,16 @@ import Foundation
 /// 跟伺服器拿資料的物件
 class BaseFetcher {
     // MARK: - initializer
-    init(keyManager: KeyManagerProtocol = KeyManager.shared,
+    init(keyManager: KeyManager = KeyManager.shared,
          currencySession: CurrencySessionProtocol = BaseFetcher.currencySession) {
-        self.keyManager = keyManager
+        threadSafeKeyManager = ThreadSafeWrapper<KeyManager>(wrappedValue: keyManager)
         self.currencySession = currencySession
         
         jsonDecoder = ResponseDataModel.jsonDecoder
     }
     
     // MARK: - instance properties
-    let keyManager: KeyManagerProtocol
+    let threadSafeKeyManager: ThreadSafeWrapper<KeyManager>
     let currencySession: CurrencySessionProtocol
     
     let jsonDecoder: JSONDecoder
