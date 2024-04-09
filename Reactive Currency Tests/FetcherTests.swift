@@ -5,7 +5,7 @@ import Combine
 class FetcherTests: XCTestCase {
     private var sut: Fetcher!
     
-    private var keyManager: TestDouble.KeyManager!
+    private var keyManager: KeyManager!
     private var currencySession: TestDouble.CurrencySession!
     private var dummyAPIKeys: Set<String>!
     
@@ -13,7 +13,7 @@ class FetcherTests: XCTestCase {
     
     override func setUp() {
         dummyAPIKeys = ["a", "b", "c"]
-        keyManager = TestDouble.KeyManager(unusedAPIKeys: dummyAPIKeys)
+        keyManager = KeyManager(unusedAPIKeys: dummyAPIKeys)
         currencySession = TestDouble.CurrencySession()
         
         sut = Fetcher(keyManager: keyManager,

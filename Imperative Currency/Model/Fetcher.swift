@@ -9,7 +9,10 @@ class Fetcher: BaseFetcher {
         _ endpoint: Endpoint,
         completionHandler: @escaping CompletionHandler<Endpoint.ResponseType>
     ) {
-        switch keyManager.getUsingAPIKey() {
+        let usingAPIKeyResult: Result<String, Swift.Error> = threadSafeKeyManager
+            .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
+        
+        switch usingAPIKeyResult {
             case .success(let apiKey):
                 let urlRequest: URLRequest = createRequest(url: endpoint.url, withAPIKey: apiKey)
                 
@@ -30,7 +33,15 @@ class Fetcher: BaseFetcher {
                             case .failure(let error):
                                 switch error {
                                     case .runOutOfQuota, .invalidAPIKey:
-                                        switch keyManager.getUsingAPIKeyAfterDeprecating(apiKey) {
+                                        threadSafeKeyManager.writeAsynchronously { keyManager in
+                                            keyManager.deprecate(apiKey)
+                                            return keyManager
+                                        }
+                                        
+                                        let usingAPIKeyResult: Result<String, Swift.Error> = threadSafeKeyManager
+                                            .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
+                                        
+                                        switch usingAPIKeyResult {
                                             case .success:
                                                 // 更新成功後重新打 api
                                                 fetch(endpoint, completionHandler: completionHandler)

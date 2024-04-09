@@ -5,12 +5,12 @@ final class FetcherTests: XCTestCase {
     private var sut: Fetcher!
     
     private var currencySession: TestDouble.CurrencySession!
-    private var keyManager: TestDouble.KeyManager!
+    private var keyManager: KeyManager!
     private var dummyAPIKeys: Set<String>!
     
     override func setUp() {
         dummyAPIKeys = ["a", "b", "c"]
-        keyManager = TestDouble.KeyManager(unusedAPIKeys: dummyAPIKeys)
+        keyManager = KeyManager(unusedAPIKeys: dummyAPIKeys)
         currencySession = TestDouble.CurrencySession()
         
         sut = Fetcher(keyManager: keyManager,

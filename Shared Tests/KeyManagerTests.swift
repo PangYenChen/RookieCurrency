@@ -11,22 +11,18 @@ import XCTest
 final class KeyManagerTests: XCTestCase {
     private var sut: KeyManager!
     
-    private var concurrentDispatchQueue: DispatchQueue!
     private var unusedAPIKeys: Set<String>!
     
     override func setUp() {
-        concurrentDispatchQueue = DispatchQueue(label: "key.manager.tests", attributes: .concurrent)
         unusedAPIKeys = Set((0..<100).map { _ in UUID().uuidString })
         
-        sut = KeyManager(concurrentDispatchQueue: concurrentDispatchQueue,
-                         unusedAPIKeys: unusedAPIKeys)
+        sut = KeyManager(unusedAPIKeys: unusedAPIKeys)
     }
     
     override func tearDown() {
         sut = nil
         
         unusedAPIKeys = nil
-        concurrentDispatchQueue = nil
     }
     
     func testNoRetainCycleOccur() {
@@ -45,58 +41,26 @@ final class KeyManagerTests: XCTestCase {
         // act, do nothing
         
         // assert
-        var usingAPIKey: String = try sut.getUsingAPIKey().get()
         
-        for _ in 0..<(unusedAPIKeys.count - 1) {
-            usingAPIKey = try sut.getUsingAPIKeyAfterDeprecating(usingAPIKey).get()
+        for _ in 0..<unusedAPIKeys.count {
+            let usingAPIKey: String = try sut.usingAPIKeyResult.get()
+            sut.deprecate(usingAPIKey)
         }
         
-        XCTAssertThrowsError(try sut.getUsingAPIKeyAfterDeprecating(usingAPIKey).get())
-        XCTAssertThrowsError(try sut.getUsingAPIKey().get())
-    }
-    
-    func testRunOutOfKeysConcurrently() throws {
-        // arrange
-        let concurrentDispatchQueue: DispatchQueue = DispatchQueue(label: "test.run.out.of.keys.concurrently",
-                                                                   attributes: .concurrent)
-        // act
-        for _ in 0..<(unusedAPIKeys.count - 1) {
-            concurrentDispatchQueue.async { [unowned self] in
-                switch sut.getUsingAPIKey() {
-                    case .success(let usingAPIKey):
-                        switch sut.getUsingAPIKeyAfterDeprecating(usingAPIKey) {
-                            case .success: break
-                            case .failure: XCTFail("api key的數量應該夠多，即使拿到的對象不對，至少能拿到東西")
-                        }
-                        
-                    case .failure:
-                        XCTFail("api key的數量應該夠多，即使拿到的對象不對，至少能拿到東西")
-                }
-            }
-        }
-        
-        concurrentDispatchQueue.sync(flags: .barrier) { /*intentionally left blank*/ }
-        
-        // assert, should not crash
+        XCTAssertThrowsError(try sut.usingAPIKeyResult.get())
     }
     
     func testDeprecatingSameAPIKey() throws {
         // arrange
-        let usingAPIKey: String = try sut.getUsingAPIKey().get()
-        let concurrentDispatchQueue: DispatchQueue = DispatchQueue(label: "test.deprecating.same.api.key",
-                                                                   attributes: .concurrent)
-        
-        let newUsingAPIKey: String = try sut.getUsingAPIKeyAfterDeprecating(usingAPIKey).get()
+        let firstAPIKey: String = try sut.usingAPIKeyResult.get()
         
         // act
-        for _ in 0..<(unusedAPIKeys.count / 2) {
-            concurrentDispatchQueue.async { [unowned self] in sut.getUsingAPIKeyAfterDeprecating(usingAPIKey) }
-        }
-        
-        concurrentDispatchQueue.sync(flags: .barrier) { /*intentionally left blank*/ }
+        sut.deprecate(firstAPIKey)
+        let secondAPIKey: String = try sut.usingAPIKeyResult.get()
+        sut.deprecate(firstAPIKey)
+        let thirdAPIKey: String = try sut.usingAPIKeyResult.get()
         
         // assert
-        let currentUsingAPIKey: String = try sut.getUsingAPIKey().get()
-        XCTAssertEqual(newUsingAPIKey, currentUsingAPIKey)
+        XCTAssertEqual(secondAPIKey, thirdAPIKey)
     }
 }

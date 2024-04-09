@@ -1,10 +1,7 @@
 import Foundation
 
 class KeyManager {
-    init(concurrentDispatchQueue: DispatchQueue = DispatchQueue(label: "key.manager", attributes: .concurrent),
-         unusedAPIKeys: Set<String> = KeyManager.unusedAPIKeys) {
-        self.concurrentDispatchQueue = concurrentDispatchQueue
-        
+    init(unusedAPIKeys: Set<String> = KeyManager.unusedAPIKeys) {
         self.unusedAPIKeys = unusedAPIKeys
         
         if let unusedAPIKey = self.unusedAPIKeys.popFirst() {
@@ -17,11 +14,9 @@ class KeyManager {
         self.usedAPIKeys = []
     }
     
-    private let concurrentDispatchQueue: DispatchQueue
-    
     private var unusedAPIKeys: Set<String>
-    private var usingAPIKeyResult: Result<String, Swift.Error>
-    private var usedAPIKeys: Set<String> = []
+    private(set) var usingAPIKeyResult: Result<String, Swift.Error>
+    private(set) var usedAPIKeys: Set<String> = []
     
 #if DEBUG
     var apiKeysUsageRatio: Double {
@@ -31,26 +26,19 @@ class KeyManager {
 #endif
 }
 
-extension KeyManager: KeyManagerProtocol {
-    func getUsingAPIKeyAfterDeprecating(_ apiKeyToBeDeprecated: String) -> Result<String, Swift.Error> {
-        concurrentDispatchQueue.sync(flags: .barrier) {
-            guard case let .success(usingAPIKey) = usingAPIKeyResult else { return .failure(Error.runOutOfKey) }
-            guard apiKeyToBeDeprecated == usingAPIKey else { return .success(usingAPIKey) }
-            
-            if let unusedAPIKey = unusedAPIKeys.popFirst() {
-                usingAPIKeyResult = .success(unusedAPIKey)
-            }
-            else {
-                usingAPIKeyResult = .failure(Error.runOutOfKey)
-            }
-            usedAPIKeys.insert(apiKeyToBeDeprecated)
-            
-            return usingAPIKeyResult
+extension KeyManager {
+    func deprecate(_ apiKeyToBeDeprecated: String) {
+        guard case let .success(usingAPIKey) = usingAPIKeyResult else { return }
+        guard apiKeyToBeDeprecated == usingAPIKey else { return }
+        
+        if let unusedAPIKey = unusedAPIKeys.popFirst() {
+            usingAPIKeyResult = .success(unusedAPIKey)
         }
-    }
-    
-    func getUsingAPIKey() -> Result<String, Swift.Error> {
-        concurrentDispatchQueue.sync { usingAPIKeyResult }
+        else {
+            usingAPIKeyResult = .failure(Error.runOutOfKey)
+        }
+        
+        usedAPIKeys.insert(apiKeyToBeDeprecated)
     }
 }
 
