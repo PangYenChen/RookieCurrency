@@ -1,11 +1,11 @@
-class HistoricalRateRing: HistoricalRateProviderProtocol {
-    init(storage: HistoricalRateStorage,
+class HistoricalRateProviderRing: HistoricalRateProviderProtocol {
+    init(storage: HistoricalRateStorageProtocol,
          nextProvider: HistoricalRateProviderProtocol) {
         self.storage = storage
         self.nextProvider = nextProvider
     }
     
-    let storage: HistoricalRateStorage
+    let storage: HistoricalRateStorageProtocol
     let nextProvider: HistoricalRateProviderProtocol
     
     func historicalRateFor(dateString: String, resultHandler: @escaping HistoricalRateResultHandler) {

@@ -8,7 +8,7 @@ class HistoricalRateCache {
     let threadSafeDateStringAndRateDirectory: ThreadSafeWrapper<[String: ResponseDataModel.HistoricalRate]>
 }
 
-extension HistoricalRateCache: HistoricalRateStorage {
+extension HistoricalRateCache: HistoricalRateStorageProtocol {
     func readFor(dateString: String) -> ResponseDataModel.HistoricalRate? {
         threadSafeDateStringAndRateDirectory
             .readSynchronously { dateStringAndRateDirectory in dateStringAndRateDirectory[dateString] }

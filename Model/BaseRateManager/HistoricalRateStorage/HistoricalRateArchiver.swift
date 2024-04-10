@@ -67,7 +67,7 @@ extension HistoricalRateArchiver {
     }
 }
 
-extension HistoricalRateArchiver: HistoricalRateStorage {
+extension HistoricalRateArchiver: HistoricalRateStorageProtocol {
     func readFor(dateString: String) -> ResponseDataModel.HistoricalRate? {
         guard hasFileInDiskWith(dateString: dateString) else { return nil }
         return try? unarchiveRateWith(dateString: dateString)
