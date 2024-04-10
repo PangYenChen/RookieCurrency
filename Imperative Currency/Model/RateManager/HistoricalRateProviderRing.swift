@@ -23,7 +23,7 @@ class HistoricalRateProviderRing: HistoricalRateProviderProtocol {
         }
     }
     
-    func removeCachedAndStoredRate() {
-        storage.removeCachedAndStoredRate()
+    func removeAllStorage() {
+        storage.removeAll()
     }
 }

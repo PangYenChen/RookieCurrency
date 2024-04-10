@@ -17,7 +17,7 @@ extension TestDouble {
             dateStringAndHistoricalRateResultHandler[dateString] = resultHandler
         }
         
-        func removeCachedAndStoredRate() {
+        func removeAllStorage() {
             dateStringAndHistoricalRateResultHandler.removeAll()
         }
         

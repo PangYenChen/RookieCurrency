@@ -1,3 +1,3 @@
 protocol BaseHistoricalRateProviderProtocol {
-    func removeCachedAndStoredRate()
+    func removeAllStorage()
 }

@@ -77,7 +77,7 @@ extension HistoricalRateArchiver: HistoricalRateStorageProtocol {
         try? archive(rate)
     }
     
-    func removeCachedAndStoredRate() {
+    func removeAll() {
         try? fileManager
             .contentsOfDirectory(at: documentsDirectory,
                                  includingPropertiesForKeys: nil,

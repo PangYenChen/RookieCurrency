@@ -22,7 +22,7 @@ extension TestDouble {
             dateStringAndRateDirectory[rate.dateString] = rate
         }
         
-        func removeCachedAndStoredRate() {
+        func removeAll() {
             dateStringAndRateDirectory.removeAll()
         }
     }

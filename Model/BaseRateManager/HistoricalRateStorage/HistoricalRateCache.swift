@@ -23,7 +23,7 @@ extension HistoricalRateCache: HistoricalRateStorageProtocol {
         }
     }
     
-    func removeCachedAndStoredRate() {
+    func removeAll() {
         threadSafeDateStringAndRateDirectory.writeAsynchronously { _ in [:] }
     }
 }
