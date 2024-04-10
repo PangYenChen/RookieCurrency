@@ -5,25 +5,25 @@ extension TestDouble {
     class HistoricalRateProvider: HistoricalRateProviderProtocol {
         // MARK: - initializer
         init() {
-            dateStringAndHistoricalRateResultHandler = [:]
-            numberOfCallOfRemoveCachedAndStoredRate = 0
+            dateStringAndHistoricalRateResultHandlerDictionary = [:]
         }
         
         // MARK: - private property
-        private var dateStringAndHistoricalRateResultHandler: [String: HistoricalRateResultHandler]
-        private(set) var numberOfCallOfRemoveCachedAndStoredRate: Int
+        private(set) var dateStringAndHistoricalRateResultHandlerDictionary: [String: HistoricalRateResultHandler]
         
         // MARK: - instance property
         func historicalRateFor(dateString: String,
                                resultHandler: @escaping HistoricalRateResultHandler) {
-            dateStringAndHistoricalRateResultHandler[dateString] = resultHandler
+            dateStringAndHistoricalRateResultHandlerDictionary[dateString] = resultHandler
         }
         
-        func removeCachedAndStoredRate() { numberOfCallOfRemoveCachedAndStoredRate += 1 }
+        func removeAllStorage() {
+            dateStringAndHistoricalRateResultHandlerDictionary.removeAll()
+        }
         
         func executeHistoricalRateResultHandlerFor(dateString: String,
                                                    with result: Result<ResponseDataModel.HistoricalRate, Error>) {
-            dateStringAndHistoricalRateResultHandler.removeValue(forKey: dateString)?(result)
+            dateStringAndHistoricalRateResultHandlerDictionary.removeValue(forKey: dateString)?(result)
         }
     }
 }

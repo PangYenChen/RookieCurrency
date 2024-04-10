@@ -59,7 +59,7 @@ extension BaseFetcher {
 }
 
 extension BaseFetcher: BaseHistoricalRateProviderProtocol {
-    func removeCachedAndStoredRate() { /*do nothing*/ }
+    func removeAllStorage() { /*do nothing*/ }
 }
 
 extension BaseFetcher {

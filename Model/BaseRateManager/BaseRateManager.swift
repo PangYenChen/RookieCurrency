@@ -29,7 +29,7 @@ extension BaseRateManager {
     }
     
     func removeCachedAndStoredData() {
-        historicalRateProvider.removeCachedAndStoredRate()
+        historicalRateProvider.removeAllStorage()
     }
 }
 

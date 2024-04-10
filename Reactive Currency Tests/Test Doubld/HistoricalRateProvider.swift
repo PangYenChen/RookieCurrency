@@ -5,17 +5,12 @@ import Combine
 
 extension TestDouble {
     class HistoricalRateProvider: HistoricalRateProviderProtocol {
-        // MARK: - initializer
         init() {
             dateStringAndSubjectDictionary = [:]
-            numberOfCallOfRemoveCachedAndStoredRate = 0
         }
         
-        // MARK: - private property
-        private var dateStringAndSubjectDictionary: [String: PassthroughSubject<ResponseDataModel.HistoricalRate, Error>]
-        private(set) var numberOfCallOfRemoveCachedAndStoredRate: Int
+        private(set) var dateStringAndSubjectDictionary: [String: PassthroughSubject<ResponseDataModel.HistoricalRate, Error>]
         
-        // MARK: - instance method
         func historicalRatePublisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> {
             let subject: PassthroughSubject<ResponseDataModel.HistoricalRate, Error> = PassthroughSubject<ResponseDataModel.HistoricalRate, Error>()
             
@@ -23,7 +18,9 @@ extension TestDouble {
             return subject.eraseToAnyPublisher()
         }
         
-        func removeCachedAndStoredRate() { numberOfCallOfRemoveCachedAndStoredRate += 1 }
+        func removeAllStorage() {
+            dateStringAndSubjectDictionary.removeAll()
+        }
         
         func publish(_ output: ResponseDataModel.HistoricalRate, for dateString: String) {
             dateStringAndSubjectDictionary[dateString]?.send(output)
