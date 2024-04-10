@@ -1,13 +1,6 @@
-class HistoricalRateProviderRing: HistoricalRateProviderProtocol {
-    init(storage: HistoricalRateStorageProtocol,
-         nextProvider: HistoricalRateProviderProtocol) {
-        self.storage = storage
-        self.nextProvider = nextProvider
-    }
-    
-    let storage: HistoricalRateStorageProtocol
-    let nextProvider: HistoricalRateProviderProtocol
-    
+class HistoricalRateProviderRing: BaseHistoricalRateProviderRing {}
+
+extension HistoricalRateProviderRing: HistoricalRateProviderProtocol {
     func historicalRateFor(dateString: String, resultHandler: @escaping HistoricalRateResultHandler) {
         if let storedRate = storage.readFor(dateString: dateString) {
             resultHandler(.success(storedRate))
@@ -21,9 +14,5 @@ class HistoricalRateProviderRing: HistoricalRateProviderProtocol {
                 resultHandler(rateResult)
             }
         }
-    }
-    
-    func removeAllStorage() {
-        storage.removeAll()
     }
 }

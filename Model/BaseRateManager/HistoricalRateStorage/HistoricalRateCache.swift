@@ -16,7 +16,7 @@ extension HistoricalRateCache: HistoricalRateStorageProtocol {
     
     func store(_ rate: ResponseDataModel.HistoricalRate) {
         threadSafeDateStringAndRateDirectory.writeAsynchronously { dateStringAndRateDirectory in
-            var dateStringAndRateDirectory = dateStringAndRateDirectory
+            var dateStringAndRateDirectory: [String: ResponseDataModel.HistoricalRate] = dateStringAndRateDirectory
             dateStringAndRateDirectory[rate.dateString] = rate
             
             return dateStringAndRateDirectory
