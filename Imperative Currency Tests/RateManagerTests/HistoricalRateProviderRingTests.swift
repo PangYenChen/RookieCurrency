@@ -55,7 +55,7 @@ class HistoricalRateProviderRingTests: XCTestCase {
         }
         
         // assert
-        try XCTUnwrap(receivedRateResult?.get())
+        XCTAssertNoThrow(try XCTUnwrap(receivedRateResult?.get()))
         
         XCTAssertNotNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
         
@@ -70,7 +70,7 @@ class HistoricalRateProviderRingTests: XCTestCase {
         // assert
         XCTAssertNil(nextHistoricalRateProvider.dateStringAndHistoricalRateResultHandler[dummyDateString])
         
-        try XCTUnwrap(receivedRateResult?.get())
+        XCTAssertNoThrow(try XCTUnwrap(receivedRateResult?.get()))
         
         // act
         sut.removeAllStorage()
@@ -79,10 +79,11 @@ class HistoricalRateProviderRingTests: XCTestCase {
         XCTAssertNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
     }
     
-    func testFailure() {
+    func testFailure() throws {
         // arrange
         var receivedRateResult: Result<ResponseDataModel.HistoricalRate, Error>?
         let dummyDateString: String = "1970-01-01"
+        let expectedURLTimeoutError: URLError = URLError(URLError.Code.timedOut)
         
         XCTAssertNil(nextHistoricalRateProvider.dateStringAndHistoricalRateResultHandler[dummyDateString])
         
@@ -93,15 +94,20 @@ class HistoricalRateProviderRingTests: XCTestCase {
         
         XCTAssertNotNil(nextHistoricalRateProvider.dateStringAndHistoricalRateResultHandler[dummyDateString])
         
-        do {
-            let dummyError: URLError = URLError(URLError.Code.timedOut)
-            nextHistoricalRateProvider.executeHistoricalRateResultHandlerFor(dateString: dummyDateString,
-                                                                             with: .failure(dummyError))
-        }
+        nextHistoricalRateProvider.executeHistoricalRateResultHandlerFor(dateString: dummyDateString,
+                                                                         with: .failure(expectedURLTimeoutError))
         
         // assert
-        try XCTAssertThrowsError(receivedRateResult?.get())
+        do {
+            let receivedRateResult = try XCTUnwrap(receivedRateResult)
+            switch receivedRateResult {
+                case .success(let rate): XCTFail("should not receive a rate, but receive: \(rate)")
+                case .failure(let error): XCTAssertEqual(error as? URLError, expectedURLTimeoutError)
+            }
+        }
         
         XCTAssertNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
+        
+        XCTAssertNil(nextHistoricalRateProvider.dateStringAndHistoricalRateResultHandlerDictionary[dummyDateString])
     }
 }

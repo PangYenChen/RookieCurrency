@@ -3,96 +3,146 @@ import Combine
 
 @testable import ReactiveCurrency
 
-final class HistoricalRateProviderTests: XCTestCase {
-    private var sut: HistoricalRateProviderChain!
+class HistoricalRateProviderRingTests: XCTestCase {
+    private var sut: HistoricalRateProviderRing!
     
-    private var historicalRateProviderSpy: TestDouble.HistoricalRateProvider!
+    private var historicalRateStorage: TestDouble.HistoricalRateStorage!
+    private var nextHistoricalRateProvider: TestDouble.HistoricalRateProvider!
+    
     private var anyCancellableSet: Set<AnyCancellable>!
     
     override func setUp() {
-        historicalRateProviderSpy = TestDouble.HistoricalRateProvider()
+        historicalRateStorage = TestDouble.HistoricalRateStorage(dateStringAndRateDirectory: [:])
+        nextHistoricalRateProvider = TestDouble.HistoricalRateProvider()
         
-        sut = HistoricalRateProviderChain(nextHistoricalRateProvider: historicalRateProviderSpy)
+        sut = HistoricalRateProviderRing(storage: historicalRateStorage,
+                                         nextProvider: nextHistoricalRateProvider)
         
         anyCancellableSet = Set<AnyCancellable>()
     }
     
     override func tearDown() {
-        sut = nil
-        
-        historicalRateProviderSpy = nil
-        
         anyCancellableSet.forEach { anyCancellable in anyCancellable.cancel() }
         anyCancellableSet = nil
+        
+        sut = nil
+        
+        historicalRateStorage = nil
+        nextHistoricalRateProvider = nil
     }
     
-    func testPassingSuccess() throws {
+    func testNoRetainCycleOccur() {
+        // arrange
+        addTeardownBlock { [weak sut] in
+            // assert
+            XCTAssertNil(sut)
+        }
+        // act
+        sut = nil
+    }
+    
+    func testGetFromNextProviderAndThenGetFromStorageAndThenRemoveAllStorage() throws {
         // arrange
         var receivedRate: ResponseDataModel.HistoricalRate?
         var receivedCompletion: Subscribers.Completion<Error>?
-        let dateString: String = "1970-01-01"
-        let expectedRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: dateString)
+        let dummyDateString: String = "1970-01-01"
         
-        sut.historicalRatePublisherFor(dateString: dateString)
+        XCTAssertNil(nextHistoricalRateProvider.dateStringAndSubjectDictionary[dummyDateString])
+        
+        // act
+        XCTAssertNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
+        
+        sut.historicalRatePublisherFor(dateString: dummyDateString)
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { rate in receivedRate = rate })
             .store(in: &anyCancellableSet)
-            
-        // act
-        historicalRateProviderSpy.publish(expectedRate, for: dateString)
-        historicalRateProviderSpy.publish(completion: .finished, for: dateString)
         
-        // assert
-        do /*assertion about received rate*/ {
-            let receivedRate: ResponseDataModel.HistoricalRate = try XCTUnwrap(receivedRate)
-            XCTAssertEqual(receivedRate, expectedRate)
+        XCTAssertNotNil(nextHistoricalRateProvider.dateStringAndSubjectDictionary[dummyDateString])
+        
+        do {
+            let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData
+                .Instance
+                .historicalRateFor(dateString: dummyDateString)
+            nextHistoricalRateProvider.publish(dummyHistoricalRate, for: dummyDateString)
+            
+            nextHistoricalRateProvider.publish(completion: .finished, for: dummyDateString)
         }
         
-        do /*assertion about received error*/ {
-            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+        // assert
+        XCTAssertNotNil(receivedRate)
+        do {
+            let receivedCompletion: Subscribers.Completion<any Error> = try XCTUnwrap(receivedCompletion)
             switch receivedCompletion {
                 case .finished: break
-                case .failure(let receivedFailure): XCTFail("should not receive failure, but receive: \(receivedFailure)")
+                case .failure(let failure): XCTFail("should not receive any failure, but receive: \(failure)")
             }
         }
-    }
-    
-    func testPassingFailure() throws {
-        // arrange
-        var receivedRate: ResponseDataModel.HistoricalRate?
-        var receivedCompletion: Subscribers.Completion<Error>?
-        let dateString: String = "1970-01-01"
-        let expectedTimeOut: URLError = URLError(URLError.Code.timedOut)
         
-        sut.historicalRatePublisherFor(dateString: dateString)
+        XCTAssertNotNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
+        
+        XCTAssertNil(nextHistoricalRateProvider.dateStringAndSubjectDictionary[dummyDateString])
+        
+        // arrange
+        receivedRate = nil
+        
+        // act
+        sut.historicalRatePublisherFor(dateString: dummyDateString)
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { rate in receivedRate = rate })
             .store(in: &anyCancellableSet)
         
-        // act
-        historicalRateProviderSpy.publish(completion: .failure(expectedTimeOut), for: dateString)
-        
         // assert
-        do /*assertion about received rate*/ {
-            XCTAssertNil(receivedRate)
+        XCTAssertNil(nextHistoricalRateProvider.dateStringAndSubjectDictionary[dummyDateString])
+        
+        XCTAssertNotNil(receivedRate)
+        do {
+            let receivedCompletion: Subscribers.Completion<any Error> = try XCTUnwrap(receivedCompletion)
+            switch receivedCompletion {
+                case .finished: break
+                case .failure(let failure): XCTFail("should not receive any failure, but receive: \(failure)")
+            }
         }
         
-        do /*assertion about received error*/ {
+        // act
+        sut.removeAllStorage()
+        
+        // assert
+        XCTAssertNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
+    }
+    
+    func testFailure() throws {
+        // arrange
+        var receivedRate: ResponseDataModel.HistoricalRate?
+        var receivedCompletion: Subscribers.Completion<Error>?
+        let dummyDateString: String = "1970-01-01"
+        let expectedURLTimeoutError: URLError = URLError(URLError.Code.timedOut)
+        
+        XCTAssertNil(nextHistoricalRateProvider.dateStringAndSubjectDictionary[dummyDateString])
+        
+        // act
+        XCTAssertNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
+        
+        sut.historicalRatePublisherFor(dateString: dummyDateString)
+            .sink(receiveCompletion: { completion in receivedCompletion = completion },
+                  receiveValue: { rate in receivedRate = rate })
+            .store(in: &anyCancellableSet)
+        
+        XCTAssertNotNil(nextHistoricalRateProvider.dateStringAndSubjectDictionary[dummyDateString])
+        
+        nextHistoricalRateProvider.publish(completion: .failure(expectedURLTimeoutError), for: dummyDateString)
+        
+        // assert
+        XCTAssertNil(receivedRate)
+        do {
             let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             switch receivedCompletion {
                 case .finished: XCTFail("should not complete normally")
-                case .failure(let receivedFailure): XCTAssertEqual(receivedFailure as? URLError, expectedTimeOut)
+                case .failure(let failure): XCTAssertEqual(failure as? URLError, expectedURLTimeoutError)
             }
         }
-    }
-    
-    func testRemoveCachedAndStoredRate() {
-        // arrange, do nothing
         
-        // act
-        sut.removeCachedAndStoredRate()
+        XCTAssertNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
         
-        // assert
-        XCTAssertEqual(historicalRateProviderSpy.numberOfCallOfRemoveCachedAndStoredRate, 1)
+        XCTAssertNil(nextHistoricalRateProvider.dateStringAndSubjectDictionary[dummyDateString])
     }
 }
