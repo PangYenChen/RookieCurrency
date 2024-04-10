@@ -5,5 +5,5 @@ protocol LatestRateProviderProtocol {
 }
 
 extension LatestRateProviderProtocol {
-    typealias LatestRateResultHandler = (_ latestRateResult: Result<ResponseDataModel.LatestRate, Error>) -> Void
+    typealias LatestRateResultHandler = (_ rateResult: Result<ResponseDataModel.LatestRate, Error>) -> Void
 }

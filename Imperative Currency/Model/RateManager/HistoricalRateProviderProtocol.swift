@@ -6,5 +6,5 @@ protocol HistoricalRateProviderProtocol: BaseHistoricalRateProviderProtocol {
 }
 
 extension HistoricalRateProviderProtocol {
-    typealias HistoricalRateResultHandler = (_ historicalRateResult: Result<ResponseDataModel.HistoricalRate, Error>) -> Void
+    typealias HistoricalRateResultHandler = (_ rateResult: Result<ResponseDataModel.HistoricalRate, Error>) -> Void
 }
