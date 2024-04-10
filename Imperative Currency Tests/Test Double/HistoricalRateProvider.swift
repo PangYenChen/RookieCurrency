@@ -6,12 +6,10 @@ extension TestDouble {
         // MARK: - initializer
         init() {
             dateStringAndHistoricalRateResultHandler = [:]
-            numberOfCallOfRemoveCachedAndStoredRate = 0
         }
         
         // MARK: - private property
-        private var dateStringAndHistoricalRateResultHandler: [String: HistoricalRateResultHandler]
-        private(set) var numberOfCallOfRemoveCachedAndStoredRate: Int
+        private(set) var dateStringAndHistoricalRateResultHandler: [String: HistoricalRateResultHandler]
         
         // MARK: - instance property
         func historicalRateFor(dateString: String,
@@ -19,7 +17,9 @@ extension TestDouble {
             dateStringAndHistoricalRateResultHandler[dateString] = resultHandler
         }
         
-        func removeCachedAndStoredRate() { numberOfCallOfRemoveCachedAndStoredRate += 1 }
+        func removeCachedAndStoredRate() {
+            dateStringAndHistoricalRateResultHandler.removeAll()
+        }
         
         func executeHistoricalRateResultHandlerFor(dateString: String,
                                                    with result: Result<ResponseDataModel.HistoricalRate, Error>) {
