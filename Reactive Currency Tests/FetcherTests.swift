@@ -297,12 +297,15 @@ class FetcherTests: XCTestCase {
         // arrange
         var receivedValue: ResponseDataModel.TestDataModel?
         var receivedCompletion: Subscribers.Completion<Error>?
+        let dummyEndpoint: Endpoints.TestEndpoint = try {
+            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
+            return Endpoints.TestEndpoint(url: dummyURL)
+        }()
         
         // act
         do {
-            let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             sut
-                .publisher(for: Endpoints.TestEndpoint(url: dummyURL))
+                .publisher(for: dummyEndpoint)
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)
@@ -339,6 +342,38 @@ class FetcherTests: XCTestCase {
         }
         
         XCTAssertEqual(keyManager.usedAPIKeys.count, dummyAPIKeys.count)
+        
+        // arrange
+        receivedValue = nil
+        receivedCompletion = nil
+        
+        // act
+        sut
+            .publisher(for: dummyEndpoint)
+            .sink(receiveCompletion: { completion in receivedCompletion = completion },
+                  receiveValue: { value in receivedValue = value })
+            .store(in: &anyCancellableSet)
+        
+        // assert
+        XCTAssertNil(receivedValue)
+        
+        do /*assert receivedCompletion*/ {
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            switch receivedCompletion {
+                case .failure(let error):
+                    guard let fetcherError = error as? KeyManager.Error else {
+                        XCTFail("應該要收到 Fetcher.Error")
+                        return
+                    }
+                    
+                    guard fetcherError == KeyManager.Error.runOutOfKey else {
+                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
+                        return
+                    }
+                case .finished:
+                    XCTFail("should not complete normally")
+            }
+        }
     }
     
     /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
