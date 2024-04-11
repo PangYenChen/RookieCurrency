@@ -45,16 +45,34 @@ final class UserSettingManagerTests: XCTestCase {
         XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.numberOfDays.rawValue])
     }
     
+    func testNumberOfDaysReadFromUserDefaults() {
+        // arrange
+        let dummyNumberOfDays: Int = 4
+        userDefaultsSpy = TestDouble
+            .UserDefaults(dataDictionary: [UserSettingManager.Key.numberOfDays.rawValue: dummyNumberOfDays])
+        
+        // act
+        sut = UserSettingManager(userDefaults: userDefaultsSpy)
+        
+        // assert
+        XCTAssertEqual(sut.numberOfDays, dummyNumberOfDays)
+        XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.numberOfDays.rawValue], 1)
+        XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.numberOfDays.rawValue])
+    }
+    
     func testNumberOfDaysFallBackToDefaultValueWhenUserDefaultsValueIsIllegal() {
         // arrange
-        userDefaultsSpy.set(-1, forKey: UserSettingManager.Key.numberOfDays.rawValue)
+        let dummyNumberOfDays: Int = -1
+        userDefaultsSpy = TestDouble
+            .UserDefaults(dataDictionary: [UserSettingManager.Key.numberOfDays.rawValue: dummyNumberOfDays])
         
-        // act, do nothing
+        // act
+        sut = UserSettingManager(userDefaults: userDefaultsSpy)
         
         // assert
         XCTAssertEqual(sut.numberOfDays, sut.defaultNumberOfDays)
         XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.numberOfDays.rawValue], 1)
-        XCTAssertEqual(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.numberOfDays.rawValue], 1)
+        XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.numberOfDays.rawValue])
     }
     
     func testNumberOfDaysDoNotStoreInDefaultValueAfterSettingSameValueUsingDefaultValue() {
@@ -112,16 +130,34 @@ final class UserSettingManagerTests: XCTestCase {
         XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.baseCurrencyCode.rawValue])
     }
     
+    func testBaseCurrencyCodeReadFromUserDefaults() {
+        // arrange
+        let dummyBaseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
+        userDefaultsSpy = TestDouble
+            .UserDefaults(dataDictionary: [UserSettingManager.Key.baseCurrencyCode.rawValue: dummyBaseCurrencyCode])
+        
+        // act
+        sut = UserSettingManager(userDefaults: userDefaultsSpy)
+        
+        // assert
+        XCTAssertEqual(sut.baseCurrencyCode, dummyBaseCurrencyCode)
+        XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.baseCurrencyCode.rawValue], 1)
+        XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.baseCurrencyCode.rawValue])
+    }
+    
     func testBaseCurrencyCodeFallBackToDefaultValueWhenUserDefaultsValueIsIllegal() {
         // arrange
-        userDefaultsSpy.set("something illegal", forKey: UserSettingManager.Key.baseCurrencyCode.rawValue)
+        let illegalValue: Int = 1
+        userDefaultsSpy = TestDouble
+            .UserDefaults(dataDictionary: [UserSettingManager.Key.baseCurrencyCode.rawValue: illegalValue])
         
-        // act, do nothing
+        // act
+        sut = UserSettingManager(userDefaults: userDefaultsSpy)
         
         // assert
         XCTAssertEqual(sut.baseCurrencyCode, sut.defaultBaseCurrencyCode)
         XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.baseCurrencyCode.rawValue], 1)
-        XCTAssertEqual(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.baseCurrencyCode.rawValue], 1)
+        XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.baseCurrencyCode.rawValue])
     }
     
     func testBaseCurrencyCodeDoNotStoreInDefaultValueAfterSettingSameValueUsingDefaultValue() {
@@ -180,16 +216,34 @@ final class UserSettingManagerTests: XCTestCase {
         XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue])
     }
     
+    func testCurrencyCodeOfInterestReadFromUserDefaults() {
+        // arrange
+        let dummyCurrencyCodeOfInterest: [ResponseDataModel.CurrencyCode] = ["TWD", "USD"]
+        userDefaultsSpy = TestDouble
+            .UserDefaults(dataDictionary: [UserSettingManager.Key.currencyCodeOfInterest.rawValue: dummyCurrencyCodeOfInterest])
+        
+        // act
+        sut = UserSettingManager(userDefaults: userDefaultsSpy)
+        
+        // assert
+        XCTAssertEqual(sut.currencyCodeOfInterest, Set(dummyCurrencyCodeOfInterest))
+        XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue], 1)
+        XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue])
+    }
+    
     func testCurrencyCodeOfInterestFallBackToDefaultValueWhenUserDefaultsValueIsIllegal() {
         // arrange
-        userDefaultsSpy.set("something illegal", forKey: UserSettingManager.Key.currencyCodeOfInterest.rawValue)
+        let illegalValue: Int = -1
+        userDefaultsSpy = TestDouble
+            .UserDefaults(dataDictionary: [UserSettingManager.Key.currencyCodeOfInterest.rawValue: illegalValue])
         
         // act, do nothing
+        sut = UserSettingManager(userDefaults: userDefaultsSpy)
         
         // assert
         XCTAssertEqual(sut.currencyCodeOfInterest, sut.defaultCurrencyCodeOfInterest)
         XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue], 1)
-        XCTAssertEqual(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue], 1)
+        XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.currencyCodeOfInterest.rawValue])
     }
     
     func testCurrencyCodeOfInterestDoNotStoreInDefaultValueAfterSettingSameValueUsingDefaultValue() {
@@ -258,16 +312,33 @@ final class UserSettingManagerTests: XCTestCase {
         XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.resultOrder.rawValue])
     }
     
-    func testResultOrderFallBackToDefaultValueWhenUserDefaultsValueIsIllegal() {
+    func testResultOrderReadFromUserDefaults() {
         // arrange
-        userDefaultsSpy.set("something illegal", forKey: UserSettingManager.Key.resultOrder.rawValue)
+        let dummyResultOrder: ResultModel.Order = .decreasing
+        userDefaultsSpy = TestDouble
+            .UserDefaults(dataDictionary: [UserSettingManager.Key.resultOrder.rawValue: dummyResultOrder.rawValue])
         
-        // act, do nothing
+        // act
+        sut = UserSettingManager(userDefaults: userDefaultsSpy)
+        
+        // assert
+        XCTAssertEqual(sut.resultOrder, dummyResultOrder)
+        XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.resultOrder.rawValue], 1)
+        XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.resultOrder.rawValue])
+    }
+    
+    func testResultOrderFallBackToDefaultValueWhenUserDefaultsValueIsIllegal() {
+        let illegalValue: Int = -1
+        userDefaultsSpy = TestDouble
+            .UserDefaults(dataDictionary: [UserSettingManager.Key.resultOrder.rawValue: illegalValue])
+        
+        // act
+        sut = UserSettingManager(userDefaults: userDefaultsSpy)
         
         // assert
         XCTAssertEqual(sut.resultOrder, sut.defaultResultOrder)
         XCTAssertEqual(userDefaultsSpy.numberOfUnarchive[UserSettingManager.Key.resultOrder.rawValue], 1)
-        XCTAssertEqual(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.resultOrder.rawValue], 1)
+        XCTAssertNil(userDefaultsSpy.numberOfArchive[UserSettingManager.Key.resultOrder.rawValue])
     }
     
     func testResultOrderDoNotStoreInDefaultValueAfterSettingSameValueUsingDefaultValue() {
