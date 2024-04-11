@@ -81,7 +81,7 @@ final class ResultModel: BaseResultModel {
             
             let statisticsInfoTuple: AnyPublisher<StatisticsInfoTuple, Never> = statisticsInfoTupleResult
                 .share()
-                .resultSuccess()
+                .resultFilterSuccess()
             
             rateStatistics = statisticsInfoTuple
                 .map { statisticsInfoTuple in statisticsInfoTuple.statisticsInfo }
