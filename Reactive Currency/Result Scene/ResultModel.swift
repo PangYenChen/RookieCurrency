@@ -101,7 +101,7 @@ final class ResultModel: BaseResultModel {
             
             error = statisticsInfoTupleResult
                 .share()
-                .resultFailure()
+                .resultFilterFailure()
             
             do /*initialize refreshStatus*/ {
                 let refreshStatusProcess: AnyPublisher<RefreshStatus, Never> = refresh

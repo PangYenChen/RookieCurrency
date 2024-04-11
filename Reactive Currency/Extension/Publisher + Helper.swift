@@ -14,7 +14,7 @@ extension Publisher {
             .eraseToAnyPublisher()
     }
     
-    func resultFailure<Success, Failure>() -> AnyPublisher<Failure, Never>
+    func resultFilterFailure<Success, Failure>() -> AnyPublisher<Failure, Never>
     where Self.Output == Result<Success, Failure>,
           Self.Failure == Never {
         compactMap { result in
