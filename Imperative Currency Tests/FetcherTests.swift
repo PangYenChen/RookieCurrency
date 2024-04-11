@@ -303,6 +303,32 @@ final class FetcherTests: XCTestCase {
             
             XCTAssertEqual(keyManager.usedAPIKeys.count, dummyAPIKeys.count)
         }
+        
+        // arrange
+        receivedResult = nil
+        
+        // act
+        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        
+        // assert
+        do {
+            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
+            
+            switch receivedResult {
+                case .success:
+                    XCTFail("should not receive any instance")
+                case .failure(let error):
+                    guard let fetcherError = error as? KeyManager.Error else {
+                        XCTFail("應該要收到 Fetcher.Error")
+                        return
+                    }
+                    
+                    guard fetcherError == KeyManager.Error.runOutOfKey else {
+                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
+                        return
+                    }
+            }
+        }
     }
     
     /// session 回應 api key 無效（可能是我在服務商平台更新某個 api key），
