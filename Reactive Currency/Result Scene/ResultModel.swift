@@ -81,7 +81,7 @@ final class ResultModel: BaseResultModel {
             
             let statisticsInfoTuple: AnyPublisher<StatisticsInfoTuple, Never> = statisticsInfoTupleResult
                 .share()
-                .resultSuccess()
+                .resultFilterSuccess()
             
             rateStatistics = statisticsInfoTuple
                 .map { statisticsInfoTuple in statisticsInfoTuple.statisticsInfo }
@@ -101,7 +101,7 @@ final class ResultModel: BaseResultModel {
             
             error = statisticsInfoTupleResult
                 .share()
-                .resultFailure()
+                .resultFilterFailure()
             
             do /*initialize refreshStatus*/ {
                 let refreshStatusProcess: AnyPublisher<RefreshStatus, Never> = refresh

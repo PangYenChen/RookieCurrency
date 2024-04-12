@@ -72,7 +72,7 @@ final class SettingModelTests: XCTestCase {
         
         dummyCurrencyDescriber = nil
         dummySetting = nil
-        clearUpReceivedValue()
+        removeAllReceivedValue()
     }
     
     func testNumberOfDaysChanges() throws {
@@ -87,7 +87,7 @@ final class SettingModelTests: XCTestCase {
                expectedNumberOfDays: 4)
         
         // arrange
-        clearUpReceivedValue()
+        removeAllReceivedValue()
         
         // act
         sut.set(numberOfDays: 3)
@@ -129,7 +129,7 @@ final class SettingModelTests: XCTestCase {
                expectedNumberOfDays: dummySetting.numberOfDays)
         
         // act
-        clearUpReceivedValue()
+        removeAllReceivedValue()
         sut.cancel()
         
         // assert
@@ -155,7 +155,7 @@ final class SettingModelTests: XCTestCase {
 
 // MARK: - private method
 private extension SettingModelTests {
-    func clearUpReceivedValue() {
+    func removeAllReceivedValue() {
         receivedNumberOfDaysDidChange = nil
         receivedBaseCurrencyCodeDidChange = nil
         receivedCurrencyCodeOfInterestDidChange = nil
