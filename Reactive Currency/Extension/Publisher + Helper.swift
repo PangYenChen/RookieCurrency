@@ -24,12 +24,15 @@ extension Publisher {
         .eraseToAnyPublisher()
     }
     
-    func withLatestFrom<Other: Publisher>(_ other: Other) -> AnyPublisher<(Output, Other.Output), Self.Failure>
-    where Self.Failure == Other.Failure {
-        map { output in (output, Date()) }
-            .combineLatest(other)
-            .removeDuplicates(by: { lhs, rhs in lhs.0.1 == rhs.0.1 })
-            .map { ($0.0, $1) }
+    /// This operator is different form RxSwift, but designed to fit the usage for this project.
+    /// In the use case of this project, `Failure` is always `Never`, and flow never completes.
+    func withLatestFrom<Other: Publisher>(_ other: Other) -> AnyPublisher<(selfOutput: Output, otherOutput: Other.Output), Self.Failure>
+    where Self.Failure == Other.Failure, Self.Failure == Never {
+        drop(untilOutputFrom: other.first())
+            .map { selfOutput in (selfOutput: selfOutput, token: UUID()) }
+            .combineLatest(other) { tuple, otherOutput in (tuple: tuple, otherOutput: otherOutput) }
+            .removeDuplicates(by: { lhs, rhs in lhs.tuple.token == rhs.tuple.token })
+            .map { tuple, otherOutput in (selfOutput: tuple.selfOutput, otherOutput: otherOutput) }
             .eraseToAnyPublisher()
     }
 }
