@@ -2,34 +2,50 @@ import Foundation
 import Combine
 
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
-    private var wrappedSupportedSymbols: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error>?
+    override init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol = Fetcher.shared,
+                  locale: Locale = Locale.autoupdatingCurrent) {
+        wrappedCurrentPublisher = ThreadSafeWrapper<AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error>?>(wrappedValue: nil)
+        
+        super.init(supportedCurrencyProvider: supportedCurrencyProvider,
+                   locale: locale)
+    }
+    
+    private var wrappedCurrentPublisher: ThreadSafeWrapper<AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error>?>
     
     func supportedCurrency() -> AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> {
-        if let supportedCurrencyDescriptionDictionary {
-            return Just(supportedCurrencyDescriptionDictionary)
+        let cachedValue: [ResponseDataModel.CurrencyCode: String]? = cache.readSynchronously { cachedDictionary in cachedDictionary }
+        
+        if let cachedValue {
+            return Just(cachedValue)
                 .setFailureType(to: Error.self)
                 .eraseToAnyPublisher()
         }
         else {
-            if let wrappedSupportedSymbols {
-                return wrappedSupportedSymbols
+            let currentPublisher = wrappedCurrentPublisher.readSynchronously { currentPublisher in currentPublisher }
+            
+            if let currentPublisher {
+                return currentPublisher
             }
             else {
-                let wrappedSupportedSymbols: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> = supportedCurrencyProvider.supportedCurrencyPublisher()
+                let currentPublisher: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> = supportedCurrencyProvider.supportedCurrencyPublisher()
                     .map { $0.symbols }
                     .handleEvents(
-                        receiveOutput: { supportedCurrencyDescriptionDictionary in
-                            self.supportedCurrencyDescriptionDictionary = supportedCurrencyDescriptionDictionary
+                        receiveOutput: { [unowned self] supportedCurrencyDescriptionDictionary in
+                            cache.writeAsynchronously { _ in supportedCurrencyDescriptionDictionary }
                         },
-                        receiveCompletion: { _ in self.wrappedSupportedSymbols = nil },
-                        receiveCancel: { self.wrappedSupportedSymbols = nil }
+                        receiveCompletion: { [unowned self] _ in
+                            wrappedCurrentPublisher.writeAsynchronously { _ in nil }
+                        },
+                        receiveCancel: { [unowned self] in
+                            wrappedCurrentPublisher.writeAsynchronously { _ in nil }
+                        }
                     )
                     .share()
                     .eraseToAnyPublisher()
                 
-                self.wrappedSupportedSymbols = wrappedSupportedSymbols
+                wrappedCurrentPublisher.writeAsynchronously { _ in currentPublisher }
                 
-                return wrappedSupportedSymbols
+                return currentPublisher
             }
         }
     }
