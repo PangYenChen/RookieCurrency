@@ -65,6 +65,64 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         }
     }
     
+//    func testFailure() throws {
+//        // arrange
+//        var receivedValue: [ResponseDataModel.CurrencyCode: String]?
+//        var receivedCompletion: Subscribers.Completion<Error>?
+//        let expectedError: URLError = URLError(URLError.Code.timedOut)
+//        
+//        // act
+//        sut.supportedCurrency()
+//            .sink(receiveCompletion: { completion in receivedCompletion = completion },
+//                  receiveValue: { value in receivedValue = value })
+//            .store(in: &anyCancellableSet)
+//            
+//        supportedCurrencyProvider.publish(completion: .failure(expectedError))
+//        
+//        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+//        
+//        // assert
+//        
+//        XCTAssertNil(receivedValue)
+//        do {
+//            let receivedCompletion = try XCTUnwrap(receivedCompletion)
+//            switch receivedCompletion {
+//                case .finished: XCTFail("should not complete normally")
+//                case .failure(let failure): XCTAssertEqual(failure as? URLError, expectedError)
+//            }
+//        }
+//        
+//        XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
+//        
+//        // arrange
+//        receivedValue = nil
+//        let supportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
+//            .Instance
+//            .supportedSymbols()
+//        let expectedValue: [ResponseDataModel.CurrencyCode: String] = supportedSymbols.symbols
+//        
+//        // act
+//        sut.supportedCurrency()
+//            .sink(receiveCompletion: { completion in receivedCompletion = completion },
+//                  receiveValue: { value in receivedValue = value })
+//            .store(in: &anyCancellableSet)
+//        
+//        supportedCurrencyProvider.publish(completion: .success(expectedValue))
+//        
+//        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+//        
+//        // assert
+//        do {
+//            let receivedResult: Result<[ResponseDataModel.CurrencyCode: String], any Error> = try XCTUnwrap(receivedResult)
+//            switch receivedResult {
+//                case .success(let supportedCurrency): XCTAssertEqual(supportedCurrency, expectedValue)
+//                case .failure(let failure): XCTFail("should not receive failure, but receive: \(failure)")
+//            }
+//        }
+//        
+//        XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 2)
+//    }
+    
     func testSecondCallBeforeFirstReturn() throws {
         // arrange
         var receivedSecondValue: [ResponseDataModel.CurrencyCode: String]?
