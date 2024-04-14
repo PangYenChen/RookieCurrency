@@ -47,6 +47,36 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         }
     }
     
+//    func testFailure() throws {
+//        // arrange
+//        var receivedFirstResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?
+//        let expectedError: URLError = URLError(URLError.Code.timedOut)
+//        
+//        // act
+//        sut.getSupportedCurrency { result in receivedFirstResult = result }
+//        supportedCurrencyProvider.executeCompletionHandler(with: .failure(expectedError))
+//        
+//        let supportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
+//            .Instance
+//            .supportedSymbols()
+//        let expectedValue: [ResponseDataModel.CurrencyCode: String] = supportedSymbols.symbols
+//        
+//        // act
+//        sut.getSupportedCurrency { result in receivedFirstResult = result }
+//        supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
+//        
+//        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+//        
+//        // assert
+//        do {
+//            let receivedResult: Result<[ResponseDataModel.CurrencyCode: String], any Error> = try XCTUnwrap(receivedFirstResult)
+//            switch receivedResult {
+//                case .success(let supportedCurrency): XCTAssertEqual(supportedCurrency, expectedValue)
+//                case .failure(let failure): XCTFail("should not receive failure, but receive: \(failure)")
+//            }
+//        }
+//    }
+    
     func testSecondCallBeforeFirstReturn() throws {
         // arrange
         var receivedSecondResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?
@@ -100,4 +130,32 @@ final class SupportedCurrencyManagerTests: XCTestCase {
             XCTAssertEqual(receivedSecondSupportedCurrency, expectedValue)
         }
     }
+    
+//    func testManyCallSiteSimultaneously() throws {
+//        // arrange
+//        let concurrentDispatchQueue: DispatchQueue = DispatchQueue(label: "test.many.call.site.simultaneously",
+//                                                                   attributes: .concurrent)
+//        
+//        // act
+//        concurrentDispatchQueue.async { [unowned self] in
+//            let callSiteCount: Int = 50
+//            for _ in 0..<50 {
+//                sut.getSupportedCurrency { _ in }
+//            }
+//        }
+//        
+//        do {
+//            let dummySupportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
+//                .Instance
+//                .supportedSymbols()
+//            
+//            concurrentDispatchQueue.async { [unowned self] in
+//                supportedCurrencyProvider.executeCompletionHandler(with: .success(dummySupportedSymbols))
+//            }
+//        }
+//        
+//        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+//        
+//        // assert, non-crash means passed
+//    }
 }

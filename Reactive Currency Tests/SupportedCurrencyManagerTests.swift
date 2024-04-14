@@ -45,7 +45,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
-
+        
         supportedCurrencyProvider.publish(supportedSymbols)
         
         serialDispatchQueue.sync { /*wait for all work items complete*/ }
@@ -57,7 +57,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         }
         
         do /*assert about receivedCompletion*/ {
-            var receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             switch receivedCompletion {
                 case .finished: break
                 case .failure(let failure): XCTFail("should not receive failure, but receive: \(failure)")
@@ -67,9 +67,6 @@ final class SupportedCurrencyManagerTests: XCTestCase {
     
     func testSecondCallBeforeFirstReturn() throws {
         // arrange
-        var receivedFirstValue: [ResponseDataModel.CurrencyCode: String]?
-        var receivedFirstCompletion: Subscribers.Completion<Error>?
-        
         var receivedSecondValue: [ResponseDataModel.CurrencyCode: String]?
         var receivedSecondCompletion: Subscribers.Completion<Error>?
         
@@ -79,11 +76,8 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         let expectedValue: [ResponseDataModel.CurrencyCode: String] = supportedSymbols.symbols
         
         // act
-        sut.supportedCurrency()
-            .sink(receiveCompletion: { completion in receivedFirstCompletion = completion },
-                  receiveValue: { value in receivedFirstValue = value })
-            .store(in: &anyCancellableSet)
-            
+        sut.prefetchSupportedCurrency()
+        
         sut.supportedCurrency()
             .sink(receiveCompletion: { completion in receivedSecondCompletion = completion },
                   receiveValue: { value in receivedSecondValue = value })
@@ -95,17 +89,6 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         
         // assert
         XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
-        
-        do /*assert first subscribers*/ {
-            let receivedFirstValue: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedFirstValue)
-            XCTAssertEqual(receivedFirstValue, expectedValue)
-            
-            var receivedFirstCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedFirstCompletion)
-            switch receivedFirstCompletion {
-                case .finished: break
-                case .failure(let failure): XCTFail("should not receive failure, but receive: \(failure)")
-            }
-        }
         
         do /*assert second subscriber*/ {
             let receivedSecondValue: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedSecondValue)
@@ -121,9 +104,6 @@ final class SupportedCurrencyManagerTests: XCTestCase {
     
     func testTwoCallSiteSequentially() throws {
         // arrange
-        var receivedFirstValue: [ResponseDataModel.CurrencyCode: String]?
-        var receivedFirstCompletion: Subscribers.Completion<Error>?
-        
         var receivedSecondValue: [ResponseDataModel.CurrencyCode: String]?
         var receivedSecondCompletion: Subscribers.Completion<Error>?
         
@@ -133,10 +113,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         let expectedValue: [ResponseDataModel.CurrencyCode: String] = supportedSymbols.symbols
         
         // act
-        sut.supportedCurrency()
-            .sink(receiveCompletion: { completion in receivedFirstCompletion = completion },
-                  receiveValue: { value in receivedFirstValue = value })
-            .store(in: &anyCancellableSet)
+        sut.prefetchSupportedCurrency()
         
         supportedCurrencyProvider.publish(supportedSymbols)
         
@@ -149,20 +126,6 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         
         // assert
         XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
-        
-        // assert
-        XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
-        
-        do /*assert first subscribers*/ {
-            let receivedFirstValue: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedFirstValue)
-            XCTAssertEqual(receivedFirstValue, expectedValue)
-            
-            var receivedFirstCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedFirstCompletion)
-            switch receivedFirstCompletion {
-                case .finished: break
-                case .failure(let failure): XCTFail("should not receive failure, but receive: \(failure)")
-            }
-        }
         
         do /*assert second subscriber*/ {
             let receivedSecondValue: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedSecondValue)
@@ -202,6 +165,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
             }
         }
         
+        concurrentDispatchQueue.sync(flags: .barrier) { /*wait for all work items complete*/ }
         serialDispatchQueue.sync { /*wait for all work items complete*/ }
         
         // assert, non-crash means passed
