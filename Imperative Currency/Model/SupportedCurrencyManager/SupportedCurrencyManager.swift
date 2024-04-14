@@ -2,9 +2,9 @@ import Foundation
 
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     // MARK: - life cycle
-    override init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol = Fetcher.shared,
+    override init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol,
                   locale: Locale = Locale.autoupdatingCurrent,
-                  serialDispatchQueue: DispatchQueue = DispatchQueue(label: "base.supported.currency.manager")) {
+                  serialDispatchQueue: DispatchQueue) {
         descriptionHandlers = []
         
         super.init(supportedCurrencyProvider: supportedCurrencyProvider,

@@ -3,12 +3,10 @@ import Combine
 
 final class ResultModel: BaseResultModel {
     // MARK: - initializer
-    init(
-        userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
-        rateManager: RateManagerProtocol = RateManager.shared,
-        currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
-        timer: TimerProtocol = TimerProxy()
-    ) {
+    init(userSettingManager: UserSettingManagerProtocol,
+         rateManager: RateManagerProtocol,
+         currencyDescriber: CurrencyDescriberProtocol,
+         timer: TimerProtocol) {
         var userSettingManager: UserSettingManagerProtocol = userSettingManager
         
         do /*initialize input*/ {
@@ -203,6 +201,7 @@ extension ResultModel {
     func makeSettingModel() -> SettingModel {
         suspendAutoRefresh.send()
         return SettingModel(setting: setting.value,
+                            currencyDescriber: SupportedCurrencyManager.shared,
                             saveSettingSubscriber: AnySubscriber(setting),
                             cancelSubscriber: AnySubscriber(resumeAutoRefreshSubject))
     }

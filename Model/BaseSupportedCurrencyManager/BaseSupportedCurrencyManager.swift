@@ -32,7 +32,10 @@ extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {
 
 // MARK: - static property
 extension SupportedCurrencyManager {
-    static let shared: SupportedCurrencyManager = SupportedCurrencyManager()
+    static let shared: SupportedCurrencyManager = SupportedCurrencyManager(
+        supportedCurrencyProvider: Fetcher.shared,
+        serialDispatchQueue: DispatchQueue(label: "supported.currency.manager")
+    )
 }
 
 extension BaseSupportedCurrencyManager {

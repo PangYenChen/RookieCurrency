@@ -3,7 +3,11 @@ import UIKit
 final class ResultTableViewController: BaseResultTableViewController {
     // MARK: - initializer
     required init?(coder: NSCoder) {
-        resultModel = ResultModel()
+        resultModel = ResultModel(
+            userSettingManager: UserSettingManager.shared,
+            rateManager: RateManager.shared,
+            currencyDescriber: SupportedCurrencyManager.shared,
+            timer: TimerProxy())
         
         super.init(coder: coder, baseResultModel: resultModel)
     }

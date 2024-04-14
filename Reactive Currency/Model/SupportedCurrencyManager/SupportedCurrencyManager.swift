@@ -2,9 +2,9 @@ import Foundation
 import Combine
 
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
-    override init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol = Fetcher.shared,
+    override init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol,
                   locale: Locale = Locale.autoupdatingCurrent,
-                  serialDispatchQueue: DispatchQueue = DispatchQueue(label: "base.supported.currency.manager")) {
+                  serialDispatchQueue: DispatchQueue) {
         currentPublisher = nil
         
         super.init(supportedCurrencyProvider: supportedCurrencyProvider,

@@ -3,8 +3,8 @@ import Foundation
 /// 跟伺服器拿資料的物件
 class BaseFetcher {
     // MARK: - initializer
-    init(keyManager: KeyManager = KeyManager.shared,
-         currencySession: CurrencySessionProtocol = BaseFetcher.currencySession) {
+    init(keyManager: KeyManager,
+         currencySession: CurrencySessionProtocol) {
         threadSafeKeyManager = ThreadSafeWrapper<KeyManager>(wrappedValue: keyManager)
         self.currencySession = currencySession
         
@@ -16,30 +16,6 @@ class BaseFetcher {
     let currencySession: CurrencySessionProtocol
     
     let jsonDecoder: JSONDecoder
-}
-
-// MARK: - static properties
-extension BaseFetcher {
-    static let urlComponents: URLComponents? = {
-        /// 拿匯率的 base url。
-        /// 提供資料的服務商集團： https://apilayer.com/marketplace/category/currency
-        /// 服務商之一："https://api.apilayer.com/fixer/"
-        /// 服務商之二："https://api.apilayer.com/exchangerates_data"
-        let baseURLString: String = "https://api.apilayer.com/exchangerates_data/"
-        
-        return URLComponents(string: baseURLString)
-    }()
-}
-
-// MARK: - static property
-extension BaseFetcher {
-    /// 不暫存的 session
-    private static let currencySession: URLSession = {
-        let configuration: URLSessionConfiguration = URLSessionConfiguration.default
-        configuration.urlCache = nil
-        
-        return URLSession(configuration: configuration)
-    }()
 }
 
 // MARK: - helper method
@@ -101,6 +77,28 @@ extension BaseFetcher {
     }
 }
 
+// MARK: - static properties
+extension BaseFetcher {
+    static let urlComponents: URLComponents? = {
+        /// 拿匯率的 base url。
+        /// 提供資料的服務商集團： https://apilayer.com/marketplace/category/currency
+        /// 服務商之一："https://api.apilayer.com/fixer/"
+        /// 服務商之二："https://api.apilayer.com/exchangerates_data"
+        let baseURLString: String = "https://api.apilayer.com/exchangerates_data/"
+        
+        return URLComponents(string: baseURLString)
+    }()
+    
+    /// 不暫存的 session
+    static let currencySession: URLSession = {
+        let configuration: URLSessionConfiguration = URLSessionConfiguration.default
+        configuration.urlCache = nil
+        
+        return URLSession(configuration: configuration)
+    }()
+}
+
 extension Fetcher {
-    static let shared: Fetcher = .init()
+    static let shared: Fetcher = Fetcher(keyManager: KeyManager.shared,
+                                         currencySession: BaseFetcher.currencySession)
 }

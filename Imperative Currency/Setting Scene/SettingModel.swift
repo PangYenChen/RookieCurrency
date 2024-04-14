@@ -3,9 +3,9 @@ import Foundation
 final class SettingModel: BaseSettingModel {
     // MARK: - initializer
     init(setting: BaseResultModel.Setting,
+         currencyDescriber: CurrencyDescriberProtocol,
          saveCompletionHandler: @escaping SaveHandler,
-         cancelCompletionHandler: @escaping CancelHandler,
-         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
+         cancelCompletionHandler: @escaping CancelHandler) {
         originalNumberOfDays = setting.numberOfDays
         numberOfDays = setting.numberOfDays
         
@@ -15,12 +15,12 @@ final class SettingModel: BaseSettingModel {
         originalCurrencyCodeOfInterest = setting.currencyCodeOfInterest
         currencyCodeOfInterest = setting.currencyCodeOfInterest
         
+        self.currencyDescriber = currencyDescriber
+        
         hasModificationsToSave = false
         
         self.saveCompletionHandler = saveCompletionHandler
         self.cancelCompletionHandler = cancelCompletionHandler
-        
-        self.currencyDescriber = currencyDescriber
     }
     // MARK: - internal properties
     var numberOfDays: Int {

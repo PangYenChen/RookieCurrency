@@ -4,9 +4,9 @@ import Combine
 class SettingModel {
     // MARK: - initializer
     init(setting: BaseResultModel.Setting,
+         currencyDescriber: CurrencyDescriberProtocol,
          saveSettingSubscriber: AnySubscriber<BaseResultModel.Setting, Never>,
-         cancelSubscriber: AnySubscriber<Void, Never>,
-         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
+         cancelSubscriber: AnySubscriber<Void, Never>) {
         self.currencyDescriber = currencyDescriber
         
         do /*initialize number of days*/ {
@@ -125,7 +125,8 @@ extension SettingModel: BaseSettingModel {
             selectedBaseCurrencyCode: AnySubscriber(baseCurrencyCodeSubject)
         )
         
-        return CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy)
+        return CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy,
+                                      supportedCurrencyManager: .shared)
     }
     
     func makeCurrencyOfInterestSelectionModel() -> CurrencySelectionModel {
@@ -134,7 +135,8 @@ extension SettingModel: BaseSettingModel {
             selectedCurrencyCodeOfInterest: AnySubscriber(currencyCodeOfInterestSubject)
         )
         
-        return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
+        return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy,
+                                      supportedCurrencyManager:.shared)
     }
 }
 

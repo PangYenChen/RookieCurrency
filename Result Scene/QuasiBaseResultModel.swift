@@ -2,7 +2,7 @@ import Foundation
 
 class QuasiBaseResultModel {
     init(userSettingManager: UserSettingManagerProtocol,
-         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared) {
+         currencyDescriber: CurrencyDescriberProtocol) {
         self.currencyDescriber = currencyDescriber
         initialOrder = userSettingManager.resultOrder
     }
