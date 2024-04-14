@@ -1,28 +1,30 @@
 import Foundation
 
 class BaseSupportedCurrencyManager {
-    init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol = Fetcher.shared,
-         locale: Locale = Locale.autoupdatingCurrent) {
+    init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol,
+         locale: Locale,
+         serialDispatchQueue: DispatchQueue = DispatchQueue(label: "base.supported.currency.manager")) {
         self.supportedCurrencyProvider = supportedCurrencyProvider
         self.locale = locale
         
-        cache = ThreadSafeWrapper<[ResponseDataModel.CurrencyCode: String]?>(wrappedValue: nil)
+        cachedValue = nil
+        self.serialDispatchQueue = serialDispatchQueue
     }
     
     let supportedCurrencyProvider: SupportedCurrencyProviderProtocol
     
     private let locale: Locale
     
-    var cache: ThreadSafeWrapper<[ResponseDataModel.CurrencyCode: String]?>
+    var cachedValue: CurrencyCodeDescriptions?
+    
+    let serialDispatchQueue: DispatchQueue
 }
 
 extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {
     func localizedStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
-        locale.localizedString(forCurrencyCode: currencyCode) 
+        locale.localizedString(forCurrencyCode: currencyCode)
         ??
-        cache.readSynchronously { supportedCurrencyDescriptionDictionary in
-            supportedCurrencyDescriptionDictionary?[currencyCode]
-        }
+        serialDispatchQueue.sync { cachedValue?[currencyCode] }
         ??
         currencyCode
     }
@@ -31,4 +33,8 @@ extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {
 // MARK: - static property
 extension SupportedCurrencyManager {
     static let shared: SupportedCurrencyManager = SupportedCurrencyManager()
+}
+
+extension BaseSupportedCurrencyManager {
+    typealias CurrencyCodeDescriptions = [ResponseDataModel.CurrencyCode: String]
 }

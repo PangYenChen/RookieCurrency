@@ -40,7 +40,7 @@ final class ThreadSafeWrapperTests: XCTestCase {
             }
         }
         
-        concurrentDispatchQueue.sync(flags: .barrier) { /*intentionally left blank*/ }
+        concurrentDispatchQueue.sync(flags: .barrier) { /*wait for all work items complete*/ }
         
         // assert
         XCTAssertEqual(sut.readSynchronously { number in number },

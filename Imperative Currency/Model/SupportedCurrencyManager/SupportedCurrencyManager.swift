@@ -3,30 +3,38 @@ import Foundation
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     // MARK: - life cycle
     override init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol = Fetcher.shared,
-                  locale: Locale = Locale.autoupdatingCurrent) {
-        completionHandlers = []
+                  locale: Locale = Locale.autoupdatingCurrent,
+                  serialDispatchQueue: DispatchQueue = DispatchQueue(label: "base.supported.currency.manager")) {
+        descriptionHandlers = []
         
         super.init(supportedCurrencyProvider: supportedCurrencyProvider,
-                   locale: locale)
+                   locale: locale,
+                   serialDispatchQueue: serialDispatchQueue)
     }
     
-    private var completionHandlers: [(Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void]
+    private var descriptionHandlers: [DescriptionResultHandler]
     
-    func getSupportedCurrency(completionHandler: @escaping (Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void) {
-        if let supportedCurrencyDescriptionDictionary {
-            completionHandler(.success(supportedCurrencyDescriptionDictionary))
-        }
-        else {
-            completionHandlers.append(completionHandler)
-            
-            guard 1 == completionHandlers.count else { return }
-            
-            supportedCurrencyProvider.supportedCurrency { [unowned self] result in
-                if case .success(let supportedSymbols) = result {
-                    supportedCurrencyDescriptionDictionary = supportedSymbols.symbols
-                }
-                while let completionHandler = completionHandlers.popLast() {
-                    completionHandler(result.map { $0.symbols })
+    func getSupportedCurrency(descriptionHandler: @escaping DescriptionResultHandler) {
+        serialDispatchQueue.sync { [unowned self] in
+            if let cachedValue {
+                descriptionHandler(.success(cachedValue))
+            }
+            else {
+                descriptionHandlers.append(descriptionHandler)
+                
+                guard 1 == descriptionHandlers.count else { return }
+                
+                supportedCurrencyProvider.supportedCurrency { [unowned self] result in
+                    serialDispatchQueue.async { [unowned self] in
+                        let result: Result<[ResponseDataModel.CurrencyCode: String], Error> = result.map { supportedSymbols in supportedSymbols.symbols }
+                        
+                        if case .success(let currencyCodeDescriptions) = result {
+                            cachedValue = currencyCodeDescriptions
+                        }
+                        
+                        descriptionHandlers.forEach { descriptionHandler in descriptionHandler(result) }
+                        descriptionHandlers.removeAll()
+                    }
                 }
             }
         }
@@ -35,4 +43,8 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     func prefetchSupportedCurrency() {
         getSupportedCurrency { _ in }
     }
+}
+
+extension SupportedCurrencyManager {
+    typealias DescriptionResultHandler = (_ result: Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void
 }

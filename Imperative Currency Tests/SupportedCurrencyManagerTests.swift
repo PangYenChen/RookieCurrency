@@ -5,17 +5,21 @@ final class SupportedCurrencyManagerTests: XCTestCase {
     private var sut: SupportedCurrencyManager!
     
     private var supportedCurrencyProvider: TestDouble.SupportedCurrencyProvider!
+    private var serialDispatchQueue: DispatchQueue!
 
     override func setUp() {
         supportedCurrencyProvider = TestDouble.SupportedCurrencyProvider()
+        serialDispatchQueue = DispatchQueue(label: "supported.currency.manager.test")
         
-        sut = SupportedCurrencyManager(supportedCurrencyProvider: supportedCurrencyProvider)
+        sut = SupportedCurrencyManager(supportedCurrencyProvider: supportedCurrencyProvider,
+                                       serialDispatchQueue: serialDispatchQueue)
     }
 
     override func tearDown() {
         sut = nil
         
         supportedCurrencyProvider = nil
+        serialDispatchQueue = nil
     }
     
     func testSuccess() throws {
@@ -30,6 +34,8 @@ final class SupportedCurrencyManagerTests: XCTestCase {
                 .supportedSymbols()
             supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
         }
+        
+        serialDispatchQueue.sync { /*wait for all work items complete*/ }
         
         // assert
         do {
@@ -57,6 +63,8 @@ final class SupportedCurrencyManagerTests: XCTestCase {
                 .supportedSymbols()
             supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
         }
+        
+        serialDispatchQueue.sync { /*wait for all work items complete*/ }
         
         // assert
         XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
@@ -88,6 +96,8 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         }
         
         sut.getSupportedCurrency { result in receivedSecondResult = result }
+        
+        serialDispatchQueue.sync { /*wait for all work items complete*/ }
         
         // assert
         XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
