@@ -26,14 +26,14 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         // arrange
         var receivedResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?
         
+        let supportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
+            .Instance
+            .supportedSymbols()
+        let expectedValue: [ResponseDataModel.CurrencyCode: String] = supportedSymbols.symbols
+        
         // act
         sut.getSupportedCurrency { result in receivedResult = result }
-        do {
-            let supportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
-                .Instance
-                .supportedSymbols()
-            supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
-        }
+        supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
         
         serialDispatchQueue.sync { /*wait for all work items complete*/ }
         
@@ -41,7 +41,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         do {
             let receivedResult: Result<[ResponseDataModel.CurrencyCode: String], any Error> = try XCTUnwrap(receivedResult)
             switch receivedResult {
-                case .success(let supportedCurrency): XCTAssertFalse(supportedCurrency.isEmpty)
+                case .success(let supportedCurrency): XCTAssertEqual(supportedCurrency, expectedValue)
                 case .failure(let failure): XCTFail("should not receive failure, but receive: \(failure)")
             }
         }
@@ -52,31 +52,31 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         var receivedFirstResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?
         var receivedSecondResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?
         
+        let supportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
+            .Instance
+            .supportedSymbols()
+        let expectedValue: [ResponseDataModel.CurrencyCode: String] = supportedSymbols.symbols
+        
         // act
         sut.getSupportedCurrency { result in  receivedFirstResult = result }
         
         sut.getSupportedCurrency { result in receivedSecondResult = result }
         
-        do {
-            let supportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
-                .Instance
-                .supportedSymbols()
-            supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
-        }
+        supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
         
         serialDispatchQueue.sync { /*wait for all work items complete*/ }
         
         // assert
         XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
         
-        do {
+        do /*assert first result*/ {
             let receivedFirstSupportedCurrency: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedFirstResult?.get())
-            XCTAssertFalse(receivedFirstSupportedCurrency.isEmpty)
-            
+            XCTAssertEqual(receivedFirstSupportedCurrency, expectedValue)
+        }
+        
+        do /*assert second result*/ {
             let receivedSecondSupportedCurrency: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedSecondResult?.get())
-            XCTAssertFalse(receivedSecondSupportedCurrency.isEmpty)
-            
-            XCTAssertEqual(receivedFirstSupportedCurrency, receivedSecondSupportedCurrency)
+            XCTAssertEqual(receivedSecondSupportedCurrency, expectedValue)
         }
     }
     
@@ -85,15 +85,15 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         var receivedFirstResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?
         var receivedSecondResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?
         
+        let supportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
+            .Instance
+            .supportedSymbols()
+        let expectedValue: [ResponseDataModel.CurrencyCode: String] = supportedSymbols.symbols
+        
         // act
         sut.getSupportedCurrency { result in  receivedFirstResult = result }
         
-        do {
-            let supportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
-                .Instance
-                .supportedSymbols()
-            supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
-        }
+        supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
         
         sut.getSupportedCurrency { result in receivedSecondResult = result }
         
@@ -102,14 +102,14 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         // assert
         XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
         
-        do {
+        do /*assert first result*/ {
             let receivedFirstSupportedCurrency: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedFirstResult?.get())
-            XCTAssertFalse(receivedFirstSupportedCurrency.isEmpty)
-            
+            XCTAssertEqual(receivedFirstSupportedCurrency, expectedValue)
+        }
+        
+        do /*assert second result*/ {
             let receivedSecondSupportedCurrency: [ResponseDataModel.CurrencyCode: String] = try XCTUnwrap(receivedSecondResult?.get())
-            XCTAssertFalse(receivedSecondSupportedCurrency.isEmpty)
-            
-            XCTAssertEqual(receivedFirstSupportedCurrency, receivedSecondSupportedCurrency)
+            XCTAssertEqual(receivedSecondSupportedCurrency, expectedValue)
         }
     }
 }

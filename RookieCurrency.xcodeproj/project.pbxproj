@@ -157,6 +157,8 @@
 		519BD8AB29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519BD8A929BD7E8F00D2CB29 /* EndpointProtocol.swift */; };
 		51B2D13D2BCB280400ACB75D /* CurrencyCodeDescriberProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B2D13C2BCB280400ACB75D /* CurrencyCodeDescriberProtocol.swift */; };
 		51B2D13E2BCB280400ACB75D /* CurrencyCodeDescriberProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B2D13C2BCB280400ACB75D /* CurrencyCodeDescriberProtocol.swift */; };
+		51B2D1542BCC5BDA00ACB75D /* SupportedCurrencyManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B2D1532BCC5BDA00ACB75D /* SupportedCurrencyManagerTests.swift */; };
+		51B2D1582BCC5C2300ACB75D /* SupportedCurrnecyProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51B2D1572BCC5C2300ACB75D /* SupportedCurrnecyProvider.swift */; };
 		51C02C132B39B91000B757FA /* ResultModelTest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C02C122B39B91000B757FA /* ResultModelTest.swift */; };
 		51C02C142B39B92000B757FA /* RateManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51C02C0D2B39B84A00B757FA /* RateManager.swift */; };
 		51CFA4A92BC6E00D0052DE8E /* HistoricalRateArchiver.swift in Sources */ = {isa = PBXBuildFile; fileRef = 51CFA4A82BC6E00D0052DE8E /* HistoricalRateArchiver.swift */; };
@@ -342,6 +344,8 @@
 		519A643729B4627500918B84 /* TestingData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestingData.swift; sourceTree = "<group>"; };
 		519BD8A929BD7E8F00D2CB29 /* EndpointProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EndpointProtocol.swift; sourceTree = "<group>"; };
 		51B2D13C2BCB280400ACB75D /* CurrencyCodeDescriberProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencyCodeDescriberProtocol.swift; sourceTree = "<group>"; };
+		51B2D1532BCC5BDA00ACB75D /* SupportedCurrencyManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedCurrencyManagerTests.swift; sourceTree = "<group>"; };
+		51B2D1572BCC5C2300ACB75D /* SupportedCurrnecyProvider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedCurrnecyProvider.swift; sourceTree = "<group>"; };
 		51C02C0D2B39B84A00B757FA /* RateManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateManager.swift; sourceTree = "<group>"; };
 		51C02C122B39B91000B757FA /* ResultModelTest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultModelTest.swift; sourceTree = "<group>"; };
 		51CFA4A82BC6E00D0052DE8E /* HistoricalRateArchiver.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateArchiver.swift; sourceTree = "<group>"; };
@@ -535,6 +539,7 @@
 				516DD02E2BBA2DBC00D0B593 /* HistoricalRateProvider.swift */,
 				516DD0312BBA2F9E00D0B593 /* LatestRateProvider.swift */,
 				5110C4362BC1F5B800565299 /* CurrencySession.swift */,
+				51B2D1572BCC5C2300ACB75D /* SupportedCurrnecyProvider.swift */,
 			);
 			path = "Test Doubld";
 			sourceTree = "<group>";
@@ -887,6 +892,7 @@
 				E15BA6C424FCA66900CA5B1B /* FetcherTests.swift */,
 				51C02C122B39B91000B757FA /* ResultModelTest.swift */,
 				516DD0542BBC786C00D0B593 /* SettingModelTests.swift */,
+				51B2D1532BCC5BDA00ACB75D /* SupportedCurrencyManagerTests.swift */,
 				516FA7DB2BC8750E007DC712 /* Publisher + Helper tests */,
 			);
 			path = "Reactive Currency Tests";
@@ -1335,6 +1341,7 @@
 				E15BA6C524FCA66900CA5B1B /* FetcherTests.swift in Sources */,
 				516DD0482BBB34C000D0B593 /* HistoricalRateProviderTests.swift in Sources */,
 				51CFA4B92BC6E91B0052DE8E /* HistoricalRateStorage.swift in Sources */,
+				51B2D1582BCC5C2300ACB75D /* SupportedCurrnecyProvider.swift in Sources */,
 				51290BA72B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift in Sources */,
 				512CE8F12B373D5700019B20 /* CurrencyDescriber.swift in Sources */,
 				516DD0552BBC786C00D0B593 /* SettingModelTests.swift in Sources */,
@@ -1360,6 +1367,7 @@
 				5121216D29E2D60C001D234B /* TestDouble.swift in Sources */,
 				51C02C142B39B92000B757FA /* RateManager.swift in Sources */,
 				516DD0892BBF556800D0B593 /* KeyManagerTests.swift in Sources */,
+				51B2D1542BCC5BDA00ACB75D /* SupportedCurrencyManagerTests.swift in Sources */,
 				5110C4322BC1E07C00565299 /* BaseFetcherTests.swift in Sources */,
 				519A643929B462AE00918B84 /* TestingData.swift in Sources */,
 			);
