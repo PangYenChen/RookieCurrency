@@ -29,7 +29,7 @@ extension QuasiBaseResultModel {
         currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>,
         latestRate: ResponseDataModel.LatestRate,
         historicalRateSet: Set<ResponseDataModel.HistoricalRate>,
-        currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared
+        currencyDescriber: CurrencyDescriberProtocol
     ) -> StatisticsInfo {
         var rateStatistics: Set<RateStatistic> = []
         var dataAbsentCurrencyCodeSet: Set<ResponseDataModel.CurrencyCode> = []

@@ -58,7 +58,8 @@ extension ResultModel {
                         .statisticize(baseCurrencyCode: userSettingManager.baseCurrencyCode,
                                       currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest,
                                       latestRate: latestRate,
-                                      historicalRateSet: historicalRateSet)
+                                      historicalRateSet: historicalRateSet,
+                                      currencyDescriber: currencyDescriber)
                     
                     if !statisticsInfo.dataAbsentCurrencyCodeSet.isEmpty {
                         dataAbsentCurrencyCodeSetHandler?(statisticsInfo.dataAbsentCurrencyCodeSet)

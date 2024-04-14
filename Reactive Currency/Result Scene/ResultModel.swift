@@ -70,7 +70,8 @@ final class ResultModel: BaseResultModel {
                                     .statisticize(baseCurrencyCode: setting.baseCurrencyCode,
                                                   currencyCodeOfInterest: setting.currencyCodeOfInterest,
                                                   latestRate: rateTuple.latestRate,
-                                                  historicalRateSet: rateTuple.historicalRateSet)
+                                                  historicalRateSet: rateTuple.historicalRateSet,
+                                                  currencyDescriber: currencyDescriber)
                                 return (latestUpdateTime: rateTuple.latestRate.timestamp,
                                         statisticsInfo: statisticsInfo)
                             }
@@ -122,7 +123,7 @@ final class ResultModel: BaseResultModel {
                 refreshStatus = Publishers.Merge(refreshStatusProcess,
                                                  refreshStatusIdle)
                 .share()
-                    .eraseToAnyPublisher()
+                .eraseToAnyPublisher()
             }
         }
         

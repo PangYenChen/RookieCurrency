@@ -3,7 +3,7 @@ import Foundation
 class BaseSupportedCurrencyManager {
     init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol,
          locale: Locale,
-         serialDispatchQueue: DispatchQueue = DispatchQueue(label: "base.supported.currency.manager")) {
+         serialDispatchQueue: DispatchQueue) {
         self.supportedCurrencyProvider = supportedCurrencyProvider
         self.locale = locale
         
