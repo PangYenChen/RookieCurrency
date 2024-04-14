@@ -65,7 +65,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         }
     }
     
-    func testTwoCallSiteSimultaneously() throws {
+    func testSecondCallBeforeFirstReturn() throws {
         // arrange
         var receivedFirstValue: [ResponseDataModel.CurrencyCode: String]?
         var receivedFirstCompletion: Subscribers.Completion<Error>?
@@ -174,5 +174,36 @@ final class SupportedCurrencyManagerTests: XCTestCase {
                 case .failure(let failure): XCTFail("should not receive failure, but receive: \(failure)")
             }
         }
+    }
+    
+    func testManyCallSiteSimultaneously() throws {
+        // arrange
+        let concurrentDispatchQueue: DispatchQueue = DispatchQueue(label: "test.many.call.site.simultaneously",
+                                                                   attributes: .concurrent)
+        
+        // act
+        concurrentDispatchQueue.async { [unowned self] in
+            let callSiteCount: Int = 50
+            for _ in 0..<50 {
+                sut.supportedCurrency()
+                    .sink(receiveCompletion: { _ in },
+                          receiveValue: { _ in })
+                    .store(in: &anyCancellableSet)
+            }
+        }
+        
+        do {
+            let dummySupportedSymbols: ResponseDataModel.SupportedSymbols = try TestingData
+                .Instance
+                .supportedSymbols()
+            
+            concurrentDispatchQueue.async { [unowned self] in
+                supportedCurrencyProvider.publish(dummySupportedSymbols)
+            }
+        }
+        
+        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        
+        // assert, non-crash means passed
     }
 }
