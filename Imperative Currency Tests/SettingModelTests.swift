@@ -23,9 +23,9 @@ final class SettingModelTests: XCTestCase {
         dummyCurrencyDescriber = TestDouble.CurrencyDescriber()
         
         sut = SettingModel(setting: dummySetting,
+                           currencyDescriber: dummyCurrencyDescriber,
                            saveCompletionHandler: { [unowned self] setting in receivedSetting = setting },
-                           cancelCompletionHandler: { [unowned self] in receivedCancel = () },
-                           currencyDescriber: dummyCurrencyDescriber)
+                           cancelCompletionHandler: { [unowned self] in receivedCancel = () })
         
         sut.baseCurrencyCodeDidChangeHandler = { [unowned self] in receivedBaseCurrencyCodeDidChange = () }
         sut.currencyCodeOfInterestDidChangeHandler = { [unowned self] in receivedCurrencyCodeOfInterestDidChange = () }
