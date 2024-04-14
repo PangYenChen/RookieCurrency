@@ -171,6 +171,13 @@ final class SupportedCurrencyManagerTests: XCTestCase {
             }
         }
         
+        concurrentDispatchQueue.async { [unowned self] in
+            let callSiteCount: Int = 50
+            for _ in 0..<50 {
+                sut.getSupportedCurrency { _ in }
+            }
+        }
+        
         concurrentDispatchQueue.sync(flags: .barrier) { /*wait for all work items complete*/ }
         serialDispatchQueue.sync { /*wait for all work items complete*/ }
         
