@@ -22,8 +22,8 @@ class BaseSupportedCurrencyManager {
 
 extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {
     func localizedStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
-        locale.localizedString(forCurrencyCode: currencyCode)
-        ??
+//        locale.localizedString(forCurrencyCode: currencyCode)
+//        ??
         serialDispatchQueue.sync { cachedValue?[currencyCode] }
         ??
         currencyCode
