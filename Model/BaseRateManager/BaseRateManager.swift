@@ -3,8 +3,8 @@ import Foundation
 /// 用來獲得各貨幣匯率資料的類別
 class BaseRateManager {
     // MARK: - initializer
-    init(historicalRateProvider: HistoricalRateProviderProtocol = HistoricalRateProviderChain.shared,
-         latestRateProvider: LatestRateProviderProtocol = Fetcher.shared) {
+    init(historicalRateProvider: HistoricalRateProviderProtocol,
+         latestRateProvider: LatestRateProviderProtocol) {
         self.historicalRateProvider = historicalRateProvider
         self.latestRateProvider = latestRateProvider
     }
@@ -34,8 +34,9 @@ extension BaseRateManager {
 }
 
 // MARK: - static property
-extension BaseRateManager {
-    static let shared: RateManager = .init()
+extension RateManager {
+    static let shared: RateManager = RateManager(historicalRateProvider: HistoricalRateProviderChain.shared,
+                                                 latestRateProvider: Fetcher.shared)
 }
 
 // MARK: - name space

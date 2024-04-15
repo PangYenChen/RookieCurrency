@@ -2,7 +2,7 @@ import Foundation
 
 /// 讀寫 Historical Rate 的類別，當使用的 file manager 是 `.default`，這個 class 是 thread safe
 class HistoricalRateArchiver {
-    init(fileManager: FileManager = .default) {
+    init(fileManager: FileManager) {
         self.fileManager = fileManager
         
         documentsDirectory = URL.documentsDirectory

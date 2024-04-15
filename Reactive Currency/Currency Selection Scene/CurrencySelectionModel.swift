@@ -5,7 +5,7 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol, BaseCurrencySelect
     // MARK: - initializer
     init(
         currencySelectionStrategy: CurrencySelectionStrategy,
-        supportedCurrencyManager: SupportedCurrencyManager = .shared
+        supportedCurrencyManager: SupportedCurrencyManager
     ) {
         self.currencySelectionStrategy = currencySelectionStrategy
         

@@ -11,7 +11,7 @@ import Foundation
 extension TestDouble {
     final class UserDefaults: UserDefaultsProtocol {
         // MARK: - initializer
-        init(dataDictionary: [String: Any] = [:]) {
+        init(dataDictionary: [String: Any]) {
             self.dataDictionary = dataDictionary
             numberOfArchive = [:]
             numberOfUnarchive = [:]

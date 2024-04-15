@@ -29,9 +29,9 @@ final class SettingModelTests: XCTestCase {
         dummyCurrencyDescriber = TestDouble.CurrencyDescriber()
         
         sut = SettingModel(setting: dummySetting,
+                           currencyDescriber: dummyCurrencyDescriber,
                            saveSettingSubscriber: AnySubscriber(saveSettingSubject),
-                           cancelSubscriber: AnySubscriber(cancelSubject),
-                           currencyDescriber: dummyCurrencyDescriber)
+                           cancelSubscriber: AnySubscriber(cancelSubject))
         
         anyCancellableSet = Set<AnyCancellable>()
         

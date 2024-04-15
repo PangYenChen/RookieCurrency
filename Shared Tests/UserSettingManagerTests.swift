@@ -14,7 +14,7 @@ final class UserSettingManagerTests: XCTestCase {
     private var userDefaultsSpy: TestDouble.UserDefaults!
     
     override func setUp() {
-        userDefaultsSpy = TestDouble.UserDefaults()
+        userDefaultsSpy = TestDouble.UserDefaults(dataDictionary: [:])
         sut = UserSettingManager(userDefaults: userDefaultsSpy)
     }
     

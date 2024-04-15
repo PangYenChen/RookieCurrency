@@ -2,10 +2,10 @@ import Foundation
 
 final class ResultModel: BaseResultModel {
     // MARK: - life cycle
-    init(userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
-         rateManager: RateManagerProtocol = RateManager.shared,
-         currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
-         timer: TimerProtocol = TimerProxy()) {
+    init(userSettingManager: UserSettingManagerProtocol,
+         rateManager: RateManagerProtocol,
+         currencyDescriber: CurrencyDescriberProtocol,
+         timer: TimerProtocol) {
         self.userSettingManager = userSettingManager
         self.rateManager = rateManager
         self.timer = timer
@@ -58,7 +58,8 @@ extension ResultModel {
                         .statisticize(baseCurrencyCode: userSettingManager.baseCurrencyCode,
                                       currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest,
                                       latestRate: latestRate,
-                                      historicalRateSet: historicalRateSet)
+                                      historicalRateSet: historicalRateSet,
+                                      currencyDescriber: currencyDescriber)
                     
                     if !statisticsInfo.dataAbsentCurrencyCodeSet.isEmpty {
                         dataAbsentCurrencyCodeSetHandler?(statisticsInfo.dataAbsentCurrencyCodeSet)
@@ -119,7 +120,8 @@ extension ResultModel {
                                 baseCurrencyCode: userSettingManager.baseCurrencyCode,
                                 currencyCodeOfInterest: userSettingManager.currencyCodeOfInterest)
         
-        return SettingModel(setting: setting) { [unowned self] setting in
+        return SettingModel(setting: setting,
+                            currencyDescriber: SupportedCurrencyManager.shared) { [unowned self] setting in
             userSettingManager.numberOfDays = setting.numberOfDays
             userSettingManager.baseCurrencyCode = setting.baseCurrencyCode
             userSettingManager.currencyCodeOfInterest = setting.currencyCodeOfInterest

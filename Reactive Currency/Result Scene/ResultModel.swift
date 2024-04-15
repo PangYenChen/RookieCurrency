@@ -3,12 +3,10 @@ import Combine
 
 final class ResultModel: BaseResultModel {
     // MARK: - initializer
-    init(
-        userSettingManager: UserSettingManagerProtocol = UserSettingManager.shared,
-        rateManager: RateManagerProtocol = RateManager.shared,
-        currencyDescriber: CurrencyDescriberProtocol = SupportedCurrencyManager.shared,
-        timer: TimerProtocol = TimerProxy()
-    ) {
+    init(userSettingManager: UserSettingManagerProtocol,
+         rateManager: RateManagerProtocol,
+         currencyDescriber: CurrencyDescriberProtocol,
+         timer: TimerProtocol) {
         var userSettingManager: UserSettingManagerProtocol = userSettingManager
         
         do /*initialize input*/ {
@@ -70,7 +68,8 @@ final class ResultModel: BaseResultModel {
                                     .statisticize(baseCurrencyCode: setting.baseCurrencyCode,
                                                   currencyCodeOfInterest: setting.currencyCodeOfInterest,
                                                   latestRate: rateTuple.latestRate,
-                                                  historicalRateSet: rateTuple.historicalRateSet)
+                                                  historicalRateSet: rateTuple.historicalRateSet,
+                                                  currencyDescriber: currencyDescriber)
                                 return (latestUpdateTime: rateTuple.latestRate.timestamp,
                                         statisticsInfo: statisticsInfo)
                             }
@@ -122,7 +121,7 @@ final class ResultModel: BaseResultModel {
                 refreshStatus = Publishers.Merge(refreshStatusProcess,
                                                  refreshStatusIdle)
                 .share()
-                    .eraseToAnyPublisher()
+                .eraseToAnyPublisher()
             }
         }
         
@@ -202,6 +201,7 @@ extension ResultModel {
     func makeSettingModel() -> SettingModel {
         suspendAutoRefresh.send()
         return SettingModel(setting: setting.value,
+                            currencyDescriber: SupportedCurrencyManager.shared,
                             saveSettingSubscriber: AnySubscriber(setting),
                             cancelSubscriber: AnySubscriber(resumeAutoRefreshSubject))
     }
