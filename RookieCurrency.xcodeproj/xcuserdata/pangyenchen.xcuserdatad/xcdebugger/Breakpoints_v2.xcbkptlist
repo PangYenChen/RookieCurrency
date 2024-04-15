@@ -50,6 +50,36 @@
             endingLineNumber = "71"
             landmarkName = "sort(_:bySortingMethod:andSortingOrder:thenFilterIfNeedBySearchTextBy:)"
             landmarkType = "7">
+            <Locations>
+               <Location
+                  uuid = "9B74AE9E-1459-440D-B255-C960706927B2 - 7601adcbe14a62"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "ImperativeCurrency.CurrencySelectionModel.CurrencyCodeDescriptionDictionarySorter.sort(_: Swift.Dictionary&lt;Swift.String, Swift.String&gt;, bySortingMethod: ImperativeCurrency.CurrencySelectionModel.SortingMethod, andSortingOrder: ImperativeCurrency.CurrencySelectionModel.SortingOrder, thenFilterIfNeedBySearchTextBy: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Array&lt;Swift.String&gt;"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Currency%20Selection%20Scene/CurrencySelectionModelProtocol.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "71"
+                  endingLineNumber = "71">
+               </Location>
+               <Location
+                  uuid = "9B74AE9E-1459-440D-B255-C960706927B2 - e40c4ab9f78ff96a"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "closure #1 (Swift.String, Swift.String) -&gt; Swift.Bool in ImperativeCurrency.CurrencySelectionModel.CurrencyCodeDescriptionDictionarySorter.sort(_: Swift.Dictionary&lt;Swift.String, Swift.String&gt;, bySortingMethod: ImperativeCurrency.CurrencySelectionModel.SortingMethod, andSortingOrder: ImperativeCurrency.CurrencySelectionModel.SortingOrder, thenFilterIfNeedBySearchTextBy: Swift.Optional&lt;Swift.String&gt;) -&gt; Swift.Array&lt;Swift.String&gt;"
+                  moduleName = "ImperativeCurrency"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/pangyenchen/Desktop/RookieCurrency/Currency%20Selection%20Scene/CurrencySelectionModelProtocol.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "71"
+                  endingLineNumber = "71">
+               </Location>
+            </Locations>
          </BreakpointContent>
       </BreakpointProxy>
    </Breakpoints>
