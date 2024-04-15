@@ -156,7 +156,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         // act
         concurrentDispatchQueue.async { [unowned self] in
             let callSiteCount: Int = 50
-            for _ in 0..<50 {
+            for _ in 0..<callSiteCount {
                 sut.getSupportedCurrency { _ in }
             }
         }
@@ -173,7 +173,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         
         concurrentDispatchQueue.async { [unowned self] in
             let callSiteCount: Int = 50
-            for _ in 0..<50 {
+            for _ in 0..<callSiteCount {
                 sut.getSupportedCurrency { _ in }
             }
         }

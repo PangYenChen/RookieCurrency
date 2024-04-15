@@ -15,33 +15,39 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     private var currentPublisher: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error>?
     
     func supportedCurrency() -> AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> {
-        if let cachedValue {
-            return Just(cachedValue)
-                .setFailureType(to: Error.self)
-                .eraseToAnyPublisher()
-        }
-        else {
-            if let currentPublisher {
-                return currentPublisher
+        Just(())
+            .receive(on: serialDispatchQueue)
+            .flatMap { [unowned self] _ in
+                if let cachedValue {
+                    return Just(cachedValue)
+                        .setFailureType(to: Error.self)
+                        .eraseToAnyPublisher()
+                }
+                else {
+                    if let currentPublisher {
+                        return currentPublisher
+                    }
+                    else {
+                        let currentPublisher: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> = supportedCurrencyProvider.supportedCurrencyPublisher()
+                            .receive(on: serialDispatchQueue)
+                            .map { $0.symbols }
+                            .handleEvents(
+                                receiveOutput: { [unowned self] supportedCurrencyDescriptionDictionary in
+                                    cachedValue = supportedCurrencyDescriptionDictionary
+                                },
+                                receiveCompletion: { [unowned self] _ in self.currentPublisher = nil },
+                                receiveCancel: { [unowned self]  in self.currentPublisher = nil }
+                            )
+                            .share()
+                            .eraseToAnyPublisher()
+                        
+                        self.currentPublisher = currentPublisher
+                        
+                        return currentPublisher
+                    }
+                }
             }
-            else {
-                let currentPublisher: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> = supportedCurrencyProvider.supportedCurrencyPublisher()
-                    .map { $0.symbols }
-                    .handleEvents(
-                        receiveOutput: { [unowned self] supportedCurrencyDescriptionDictionary in
-                            cachedValue = supportedCurrencyDescriptionDictionary
-                        },
-                        receiveCompletion: { [unowned self] _ in self.currentPublisher = nil },
-                        receiveCancel: { [unowned self]  in self.currentPublisher = nil }
-                    )
-                    .share()
-                    .eraseToAnyPublisher()
-                
-                self.currentPublisher = currentPublisher
-                
-                return currentPublisher
-            }
-        }
+            .eraseToAnyPublisher()
     }
     
     func prefetchSupportedCurrency() {

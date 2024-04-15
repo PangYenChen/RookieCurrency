@@ -46,6 +46,8 @@ final class SupportedCurrencyManagerTests: XCTestCase {
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
         
+        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        
         supportedCurrencyProvider.publish(supportedSymbols)
         
         serialDispatchQueue.sync { /*wait for all work items complete*/ }
@@ -76,6 +78,8 @@ final class SupportedCurrencyManagerTests: XCTestCase {
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
+        
+        serialDispatchQueue.sync { /*wait for all work items complete*/ }
             
         supportedCurrencyProvider.publish(completion: .failure(expectedError))
         
@@ -85,7 +89,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         XCTAssertNil(receivedValue)
         
         do {
-            let receivedCompletion = try XCTUnwrap(receivedCompletion)
+            let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             switch receivedCompletion {
                 case .finished: XCTFail("should not complete normally")
                 case .failure(let failure): XCTAssertEqual(failure as? URLError, expectedError)
@@ -108,6 +112,8 @@ final class SupportedCurrencyManagerTests: XCTestCase {
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
+        
+        serialDispatchQueue.sync { /*wait for all work items complete*/ }
         
         supportedCurrencyProvider.publish(supportedSymbols)
         
@@ -148,6 +154,8 @@ final class SupportedCurrencyManagerTests: XCTestCase {
                   receiveValue: { value in receivedSecondValue = value })
             .store(in: &anyCancellableSet)
         
+        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        
         supportedCurrencyProvider.publish(supportedSymbols)
         
         serialDispatchQueue.sync { /*wait for all work items complete*/ }
@@ -180,7 +188,11 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         // act
         sut.prefetchSupportedCurrency()
         
+        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        
         supportedCurrencyProvider.publish(supportedSymbols)
+        
+        serialDispatchQueue.sync { /*wait for all work items complete*/ }
         
         sut.supportedCurrency()
             .sink(receiveCompletion: { completion in receivedSecondCompletion = completion },
@@ -209,14 +221,16 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         let concurrentDispatchQueue: DispatchQueue = DispatchQueue(label: "test.many.call.site.simultaneously",
                                                                    attributes: .concurrent)
         
+        let serialQueueForAnyCancellableSet: DispatchQueue = DispatchQueue(label: "for.any.cancellable.set")
+        
         // act
         concurrentDispatchQueue.async { [unowned self] in
             let callSiteCount: Int = 50
-            for _ in 0..<50 {
-                sut.supportedCurrency()
+            for _ in 0..<callSiteCount {
+                let anyCancellable: AnyCancellable = sut.supportedCurrency()
                     .sink(receiveCompletion: { _ in },
                           receiveValue: { _ in })
-                    .store(in: &anyCancellableSet)
+                serialQueueForAnyCancellableSet.async { [unowned self] in anyCancellableSet.insert(anyCancellable) }
             }
         }
         
@@ -232,11 +246,11 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         
         concurrentDispatchQueue.async { [unowned self] in
             let callSiteCount: Int = 50
-            for _ in 0..<50 {
-                sut.supportedCurrency()
+            for _ in 0..<callSiteCount {
+                let anyCancellable: AnyCancellable = sut.supportedCurrency()
                     .sink(receiveCompletion: { _ in },
                           receiveValue: { _ in })
-                    .store(in: &anyCancellableSet)
+                serialQueueForAnyCancellableSet.async { [unowned self] in anyCancellableSet.insert(anyCancellable) }
             }
         }
         
