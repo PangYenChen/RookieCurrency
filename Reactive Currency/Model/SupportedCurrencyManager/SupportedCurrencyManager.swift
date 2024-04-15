@@ -4,19 +4,21 @@ import Combine
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     override init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol,
                   locale: Locale = Locale.autoupdatingCurrent,
-                  serialDispatchQueue: DispatchQueue) {
+                  internalSerialDispatchQueue: DispatchQueue,
+                  externalConcurrentDispatchQueue: DispatchQueue) {
         currentPublisher = nil
         
         super.init(supportedCurrencyProvider: supportedCurrencyProvider,
                    locale: locale,
-                   serialDispatchQueue: serialDispatchQueue)
+                   internalSerialDispatchQueue: internalSerialDispatchQueue,
+                   externalConcurrentDispatchQueue: externalConcurrentDispatchQueue)
     }
     
     private var currentPublisher: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error>?
     
     func supportedCurrency() -> AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> {
         Just(())
-            .receive(on: serialDispatchQueue)
+            .receive(on: internalSerialDispatchQueue)
             .flatMap { [unowned self] _ in
                 if let cachedValue {
                     return Just(cachedValue)
@@ -29,7 +31,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
                     }
                     else {
                         let currentPublisher: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> = supportedCurrencyProvider.supportedCurrencyPublisher()
-                            .receive(on: serialDispatchQueue)
+                            .receive(on: internalSerialDispatchQueue)
                             .map { $0.symbols }
                             .handleEvents(
                                 receiveOutput: { [unowned self] supportedCurrencyDescriptionDictionary in
@@ -47,6 +49,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
                     }
                 }
             }
+            .receive(on: externalConcurrentDispatchQueue)
             .eraseToAnyPublisher()
     }
     

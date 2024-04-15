@@ -3,12 +3,14 @@ import Foundation
 class BaseSupportedCurrencyManager {
     init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol,
          locale: Locale,
-         serialDispatchQueue: DispatchQueue) {
+         internalSerialDispatchQueue: DispatchQueue,
+         externalConcurrentDispatchQueue: DispatchQueue) {
         self.supportedCurrencyProvider = supportedCurrencyProvider
         self.locale = locale
         
         cachedValue = nil
-        self.serialDispatchQueue = serialDispatchQueue
+        self.internalSerialDispatchQueue = internalSerialDispatchQueue
+        self.externalConcurrentDispatchQueue = externalConcurrentDispatchQueue
     }
     
     let supportedCurrencyProvider: SupportedCurrencyProviderProtocol
@@ -17,14 +19,16 @@ class BaseSupportedCurrencyManager {
     
     var cachedValue: CurrencyCodeDescriptions?
     
-    let serialDispatchQueue: DispatchQueue
+    let internalSerialDispatchQueue: DispatchQueue
+    
+    let externalConcurrentDispatchQueue: DispatchQueue
 }
 
 extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {
     func localizedStringFor(currencyCode: ResponseDataModel.CurrencyCode) -> String {
-//        locale.localizedString(forCurrencyCode: currencyCode)
-//        ??
-        serialDispatchQueue.sync { cachedValue?[currencyCode] }
+        locale.localizedString(forCurrencyCode: currencyCode)
+        ??
+        internalSerialDispatchQueue.sync { cachedValue?[currencyCode] }
         ??
         currencyCode
     }
@@ -34,7 +38,9 @@ extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {
 extension SupportedCurrencyManager {
     static let shared: SupportedCurrencyManager = SupportedCurrencyManager(
         supportedCurrencyProvider: Fetcher.shared,
-        serialDispatchQueue: DispatchQueue(label: "supported.currency.manager")
+        internalSerialDispatchQueue: DispatchQueue(label: "supported.currency.manager.internal.serial"),
+        externalConcurrentDispatchQueue: DispatchQueue(label: "supported.currency.manager.external.concurrent",
+                                                       attributes: .concurrent)
     )
 }
 
