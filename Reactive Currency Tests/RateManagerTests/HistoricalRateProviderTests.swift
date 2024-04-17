@@ -12,7 +12,7 @@ class HistoricalRateProviderRingTests: XCTestCase {
     private var anyCancellableSet: Set<AnyCancellable>!
     
     override func setUp() {
-        historicalRateStorage = TestDouble.HistoricalRateStorage(dateStringAndRateDirectory: [:])
+        historicalRateStorage = TestDouble.HistoricalRateStorage()
         nextHistoricalRateProvider = TestDouble.HistoricalRateProvider()
         
         sut = HistoricalRateProviderRing(storage: historicalRateStorage,

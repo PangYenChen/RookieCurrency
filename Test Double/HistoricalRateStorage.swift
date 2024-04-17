@@ -8,8 +8,8 @@
 
 extension TestDouble {
     class HistoricalRateStorage: HistoricalRateStorageProtocol {
-        init(dateStringAndRateDirectory: [String: ResponseDataModel.HistoricalRate]) {
-            self.dateStringAndRateDirectory = dateStringAndRateDirectory
+        init() {
+            dateStringAndRateDirectory = [:]
         }
         
         private(set) var dateStringAndRateDirectory: [String: ResponseDataModel.HistoricalRate]

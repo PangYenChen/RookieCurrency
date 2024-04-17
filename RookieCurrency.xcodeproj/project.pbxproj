@@ -104,6 +104,8 @@
 		515D3D9029EEE81000B84F4B /* Supported Symbols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515D3D8E29EEE81000B84F4B /* Supported Symbols.swift */; };
 		515DE3732AA31FE6005E719C /* Session Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515DE3722AA31FE6005E719C /* Session Output.swift */; };
 		515DE3742AA31FE6005E719C /* Session Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515DE3722AA31FE6005E719C /* Session Output.swift */; };
+		515EBC012BD0210C004453F6 /* HistoricalRateCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515EBC002BD0210C004453F6 /* HistoricalRateCacheTests.swift */; };
+		515EBC022BD0210C004453F6 /* HistoricalRateCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515EBC002BD0210C004453F6 /* HistoricalRateCacheTests.swift */; };
 		51600C532AADDD3900B9BE43 /* ResultScene.strings in Resources */ = {isa = PBXBuildFile; fileRef = 51600C562AADDD3900B9BE43 /* ResultScene.strings */; };
 		51600C542AADDD3900B9BE43 /* ResultScene.strings in Resources */ = {isa = PBXBuildFile; fileRef = 51600C562AADDD3900B9BE43 /* ResultScene.strings */; };
 		51600C5B2AADDE8400B9BE43 /* SettingScene.strings in Resources */ = {isa = PBXBuildFile; fileRef = 51600C5E2AADDE8400B9BE43 /* SettingScene.strings */; };
@@ -298,6 +300,7 @@
 		515D3D8629ED8C7400B84F4B /* SupportedSymbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SupportedSymbols.swift; sourceTree = "<group>"; };
 		515D3D8E29EEE81000B84F4B /* Supported Symbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Supported Symbols.swift"; sourceTree = "<group>"; };
 		515DE3722AA31FE6005E719C /* Session Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Session Output.swift"; sourceTree = "<group>"; };
+		515EBC002BD0210C004453F6 /* HistoricalRateCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateCacheTests.swift; sourceTree = "<group>"; };
 		51600C552AADDD3900B9BE43 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/ResultScene.strings; sourceTree = "<group>"; };
 		51600C572AADDD3E00B9BE43 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/ResultScene.strings"; sourceTree = "<group>"; };
 		51600C5D2AADDE8400B9BE43 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SettingScene.strings; sourceTree = "<group>"; };
@@ -488,7 +491,7 @@
 			children = (
 				519A643429B4615B00918B84 /* ResponseDataModelTest.swift */,
 				5125CC7D2BC371E100C96B38 /* ThreadSafeWrapperTests.swift */,
-				51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */,
+				515EBBFD2BD01FF1004453F6 /* RateManagerTests */,
 				516DD0872BBF556800D0B593 /* KeyManagerTests.swift */,
 				51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */,
 				51290BA52B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift */,
@@ -551,6 +554,15 @@
 				5149A1AB2B08E2B2005D2B04 /* SettingModel.swift */,
 			);
 			path = "Setting Scene";
+			sourceTree = "<group>";
+		};
+		515EBBFD2BD01FF1004453F6 /* RateManagerTests */ = {
+			isa = PBXGroup;
+			children = (
+				51869FD729D9D31D00EFA13D /* BaseRateManagerTests.swift */,
+				515EBC002BD0210C004453F6 /* HistoricalRateCacheTests.swift */,
+			);
+			path = RateManagerTests;
 			sourceTree = "<group>";
 		};
 		516017552BC4508900817732 /* SupportedCurrencyManager */ = {
@@ -1259,6 +1271,7 @@
 				5110C4312BC1E07C00565299 /* BaseFetcherTests.swift in Sources */,
 				5121216C29E2D60C001D234B /* TestDouble.swift in Sources */,
 				516DD0882BBF556800D0B593 /* KeyManagerTests.swift in Sources */,
+				515EBC012BD0210C004453F6 /* HistoricalRateCacheTests.swift in Sources */,
 				5189F9D029DAD630004234D3 /* RateManagerTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1341,6 +1354,7 @@
 				E15BA6C524FCA66900CA5B1B /* FetcherTests.swift in Sources */,
 				516DD0482BBB34C000D0B593 /* HistoricalRateProviderTests.swift in Sources */,
 				51CFA4B92BC6E91B0052DE8E /* HistoricalRateStorage.swift in Sources */,
+				515EBC022BD0210C004453F6 /* HistoricalRateCacheTests.swift in Sources */,
 				51B2D1582BCC5C2300ACB75D /* SupportedCurrnecyProvider.swift in Sources */,
 				51290BA72B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift in Sources */,
 				512CE8F12B373D5700019B20 /* CurrencyDescriber.swift in Sources */,
