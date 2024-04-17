@@ -81,7 +81,8 @@ extension SettingModel {
             baseCurrencyCode: baseCurrencyCode
         ) { [unowned self] selectedBaseCurrencyCode in baseCurrencyCode = selectedBaseCurrencyCode }
         
-        return CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy)
+        return CurrencySelectionModel(currencySelectionStrategy: baseCurrencySelectionStrategy,
+                                      supportedCurrencyManager: SupportedCurrencyManager.shared)
     }
     
     func makeCurrencyOfInterestSelectionModel() -> CurrencySelectionModel {
@@ -89,7 +90,8 @@ extension SettingModel {
             currencyCodeOfInterest: currencyCodeOfInterest
         ) { [unowned self] selectedCurrencyCodeOfInterest in currencyCodeOfInterest = selectedCurrencyCodeOfInterest }
         
-        return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy)
+        return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy,
+                                      supportedCurrencyManager: SupportedCurrencyManager.shared)
     }
 }
 

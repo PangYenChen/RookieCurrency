@@ -5,21 +5,36 @@ final class SupportedCurrencyManagerTests: XCTestCase {
     private var sut: SupportedCurrencyManager!
     
     private var supportedCurrencyProvider: TestDouble.SupportedCurrencyProvider!
-    private var serialDispatchQueue: DispatchQueue!
+    private var internalSerialDispatchQueue: DispatchQueue!
+    private var externalConcurrentDispatchQueue: DispatchQueue!
 
     override func setUp() {
         supportedCurrencyProvider = TestDouble.SupportedCurrencyProvider()
-        serialDispatchQueue = DispatchQueue(label: "supported.currency.manager.test")
+        internalSerialDispatchQueue = DispatchQueue(label: "supported.currency.manager.test.internal.serial")
+        externalConcurrentDispatchQueue = DispatchQueue(label: "supported.currency.manager.test.external.concurrent",
+                                                        attributes: .concurrent)
         
         sut = SupportedCurrencyManager(supportedCurrencyProvider: supportedCurrencyProvider,
-                                       serialDispatchQueue: serialDispatchQueue)
+                                       internalSerialDispatchQueue: internalSerialDispatchQueue,
+                                       externalConcurrentDispatchQueue: externalConcurrentDispatchQueue)
     }
 
     override func tearDown() {
         sut = nil
         
         supportedCurrencyProvider = nil
-        serialDispatchQueue = nil
+        internalSerialDispatchQueue = nil
+        externalConcurrentDispatchQueue = nil
+    }
+    
+    func testNoRetainCycleOccur() {
+        // arrange
+        addTeardownBlock { [weak sut] in
+            // assert
+            XCTAssertNil(sut)
+        }
+        // act
+        sut = nil
     }
     
     func testSuccess() throws {
@@ -35,7 +50,9 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         sut.getSupportedCurrency { result in receivedResult = result }
         supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
+        
+        externalConcurrentDispatchQueue.sync(flags: .barrier) { /*wait for all work items complete*/ }
         
         // assert
         do {
@@ -56,7 +73,9 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         sut.getSupportedCurrency { result in receivedResult = result }
         supportedCurrencyProvider.executeCompletionHandler(with: .failure(expectedError))
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
+        
+        externalConcurrentDispatchQueue.sync(flags: .barrier) { /*wait for all work items complete*/ }
         
         // assert
         do {
@@ -80,7 +99,9 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         sut.getSupportedCurrency { result in receivedResult = result }
         supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
+        
+        externalConcurrentDispatchQueue.sync(flags: .barrier) { /*wait for all work items complete*/ }
         
         // assert
         do {
@@ -110,7 +131,9 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         
         supportedCurrencyProvider.executeCompletionHandler(with: .success(supportedSymbols))
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
+        
+        externalConcurrentDispatchQueue.sync(flags: .barrier) { /*wait for all work items complete*/ }
         
         // assert
         XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
@@ -137,7 +160,9 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         
         sut.getSupportedCurrency { result in receivedSecondResult = result }
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
+        
+        externalConcurrentDispatchQueue.sync(flags: .barrier) { /*wait for all work items complete*/ }
         
         // assert
         XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
@@ -154,6 +179,8 @@ final class SupportedCurrencyManagerTests: XCTestCase {
                                                                    attributes: .concurrent)
         
         // act
+        sut.getSupportedCurrency { _ in }
+        
         concurrentDispatchQueue.async { [unowned self] in
             let callSiteCount: Int = 50
             for _ in 0..<callSiteCount {
@@ -179,8 +206,9 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         }
         
         concurrentDispatchQueue.sync(flags: .barrier) { /*wait for all work items complete*/ }
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
         
-        // assert, non-crash means passed
+        // assert
+        XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
     }
 }

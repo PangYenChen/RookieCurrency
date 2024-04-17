@@ -3,7 +3,7 @@ import Foundation
 class CurrencySelectionModel: CurrencySelectionModelProtocol, BaseCurrencySelectionModelProtocol {
     // MARK: - initializer
     init(currencySelectionStrategy: CurrencySelectionStrategy,
-         supportedCurrencyManager: SupportedCurrencyManager = .shared) {
+         supportedCurrencyManager: SupportedCurrencyManager) {
         self.currencySelectionStrategy = currencySelectionStrategy
         self.supportedCurrencyManager = supportedCurrencyManager
         self.currencyCodeDescriptionDictionarySorter = CurrencyCodeDescriptionDictionarySorter(currencyDescriber: supportedCurrencyManager)
