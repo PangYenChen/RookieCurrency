@@ -3,14 +3,12 @@ import Foundation
 class BaseSupportedCurrencyManager {
     init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol,
          locale: Locale,
-         internalSerialDispatchQueue: DispatchQueue,
-         externalConcurrentDispatchQueue: DispatchQueue) {
+         internalSerialDispatchQueue: DispatchQueue) {
         self.supportedCurrencyProvider = supportedCurrencyProvider
         self.locale = locale
         
         cachedValue = nil
         self.internalSerialDispatchQueue = internalSerialDispatchQueue
-        self.externalConcurrentDispatchQueue = externalConcurrentDispatchQueue
     }
     
     let supportedCurrencyProvider: SupportedCurrencyProviderProtocol
@@ -20,8 +18,6 @@ class BaseSupportedCurrencyManager {
     var cachedValue: CurrencyCodeDescriptions?
     
     let internalSerialDispatchQueue: DispatchQueue
-    
-    let externalConcurrentDispatchQueue: DispatchQueue
 }
 
 extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {
@@ -32,16 +28,6 @@ extension BaseSupportedCurrencyManager: CurrencyDescriberProtocol {
         ??
         currencyCode
     }
-}
-
-// MARK: - static property
-extension SupportedCurrencyManager {
-    static let shared: SupportedCurrencyManager = SupportedCurrencyManager(
-        supportedCurrencyProvider: Fetcher.shared,
-        internalSerialDispatchQueue: DispatchQueue(label: "supported.currency.manager.internal.serial"),
-        externalConcurrentDispatchQueue: DispatchQueue(label: "supported.currency.manager.external.concurrent",
-                                                       attributes: .concurrent)
-    )
 }
 
 extension BaseSupportedCurrencyManager {

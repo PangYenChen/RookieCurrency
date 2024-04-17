@@ -2,17 +2,19 @@ import Foundation
 
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     // MARK: - life cycle
-    override init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol,
-                  locale: Locale = Locale.autoupdatingCurrent,
-                  internalSerialDispatchQueue: DispatchQueue,
-                  externalConcurrentDispatchQueue: DispatchQueue) {
+    init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol,
+         locale: Locale = Locale.autoupdatingCurrent,
+         internalSerialDispatchQueue: DispatchQueue,
+         externalConcurrentDispatchQueue: DispatchQueue) {
         descriptionHandlers = []
+        self.externalConcurrentDispatchQueue = externalConcurrentDispatchQueue
         
         super.init(supportedCurrencyProvider: supportedCurrencyProvider,
                    locale: locale,
-                   internalSerialDispatchQueue: internalSerialDispatchQueue,
-                   externalConcurrentDispatchQueue: externalConcurrentDispatchQueue)
+                   internalSerialDispatchQueue: internalSerialDispatchQueue)
     }
+    
+    private let externalConcurrentDispatchQueue: DispatchQueue
     
     private var descriptionHandlers: [DescriptionResultHandler]
     
@@ -52,4 +54,13 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
 
 extension SupportedCurrencyManager {
     typealias DescriptionResultHandler = (_ result: Result<[ResponseDataModel.CurrencyCode: String], Error>) -> Void
+}
+
+extension SupportedCurrencyManager {
+    static let shared: SupportedCurrencyManager = SupportedCurrencyManager(
+        supportedCurrencyProvider: Fetcher.shared,
+        internalSerialDispatchQueue: DispatchQueue(label: "supported.currency.manager.internal.serial"),
+        externalConcurrentDispatchQueue: DispatchQueue(label: "supported.currency.manager.external.concurrent",
+                                                       attributes: .concurrent)
+    )
 }

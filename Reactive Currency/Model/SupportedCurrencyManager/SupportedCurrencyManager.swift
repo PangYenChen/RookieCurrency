@@ -4,14 +4,12 @@ import Combine
 class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     override init(supportedCurrencyProvider: SupportedCurrencyProviderProtocol,
                   locale: Locale = Locale.autoupdatingCurrent,
-                  internalSerialDispatchQueue: DispatchQueue,
-                  externalConcurrentDispatchQueue: DispatchQueue) {
+                  internalSerialDispatchQueue: DispatchQueue) {
         currentPublisher = nil
         
         super.init(supportedCurrencyProvider: supportedCurrencyProvider,
                    locale: locale,
-                   internalSerialDispatchQueue: internalSerialDispatchQueue,
-                   externalConcurrentDispatchQueue: externalConcurrentDispatchQueue)
+                   internalSerialDispatchQueue: internalSerialDispatchQueue)
     }
     
     private var currentPublisher: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error>?
@@ -58,4 +56,11 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
         supportedCurrency()
             .subscribe(Subscribers.Sink(receiveCompletion: { _ in }, receiveValue: { _ in }))
     }
+}
+
+extension SupportedCurrencyManager {
+    static let shared: SupportedCurrencyManager = SupportedCurrencyManager(
+        supportedCurrencyProvider: Fetcher.shared,
+        internalSerialDispatchQueue: DispatchQueue(label: "supported.currency.manager.internal.serial")
+    )
 }

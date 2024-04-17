@@ -7,19 +7,15 @@ final class SupportedCurrencyManagerTests: XCTestCase {
     
     private var supportedCurrencyProvider: TestDouble.SupportedCurrencyProvider!
     private var internalSerialDispatchQueue: DispatchQueue!
-    private var externalConcurrentDispatchQueue: DispatchQueue!
     
     private var anyCancellableSet: Set<AnyCancellable>!
     
     override func setUp() {
         supportedCurrencyProvider = TestDouble.SupportedCurrencyProvider()
         internalSerialDispatchQueue = DispatchQueue(label: "supported.currency.manager.test")
-        externalConcurrentDispatchQueue = DispatchQueue(label: "supported.currency.manager.test.external.concurrent",
-                                                        attributes: .concurrent)
         
         sut = SupportedCurrencyManager(supportedCurrencyProvider: supportedCurrencyProvider,
-                                       internalSerialDispatchQueue: internalSerialDispatchQueue,
-                                       externalConcurrentDispatchQueue: externalConcurrentDispatchQueue)
+                                       internalSerialDispatchQueue: internalSerialDispatchQueue)
         
         anyCancellableSet = Set<AnyCancellable>()
     }
@@ -32,7 +28,6 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         
         supportedCurrencyProvider = nil
         internalSerialDispatchQueue = nil
-        externalConcurrentDispatchQueue = nil
     }
     
     func testNoRetainCycleOccur() {
