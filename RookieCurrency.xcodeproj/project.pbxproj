@@ -106,6 +106,8 @@
 		515DE3742AA31FE6005E719C /* Session Output.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515DE3722AA31FE6005E719C /* Session Output.swift */; };
 		515EBC012BD0210C004453F6 /* HistoricalRateCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515EBC002BD0210C004453F6 /* HistoricalRateCacheTests.swift */; };
 		515EBC022BD0210C004453F6 /* HistoricalRateCacheTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515EBC002BD0210C004453F6 /* HistoricalRateCacheTests.swift */; };
+		515EBC062BD03FF5004453F6 /* BaseSupportedCurrencyManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515EBC052BD03FF5004453F6 /* BaseSupportedCurrencyManagerTests.swift */; };
+		515EBC072BD03FF5004453F6 /* BaseSupportedCurrencyManagerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 515EBC052BD03FF5004453F6 /* BaseSupportedCurrencyManagerTests.swift */; };
 		51600C532AADDD3900B9BE43 /* ResultScene.strings in Resources */ = {isa = PBXBuildFile; fileRef = 51600C562AADDD3900B9BE43 /* ResultScene.strings */; };
 		51600C542AADDD3900B9BE43 /* ResultScene.strings in Resources */ = {isa = PBXBuildFile; fileRef = 51600C562AADDD3900B9BE43 /* ResultScene.strings */; };
 		51600C5B2AADDE8400B9BE43 /* SettingScene.strings in Resources */ = {isa = PBXBuildFile; fileRef = 51600C5E2AADDE8400B9BE43 /* SettingScene.strings */; };
@@ -301,6 +303,7 @@
 		515D3D8E29EEE81000B84F4B /* Supported Symbols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Supported Symbols.swift"; sourceTree = "<group>"; };
 		515DE3722AA31FE6005E719C /* Session Output.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Session Output.swift"; sourceTree = "<group>"; };
 		515EBC002BD0210C004453F6 /* HistoricalRateCacheTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HistoricalRateCacheTests.swift; sourceTree = "<group>"; };
+		515EBC052BD03FF5004453F6 /* BaseSupportedCurrencyManagerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseSupportedCurrencyManagerTests.swift; sourceTree = "<group>"; };
 		51600C552AADDD3900B9BE43 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/ResultScene.strings; sourceTree = "<group>"; };
 		51600C572AADDD3E00B9BE43 /* zh-Hant */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "zh-Hant"; path = "zh-Hant.lproj/ResultScene.strings"; sourceTree = "<group>"; };
 		51600C5D2AADDE8400B9BE43 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/SettingScene.strings; sourceTree = "<group>"; };
@@ -492,11 +495,10 @@
 				519A643429B4615B00918B84 /* ResponseDataModelTest.swift */,
 				5125CC7D2BC371E100C96B38 /* ThreadSafeWrapperTests.swift */,
 				515EBBFD2BD01FF1004453F6 /* RateManagerTests */,
-				516DD0872BBF556800D0B593 /* KeyManagerTests.swift */,
-				51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */,
-				51290BA52B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift */,
+				515EBC032BD03FA1004453F6 /* BaseFetcherTests */,
+				515EBC042BD03FC5004453F6 /* QuasiBaseResultModelTests */,
 				51290BB42B9A4ED1005BE201 /* UserSettingManagerTests.swift */,
-				5110C4302BC1E07C00565299 /* BaseFetcherTests.swift */,
+				515EBC052BD03FF5004453F6 /* BaseSupportedCurrencyManagerTests.swift */,
 			);
 			path = "Shared Tests";
 			sourceTree = "<group>";
@@ -563,6 +565,24 @@
 				515EBC002BD0210C004453F6 /* HistoricalRateCacheTests.swift */,
 			);
 			path = RateManagerTests;
+			sourceTree = "<group>";
+		};
+		515EBC032BD03FA1004453F6 /* BaseFetcherTests */ = {
+			isa = PBXGroup;
+			children = (
+				516DD0872BBF556800D0B593 /* KeyManagerTests.swift */,
+				5110C4302BC1E07C00565299 /* BaseFetcherTests.swift */,
+			);
+			path = BaseFetcherTests;
+			sourceTree = "<group>";
+		};
+		515EBC042BD03FC5004453F6 /* QuasiBaseResultModelTests */ = {
+			isa = PBXGroup;
+			children = (
+				51290B9A2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift */,
+				51290BA52B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift */,
+			);
+			path = QuasiBaseResultModelTests;
 			sourceTree = "<group>";
 		};
 		516017552BC4508900817732 /* SupportedCurrencyManager */ = {
@@ -1253,6 +1273,7 @@
 				51290BA62B966502005BE201 /* QuasiBaseResultModelRateStatisticTests.swift in Sources */,
 				516DD05A2BBC905200D0B593 /* SettingModelTests.swift in Sources */,
 				518F7F0A2BC099DD00B1FF44 /* CurrencySession.swift in Sources */,
+				515EBC062BD03FF5004453F6 /* BaseSupportedCurrencyManagerTests.swift in Sources */,
 				51869FD829D9D31D00EFA13D /* BaseRateManagerTests.swift in Sources */,
 				51CFA4BA2BC6E91D0052DE8E /* HistoricalRateStorage.swift in Sources */,
 				51290BBC2B9A4F7F005BE201 /* UserDefaults.swift in Sources */,
@@ -1367,6 +1388,7 @@
 				516DD0302BBA2E1F00D0B593 /* HistoricalRateProvider.swift in Sources */,
 				51E1B4BA29ADADD800D75669 /* TestingData For Data.swift in Sources */,
 				51290B9C2B92F6CE005BE201 /* QuasiBaseResultModelTests.swift in Sources */,
+				515EBC072BD03FF5004453F6 /* BaseSupportedCurrencyManagerTests.swift in Sources */,
 				518F7F0D2BC0BC2400B1FF44 /* TestEndpoint.swift in Sources */,
 				5125CC7F2BC371E100C96B38 /* ThreadSafeWrapperTests.swift in Sources */,
 				51362E4F29B4D93500E3CE89 /* Rate Instance.swift in Sources */,
