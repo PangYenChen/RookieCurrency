@@ -63,4 +63,19 @@ final class KeyManagerTests: XCTestCase {
         // assert
         XCTAssertEqual(secondAPIKey, thirdAPIKey)
     }
+    
+    func testEmptyInitialUnusedKeys() {
+        // arrange
+        sut = KeyManager(unusedAPIKeys: [])
+        
+        // act, do nothing
+        
+        // assert
+        switch sut.usingAPIKeyResult {
+            case .success(let usingAPIKey): XCTFail("should not receive .success, but receive: \(usingAPIKey)")
+            case .failure(let failure): XCTAssertEqual(failure as? KeyManager.Error, .runOutOfKey)
+        }
+    }
+    
+    
 }
