@@ -7,9 +7,13 @@ extension TestDouble {
     class HistoricalRateProvider: HistoricalRateProviderProtocol {
         init() {
             dateStringAndSubjectDictionary = [:]
+            
+            numberOfRemoveAllStorageCall = 0
         }
         
         private(set) var dateStringAndSubjectDictionary: [String: PassthroughSubject<ResponseDataModel.HistoricalRate, Error>]
+        
+        private(set) var numberOfRemoveAllStorageCall: Int
         
         func historicalRatePublisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Error> {
             let subject: PassthroughSubject<ResponseDataModel.HistoricalRate, Error> = PassthroughSubject<ResponseDataModel.HistoricalRate, Error>()
@@ -19,6 +23,7 @@ extension TestDouble {
         }
         
         func removeAllStorage() {
+            numberOfRemoveAllStorageCall += 1
             dateStringAndSubjectDictionary.removeAll()
         }
         
