@@ -384,6 +384,19 @@ extension TestingData {
 }
 """.data(using: .utf8)
         
+        static let invalidDateStringRateData: Data? = """
+        {
+        "base": "USD",
+        "date": "invalid date string",
+        "rates": {
+        "AED": 3.67265
+        },
+        "success": true,
+        "timestamp": 1678501623
+        }
+        """.data(using: .utf8)
+        
+        
         static let tooManyRequestData: Data? = """
 {
   "message": "You have exceeded your daily/monthly API rate limit. Please review and upgrade your subscription plan at https://promptapi.com/subscriptions to continue."

@@ -40,6 +40,22 @@ final class ResponseDataModelTest: XCTestCase {
         XCTAssertFalse(latestRate.rates.isEmpty)
     }
     
+    func testInvalidDateStringInData() throws {
+        // arrange
+        let historicalData: Data = try XCTUnwrap(TestingData.TestingData.invalidDateStringRateData)
+        
+        // act
+        do {
+            let historicalRate: ResponseDataModel.HistoricalRate = try ResponseDataModel.jsonDecoder
+                .decode(ResponseDataModel.HistoricalRate.self,
+                        from: historicalData)
+            XCTFail("should fail to decode")
+        }
+        catch {
+            XCTAssertTrue(error is ResponseDataModel.HistoricalRate.ServerDateError)
+        }
+    }
+    
     /// 先將 historical rate encode 再 decode，檢查前後是否一致
     func testEncodeAndThanDecode() throws {
         // arrange
