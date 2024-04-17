@@ -27,6 +27,16 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         externalConcurrentDispatchQueue = nil
     }
     
+    func testNoRetainCycleOccur() {
+        // arrange
+        addTeardownBlock { [weak sut] in
+            // assert
+            XCTAssertNil(sut)
+        }
+        // act
+        sut = nil
+    }
+    
     func testSuccess() throws {
         // arrange
         var receivedResult: Result<[ResponseDataModel.CurrencyCode: String], Error>?

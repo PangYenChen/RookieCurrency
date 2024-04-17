@@ -6,16 +6,20 @@ final class SupportedCurrencyManagerTests: XCTestCase {
     private var sut: SupportedCurrencyManager!
     
     private var supportedCurrencyProvider: TestDouble.SupportedCurrencyProvider!
-    private var serialDispatchQueue: DispatchQueue!
+    private var internalSerialDispatchQueue: DispatchQueue!
+    private var externalConcurrentDispatchQueue: DispatchQueue!
     
     private var anyCancellableSet: Set<AnyCancellable>!
     
     override func setUp() {
         supportedCurrencyProvider = TestDouble.SupportedCurrencyProvider()
-        serialDispatchQueue = DispatchQueue(label: "supported.currency.manager.test")
+        internalSerialDispatchQueue = DispatchQueue(label: "supported.currency.manager.test")
+        externalConcurrentDispatchQueue = DispatchQueue(label: "supported.currency.manager.test.external.concurrent",
+                                                        attributes: .concurrent)
         
         sut = SupportedCurrencyManager(supportedCurrencyProvider: supportedCurrencyProvider,
-                                       serialDispatchQueue: serialDispatchQueue)
+                                       internalSerialDispatchQueue: internalSerialDispatchQueue,
+                                       externalConcurrentDispatchQueue: externalConcurrentDispatchQueue)
         
         anyCancellableSet = Set<AnyCancellable>()
     }
@@ -27,7 +31,18 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         sut = nil
         
         supportedCurrencyProvider = nil
-        serialDispatchQueue = nil
+        internalSerialDispatchQueue = nil
+        externalConcurrentDispatchQueue = nil
+    }
+    
+    func testNoRetainCycleOccur() {
+        // arrange
+        addTeardownBlock { [weak sut] in
+            // assert
+            XCTAssertNil(sut)
+        }
+        // act
+        sut = nil
     }
     
     func testSuccess() throws {
@@ -46,11 +61,11 @@ final class SupportedCurrencyManagerTests: XCTestCase {
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
-        
         supportedCurrencyProvider.publish(supportedSymbols)
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        addTeardownBlock { [unowned self] in
+            internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
+        }
         
         // assert
         do /*assert about receivedValue*/ {
@@ -78,12 +93,12 @@ final class SupportedCurrencyManagerTests: XCTestCase {
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
-        
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
             
         supportedCurrencyProvider.publish(completion: .failure(expectedError))
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        addTeardownBlock { [unowned self] in
+            internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
+        }
         
         // assert
         XCTAssertNil(receivedValue)
@@ -113,11 +128,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
-        
         supportedCurrencyProvider.publish(supportedSymbols)
-        
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
         
         // assert
         do /*assert about receivedValue*/ {
@@ -154,11 +165,11 @@ final class SupportedCurrencyManagerTests: XCTestCase {
                   receiveValue: { value in receivedSecondValue = value })
             .store(in: &anyCancellableSet)
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
-        
         supportedCurrencyProvider.publish(supportedSymbols)
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        addTeardownBlock { [unowned self] in
+            internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
+        }
         
         // assert
         XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
@@ -188,18 +199,16 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         // act
         sut.prefetchSupportedCurrency()
         
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
-        
         supportedCurrencyProvider.publish(supportedSymbols)
-        
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+
+        addTeardownBlock { [unowned self] in
+            internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
+        }
         
         sut.supportedCurrency()
             .sink(receiveCompletion: { completion in receivedSecondCompletion = completion },
                   receiveValue: { value in receivedSecondValue = value })
             .store(in: &anyCancellableSet)
-        
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
         
         // assert
         XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
@@ -224,6 +233,11 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         let serialQueueForAnyCancellableSet: DispatchQueue = DispatchQueue(label: "for.any.cancellable.set")
         
         // act
+        let anyCancellable: AnyCancellable = sut.supportedCurrency()
+            .sink(receiveCompletion: { _ in },
+                  receiveValue: { _ in })
+        serialQueueForAnyCancellableSet.async { [unowned self] in anyCancellableSet.insert(anyCancellable) }
+        
         concurrentDispatchQueue.async { [unowned self] in
             let callSiteCount: Int = 50
             for _ in 0..<callSiteCount {
@@ -241,6 +255,10 @@ final class SupportedCurrencyManagerTests: XCTestCase {
             
             concurrentDispatchQueue.async { [unowned self] in
                 supportedCurrencyProvider.publish(dummySupportedSymbols)
+                
+                addTeardownBlock { [unowned self] in
+                    internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
+                }
             }
         }
         
@@ -255,7 +273,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         }
         
         concurrentDispatchQueue.sync(flags: .barrier) { /*wait for all work items complete*/ }
-        serialDispatchQueue.sync { /*wait for all work items complete*/ }
+        serialQueueForAnyCancellableSet.sync { /*wait for all work items complete*/ }
         
         // assert, non-crash means passed
     }
