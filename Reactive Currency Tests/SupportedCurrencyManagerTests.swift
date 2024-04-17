@@ -51,7 +51,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         let expectedValue: [ResponseDataModel.CurrencyCode: String] = supportedSymbols.symbols
         
         // act
-        sut.supportedCurrency()
+        sut.supportedCurrencyPublisher()
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
@@ -84,7 +84,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         let expectedError: URLError = URLError(URLError.Code.timedOut)
         
         // act
-        sut.supportedCurrency()
+        sut.supportedCurrencyPublisher()
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
@@ -118,7 +118,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         let expectedValue: [ResponseDataModel.CurrencyCode: String] = supportedSymbols.symbols
         
         // act
-        sut.supportedCurrency()
+        sut.supportedCurrencyPublisher()
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
@@ -155,7 +155,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         // act
         sut.prefetchSupportedCurrency()
         
-        sut.supportedCurrency()
+        sut.supportedCurrencyPublisher()
             .sink(receiveCompletion: { completion in receivedSecondCompletion = completion },
                   receiveValue: { value in receivedSecondValue = value })
             .store(in: &anyCancellableSet)
@@ -200,7 +200,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
             internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
         }
         
-        sut.supportedCurrency()
+        sut.supportedCurrencyPublisher()
             .sink(receiveCompletion: { completion in receivedSecondCompletion = completion },
                   receiveValue: { value in receivedSecondValue = value })
             .store(in: &anyCancellableSet)
@@ -228,7 +228,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         let serialQueueForAnyCancellableSet: DispatchQueue = DispatchQueue(label: "for.any.cancellable.set")
         
         // act
-        let anyCancellable: AnyCancellable = sut.supportedCurrency()
+        let anyCancellable: AnyCancellable = sut.supportedCurrencyPublisher()
             .sink(receiveCompletion: { _ in },
                   receiveValue: { _ in })
         serialQueueForAnyCancellableSet.async { [unowned self] in anyCancellableSet.insert(anyCancellable) }
@@ -236,7 +236,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         concurrentDispatchQueue.async { [unowned self] in
             let callSiteCount: Int = 50
             for _ in 0..<callSiteCount {
-                let anyCancellable: AnyCancellable = sut.supportedCurrency()
+                let anyCancellable: AnyCancellable = sut.supportedCurrencyPublisher()
                     .sink(receiveCompletion: { _ in },
                           receiveValue: { _ in })
                 serialQueueForAnyCancellableSet.async { [unowned self] in anyCancellableSet.insert(anyCancellable) }
@@ -260,7 +260,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         concurrentDispatchQueue.async { [unowned self] in
             let callSiteCount: Int = 50
             for _ in 0..<callSiteCount {
-                let anyCancellable: AnyCancellable = sut.supportedCurrency()
+                let anyCancellable: AnyCancellable = sut.supportedCurrencyPublisher()
                     .sink(receiveCompletion: { _ in },
                           receiveValue: { _ in })
                 serialQueueForAnyCancellableSet.async { [unowned self] in anyCancellableSet.insert(anyCancellable) }
@@ -276,7 +276,7 @@ final class SupportedCurrencyManagerTests: XCTestCase {
     
     func testCancel() {
         // arrange
-        let anyCancellable: AnyCancellable = sut.supportedCurrency()
+        let anyCancellable: AnyCancellable = sut.supportedCurrencyPublisher()
             .sink { _ in } receiveValue: { _ in }
         
         // act

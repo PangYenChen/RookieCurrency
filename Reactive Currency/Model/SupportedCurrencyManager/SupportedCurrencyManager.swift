@@ -14,7 +14,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     
     private var currentPublisher: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error>?
     
-    func supportedCurrency() -> AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> {
+    func supportedCurrencyPublisher() -> AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> {
         internalSerialDispatchQueue.sync {
             if let cachedValue {
                 return Just(cachedValue)
@@ -53,7 +53,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
     }
     
     func prefetchSupportedCurrency() {
-        supportedCurrency()
+        supportedCurrencyPublisher()
             .subscribe(Subscribers.Sink(receiveCompletion: { _ in }, receiveValue: { _ in }))
     }
 }

@@ -22,7 +22,7 @@ class CurrencySelectionModel: CurrencySelectionModelProtocol, BaseCurrencySelect
         )
         
         result = fetchSubject
-            .flatMap { supportedCurrencyManager.supportedCurrency().convertOutputToResult() }
+            .flatMap { supportedCurrencyManager.supportedCurrencyPublisher().convertOutputToResult() }
             .combineLatest(sortingMethodAndOrder, searchText) { result, sortingMethodAndOrder, searchText in
                 result.map { currencyCodeDescriptionDictionary in
                     currencyCodeDescriptionDictionarySorter.sort(currencyCodeDescriptionDictionary,
