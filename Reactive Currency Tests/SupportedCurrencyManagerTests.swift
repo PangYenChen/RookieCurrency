@@ -275,6 +275,20 @@ final class SupportedCurrencyManagerTests: XCTestCase {
         concurrentDispatchQueue.sync(flags: .barrier) { /*wait for all work items complete*/ }
         serialQueueForAnyCancellableSet.sync { /*wait for all work items complete*/ }
         
+        // assert
+        XCTAssertEqual(supportedCurrencyProvider.numberOfFunctionCall, 1)
+    }
+    
+    func testCancel() {
+        // arrange
+        let anyCancellable: AnyCancellable = sut.supportedCurrency()
+            .sink { _ in } receiveValue: { _ in }
+        
+        // act
+        anyCancellable.cancel()
+        
+        internalSerialDispatchQueue.sync { /*wait for all work items complete*/ }
+        
         // assert, non-crash means passed
     }
 }
