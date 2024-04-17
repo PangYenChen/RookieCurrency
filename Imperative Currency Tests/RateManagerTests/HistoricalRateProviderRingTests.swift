@@ -8,7 +8,7 @@ class HistoricalRateProviderRingTests: XCTestCase {
     private var nextHistoricalRateProvider: TestDouble.HistoricalRateProvider!
     
     override func setUp() {
-        historicalRateStorage = TestDouble.HistoricalRateStorage(dateStringAndRateDirectory: [:])
+        historicalRateStorage = TestDouble.HistoricalRateStorage()
         nextHistoricalRateProvider = TestDouble.HistoricalRateProvider()
         
         sut = HistoricalRateProviderRing(storage: historicalRateStorage,
