@@ -13,7 +13,7 @@ import XCTest
 final class BaseRateManagerTests: XCTestCase {
     private var sut: BaseRateManager!
     
-    private var dummyHistoricalRateProvider: HistoricalRateProviderProtocol!
+    private var dummyHistoricalRateProvider: TestDouble.HistoricalRateProvider!
     private var dummyLatestRateProvider: LatestRateProviderProtocol!
     
     override func setUp() {
@@ -52,5 +52,15 @@ final class BaseRateManagerTests: XCTestCase {
         
         // assert
         XCTAssertEqual(historicalDateStrings, Set(["1969-12-31", "1969-12-30", "1969-12-29"]))
+    }
+    
+    func testRemoveAllStorage() {
+        // arrange, do nothing
+        
+        // act
+        sut.removeAllStorage()
+        
+        // assert
+        XCTAssertEqual(dummyHistoricalRateProvider.numberOfRemoveAllStorageCall, 1)
     }
 }

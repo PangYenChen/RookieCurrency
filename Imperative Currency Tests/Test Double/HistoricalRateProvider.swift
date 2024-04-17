@@ -3,21 +3,23 @@ import Foundation
 
 extension TestDouble {
     class HistoricalRateProvider: HistoricalRateProviderProtocol {
-        // MARK: - initializer
         init() {
             dateStringAndHistoricalRateResultHandlerDictionary = [:]
+            
+            numberOfRemoveAllStorageCall = 0
         }
         
-        // MARK: - private property
         private(set) var dateStringAndHistoricalRateResultHandlerDictionary: [String: HistoricalRateResultHandler]
         
-        // MARK: - instance property
+        private(set) var numberOfRemoveAllStorageCall: Int
+        
         func historicalRateFor(dateString: String,
                                resultHandler: @escaping HistoricalRateResultHandler) {
             dateStringAndHistoricalRateResultHandlerDictionary[dateString] = resultHandler
         }
         
         func removeAllStorage() {
+            numberOfRemoveAllStorageCall += 1
             dateStringAndHistoricalRateResultHandlerDictionary.removeAll()
         }
         
