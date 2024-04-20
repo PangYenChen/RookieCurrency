@@ -1,7 +1,7 @@
 import Foundation
 
 protocol EndpointProtocol {
-    var url: URL { get }
+    var urlResult: Result<URL, Error> { get }
     
     associatedtype ResponseType: Decodable
 }

@@ -4,6 +4,6 @@ extension Endpoints {
     struct Latest: BaseOnTWD {
         typealias ResponseType = ResponseDataModel.LatestRate
         
-        let partialPath: String = "latest"
+        let partialPath: String = "/latest"
     }
 }

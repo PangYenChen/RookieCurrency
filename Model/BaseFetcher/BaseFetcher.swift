@@ -79,14 +79,18 @@ extension BaseFetcher {
 
 // MARK: - static properties
 extension BaseFetcher {
-    static let urlComponents: URLComponents? = {
+    static let urlComponents: URLComponents = {
         /// 拿匯率的 base url。
         /// 提供資料的服務商集團： https://apilayer.com/marketplace/category/currency
         /// 服務商之一："https://api.apilayer.com/fixer/"
         /// 服務商之二："https://api.apilayer.com/exchangerates_data"
-        let baseURLString: String = "https://api.apilayer.com/exchangerates_data/"
         
-        return URLComponents(string: baseURLString)
+        var urlComponents = URLComponents()
+        urlComponents.scheme = "https"
+        urlComponents.host = "api.apilayer.com"
+        urlComponents.path = "/exchangerates_data"
+        
+        return urlComponents
     }()
     
     /// 不暫存的 session

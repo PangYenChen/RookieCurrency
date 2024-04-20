@@ -5,11 +5,18 @@ protocol PartialPathProvider: EndpointProtocol {
 }
 
 extension PartialPathProvider {
-    var url: URL { (urlComponents?.url)! }
+    var urlResult: Result<URL, Error> {
+        if let url = urlComponents.url {
+            return .success(url)
+        }
+        else {
+            return .failure(URLError(URLError.Code.badURL))
+        }
+    }
     
-    var urlComponents: URLComponents? {
-        var urlComponents: URLComponents? = Fetcher.urlComponents
-        urlComponents?.path += partialPath
+    var urlComponents: URLComponents {
+        var urlComponents: URLComponents = Fetcher.urlComponents
+        urlComponents.path += partialPath
         return urlComponents
     }
 }
