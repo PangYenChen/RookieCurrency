@@ -12,6 +12,6 @@ extension Endpoints {
     struct TestEndpoint: EndpointProtocol {
         typealias ResponseType = ResponseDataModel.TestDataModel
         
-        let urlResult: URL
+        let urlResult: Result<URL, Error>
     }
 }

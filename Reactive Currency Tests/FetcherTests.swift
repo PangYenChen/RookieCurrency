@@ -168,7 +168,7 @@ class FetcherTests: XCTestCase {
         do {
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             sut
-                .publisher(for: Endpoints.TestEndpoint(url: dummyURL))
+                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)))
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)
@@ -205,7 +205,7 @@ class FetcherTests: XCTestCase {
         do {
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             sut
-                .publisher(for: Endpoints.TestEndpoint(url: dummyURL))
+                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)))
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)
@@ -250,7 +250,7 @@ class FetcherTests: XCTestCase {
         do {
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             sut
-                .publisher(for: Endpoints.TestEndpoint(url: dummyURL))
+                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)))
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)
@@ -299,7 +299,7 @@ class FetcherTests: XCTestCase {
         var receivedCompletion: Subscribers.Completion<Error>?
         let dummyEndpoint: Endpoints.TestEndpoint = try {
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            return Endpoints.TestEndpoint(url: dummyURL)
+            return Endpoints.TestEndpoint(urlResult: .success(dummyURL))
         }()
         
         // act
@@ -389,7 +389,7 @@ class FetcherTests: XCTestCase {
         do {
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             sut
-                .publisher(for: Endpoints.TestEndpoint(url: dummyURL))
+                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)))
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)
@@ -440,7 +440,7 @@ class FetcherTests: XCTestCase {
         do {
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             sut
-                .publisher(for: Endpoints.TestEndpoint(url: dummyURL))
+                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)))
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)
