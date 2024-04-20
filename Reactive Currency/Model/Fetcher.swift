@@ -7,53 +7,66 @@ class Fetcher: BaseFetcher {
     /// - Returns: The publisher publishes decoded instance when the task completes, or terminates if the task fails with an error.
     func publisher<Endpoint: EndpointProtocol>(for endpoint: Endpoint) -> AnyPublisher<Endpoint.ResponseType, Swift.Error> {
         func dataTaskPublisherWithLimitHandling(for endpoint: Endpoint) -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> {
-            let usingAPIKeyResult: Result<String, Swift.Error> = threadSafeKeyManager
-                .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
+            let apiKey: String
+            do {
+                apiKey = try threadSafeKeyManager
+                    .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
+                    .get()
+            }
+            catch {
+                return Fail(error: error)
+                    .eraseToAnyPublisher()
+            }
             
-            switch usingAPIKeyResult {
-                case .success(let apiKey):
-                    return currencySession.currencyDataTaskPublisher(for: createRequest(url: endpoint.url, withAPIKey: apiKey))
-                        .mapError { $0 }
-                        .flatMap { [unowned self] data, urlResponse -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> in
-                            switch venderResultFor(data: data, urlResponse: urlResponse) {
-                                case .success:
-                                    // 這是一切都正常的情況，把 data 跟 response 往下傳
-                                    return Just((data: data, response: urlResponse))
-                                        .setFailureType(to: Swift.Error.self)
-                                        .eraseToAnyPublisher()
-                                case .failure(let error):
-                                    switch error {
-                                        case .invalidAPIKey, .runOutOfQuota:
-                                            threadSafeKeyManager.writeAsynchronously { keyManager in
-                                                keyManager.deprecate(apiKey)
-                                                return keyManager
-                                            }
-                                            
-                                            let usingAPIKeyResult: Result<String, Swift.Error> = threadSafeKeyManager
-                                                .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
-                                            
-                                            switch usingAPIKeyResult {
-                                                case .success:
-                                                    // 更新完 api key 後重新打 api
-                                                    return dataTaskPublisherWithLimitHandling(for: endpoint)
-                                                        .eraseToAnyPublisher()
-                                                case .failure:
-                                                    // 沒有 api key 可用了
-                                                    return Fail(error: error)
-                                                        .eraseToAnyPublisher()
-                                            }
-                                        case .unknownError:
-                                            assertionFailure("###, \(#function), \(self), response 不是 HttpURLResponse，常理來說都不會發生。")
-                                            return Fail(error: Error.unknownError)
+            let urlRequest: URLRequest
+            do {
+                urlRequest = try endpoint.urlResult
+                    .map { url in createRequest(url: url, withAPIKey: apiKey) }
+                    .get()
+            }
+            catch {
+                return Fail(error: error)
+                    .eraseToAnyPublisher()
+            }
+            
+            return currencySession.currencyDataTaskPublisher(for: urlRequest)
+                .mapError { $0 }
+                .flatMap { [unowned self] data, urlResponse -> AnyPublisher<(data: Data, response: URLResponse), Swift.Error> in
+                    switch venderResultFor(data: data, urlResponse: urlResponse) {
+                        case .success:
+                            // 這是一切都正常的情況，把 data 跟 response 往下傳
+                            return Just((data: data, response: urlResponse))
+                                .setFailureType(to: Swift.Error.self)
+                                .eraseToAnyPublisher()
+                        case .failure(let error):
+                            switch error {
+                                case .invalidAPIKey, .runOutOfQuota:
+                                    threadSafeKeyManager.writeAsynchronously { keyManager in
+                                        keyManager.deprecate(apiKey)
+                                        return keyManager
+                                    }
+                                    
+                                    let usingAPIKeyResult: Result<String, Swift.Error> = threadSafeKeyManager
+                                        .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
+                                    
+                                    switch usingAPIKeyResult {
+                                        case .success:
+                                            // 更新完 api key 後重新打 api
+                                            return dataTaskPublisherWithLimitHandling(for: endpoint)
+                                                .eraseToAnyPublisher()
+                                        case .failure:
+                                            // 沒有 api key 可用了
+                                            return Fail(error: error)
                                                 .eraseToAnyPublisher()
                                     }
+                                case .unknownError:
+                                    assertionFailure("###, \(#function), \(self), response 不是 HttpURLResponse，常理來說都不會發生。")
+                                    return Fail(error: Error.unknownError)
+                                        .eraseToAnyPublisher()
                             }
-                        }
-                        .eraseToAnyPublisher()
-                case .failure(let failure):
-                    return Fail(error: failure)
-                        .eraseToAnyPublisher()
-            }
+                    }
+                }
+                .eraseToAnyPublisher()
         }
         
         return dataTaskPublisherWithLimitHandling(for: endpoint)

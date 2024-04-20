@@ -9,65 +9,77 @@ class Fetcher: BaseFetcher {
         _ endpoint: Endpoint,
         completionHandler: @escaping CompletionHandler<Endpoint.ResponseType>
     ) {
-        let usingAPIKeyResult: Result<String, Swift.Error> = threadSafeKeyManager
-            .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
+        let apiKey: String
+        do {
+            apiKey = try threadSafeKeyManager
+                .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
+                .get()
+        }
+        catch {
+            completionHandler(.failure(error))
+            return
+        }
         
-        switch usingAPIKeyResult {
-            case .success(let apiKey):
-                let urlRequest: URLRequest = createRequest(url: endpoint.url, withAPIKey: apiKey)
-                
-                currencySession.currencyDataTask(with: urlRequest) { [unowned self] data, urlResponse, error in
-                    if let data, let urlResponse {
-                        switch venderResultFor(data: data, urlResponse: urlResponse) {
-                            case .success(let data):
-                                AppUtility.prettyPrint(data)
-                                // 正常的情況，將 data decode，或者有其他未知的錯誤
-                                do {
-                                    let rate: Endpoint.ResponseType = try jsonDecoder.decode(Endpoint.ResponseType.self, from: data)
-                                    completionHandler(.success(rate))
-                                }
-                                catch {
-                                    completionHandler(.failure(error))
-                                    print("###, \(self), \(#function), decode 失敗, \(error.localizedDescription), \(error)")
-                                }
-                            case .failure(let error):
-                                switch error {
-                                    case .runOutOfQuota, .invalidAPIKey:
-                                        threadSafeKeyManager.writeAsynchronously { keyManager in
-                                            keyManager.deprecate(apiKey)
-                                            return keyManager
-                                        }
-                                        
-                                        let usingAPIKeyResult: Result<String, Swift.Error> = threadSafeKeyManager
-                                            .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
-                                        
-                                        switch usingAPIKeyResult {
-                                            case .success:
-                                                // 更新成功後重新打 api
-                                                fetch(endpoint, completionHandler: completionHandler)
-                                            case .failure:
-                                                // 沒有 api key 了
-                                                completionHandler(.failure(error))
-                                        }
-                                        
-                                    case .unknownError:
-                                        assertionFailure("###, \(#function), \(self), response 不是 HttpURLResponse，常理來說不會發生。")
-                                        completionHandler(.failure(Error.unknownError))
-                                }
+        let urlRequest: URLRequest
+        do {
+            urlRequest = try endpoint.urlResult
+                .map { url in createRequest(url: url, withAPIKey: apiKey) }
+                .get()
+        }
+        catch {
+            completionHandler(.failure(error))
+            return
+        }
+        
+        currencySession.currencyDataTask(with: urlRequest) { [unowned self] data, urlResponse, error in
+            if let data, let urlResponse {
+                switch venderResultFor(data: data, urlResponse: urlResponse) {
+                    case .success(let data):
+                        AppUtility.prettyPrint(data)
+                        // 正常的情況，將 data decode，或者有其他未知的錯誤
+                        do {
+                            let rate: Endpoint.ResponseType = try jsonDecoder.decode(Endpoint.ResponseType.self, from: data)
+                            completionHandler(.success(rate))
                         }
-                    }
-                    else if let error {
-                        // 網路錯誤，例如 timeout
-                        completionHandler(.failure(error))
-                        print("###", self, #function, "網路錯誤", error.localizedDescription, error)
-                    }
-                    else {
-                        assertionFailure("###, \(#function), \(self), 既沒有(data, httpURLResponse)，也沒有 error，常理來說不會發生。")
-                        completionHandler(.failure(Error.unknownError))
-                    }
+                        catch {
+                            completionHandler(.failure(error))
+                            print("###, \(self), \(#function), decode 失敗, \(error.localizedDescription), \(error)")
+                        }
+                    case .failure(let error):
+                        switch error {
+                            case .runOutOfQuota, .invalidAPIKey:
+                                threadSafeKeyManager.writeAsynchronously { keyManager in
+                                    keyManager.deprecate(apiKey)
+                                    return keyManager
+                                }
+                                
+                                let usingAPIKeyResult: Result<String, Swift.Error> = threadSafeKeyManager
+                                    .readSynchronously { keyManager in keyManager.usingAPIKeyResult }
+                                
+                                switch usingAPIKeyResult {
+                                    case .success:
+                                        // 更新成功後重新打 api
+                                        fetch(endpoint, completionHandler: completionHandler)
+                                    case .failure:
+                                        // 沒有 api key 了
+                                        completionHandler(.failure(error))
+                                }
+                                
+                            case .unknownError:
+                                assertionFailure("###, \(#function), \(self), response 不是 HttpURLResponse，常理來說不會發生。")
+                                completionHandler(.failure(Error.unknownError))
+                        }
                 }
-            case .failure(let failure):
-                completionHandler(.failure(failure))
+            }
+            else if let error {
+                // 網路錯誤，例如 timeout
+                completionHandler(.failure(error))
+                print("###", self, #function, "網路錯誤", error.localizedDescription, error)
+            }
+            else {
+                assertionFailure("###, \(#function), \(self), 既沒有(data, httpURLResponse)，也沒有 error，常理來說不會發生。")
+                completionHandler(.failure(Error.unknownError))
+            }
         }
     }
 }

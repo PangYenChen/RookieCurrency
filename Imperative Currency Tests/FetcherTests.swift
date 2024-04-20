@@ -135,7 +135,7 @@ final class FetcherTests: XCTestCase {
         
         let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            return Endpoints.TestEndpoint(url: dummyURL)
+            return Endpoints.TestEndpoint(urlResult: dummyURL)
         }()
         
         // act
@@ -171,7 +171,7 @@ final class FetcherTests: XCTestCase {
         
         let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            return Endpoints.TestEndpoint(url: dummyURL)
+            return Endpoints.TestEndpoint(urlResult: dummyURL)
         }()
         
         // act
@@ -215,7 +215,7 @@ final class FetcherTests: XCTestCase {
         
         let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            return Endpoints.TestEndpoint(url: dummyURL)
+            return Endpoints.TestEndpoint(urlResult: dummyURL)
         }()
         
         // act
@@ -265,7 +265,7 @@ final class FetcherTests: XCTestCase {
         
         let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            return Endpoints.TestEndpoint(url: dummyURL)
+            return Endpoints.TestEndpoint(urlResult: dummyURL)
         }()
         
         // act
@@ -341,7 +341,7 @@ final class FetcherTests: XCTestCase {
         
         let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            return Endpoints.TestEndpoint(url: dummyURL)
+            return Endpoints.TestEndpoint(urlResult: dummyURL)
         }()
         
         // act
@@ -390,7 +390,7 @@ final class FetcherTests: XCTestCase {
         
         let dummyEndpoint: Endpoints.TestEndpoint = try { () -> Endpoints.TestEndpoint in
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
-            return Endpoints.TestEndpoint(url: dummyURL)
+            return Endpoints.TestEndpoint(urlResult: dummyURL)
         }()
         
         // act

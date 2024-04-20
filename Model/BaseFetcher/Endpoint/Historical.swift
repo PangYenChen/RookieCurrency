@@ -7,7 +7,7 @@ extension Endpoints {
         let partialPath: String
         
         init(dateString: String) {
-            self.partialPath = dateString
+            self.partialPath = "/" + dateString
         }
     }
 }
