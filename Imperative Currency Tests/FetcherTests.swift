@@ -284,22 +284,9 @@ final class FetcherTests: XCTestCase {
         
         // assert
         do {
-            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
-            
-            switch receivedResult {
-                case .success:
-                    XCTFail("should not receive any instance")
-                case .failure(let error):
-                    guard let fetcherError = error as? Fetcher.Error else {
-                        XCTFail("應該要收到 Fetcher.Error")
-                        return
-                    }
-                    
-                    guard fetcherError == Fetcher.Error.runOutOfQuota else {
-                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
-                        return
-                    }
-            }
+            do { try XCTUnwrap(receivedResult).get() }
+            catch KeyManager.Error.runOutOfKey { /*intentionally left blank*/ }
+            catch { XCTFail("should receive a KeyManager.Error.runOutOfKey, but receive: \(error)") }
             
             XCTAssertEqual(keyManager.usedAPIKeys.count, dummyAPIKeys.count)
         }
@@ -409,22 +396,9 @@ final class FetcherTests: XCTestCase {
         
         // assert
         do {
-            let receivedResult: Result<ResponseDataModel.TestDataModel, Error> = try XCTUnwrap(receivedResult)
-
-            switch receivedResult {
-                case .success:
-                    XCTFail("should not receive any instance")
-                case .failure(let error):
-                    guard let fetcherError = error as? Fetcher.Error else {
-                        XCTFail("should receive Fetcher.Error")
-                        return
-                    }
-
-                    guard fetcherError == Fetcher.Error.invalidAPIKey else {
-                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
-                        return
-                    }
-            }
+            do { try XCTUnwrap(receivedResult).get() }
+            catch KeyManager.Error.runOutOfKey { /*intentionally left blank*/ }
+            catch { XCTFail("should receive a KeyManager.Error.runOutOfKey, but receive: \(error)") }
             
             XCTAssertEqual(keyManager.usedAPIKeys.count, dummyAPIKeys.count)
         }
