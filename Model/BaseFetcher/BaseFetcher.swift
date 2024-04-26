@@ -23,11 +23,32 @@ extension BaseFetcher {
     /// 產生 timeout 時限為 5 秒，且帶上 api key 的 `URLRequest`
     /// - Parameter url: The URL to be retrieved.
     /// - Returns: The new url request.
-    func createRequest(url: URL, withAPIKey apiKey: String) -> URLRequest {
-        let timeoutInterval: TimeInterval = 5
-        var urlRequest: URLRequest = URLRequest(url: url, timeoutInterval: timeoutInterval)
-        urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
-        return urlRequest
+//    func createRequest(url: URL, withAPIKey apiKey: String) -> URLRequest {
+//        let timeoutInterval: TimeInterval = 5
+//        var urlRequest: URLRequest = URLRequest(url: url, timeoutInterval: timeoutInterval)
+//        urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
+//        return urlRequest
+//    }
+    
+    func createRequestTupleFor(
+        _ endpoint: any EndpointProtocol
+    ) -> Result<(urlRequest: URLRequest, apiKey: String), Swift.Error> {
+        endpoint.urlResult.flatMap { url in
+            threadSafeKeyManager.readSynchronously { keyManager in keyManager.usingAPIKeyResult }
+                .map { apiKey in
+                    let timeoutInterval: TimeInterval = 5
+                    var urlRequest: URLRequest = URLRequest(url: url, timeoutInterval: timeoutInterval)
+                    urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
+                    return (urlRequest, apiKey)
+                }
+        }
+    }
+    
+    func deprecate(_ apiKeyToBeDeprecated: String) {
+        threadSafeKeyManager.writeAsynchronously { keyManager in
+            keyManager.deprecate(apiKeyToBeDeprecated)
+            return keyManager
+        }
     }
 }
 
