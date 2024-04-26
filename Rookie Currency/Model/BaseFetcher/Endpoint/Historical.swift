@@ -2,12 +2,14 @@ import Foundation
 
 extension Endpoints {
     struct Historical: BaseOnTWD {
-        typealias ResponseType = ResponseDataModel.HistoricalRate
+        init(dateString: String) {
+            partialPath = "/" + dateString
+            description = "historical endpoint with date: \(dateString)"
+        }
         
         let partialPath: String
+        let description: String
         
-        init(dateString: String) {
-            self.partialPath = "/" + dateString
-        }
+        typealias ResponseType = ResponseDataModel.HistoricalRate
     }
 }

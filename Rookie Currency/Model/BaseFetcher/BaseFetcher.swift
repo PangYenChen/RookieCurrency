@@ -1,4 +1,5 @@
 import Foundation
+import OSLog
 
 /// 跟伺服器拿資料的物件
 class BaseFetcher {
@@ -9,6 +10,7 @@ class BaseFetcher {
         self.currencySession = currencySession
         
         jsonDecoder = ResponseDataModel.jsonDecoder
+        logger = LoggerFactory.make(category: String(describing: Fetcher.self))
     }
     
     // MARK: - instance properties
@@ -16,6 +18,7 @@ class BaseFetcher {
     let currencySession: CurrencySessionProtocol
     
     let jsonDecoder: JSONDecoder
+    let logger: Logger
 }
 
 // MARK: - helper method

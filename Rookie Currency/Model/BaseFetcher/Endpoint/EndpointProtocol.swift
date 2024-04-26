@@ -1,6 +1,6 @@
 import Foundation
 
-protocol EndpointProtocol {
+protocol EndpointProtocol: CustomStringConvertible {
     var urlResult: Result<URL, Error> { get }
     
     associatedtype ResponseType: Decodable
