@@ -17,8 +17,6 @@ class Fetcher: BaseFetcher {
                     let data: Data = try venderResultFor(data: data, urlResponse: urlResponse, error: error)
                         .get()
                     
-                    AppUtility.prettyPrint(data)
-                    // 正常的情況，將 data decode，或者有其他未知的錯誤
                     completionHandler(Result { try jsonDecoder.decode(Endpoint.ResponseType.self, from: data) })
                     logger.debug("\(endpoint) with id \(id) using api key: \(apiKey) finishes with data")
                 }

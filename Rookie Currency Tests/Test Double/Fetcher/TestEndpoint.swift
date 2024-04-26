@@ -13,5 +13,7 @@ extension Endpoints {
         typealias ResponseType = ResponseDataModel.TestDataModel
         
         let urlResult: Result<URL, Error>
+        
+        let description: String = "test double"
     }
 }

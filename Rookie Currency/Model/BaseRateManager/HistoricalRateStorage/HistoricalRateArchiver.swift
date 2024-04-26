@@ -42,8 +42,6 @@ extension HistoricalRateArchiver {
         do {
             let data: Data = try Data(contentsOf: url)
             
-            AppUtility.prettyPrint(data)
-            
             let rate: ResponseDataModel.HistoricalRate = try jsonDecoder.decode(ResponseDataModel.HistoricalRate.self, from: data)
             
             print("###", self, #function, "讀取資料:\n\t", rate)

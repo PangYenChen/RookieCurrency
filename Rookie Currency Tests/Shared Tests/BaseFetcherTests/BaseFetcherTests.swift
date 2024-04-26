@@ -99,6 +99,6 @@ final class BaseFetcherTests: XCTestCase {
         let result: Result<Data, BaseFetcher.Error> = sut.venderResultFor(data: data, urlResponse: urlResponse)
         
         // assert
-        XCTAssertEqual(result, .failure(BaseFetcher.Error.unknownError))
+        XCTAssertEqual(result, .failure(BaseFetcher.Error.nonHTTPResponse))
     }
 }
