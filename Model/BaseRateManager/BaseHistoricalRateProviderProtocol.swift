@@ -1,3 +1,0 @@
-protocol BaseHistoricalRateProviderProtocol {
-    func removeAllStorage()
-}

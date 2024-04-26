@@ -10,24 +10,32 @@ class Fetcher: BaseFetcher {
             let (urlRequest, apiKey): (URLRequest, String) = try createRequestTupleFor(endpoint)
                 .get()
             
+            logger.debug("\(endpoint) with id \(id) starts requesting using api key: \(apiKey)")
+            
             currencySession.currencyDataTask(with: urlRequest) { [unowned self] data, urlResponse, error in
                 do {
                     let data: Data = try venderResultFor(data: data, urlResponse: urlResponse, error: error)
                         .get()
                     
-                    AppUtility.prettyPrint(data)
-                    // 正常的情況，將 data decode，或者有其他未知的錯誤
                     completionHandler(Result { try jsonDecoder.decode(Endpoint.ResponseType.self, from: data) })
+                    logger.debug("\(endpoint) with id \(id) using api key: \(apiKey) finishes with data")
                 }
                 catch Error.invalidAPIKey, Error.runOutOfQuota {
+                    logger.debug("\(endpoint) with id \(id) deprecates api key: \(apiKey)")
                     deprecate(apiKey)
                     
                     fetch(endpoint, id: id, completionHandler: completionHandler)
                 }
-                catch { completionHandler(.failure(error)) }
+                catch {
+                    logger.debug("\(endpoint) with id \(id) using api key: \(apiKey) fails with error:\(error)")
+                    completionHandler(.failure(error))
+                }
             }
         }
-        catch { completionHandler(.failure(error)) }
+        catch {
+            logger.debug("\(endpoint) with id \(id) fails with error:\(error)")
+            completionHandler(.failure(error))
+        }
     }
 }
 
@@ -42,7 +50,7 @@ private extension Fetcher {
         }
         else {
             assertionFailure("###, \(#function), \(self), 既沒有(data, urlResponse)，也沒有 error，常理來說不會發生。")
-            return .failure(Error.unknownError)
+            return .failure(Error.missingInformation)
         }
     }
 }
