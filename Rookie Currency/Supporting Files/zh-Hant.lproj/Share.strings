@@ -4,8 +4,9 @@
 "alertActionTitle" = "喔，是喔。";
 "sortedBy" = "排序方式";
 "currencyOfInterest" = "感興趣的貨幣";
-"noDataNoError" = "發生不明錯誤 (data task completion handler 裡的 data 跟 error 都是 nil)";
+"missingInformation" = "發生不明錯誤 (data 跟 response 至少有一為 nil，且 error 為 nil)";
 "runOutOfQuota" = "查詢資料的額度已用罄";
 "invalidAPIKey" = "權限不足";
 "serverDateStringError" = "伺服器回傳的日期字串無效：%1$@";
 "runOutOfAPIKey" = "API key用罄。";
+"nonHTTPResponse" = "發生不明錯誤 (收到非 http 的 response)";

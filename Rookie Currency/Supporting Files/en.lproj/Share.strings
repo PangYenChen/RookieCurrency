@@ -4,8 +4,9 @@
 "alertActionTitle" = "ok";
 "sortedBy" = "Sort by";
 "currencyOfInterest" = "Currency of Interest";
-"noDataNoError" = "Unknown error occurs. (no data and error instance data task completion handler)";
+"missingInformation" = "Unknown error occurs. (at least one of data and response is nil, and error is nil)";
 "runOutOfQuota" = "You have exceeded your daily/monthly API rate limit.";
 "invalidAPIKey" = "Invalid authentication credentials";
 "serverDateStringError" = "the date string return by server is invalid:%1$@";
 "runOutOfAPIKey" = "Run out of API key.";
+"nonHTTPResponse" = "Unknown error occurs. (receive non http response)";

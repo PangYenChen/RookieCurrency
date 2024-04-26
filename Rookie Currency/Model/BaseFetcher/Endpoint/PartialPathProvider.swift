@@ -15,7 +15,7 @@ extension PartialPathProvider {
     }
     
     var urlComponents: URLComponents {
-        var urlComponents: URLComponents = Fetcher.urlComponents
+        var urlComponents: URLComponents = Fetcher.baseURLComponents
         urlComponents.path += partialPath
         return urlComponents
     }

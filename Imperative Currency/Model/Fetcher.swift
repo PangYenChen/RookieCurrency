@@ -42,7 +42,7 @@ private extension Fetcher {
         }
         else {
             assertionFailure("###, \(#function), \(self), 既沒有(data, urlResponse)，也沒有 error，常理來說不會發生。")
-            return .failure(Error.unknownError)
+            return .failure(Error.missingInformation)
         }
     }
 }
