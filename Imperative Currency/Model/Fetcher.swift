@@ -20,35 +20,14 @@ class Fetcher: BaseFetcher {
                     completionHandler(Result { try jsonDecoder.decode(Endpoint.ResponseType.self, from: data) })
                 }
                 catch Error.invalidAPIKey, Error.runOutOfQuota {
-                    threadSafeKeyManager.writeAsynchronously { keyManager in
-                        keyManager.deprecate(apiKey)
-                        return keyManager
-                    }
+                    deprecate(apiKey)
                     
                     fetch(endpoint, id: id, completionHandler: completionHandler)
                 }
-                catch {
-                    completionHandler(.failure(error))
-                }
+                catch { completionHandler(.failure(error)) }
             }
         }
-        catch {
-            completionHandler(.failure(error))
-        }
-    }
-    
-    func createRequestTupleFor(
-        _ endpoint: any EndpointProtocol
-    ) -> Result<(urlRequest: URLRequest, apiKey: String), Swift.Error> {
-        endpoint.urlResult.flatMap { url in
-            threadSafeKeyManager.readSynchronously { keyManager in keyManager.usingAPIKeyResult }
-                .map { apiKey in
-                    let timeoutInterval: TimeInterval = 5
-                    var urlRequest: URLRequest = URLRequest(url: url, timeoutInterval: timeoutInterval)
-                    urlRequest.addValue(apiKey, forHTTPHeaderField: "apikey")
-                    return (urlRequest, apiKey)
-                }
-        }
+        catch { completionHandler(.failure(error)) }
     }
 }
 

@@ -327,15 +327,9 @@ class FetcherTests: XCTestCase {
             let receivedCompletion: Subscribers.Completion<Error> = try XCTUnwrap(receivedCompletion)
             switch receivedCompletion {
                 case .failure(let error):
-                    guard let fetcherError = error as? Fetcher.Error else {
-                        XCTFail("應該要收到 Fetcher.Error")
-                        return
-                    }
-                    
-                    guard fetcherError == Fetcher.Error.runOutOfQuota else {
-                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
-                        return
-                    }
+                    do { throw error }
+                    catch KeyManager.Error.runOutOfKey { /*intentionally left blank*/ }
+                    catch { XCTFail("should receive a KeyManager.Error.runOutOfKey, but receive: \(error)") }
                 case .finished:
                     XCTFail("should not complete normally")
             }
@@ -463,15 +457,9 @@ class FetcherTests: XCTestCase {
             
             switch receivedCompletion {
                 case .failure(let error):
-                    guard let fetcherError = error as? Fetcher.Error else {
-                        XCTFail("should receive Fetcher.Error")
-                        return
-                    }
-                    
-                    guard fetcherError == Fetcher.Error.invalidAPIKey else {
-                        XCTFail("receive error other than Fetcher.Error.runOutOfQuota: \(error)")
-                        return
-                    }
+                    do { throw error }
+                    catch KeyManager.Error.runOutOfKey { /*intentionally left blank*/ }
+                    catch { XCTFail("should receive a KeyManager.Error.runOutOfKey, but receive: \(error)") }
                 case .finished:
                     XCTFail("should not complete normally")
             }
