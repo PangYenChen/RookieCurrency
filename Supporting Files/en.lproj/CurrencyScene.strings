@@ -1,7 +1,0 @@
-"currencyZhuyin" = "currency zhuyin";
-"currencyCode" = "currency code";
-"currencyName" = "currency name";
-"ascending" = "ascending";
-"descending" = "descending";
-"sortingWay" = "%1$@ in %2$@ order";
-"currencyNotSupported" = "The previous selected currency is not supported by the vender. Please select other currency.";

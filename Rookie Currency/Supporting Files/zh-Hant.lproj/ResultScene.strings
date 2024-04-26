@@ -1,0 +1,9 @@
+"baseCurrencyInPrompt" = "基準貨幣：%@";
+"analysisResult" = "分析結果";
+"latestUpdateTime" = "最後更新時間：%@";
+"currencyCellDetail" = "過去平均：%1$@，今天匯率：%2$@";
+"increasing" = "遞增";
+"decreasing" = "遞減";
+"refreshing" = "正在更新";
+"fluctuation" = "漲跌: %@";
+"dataAbsent" = "缺少下列貨幣的資料，請考慮不再關注該貨幣： %@。";

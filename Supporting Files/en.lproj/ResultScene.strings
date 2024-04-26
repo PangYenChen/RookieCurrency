@@ -1,9 +1,0 @@
-"baseCurrencyInPrompt" = "Base currency: %@";
-"analysisResult" = "Analysis Result";
-"latestUpdateTime" = "latest update time: %@";
-"currencyCellDetail" = "historical mean：%2$@，today：%1$@";
-"increasing" = "increasing";
-"decreasing" = "decreasing";
-"refreshing" = "refreshing";
-"fluctuation" = "fluctuation: %@";
-"dataAbsent" = "The data of following currency are absent. Please consider losing interest in those currencies: %@";
