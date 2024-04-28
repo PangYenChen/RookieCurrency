@@ -11,6 +11,9 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         ratePublisher(numberOfDays: numberOfDays, from: .now)
     }
     
+    // the purpose of this method is to
+    // inject the starting date when
+    // testing ratePublisher(numberOfDays:)
     func ratePublisher(numberOfDays: Int, from start: Date) -> AnyPublisher<BaseRateManager.RateTuple, Error> {
         historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .publisher
