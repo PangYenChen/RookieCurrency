@@ -2,14 +2,12 @@ import Foundation
 
 /// 用來獲得各貨幣匯率資料的類別
 class BaseRateManager {
-    // MARK: - initializer
     init(historicalRateProvider: HistoricalRateProviderProtocol,
          latestRateProvider: LatestRateProviderProtocol) {
         self.historicalRateProvider = historicalRateProvider
         self.latestRateProvider = latestRateProvider
     }
     
-    // MARK: - instance properties
     // MARK: - dependencies
     let historicalRateProvider: HistoricalRateProviderProtocol
     let latestRateProvider: LatestRateProviderProtocol
