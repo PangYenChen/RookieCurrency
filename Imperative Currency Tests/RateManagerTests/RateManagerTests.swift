@@ -110,17 +110,10 @@ final class RateManagerTests: XCTestCase {
         }
         
         do /*simulate historical rate provider's result*/ {
-            historicalRateDateStrings
-                .forEach { historicalRateDateString in
-                    fakeHistoricalRateProvider
-                        .executeHistoricalRateResultHandlerFor(dateString: historicalRateDateString,
-                                                               with: .failure(expectedTimeOutError))
-                }
-        }
-        
-        do /*simulate latest rate provider's result*/ {
-            let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
-            fakeLatestRateProvider.executeLatestRateResultHandler(with: .success(dummyLatestRate))
+            let historicalRateDateString: String = try XCTUnwrap(historicalRateDateStrings.first)
+            fakeHistoricalRateProvider
+                .executeHistoricalRateResultHandlerFor(dateString: historicalRateDateString,
+                                                       with: .failure(expectedTimeOutError))
         }
         
         waitForExpectations(timeout: timeoutInterval)
@@ -162,16 +155,6 @@ final class RateManagerTests: XCTestCase {
             expectation.fulfill()
         }
         
-        do /*simulate historical rate provider's result*/ {
-            try historicalRateDateStrings
-                .forEach { historicalRateDateString in
-                    let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: historicalRateDateString)
-                    fakeHistoricalRateProvider
-                        .executeHistoricalRateResultHandlerFor(dateString: historicalRateDateString,
-                                                               with: .success(dummyHistoricalRate))
-                }
-        }
-        
         do /*simulate latest rate provider's result*/ {
             fakeLatestRateProvider.executeLatestRateResultHandler(with: .failure(expectedTimeOutError))
         }
@@ -185,6 +168,49 @@ final class RateManagerTests: XCTestCase {
             switch receivedResult {
                 case .success(let rateTuple):
                     XCTFail("should not receive a rate tuple but receive: \(rateTuple)")
+                case .failure(let failure):
+                    let receivedFailure: URLError = try XCTUnwrap(failure as? URLError)
+                    XCTAssertEqual(receivedFailure, expectedTimeOutError)
+            }
+        }
+    }
+    
+    func testHistoricalRateSet() throws {
+        let fakeHistoricalRateProvider: TestDouble.HistoricalRateProvider = historicalRateProvider
+        let fakeLatestRateProvider: TestDouble.LatestRateProvider = latestRateProvider
+        
+        var receivedResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
+        let expectedTimeOutError: URLError = URLError(URLError.Code.timedOut)
+        
+        let startDate: Date = Date(timeIntervalSince1970: 0)
+        let numberOfDays: Int = 3
+        let historicalRateDateStrings: Set<String> = sut.historicalRateDateStrings(numberOfDaysAgo: numberOfDays,
+                                                                                   from: startDate)
+        let expectation: XCTestExpectation = expectation(description: "dispatch group notifies")
+        let dummyDispatchQueue: DispatchQueue = DispatchQueue(label: "rate.manager.tests")
+        
+        // act
+        sut.historicalRateSet(numberOfDaysAgo: numberOfDays, 
+                              from: startDate) { result in
+            receivedResult = result
+            expectation.fulfill()
+        }
+        
+        do /*simulate historical rate provider's result*/ {
+            let historicalRateDateString: String = try XCTUnwrap(historicalRateDateStrings.first)
+            fakeHistoricalRateProvider
+                .executeHistoricalRateResultHandlerFor(dateString: historicalRateDateString,
+                                                       with: .failure(expectedTimeOutError))
+        }
+        waitForExpectations(timeout: timeoutInterval)
+        
+        // assert
+        do {
+            let receivedResult: Result<Set<ResponseDataModel.HistoricalRate>, Error> = try XCTUnwrap(receivedResult)
+            
+            switch receivedResult {
+                case .success(let historicalRateSet):
+                    XCTFail("should not receive a rate tuple but receive: \(historicalRateSet)")
                 case .failure(let failure):
                     let receivedFailure: URLError = try XCTUnwrap(failure as? URLError)
                     XCTAssertEqual(receivedFailure, expectedTimeOutError)
