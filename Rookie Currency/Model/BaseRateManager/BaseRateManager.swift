@@ -19,7 +19,7 @@ extension BaseRateManager {
         Set(
             (1...numberOfDaysAgo)
                 .compactMap { numberOfDaysAgo in
-                    Calendar(identifier: .gregorian) // server calendar
+                    AppUtility.venderCalendar
                         .date(byAdding: .day, value: -numberOfDaysAgo, to: start)
                         .map { historicalDate in AppUtility.requestDateFormatter.string(from: historicalDate) }
                 }

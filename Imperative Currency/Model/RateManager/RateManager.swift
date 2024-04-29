@@ -27,63 +27,32 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                     completionHandler: @escaping CompletionHandler) {
         let dispatchGroup: DispatchGroup = DispatchGroup()
         var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
-        var latestRateResult: Result<ResponseDataModel.LatestRate, Error>?
         let serialDispatchQueue: DispatchQueue = DispatchQueue(label: "rate.manager")
         
         do /*request historical rate set*/ {
-            historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
-                .forEach { historicalRateDateString in
-                    dispatchGroup.enter()
-                    
-                    historicalRateProvider.historicalRateFor(dateString: historicalRateDateString) { result in
-                        serialDispatchQueue.async {
-                            let latestRateHasFailed: Bool = switch latestRateResult {
-                            case .success: false
-                            case .failure: true
-                            case nil: false
-                            }
-                            
-                            guard !latestRateHasFailed else { return }
-                            
-                            switch historicalRateSetResult {
-                                case .success(let historicalRateSet):
-                                    switch result {
-                                        case .success(let historicalRate):
-                                            historicalRateSetResult = .success(historicalRateSet.union([historicalRate]))
-                                        case .failure(let error):
-                                            historicalRateSetResult = .failure(error)
-                                            completionHandlerQueue.async { completionHandler(.failure(error)) }
-                                    }
-                                case .failure:
-                                    break
-                                case nil:
-                                    switch result {
-                                        case .success(let historicalRate):
-                                            historicalRateSetResult = .success([historicalRate])
-                                        case .failure(let error):
-                                            historicalRateSetResult = .failure(error)
-                                            completionHandlerQueue.async { completionHandler(.failure(error)) }
-                                    }
-                            }
-                            
-                            dispatchGroup.leave()
-                        }
+            dispatchGroup.enter()
+            
+            historicalRateSet(numberOfDaysAgo: numberOfDays, from: start) { result in
+                serialDispatchQueue.async {
+                    switch result {
+                        case .success(let historicalRateSet):
+                            historicalRateSetResult = .success(historicalRateSet)
+                        case .failure(let failure):
+                            historicalRateSetResult = .failure(failure)
+                            completionHandlerQueue.async { completionHandler(.failure(failure)) }
                     }
+                    
+                    dispatchGroup.leave()
                 }
+            }
         }
+        
+        var latestRateResult: Result<ResponseDataModel.LatestRate, Error>?
         
         do /*request latest rate*/ {
             dispatchGroup.enter()
             
             latestRateProvider.latestRate { result in
-                let hasHistoricalRateSetFailed: Bool = switch historicalRateSetResult {
-                case .success: false
-                case .failure: true
-                case nil: false
-                }
-                
-                guard !hasHistoricalRateSetFailed else { return }
-                
                 switch result {
                     case .success(let latestRate):
                         latestRateResult = .success(latestRate)
@@ -112,6 +81,60 @@ class RateManager: BaseRateManager, RateManagerProtocol {
             
             completionHandler(.success((latestRate: latestRate,
                                         historicalRateSet: historicalRateSet)))
+        }
+    }
+    
+    func historicalRateSet(
+        numberOfDaysAgo: Int,
+        from start: Date,
+        completionHandler: @escaping (Result<Set<ResponseDataModel.HistoricalRate>, Error>) -> Void
+    ) {
+        var dispatchGroup: DispatchGroup = DispatchGroup()
+        var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
+        let serialDispatchQueue: DispatchQueue = DispatchQueue(label: "historical.rate.set")
+        
+        historicalRateDateStrings(numberOfDaysAgo: numberOfDaysAgo, from: start)
+            .forEach { historicalRateDateString in
+                dispatchGroup.enter()
+                
+                historicalRateProvider.historicalRateFor(dateString: historicalRateDateString) { result in
+                    serialDispatchQueue.async {
+                        switch historicalRateSetResult {
+                            case .success(let historicalRateSet):
+                                switch result {
+                                    case .success(let historicalRate):
+                                        historicalRateSetResult = .success(historicalRateSet.union([historicalRate]))
+                                    case .failure(let error):
+                                        historicalRateSetResult = .failure(error)
+                                        completionHandler(.failure(error))
+                                }
+                            case .failure:
+                                break
+                            case nil:
+                                switch result {
+                                    case .success(let historicalRate):
+                                        historicalRateSetResult = .success([historicalRate])
+                                    case .failure(let error):
+                                        historicalRateSetResult = .failure(error)
+                                        completionHandler(.failure(error))
+                                }
+                        }
+                        
+                        dispatchGroup.leave()
+                    }
+                }
+            }
+        
+        dispatchGroup.notify(queue: DispatchQueue(label: "dummy")) {
+            guard let historicalRateSetResult else {
+                assertionFailure("應該要全部的 historical rate result 都有結果才能執行到這邊")
+                return
+            }
+            
+            switch historicalRateSetResult {
+                case .success(let historicalRateSet): completionHandler(.success(historicalRateSet))
+                case .failure: break
+            }
         }
     }
 }
