@@ -15,9 +15,10 @@ class RateManager: BaseRateManager, RateManagerProtocol {
     // inject the starting date when
     // testing ratePublisher(numberOfDays:)
     func ratePublisher(numberOfDays: Int,
-                       from start: Date,
-                       id: String = UUID().uuidString) -> AnyPublisher<BaseRateManager.RateTuple, Error> {
-        historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
+                       from start: Date) -> AnyPublisher<BaseRateManager.RateTuple, Error> {
+        let id: String = UUID().uuidString
+        
+        return historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
             .publisher
             .flatMap(historicalRateProvider.historicalRatePublisherFor(dateString:))
             .collect(numberOfDays)
