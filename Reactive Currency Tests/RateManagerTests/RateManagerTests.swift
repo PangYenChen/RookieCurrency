@@ -104,16 +104,8 @@ final class RateManagerTests: XCTestCase {
             .store(in: &anyCancellableSet)
         
         do /*simulate historical rate provider's result*/ {
-            historicalRateDateStrings
-                .forEach { historicalRateDateString in
-                    fakeHistoricalRateProvider.publish(completion: .failure(expectedTimeOutError), for: historicalRateDateString)
-                }
-        }
-        
-        do /*simulate latest rate provider's result*/ {
-            let dummyLatestRate: ResponseDataModel.LatestRate = try TestingData.Instance.latestRate()
-            fakeLatestRateProvider.publish(dummyLatestRate)
-            fakeLatestRateProvider.publish(completion: .finished)
+            let historicalRateDateString: String = try XCTUnwrap(historicalRateDateStrings.first)
+            fakeHistoricalRateProvider.publish(completion: .failure(expectedTimeOutError), for: historicalRateDateString)
         }
         
         // assert
@@ -150,15 +142,6 @@ final class RateManagerTests: XCTestCase {
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { rateTuple in receivedRateTuple = rateTuple })
             .store(in: &anyCancellableSet)
-        
-        do /*simulate historical rate provider's result*/ {
-            try historicalRateDateStrings
-                .forEach { historicalRateDateString in
-                    let dummyHistoricalRate: ResponseDataModel.HistoricalRate = try TestingData.Instance.historicalRateFor(dateString: historicalRateDateString)
-                    fakeHistoricalRateProvider.publish(dummyHistoricalRate, for: historicalRateDateString)
-                    fakeHistoricalRateProvider.publish(completion: .finished, for: historicalRateDateString)
-                }
-        }
         
         do /*simulate latest rate provider's result*/ {
             fakeLatestRateProvider.publish(completion: .failure(expectedTimeOutError))

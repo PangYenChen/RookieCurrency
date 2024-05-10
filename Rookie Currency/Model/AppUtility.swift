@@ -15,4 +15,7 @@ extension AppUtility {
         dateFormatter.dateFormat = "yyyy-MM-dd"
         return dateFormatter
     }()
+    
+    /// server calendar
+    static let venderCalendar: Calendar = Calendar(identifier: .gregorian)
 }

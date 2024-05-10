@@ -37,19 +37,6 @@ extension BaseFetcher {
         }
     }
     
-    func deprecate(_ apiKeyToBeDeprecated: String) {
-        threadSafeKeyManager.writeAsynchronously { keyManager in
-            keyManager.deprecate(apiKeyToBeDeprecated)
-            return keyManager
-        }
-    }
-}
-
-extension BaseFetcher: BaseHistoricalRateProviderProtocol {
-    func removeAllStorage() { /*do nothing*/ }
-}
-
-extension BaseFetcher {
     func venderResultFor(data: Data, urlResponse: URLResponse) -> Result<Data, Error> {
         let statusCodeForInvalidAPIKey: Int = 401
         let statusCodeForRunOutOfQuota: Int = 429
@@ -69,6 +56,17 @@ extension BaseFetcher {
             return .failure(.nonHTTPResponse)
         }
     }
+    
+    func deprecate(_ apiKeyToBeDeprecated: String) {
+        threadSafeKeyManager.writeAsynchronously { keyManager in
+            keyManager.deprecate(apiKeyToBeDeprecated)
+            return keyManager
+        }
+    }
+}
+
+extension BaseFetcher: BaseHistoricalRateProviderProtocol {
+    func removeAllStorage() { /*do nothing*/ }
 }
 
 // MARK: - name space
