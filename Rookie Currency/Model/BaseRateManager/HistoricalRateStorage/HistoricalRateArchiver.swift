@@ -1,4 +1,5 @@
 import Foundation
+import UniformTypeIdentifiers
 
 /// 讀寫 Historical Rate 的類別，當使用的 file manager 是 `.default`，這個 class 是 thread safe
 class HistoricalRateArchiver {
@@ -8,7 +9,7 @@ class HistoricalRateArchiver {
         documentsDirectory = URL.documentsDirectory
         jsonDecoder = ResponseDataModel.jsonDecoder
         jsonEncoder = ResponseDataModel.jsonEncoder
-        jsonPathExtension = "json"
+        jsonType = UTType.json
     }
     
     private let fileManager: FileManager
@@ -16,31 +17,26 @@ class HistoricalRateArchiver {
     private let documentsDirectory: URL
     private let jsonDecoder: JSONDecoder
     private let jsonEncoder: JSONEncoder
-    private let jsonPathExtension: String
+    private let jsonType: UTType
 }
 
 // MARK: - instance methods
 extension HistoricalRateArchiver {
-    /// 寫入資料
-    /// - Parameter historicalRate: 要寫入的資料
-    func archive(_ rate: ResponseDataModel.HistoricalRate) throws {
-        let data: Data = try jsonEncoder.encode(rate)
-        let url: URL = documentsDirectory.appending(path: rate.dateString)
-            .appendingPathExtension(jsonPathExtension)
-        try data.write(to: url)
-        
-        print("###", self, #function, "寫入資料:\n\t", rate)
+    private func fileURLWith(fileName: String) -> URL {
+        documentsDirectory
+            .appending(path: fileName)
+            .appendingPathExtension(for: jsonType)
     }
-    
-    /// 讀取資料
-    /// - Parameter fileName: historical rate 的日期，也是檔案名稱
-    /// - Returns: historical rate
-    func unarchiveRateWith(dateString fileName: String) throws -> ResponseDataModel.HistoricalRate {
-        let url: URL = documentsDirectory.appending(path: fileName)
-            .appendingPathExtension(jsonPathExtension)
+}
+
+extension HistoricalRateArchiver: HistoricalRateStorageProtocol {
+    func readFor(dateString: String) -> ResponseDataModel.HistoricalRate? {
+        let fileURL: URL = fileURLWith(fileName: dateString)
+        
+        guard fileManager.fileExists(atPath: fileURL.path()) else { return nil }
         
         do {
-            let data: Data = try Data(contentsOf: url)
+            let data: Data = try Data(contentsOf: fileURL)
             
             let rate: ResponseDataModel.HistoricalRate = try jsonDecoder.decode(ResponseDataModel.HistoricalRate.self, from: data)
             
@@ -49,30 +45,23 @@ extension HistoricalRateArchiver {
             return rate
         }
         catch {
-            try? fileManager.removeItem(at: url)
-            throw error
+            try? fileManager.removeItem(at: fileURL)
+            return nil
         }
     }
     
-    /// 查看某 historical rate 是否存於本地
-    /// - Parameter fileName: historical rate 的日期字串
-    /// - Returns: historical rate 是否存於本地
-    func hasFileInDiskWith(dateString fileName: String) -> Bool {
-        let fileURL: URL = documentsDirectory.appending(path: fileName)
-            .appendingPathExtension(jsonPathExtension)
-        
-        return fileManager.fileExists(atPath: fileURL.path())
-    }
-}
-
-extension HistoricalRateArchiver: HistoricalRateStorageProtocol {
-    func readFor(dateString: String) -> ResponseDataModel.HistoricalRate? {
-        guard hasFileInDiskWith(dateString: dateString) else { return nil }
-        return try? unarchiveRateWith(dateString: dateString)
-    }
-    
     func store(_ rate: ResponseDataModel.HistoricalRate) {
-        try? archive(rate)
+        do {
+            let data: Data = try jsonEncoder.encode(rate)
+            let fileURL: URL = fileURLWith(fileName: rate.dateString)
+            
+            try data.write(to: fileURL)
+            
+            print("###", self, #function, "寫入資料:\n\t", rate)
+        }
+        catch {
+            print("###", self, #function, error)
+        }
     }
     
     func removeAll() {
@@ -80,7 +69,7 @@ extension HistoricalRateArchiver: HistoricalRateStorageProtocol {
             .contentsOfDirectory(at: documentsDirectory,
                                  includingPropertiesForKeys: nil,
                                  options: .skipsHiddenFiles)
-            .filter { fileURL in fileURL.pathExtension == jsonPathExtension }
+            .filter { fileURL in fileURL.pathExtension == jsonType.preferredFilenameExtension }
             .forEach { fileURL in try fileManager.removeItem(at: fileURL) }
     }
 }
