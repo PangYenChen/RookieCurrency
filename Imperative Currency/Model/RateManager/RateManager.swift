@@ -74,7 +74,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         dispatchGroup.notify(queue: completionHandlerQueue) { [unowned self] in
             guard let historicalRateSetResult,
                   let latestRateResult else {
-                assertionFailure("historicalRateSetResult 跟 latestRateResult 都有值之後才會執行到此")
+                assertionFailure("historicalRateSetResult 跟 latestRateResult 該有值卻沒值")
                 return
             }
             
@@ -131,7 +131,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                 }
             }
         
-        dispatchGroup.notify(queue: DispatchQueue(label: "dummy")) {
+        dispatchGroup.notify(queue: serialDispatchQueue) {
             guard let historicalRateSetResult else {
                 assertionFailure("應該要全部的 historical rate result 都有結果才能執行到這邊")
                 return
