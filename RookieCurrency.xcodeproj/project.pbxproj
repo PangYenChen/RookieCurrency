@@ -153,6 +153,14 @@
 		518F7F0D2BC0BC2400B1FF44 /* TestEndpoint.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518F7F0B2BC0BC2400B1FF44 /* TestEndpoint.swift */; };
 		518F7F112BC0BD5000B1FF44 /* TestDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518F7F102BC0BD5000B1FF44 /* TestDataModel.swift */; };
 		518F7F122BC0BD5000B1FF44 /* TestDataModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 518F7F102BC0BD5000B1FF44 /* TestDataModel.swift */; };
+		519506C22BFCB275008D7B50 /* UserSettingManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519506C12BFCB275008D7B50 /* UserSettingManagerProtocol.swift */; };
+		519506C32BFCB275008D7B50 /* UserSettingManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519506C12BFCB275008D7B50 /* UserSettingManagerProtocol.swift */; };
+		519506C62BFCB2F2008D7B50 /* SettingModelFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519506C52BFCB2F2008D7B50 /* SettingModelFactory.swift */; };
+		519506C72BFCB2F2008D7B50 /* SettingModelFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519506C52BFCB2F2008D7B50 /* SettingModelFactory.swift */; };
+		519506CA2BFCB31B008D7B50 /* ResultRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519506C92BFCB31B008D7B50 /* ResultRefresher.swift */; };
+		519506CB2BFCB31B008D7B50 /* ResultRefresher.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519506C92BFCB31B008D7B50 /* ResultRefresher.swift */; };
+		519506CE2BFCB538008D7B50 /* RateManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519506CD2BFCB538008D7B50 /* RateManagerProtocol.swift */; };
+		519506D22BFCC0D0008D7B50 /* RateManagerProtocol.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519506D12BFCC0D0008D7B50 /* RateManagerProtocol.swift */; };
 		519685E82B8C3FE9004EEA72 /* BaseResultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519685E72B8C3FE9004EEA72 /* BaseResultModel.swift */; };
 		519685E92B8C3FE9004EEA72 /* BaseResultModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519685E72B8C3FE9004EEA72 /* BaseResultModel.swift */; };
 		519685EF2B8C44A2004EEA72 /* UIConfiguration.swift in Sources */ = {isa = PBXBuildFile; fileRef = 519685EE2B8C44A2004EEA72 /* UIConfiguration.swift */; };
@@ -347,6 +355,11 @@
 		518F7F062BC0989D00B1FF44 /* CurrencySession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CurrencySession.swift; sourceTree = "<group>"; };
 		518F7F0B2BC0BC2400B1FF44 /* TestEndpoint.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestEndpoint.swift; sourceTree = "<group>"; };
 		518F7F102BC0BD5000B1FF44 /* TestDataModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TestDataModel.swift; sourceTree = "<group>"; };
+		519506C12BFCB275008D7B50 /* UserSettingManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettingManagerProtocol.swift; sourceTree = "<group>"; };
+		519506C52BFCB2F2008D7B50 /* SettingModelFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingModelFactory.swift; sourceTree = "<group>"; };
+		519506C92BFCB31B008D7B50 /* ResultRefresher.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ResultRefresher.swift; sourceTree = "<group>"; };
+		519506CD2BFCB538008D7B50 /* RateManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateManagerProtocol.swift; sourceTree = "<group>"; };
+		519506D12BFCC0D0008D7B50 /* RateManagerProtocol.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RateManagerProtocol.swift; sourceTree = "<group>"; };
 		519685E72B8C3FE9004EEA72 /* BaseResultModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResultModel.swift; sourceTree = "<group>"; };
 		519685EE2B8C44A2004EEA72 /* UIConfiguration.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIConfiguration.swift; sourceTree = "<group>"; };
 		5196E45F2AC3F2D4001D1B39 /* README_CN.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README_CN.md; sourceTree = "<group>"; };
@@ -443,6 +456,7 @@
 				514F72FD29AB682D0080DD8B /* AppUtility.swift */,
 				5125CC792BC3701B00C96B38 /* ThreadSafeWrapper.swift */,
 				51B2D13F2BCB28C100ACB75D /* BaseSupportedCurrencyManager */,
+				519506C12BFCB275008D7B50 /* UserSettingManagerProtocol.swift */,
 				512CE8D82B36F9D000019B20 /* UserSettingManager.swift */,
 				51290BAF2B97B173005BE201 /* UserDefaultsProtocol.swift */,
 				512495632B31E1B400FD86D9 /* CurrencyDescriberProxy.swift */,
@@ -565,8 +579,6 @@
 		51541B3A2BDB368A00868D54 /* Rookie Currency */ = {
 			isa = PBXGroup;
 			children = (
-				516916B92983D4C800547B60 /* README.md */,
-				5196E45F2AC3F2D4001D1B39 /* README_CN.md */,
 				511E4B2F2AC69314007EA1DE /* Model */,
 				516FF5172B01005400576177 /* Result Scene */,
 				516FF5182B01008B00576177 /* Setting Scene */,
@@ -628,6 +640,7 @@
 			isa = PBXGroup;
 			children = (
 				512087A229A9EE85005ED87A /* RateManager.swift */,
+				519506D12BFCC0D0008D7B50 /* RateManagerProtocol.swift */,
 				5145AC1F2BB4C136001783AF /* HistoricalRateProviderProtocol.swift */,
 				5172EAB52BC62B720064F7F2 /* HistoricalRateProviderRing.swift */,
 				5145AC242BB5FA1A001783AF /* LatestRateProviderProtocol.swift */,
@@ -639,6 +652,7 @@
 			isa = PBXGroup;
 			children = (
 				512087AF29A9F858005ED87A /* RateManager.swift */,
+				519506CD2BFCB538008D7B50 /* RateManagerProtocol.swift */,
 				516DD01E2BB9F51500D0B593 /* HistoricalRateProviderProtocol.swift */,
 				51CFA4C12BC70F020052DE8E /* HistoricalRateProviderRing.swift */,
 				516DD0132BB9EDCA00D0B593 /* LatestRateProvider.swift */,
@@ -701,6 +715,8 @@
 			children = (
 				511E4B302AC6938A007EA1DE /* QuasiBaseResultModel.swift */,
 				519685E72B8C3FE9004EEA72 /* BaseResultModel.swift */,
+				519506C92BFCB31B008D7B50 /* ResultRefresher.swift */,
+				519506C52BFCB2F2008D7B50 /* SettingModelFactory.swift */,
 				514C4D0C29A3416A0049E192 /* BaseResultTableViewController.swift */,
 			);
 			path = "Result Scene";
@@ -878,6 +894,8 @@
 		E13B273924758ACB00E0A07D = {
 			isa = PBXGroup;
 			children = (
+				516916B92983D4C800547B60 /* README.md */,
+				5196E45F2AC3F2D4001D1B39 /* README_CN.md */,
 				51541B3A2BDB368A00868D54 /* Rookie Currency */,
 				E13B274424758ACB00E0A07D /* Imperative Currency */,
 				E15BA6AC24FCA66600CA5B1B /* Reactive Currency */,
@@ -996,7 +1014,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				51AAF0D42B00C5220078D6FE /* PBXTargetDependency */,
+				519506BA2BFC8BF9008D7B50 /* PBXTargetDependency */,
 				51433D35298FD7D800F2B4E6 /* PBXTargetDependency */,
 			);
 			name = ImperativeCurrency;
@@ -1019,7 +1037,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				510D17C72B00CD23007D9032 /* PBXTargetDependency */,
+				519506BC2BFC8C16008D7B50 /* PBXTargetDependency */,
 				E13B275A24758ACF00E0A07D /* PBXTargetDependency */,
 			);
 			name = ImperativeCurrencyTests;
@@ -1039,7 +1057,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				510D17CD2B00D3FC007D9032 /* PBXTargetDependency */,
+				519506BE2BFC8C1E008D7B50 /* PBXTargetDependency */,
 				51433D38298FD8AC00F2B4E6 /* PBXTargetDependency */,
 			);
 			name = ReactiveCurrency;
@@ -1062,7 +1080,7 @@
 			buildRules = (
 			);
 			dependencies = (
-				510D17CF2B00D401007D9032 /* PBXTargetDependency */,
+				519506C02BFC8C28008D7B50 /* PBXTargetDependency */,
 				E15BA6C224FCA66900CA5B1B /* PBXTargetDependency */,
 			);
 			name = ReactiveCurrencyTests;
@@ -1218,6 +1236,7 @@
 				5145AC202BB4C136001783AF /* HistoricalRateProviderProtocol.swift in Sources */,
 				512087A929A9F10A005ED87A /* Fetcher.swift in Sources */,
 				5120879829A8DC71005ED87A /* DebugInfoViewController.swift in Sources */,
+				519506CA2BFCB31B008D7B50 /* ResultRefresher.swift in Sources */,
 				512087A329A9EE85005ED87A /* RateManager.swift in Sources */,
 				51290B7E2B90526D005BE201 /* TimerProtocol.swift in Sources */,
 				51CFA4B02BC6E4040052DE8E /* HistoricalRateStorageProtocol.swift in Sources */,
@@ -1235,12 +1254,14 @@
 				E1CE96AE248555E10029ED73 /* BaseRateManager.swift in Sources */,
 				5149A1AC2B08E2B2005D2B04 /* SettingModel.swift in Sources */,
 				515D3D8F29EEE81000B84F4B /* Supported Symbols.swift in Sources */,
+				519506C22BFCB275008D7B50 /* UserSettingManagerProtocol.swift in Sources */,
 				E13B276924758BCB00E0A07D /* Response Data Model.swift in Sources */,
 				E1CE96AA248555680029ED73 /* BaseFetcher.swift in Sources */,
 				51CFA4AD2BC6E2560052DE8E /* HistoricalRateProviderChain.swift in Sources */,
 				514C4D0D29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */,
 				519BD8AA29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */,
 				51290B842B905642005BE201 /* TimerProxy.swift in Sources */,
+				519506C62BFCB2F2008D7B50 /* SettingModelFactory.swift in Sources */,
 				51290BB02B97B173005BE201 /* UserDefaultsProtocol.swift in Sources */,
 				513E106429F424D0000E1A87 /* AlertPresenter.swift in Sources */,
 				514F171D2B3131B700C806E3 /* CurrencyOfInterestSelectionStrategy.swift in Sources */,
@@ -1255,6 +1276,7 @@
 				5138032829988BC300D54E46 /* CurrencySelectionTableViewController.swift in Sources */,
 				51D6CA482B1C8A7C003F9D13 /* BaseCurrencySelectionModelProtocol.swift in Sources */,
 				51E1B4C829AE488900D75669 /* Endpoints.swift in Sources */,
+				519506D22BFCC0D0008D7B50 /* RateManagerProtocol.swift in Sources */,
 				E13B274624758ACB00E0A07D /* AppDelegate.swift in Sources */,
 				51CFA4A92BC6E00D0052DE8E /* HistoricalRateArchiver.swift in Sources */,
 				51541B3F2BDB376E00868D54 /* LoggerFactory.swift in Sources */,
@@ -1327,6 +1349,7 @@
 				512087AE29A9F4A7005ED87A /* Fetcher.swift in Sources */,
 				5120879929A8DC71005ED87A /* DebugInfoViewController.swift in Sources */,
 				51D67ED32975922A008B8928 /* AppDelegate.swift in Sources */,
+				519506CB2BFCB31B008D7B50 /* ResultRefresher.swift in Sources */,
 				51290B8D2B906107005BE201 /* TimerProtocol.swift in Sources */,
 				E1FB993F24FF554C0096FE2C /* ResultTableViewController.swift in Sources */,
 				51CFA4B32BC6E4540052DE8E /* HistoricalRateStorageProtocol.swift in Sources */,
@@ -1344,12 +1367,14 @@
 				516DD07E2BBF29F100D0B593 /* KeyManager.swift in Sources */,
 				51E0DEB5299FD4980046652B /* PresentWithNavigationController.swift in Sources */,
 				514F72FF29AB682D0080DD8B /* AppUtility.swift in Sources */,
+				519506C32BFCB275008D7B50 /* UserSettingManagerProtocol.swift in Sources */,
 				E1FB994124FF9DCD0096FE2C /* BaseFetcher.swift in Sources */,
 				516FF51C2B01014000576177 /* SettingModel.swift in Sources */,
 				515D3D9029EEE81000B84F4B /* Supported Symbols.swift in Sources */,
 				51DF9167299FD0B200CEA5A6 /* SettingTableViewController.swift in Sources */,
 				514C4D0E29A3416A0049E192 /* BaseResultTableViewController.swift in Sources */,
 				51DF916A299FD0C100CEA5A6 /* CurrencySelectionTableViewController.swift in Sources */,
+				519506C72BFCB2F2008D7B50 /* SettingModelFactory.swift in Sources */,
 				519BD8AB29BD7E8F00D2CB29 /* EndpointProtocol.swift in Sources */,
 				514C4D0B29A0D9FA0049E192 /* BaseSettingTableViewController.swift in Sources */,
 				51290BB12B97B173005BE201 /* UserDefaultsProtocol.swift in Sources */,
@@ -1364,6 +1389,7 @@
 				51290B8F2B90672C005BE201 /* TimerProxy.swift in Sources */,
 				512CE8DA2B36F9D000019B20 /* UserSettingManager.swift in Sources */,
 				51578B7229A85A1000BE890F /* Git Commit Info.swift in Sources */,
+				519506CE2BFCB538008D7B50 /* RateManagerProtocol.swift in Sources */,
 				514C4CFF29A07A7B0049E192 /* Publisher + Helper.swift in Sources */,
 				51CFA4C22BC70F020052DE8E /* HistoricalRateProviderRing.swift in Sources */,
 				51541B412BDB379C00868D54 /* LoggerFactory.swift in Sources */,
@@ -1436,18 +1462,6 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		510D17C72B00CD23007D9032 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 510D17C62B00CD23007D9032 /* SwiftLintPlugin */;
-		};
-		510D17CD2B00D3FC007D9032 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 510D17CC2B00D3FC007D9032 /* SwiftLintPlugin */;
-		};
-		510D17CF2B00D401007D9032 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 510D17CE2B00D401007D9032 /* SwiftLintPlugin */;
-		};
 		51433D35298FD7D800F2B4E6 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			productRef = 51433D34298FD7D800F2B4E6 /* RswiftGenerateInternalResources */;
@@ -1456,9 +1470,21 @@
 			isa = PBXTargetDependency;
 			productRef = 51433D37298FD8AC00F2B4E6 /* RswiftGenerateInternalResources */;
 		};
-		51AAF0D42B00C5220078D6FE /* PBXTargetDependency */ = {
+		519506BA2BFC8BF9008D7B50 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			productRef = 51AAF0D32B00C5220078D6FE /* SwiftLintPlugin */;
+			productRef = 519506B92BFC8BF9008D7B50 /* SwiftLintBuildToolPlugin */;
+		};
+		519506BC2BFC8C16008D7B50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 519506BB2BFC8C16008D7B50 /* SwiftLintBuildToolPlugin */;
+		};
+		519506BE2BFC8C1E008D7B50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 519506BD2BFC8C1E008D7B50 /* SwiftLintBuildToolPlugin */;
+		};
+		519506C02BFC8C28008D7B50 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 519506BF2BFC8C28008D7B50 /* SwiftLintBuildToolPlugin */;
 		};
 		E13B275A24758ACF00E0A07D /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -2198,21 +2224,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		510D17C62B00CD23007D9032 /* SwiftLintPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
-			productName = "plugin:SwiftLintPlugin";
-		};
-		510D17CC2B00D3FC007D9032 /* SwiftLintPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
-			productName = "plugin:SwiftLintPlugin";
-		};
-		510D17CE2B00D401007D9032 /* SwiftLintPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
-			productName = "plugin:SwiftLintPlugin";
-		};
 		51433D32298FD7BF00F2B4E6 /* RswiftLibrary */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 51433D31298FD7BF00F2B4E6 /* XCRemoteSwiftPackageReference "R" */;
@@ -2231,10 +2242,25 @@
 			package = 51433D31298FD7BF00F2B4E6 /* XCRemoteSwiftPackageReference "R" */;
 			productName = RswiftLibrary;
 		};
-		51AAF0D32B00C5220078D6FE /* SwiftLintPlugin */ = {
+		519506B92BFC8BF9008D7B50 /* SwiftLintBuildToolPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
-			productName = "plugin:SwiftLintPlugin";
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		519506BB2BFC8C16008D7B50 /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		519506BD2BFC8C1E008D7B50 /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
+		};
+		519506BF2BFC8C28008D7B50 /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 51AAF0D22B00C5170078D6FE /* XCRemoteSwiftPackageReference "SwiftLint" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 		51D6CA582B1CCB54003F9D13 /* SFSafeSymbols */ = {
 			isa = XCSwiftPackageProductDependency;
