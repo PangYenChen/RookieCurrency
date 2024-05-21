@@ -1,0 +1,3 @@
+protocol ResultRefresher {
+    func refresh()
+}

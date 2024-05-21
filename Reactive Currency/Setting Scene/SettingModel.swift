@@ -136,7 +136,7 @@ extension SettingModel: BaseSettingModel {
         )
         
         return CurrencySelectionModel(currencySelectionStrategy: currencyOfInterestSelectionStrategy,
-                                      supportedCurrencyManager:.shared)
+                                      supportedCurrencyManager: .shared)
     }
 }
 
