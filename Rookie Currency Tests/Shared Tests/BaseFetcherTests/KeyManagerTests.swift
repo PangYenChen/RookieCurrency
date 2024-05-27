@@ -76,6 +76,4 @@ final class KeyManagerTests: XCTestCase {
             case .failure(let failure): XCTAssertEqual(failure as? KeyManager.Error, .runOutOfKey)
         }
     }
-    
-    
 }

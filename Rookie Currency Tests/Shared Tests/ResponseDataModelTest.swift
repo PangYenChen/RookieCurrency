@@ -29,7 +29,7 @@ final class ResponseDataModelTest: XCTestCase {
     /// 測試將 json decode 成 latest rate
     func testDecodeLatestRate() throws {
         // arrange
-        let latestData: Data = try XCTUnwrap(TestingData.TestingData.latestData)
+        let latestData: Data = TestingData.TestingData.latestData()
 
         // act
         let latestRate: ResponseDataModel.LatestRate = try ResponseDataModel.jsonDecoder
@@ -46,7 +46,7 @@ final class ResponseDataModelTest: XCTestCase {
         
         // act
         do {
-            let historicalRate: ResponseDataModel.HistoricalRate = try ResponseDataModel.jsonDecoder
+            let _: ResponseDataModel.HistoricalRate = try ResponseDataModel.jsonDecoder
                 .decode(ResponseDataModel.HistoricalRate.self,
                         from: historicalData)
             XCTFail("should fail to decode")

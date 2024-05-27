@@ -87,7 +87,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         from start: Date,
         completionHandler: @escaping (Result<Set<ResponseDataModel.HistoricalRate>, Error>) -> Void
     ) {
-        var dispatchGroup: DispatchGroup = DispatchGroup()
+        let dispatchGroup: DispatchGroup = DispatchGroup()
         var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
         let serialDispatchQueue: DispatchQueue = DispatchQueue(label: "historical.rate.set")
         

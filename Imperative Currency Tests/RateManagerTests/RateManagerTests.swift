@@ -89,7 +89,6 @@ final class RateManagerTests: XCTestCase {
     func testHistoricalRateFailure() throws {
         // arrange
         let fakeHistoricalRateProvider: TestDouble.HistoricalRateProvider = historicalRateProvider
-        let fakeLatestRateProvider: TestDouble.LatestRateProvider = latestRateProvider
         
         var receivedResult: Result<BaseRateManager.RateTuple, Error>?
         let expectedTimeOutError: URLError = URLError(URLError.Code.timedOut)
@@ -134,7 +133,6 @@ final class RateManagerTests: XCTestCase {
     
     func testLatestRateFailure() throws {
         // arrange
-        let fakeHistoricalRateProvider: TestDouble.HistoricalRateProvider = historicalRateProvider
         let fakeLatestRateProvider: TestDouble.LatestRateProvider = latestRateProvider
         
         var receivedResult: Result<BaseRateManager.RateTuple, Error>?
@@ -142,8 +140,7 @@ final class RateManagerTests: XCTestCase {
         
         let startDate: Date = Date(timeIntervalSince1970: 0)
         let numberOfDays: Int = 3
-        let historicalRateDateStrings: Set<String> = sut.historicalRateDateStrings(numberOfDaysAgo: numberOfDays,
-                                                                                   from: startDate)
+        
         let expectation: XCTestExpectation = expectation(description: "dispatch group notifies")
         let dummyDispatchQueue: DispatchQueue = DispatchQueue(label: "rate.manager.tests")
         
@@ -177,7 +174,6 @@ final class RateManagerTests: XCTestCase {
     
     func testHistoricalRateSet() throws {
         let fakeHistoricalRateProvider: TestDouble.HistoricalRateProvider = historicalRateProvider
-        let fakeLatestRateProvider: TestDouble.LatestRateProvider = latestRateProvider
         
         var receivedResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
         let expectedTimeOutError: URLError = URLError(URLError.Code.timedOut)
@@ -187,10 +183,9 @@ final class RateManagerTests: XCTestCase {
         let historicalRateDateStrings: Set<String> = sut.historicalRateDateStrings(numberOfDaysAgo: numberOfDays,
                                                                                    from: startDate)
         let expectation: XCTestExpectation = expectation(description: "dispatch group notifies")
-        let dummyDispatchQueue: DispatchQueue = DispatchQueue(label: "rate.manager.tests")
         
         // act
-        sut.historicalRateSet(numberOfDaysAgo: numberOfDays, 
+        sut.historicalRateSet(numberOfDaysAgo: numberOfDays,
                               from: startDate) { result in
             receivedResult = result
             expectation.fulfill()
