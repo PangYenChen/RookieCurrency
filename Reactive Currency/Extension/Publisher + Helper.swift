@@ -31,7 +31,7 @@ extension Publisher {
         drop(untilOutputFrom: other.first())
             .map { selfOutput in (selfOutput: selfOutput, token: UUID()) }
             .combineLatest(other) { tuple, otherOutput in (tuple: tuple, otherOutput: otherOutput) }
-            .removeDuplicates(by: { lhs, rhs in lhs.tuple.token == rhs.tuple.token })
+            .removeDuplicates { lhs, rhs in lhs.tuple.token == rhs.tuple.token }
             .map { tuple, otherOutput in (selfOutput: tuple.selfOutput, otherOutput: otherOutput) }
             .eraseToAnyPublisher()
     }
