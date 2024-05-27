@@ -114,7 +114,6 @@ opt_in_rules:
     - sorted_first_last
     - static_operator
     - strong_iboutlet
-    - superfluous_else
     - test_case_accessibility
     - toggle_bool
     - trailing_closure

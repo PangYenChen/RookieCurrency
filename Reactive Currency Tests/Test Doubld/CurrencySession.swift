@@ -12,7 +12,9 @@ extension TestDouble {
         private var passthroughSubjects: [PassthroughSubject<(data: Data, response: URLResponse), URLError>]
         
         func currencyDataTaskPublisher(for request: URLRequest) -> AnyPublisher<(data: Data, response: URLResponse), URLError> {
-            let passthroughSubject: PassthroughSubject<(data: Data, response: URLResponse), URLError> = PassthroughSubject<(data: Data, response: URLResponse), URLError>()
+            typealias LocalPassthroughSubject = PassthroughSubject<(data: Data, response: URLResponse), URLError>
+            
+            let passthroughSubject: LocalPassthroughSubject = LocalPassthroughSubject()
             passthroughSubjects.append(passthroughSubject)
             
             return passthroughSubject.eraseToAnyPublisher()
