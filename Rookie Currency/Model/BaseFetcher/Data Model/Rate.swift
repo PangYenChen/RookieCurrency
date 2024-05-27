@@ -101,7 +101,9 @@ extension ResponseDataModel.HistoricalRate: Encodable {
     /// Encodes this value into the given encoder.
     /// - Parameter encoder: The encoder to write data to.
     func encode(to encoder: Encoder) throws {
-        var container: KeyedEncodingContainer<ResponseDataModel.Rate<ResponseDataModel.Category.Historical>.CodingKeys> = encoder.container(keyedBy: CodingKeys.self)
+        typealias EncodingContainer = KeyedEncodingContainer<ResponseDataModel.Rate<ResponseDataModel.Category.Historical>.CodingKeys>
+        
+        var container: EncodingContainer = encoder.container(keyedBy: CodingKeys.self)
         try container.encode(dateString, forKey: .date)
         try container.encode(timestamp, forKey: .timestamp)
         try container.encode(rates, forKey: .rates)
