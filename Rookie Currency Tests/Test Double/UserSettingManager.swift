@@ -9,19 +9,12 @@ import Foundation
 
 extension TestDouble {
     class UserSettingManager: UserSettingManagerProtocol {
-        var numberOfDays: Int
+        var numberOfDays: Int = 3
         
-        var baseCurrencyCode: ResponseDataModel.CurrencyCode
+        var baseCurrencyCode: ResponseDataModel.CurrencyCode = "TWD"
         
-        var resultOrder: BaseResultModel.Order
+        var resultOrder: BaseResultModel.Order = .decreasing
         
-        var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode>
-        
-        init() {
-            numberOfDays = 3
-            baseCurrencyCode = "TWD"
-            resultOrder = .decreasing
-            currencyCodeOfInterest = ["USD", "JPY"]
-        }
+        var currencyCodeOfInterest: Set<ResponseDataModel.CurrencyCode> = ["USD", "JPY"]
     }
 }

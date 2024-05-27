@@ -77,8 +77,10 @@ class RateManager: BaseRateManager, RateManagerProtocol {
             }
             logger.debug("receive rate tuple for number of days: \(numberOfDays) from: \(start) with id: \(id)")
             
-            completionHandlerQueue.async { completionHandler(.success((latestRate: latestRate,
-                                                                       historicalRateSet: historicalRateSet))) }
+            completionHandlerQueue.async {
+                completionHandler(.success((latestRate: latestRate,
+                                            historicalRateSet: historicalRateSet)))
+            }
         }
     }
     
