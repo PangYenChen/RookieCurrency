@@ -17,7 +17,9 @@ class RateManager: BaseRateManager, RateManagerProtocol {
             .publisher
             .flatMap(historicalRateProvider.historicalRatePublisherFor(dateString:))
             .collect(numberOfDays)
-            .combineLatest(latestRateProvider.latestRatePublisher()) { historicalRateArray, latestRate in (latestRate: latestRate, historicalRateSet: Set(historicalRateArray)) }
+            .combineLatest(latestRateProvider.latestRatePublisher()) { historicalRateArray, latestRate in
+                (latestRate: latestRate, historicalRateSet: Set(historicalRateArray))
+            }
             .handleEvents(
                 receiveSubscription: { [unowned self] _ in
                     logger.debug("start requesting rate for number of days: \(numberOfDays) from: \(start) with id: \(id)")

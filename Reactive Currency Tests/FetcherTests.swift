@@ -2,7 +2,7 @@ import XCTest
 @testable import ReactiveCurrency
 import Combine
 
-class FetcherTests: XCTestCase {
+final class FetcherTests: XCTestCase {
     private var sut: Fetcher!
     
     private var keyManager: KeyManager!
