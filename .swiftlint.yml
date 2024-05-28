@@ -28,7 +28,7 @@ redundant_void_return:
     include_closures: false
     
 statement_position:
-    statement_mode: uncuddled_else
+    statement_mode: uncuddled_else # 目前有版本（0.55.1）有  bug：https://github.com/realm/SwiftLint/pull/4954
     
 switch_case_alignment:
     indented_cases: true
@@ -77,7 +77,7 @@ opt_in_rules:
     - force_unwrapping
     - identical_operands
     - implicit_return
-#    - indentation_width 好像有 bug，暫時先關掉
+#    - indentation_width 目前有版本（0.55.1）有 bug：其中一個是 https://github.com/realm/SwiftLint/issues/4961
     - joined_default_parameter
     - last_where
     - legacy_multiple

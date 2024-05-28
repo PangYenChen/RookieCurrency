@@ -408,11 +408,16 @@ extension TestingData {
         }()
         
         static let tooManyRequestData: Data = {
+            let firstMessage: String = "You have exceeded your daily/monthly API rate limit."
+            let secondMessage: String = "Please review and upgrade your subscription plan at https://promptapi.com/subscriptions to continue."
+            let message: String = [firstMessage, secondMessage].joined(separator: " ")
+            
             let jsonString: String = """
 {
-  "message": "You have exceeded your daily/monthly API rate limit. Please review and upgrade your subscription plan at https://promptapi.com/subscriptions to continue."
+  "message": "\(message)"
 }
 """
+            
             return Data(jsonString.utf8)
         }()
         
