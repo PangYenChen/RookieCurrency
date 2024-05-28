@@ -8,7 +8,7 @@ import Foundation
 @testable import ReactiveCurrency // dead code
 #endif
 
-// swiftlint:disable function_body_length file_length
+// swiftlint:disable function_body_length file_length closure_body_length
 
 extension TestingData {
     /// 用來放`Data`型別的測試資料的 name space
@@ -608,4 +608,4 @@ extension TestingData {
     }
 }
 
-// swiftlint:enable function_body_length
+// swiftlint:enable function_body_length closure_body_length
