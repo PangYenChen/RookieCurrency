@@ -8,7 +8,7 @@ import Foundation
 @testable import ReactiveCurrency // dead code
 #endif
 
-// swiftlint:disable function_body_length file_length
+// swiftlint:disable function_body_length file_length closure_body_length
 
 extension TestingData {
     /// 用來放`Data`型別的測試資料的 name space
@@ -18,7 +18,7 @@ extension TestingData {
                 .map({ Int($0.timeIntervalSince1970) })
                 .map(String.init(describing:)) else { return nil }
             
-            return """
+            let jsonString: String = """
 {
   "base": "USD",
   "date": "\(dateString)",
@@ -199,13 +199,19 @@ extension TestingData {
   "success": true,
   "timestamp": \(timestamp)
 }
-""".data(using: .utf8)
+"""
+            return Data(jsonString.utf8)
         }
         
-        static let latestData: Data? = """
+        static func latestData() -> Data {
+            let now: Date = Date.now
+            let timestamp: String = String(describing: Int(now.timeIntervalSince1970))
+            let dateString: String = AppUtility.requestDateFormatter.string(from: now)
+            
+            let jsonString: String = """
 {
   "base": "USD",
-  "date": "2023-03-11",
+  "date": "\(dateString)",
   "rates": {
     "AED": 3.67265,
     "AFN": 87.575743,
@@ -380,11 +386,14 @@ extension TestingData {
     "FakeCurrencyCodeInLatestRate": -2.0
   },
   "success": true,
-  "timestamp": 1678501623
+  "timestamp": \(timestamp)
 }
-""".data(using: .utf8)
+"""
+            return Data(jsonString.utf8)
+        }
         
-        static let invalidDateStringRateData: Data? = """
+        static let invalidDateStringRateData: Data = {
+            let jsonString: String = """
         {
         "base": "USD",
         "date": "invalid date string",
@@ -394,20 +403,28 @@ extension TestingData {
         "success": true,
         "timestamp": 1678501623
         }
-        """.data(using: .utf8)
+        """
+            return Data(jsonString.utf8)
+        }()
         
-        
-        static let tooManyRequestData: Data? = """
+        static let tooManyRequestData: Data = {
+            let firstMessage: String = "You have exceeded your daily/monthly API rate limit."
+            let secondMessage: String = "Please review and upgrade your subscription plan at https://promptapi.com/subscriptions to continue."
+            let message: String = [firstMessage, secondMessage].joined(separator: " ")
+            
+            let jsonString: String = """
 {
-  "message": "You have exceeded your daily/monthly API rate limit. Please review and upgrade your subscription plan at https://promptapi.com/subscriptions to continue."
+  "message": "\(message)"
 }
-""".data(using: .utf8)
+"""
+            
+            return Data(jsonString.utf8)
+        }()
         
-        static let invalidAPIKeyData: Data? = """
-Invalid authentication credentials
-""".data(using: .utf8)
+        static let invalidAPIKeyData: Data = Data("Invalid authentication credentials".utf8)
         
-        static let supportedSymbols: Data? = """
+        static let supportedSymbols: Data = {
+            let jsonString: String = """
 {
   "success" : true,
   "symbols" : {
@@ -583,14 +600,12 @@ Invalid authentication credentials
     "IMP" : "Manx pound"
   }
 }
-""".data(using: .utf8)
+"""
+            return Data(jsonString.utf8)
+        }()
         
-        static let testData: Data? = """
-{
-    "foo": 3
-}
-""".data(using: .utf8)
+        static let testData: Data = Data("{\"foo\": 3}".utf8)
     }
 }
 
-// swiftlint:enable function_body_length
+// swiftlint:enable function_body_length closure_body_length

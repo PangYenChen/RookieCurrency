@@ -6,9 +6,9 @@ final class WithLatestFromTests: XCTestCase {
     private var upstream: PassthroughSubject<Int, Never>!
     private var other: PassthroughSubject<String, Never>!
     
-    var receivedInt: Int?
-    var receivedString: String?
-    var receivedCompletion: Subscribers.Completion<Never>?
+    private var receivedInt: Int?
+    private var receivedString: String?
+    private var receivedCompletion: Subscribers.Completion<Never>?
     
     private var anyCancellableSet: Set<AnyCancellable>!
 
@@ -20,7 +20,7 @@ final class WithLatestFromTests: XCTestCase {
         
         upstream
             .withLatestFrom(other)
-            .sink(receiveCompletion: { [unowned self] completion in receivedCompletion = completion},
+            .sink(receiveCompletion: { [unowned self] completion in receivedCompletion = completion },
                   receiveValue: { [unowned self] int, string in receivedInt = int; receivedString = string })
             .store(in: &anyCancellableSet)
         

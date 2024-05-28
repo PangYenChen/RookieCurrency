@@ -168,7 +168,8 @@ final class ResultModelTest: XCTestCase {
         let currencyCodeInResponseOfLatestAndHistoricalRate: Set<ResponseDataModel.CurrencyCode> = ["USD", "EUR", "JPY", "GBP", "CNY", "CAD", "AUD", "CHF"]
         let currencyCodeNotInHistoricalRate: ResponseDataModel.CurrencyCode = "FakeCurrencyCodeInLatestRate"
         let currencyCodeNotInLatestRate: ResponseDataModel.CurrencyCode = "FakeCurrencyCodeInHistoricalRate"
-        userSettingManagerStub.currencyCodeOfInterest = currencyCodeInResponseOfLatestAndHistoricalRate.union([currencyCodeNotInHistoricalRate, currencyCodeNotInLatestRate])
+        userSettingManagerStub.currencyCodeOfInterest = currencyCodeInResponseOfLatestAndHistoricalRate
+            .union([currencyCodeNotInHistoricalRate, currencyCodeNotInLatestRate])
         
         let fakeRateManager: TestDouble.RateManager = rateManager
         

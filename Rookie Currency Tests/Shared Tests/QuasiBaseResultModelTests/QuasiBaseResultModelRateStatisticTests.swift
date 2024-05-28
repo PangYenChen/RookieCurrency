@@ -8,7 +8,7 @@ import XCTest
 @testable import ReactiveCurrency // dead code
 #endif
 
-class QuasiBaseResultModelRateStatisticTests: XCTestCase {
+final class QuasiBaseResultModelRateStatisticTests: XCTestCase {
     private let sut: QuasiBaseResultModel.RateStatistic.Type = QuasiBaseResultModel.RateStatistic.self
     
     func testInit() throws {

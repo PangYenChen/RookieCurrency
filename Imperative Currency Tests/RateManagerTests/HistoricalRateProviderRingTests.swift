@@ -1,7 +1,7 @@
 import XCTest
 @testable import ImperativeCurrency
 
-class HistoricalRateProviderRingTests: XCTestCase {
+final class HistoricalRateProviderRingTests: XCTestCase {
     private var sut: HistoricalRateProviderRing!
     
     private var historicalRateStorage: TestDouble.HistoricalRateStorage!

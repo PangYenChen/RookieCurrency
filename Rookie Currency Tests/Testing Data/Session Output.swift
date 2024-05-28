@@ -4,7 +4,7 @@ import XCTest
 extension TestingData {
     enum CurrencySessionTuple {
         static func latestRate() throws -> (data: Data?, response: URLResponse?, error: Error?) {
-            let data: Data? = TestingData.latestData
+            let data: Data = TestingData.latestData()
             let url: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             let statusCode: Int = 200
             
@@ -84,7 +84,7 @@ extension TestingData {
         }
         
         static func testTuple() throws -> (data: Data?, response: URLResponse?, error: Error?) {
-            let data: Data? = TestingData.testData
+            let data: Data = TestingData.testData
             let url: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             let statusCode: Int = 200
             
