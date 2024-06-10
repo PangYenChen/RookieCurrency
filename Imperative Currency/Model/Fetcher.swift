@@ -4,7 +4,7 @@ class Fetcher: BaseFetcher {
     func fetch<Endpoint: EndpointProtocol>(
         _ endpoint: Endpoint,
         id: String = UUID().uuidString, // TODO: 全部的 endpoint 都有自己的 id 後，這個預設值要刪掉
-        completionHandler: @escaping CompletionHandler<Endpoint.ResponseType>
+        resultHandler: @escaping ResultHandler<Endpoint.ResponseType>
     ) {
         do {
             let (urlRequest, apiKey): (URLRequest, String) = try createRequestTupleFor(endpoint)
@@ -17,24 +17,24 @@ class Fetcher: BaseFetcher {
                     let data: Data = try venderResultFor(data: data, urlResponse: urlResponse, error: error)
                         .get()
                     
-                    completionHandler(Result { try jsonDecoder.decode(Endpoint.ResponseType.self, from: data) })
+                    resultHandler(Result { try jsonDecoder.decode(Endpoint.ResponseType.self, from: data) })
                     logger.debug("\(endpoint) with id \(id) using api key: \(apiKey) finishes with data")
                 }
                 catch Error.invalidAPIKey, Error.runOutOfQuota {
                     logger.debug("\(endpoint) with id \(id) deprecates api key: \(apiKey)")
                     deprecate(apiKey)
                     
-                    fetch(endpoint, id: id, completionHandler: completionHandler)
+                    fetch(endpoint, id: id, resultHandler: resultHandler)
                 }
                 catch {
                     logger.debug("\(endpoint) with id \(id) using api key: \(apiKey) fails with error:\(error)")
-                    completionHandler(.failure(error))
+                    resultHandler(.failure(error))
                 }
             }
         }
         catch {
             logger.debug("\(endpoint) with id \(id) fails with error:\(error)")
-            completionHandler(.failure(error))
+            resultHandler(.failure(error))
         }
     }
 }
@@ -59,22 +59,22 @@ extension Fetcher: HistoricalRateProviderProtocol {
     func historicalRateFor(dateString: String,
                            id: String,
                            resultHandler: @escaping HistoricalRateResultHandler) {
-        fetch(Endpoints.Historical(dateString: dateString), id: id, completionHandler: resultHandler)
+        fetch(Endpoints.Historical(dateString: dateString), id: id, resultHandler: resultHandler)
     }
 }
 
 extension Fetcher: LatestRateProviderProtocol {
-    func latestRate(resultHandler latestRateResultHandler: @escaping LatestRateResultHandler) {
-        fetch(Endpoints.Latest(), completionHandler: latestRateResultHandler)
+    func latestRate(resultHandler: @escaping LatestRateResultHandler) {
+        fetch(Endpoints.Latest(), resultHandler: resultHandler)
     }
 }
 
 extension Fetcher: SupportedCurrencyProviderProtocol {
-    func supportedCurrency(completionHandler: @escaping SupportedCurrencyHandler) {
-        fetch(Endpoints.SupportedSymbols(), completionHandler: completionHandler)
+    func supportedCurrency(resultHandler: @escaping SupportedCurrencyResultHandler) {
+        fetch(Endpoints.SupportedSymbols(), resultHandler: resultHandler)
     }
 }
 
 extension Fetcher {
-    typealias CompletionHandler<ResponseType> = (_ result: Result<ResponseType, Swift.Error>) -> Void
+    typealias ResultHandler<ResponseType> = (_ result: Result<ResponseType, Swift.Error>) -> Void
 }

@@ -52,7 +52,7 @@ final class HistoricalRateProviderRingTests: XCTestCase {
         // act
         XCTAssertNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
         
-        sut.historicalRatePublisherFor(dateString: dummyDateString)
+        sut.historicalRatePublisherFor(dateString: dummyDateString, id: UUID().uuidString)
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { rate in receivedRate = rate })
             .store(in: &anyCancellableSet)
@@ -86,7 +86,7 @@ final class HistoricalRateProviderRingTests: XCTestCase {
         receivedRate = nil
         
         // act
-        sut.historicalRatePublisherFor(dateString: dummyDateString)
+        sut.historicalRatePublisherFor(dateString: dummyDateString, id: UUID().uuidString)
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { rate in receivedRate = rate })
             .store(in: &anyCancellableSet)
@@ -122,7 +122,7 @@ final class HistoricalRateProviderRingTests: XCTestCase {
         // act
         XCTAssertNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
         
-        sut.historicalRatePublisherFor(dateString: dummyDateString)
+        sut.historicalRatePublisherFor(dateString: dummyDateString, id: UUID().uuidString)
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { rate in receivedRate = rate })
             .store(in: &anyCancellableSet)

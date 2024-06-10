@@ -72,7 +72,7 @@ final class FetcherTests: XCTestCase {
         let expectedDateString: ResponseDataModel.CurrencyCode = "1970-01-01"
         
         // act
-        sut.historicalRateFor(dateString: expectedDateString) { result in receivedHistoricalRateResult = result }
+        sut.historicalRateFor(dateString: expectedDateString, id: UUID().uuidString) { result in receivedHistoricalRateResult = result }
         
         do {
             let historicalRateTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData

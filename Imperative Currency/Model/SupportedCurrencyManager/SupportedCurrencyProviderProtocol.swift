@@ -1,7 +1,7 @@
 protocol SupportedCurrencyProviderProtocol {
-    func supportedCurrency(completionHandler: @escaping SupportedCurrencyHandler)
+    func supportedCurrency(resultHandler: @escaping SupportedCurrencyResultHandler)
 }
 
 extension SupportedCurrencyProviderProtocol {
-    typealias SupportedCurrencyHandler = (_ supportedCurrencyResult: Result<ResponseDataModel.SupportedSymbols, Error>) -> Void
+    typealias SupportedCurrencyResultHandler = (_ supportedCurrencyResult: Result<ResponseDataModel.SupportedSymbols, Error>) -> Void
 }

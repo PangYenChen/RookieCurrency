@@ -88,7 +88,7 @@ final class FetcherTests: XCTestCase {
         // act
         do {
             let dummyDateString: ResponseDataModel.CurrencyCode = "1970-01-01"
-            sut.historicalRatePublisherFor(dateString: dummyDateString)
+            sut.historicalRatePublisherFor(dateString: dummyDateString, id: UUID().uuidString)
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { historicalRate in receivedValue = historicalRate })
                 .store(in: &anyCancellableSet)
