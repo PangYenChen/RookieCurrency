@@ -97,7 +97,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
             .forEach { historicalRateDateString in
                 dispatchGroup.enter()
                 
-                historicalRateProvider.historicalRateFor(dateString: historicalRateDateString) { result in
+                historicalRateProvider.historicalRateFor(dateString: historicalRateDateString, id: UUID().uuidString) { result in
                     serialDispatchQueue.async {
                         switch historicalRateSetResult {
                             case .success(let historicalRateSet):

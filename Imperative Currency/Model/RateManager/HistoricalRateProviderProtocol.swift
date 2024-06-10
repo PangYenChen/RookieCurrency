@@ -2,6 +2,7 @@ import Foundation
 
 protocol HistoricalRateProviderProtocol: BaseHistoricalRateProviderProtocol {
     func historicalRateFor(dateString: String,
+                           id: String,
                            resultHandler: @escaping HistoricalRateResultHandler)
 }
 
