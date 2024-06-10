@@ -1,5 +1,5 @@
 protocol SupportedCurrencyProviderProtocol {
-    func supportedCurrency(resultHandler: @escaping SupportedCurrencyResultHandler)
+    func supportedCurrency(id: String, resultHandler: @escaping SupportedCurrencyResultHandler)
 }
 
 extension SupportedCurrencyProviderProtocol {

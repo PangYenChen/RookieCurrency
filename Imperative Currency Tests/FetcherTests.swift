@@ -105,7 +105,7 @@ final class FetcherTests: XCTestCase {
         var receivedResult: Result<ResponseDataModel.SupportedSymbols, Error>?
         
         // act
-        sut.supportedCurrency { result in receivedResult = result }
+        sut.supportedCurrency(id: UUID().uuidString) { result in receivedResult = result }
         do {
             let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
                 .CurrencySessionTuple
@@ -139,7 +139,7 @@ final class FetcherTests: XCTestCase {
         }()
         
         // act
-        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        sut.fetch(dummyEndpoint, id: UUID().uuidString) { result in receivedResult = result }
         
         do {
             let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
@@ -175,7 +175,7 @@ final class FetcherTests: XCTestCase {
         }()
         
         // act
-        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        sut.fetch(dummyEndpoint, id: UUID().uuidString) { result in receivedResult = result }
         
         do /*session result in timeout*/ {
             let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
@@ -219,7 +219,7 @@ final class FetcherTests: XCTestCase {
         }()
         
         // act
-        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        sut.fetch(dummyEndpoint, id: UUID().uuidString) { result in receivedResult = result }
         
         do /*session result in too many request*/ {
             let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
@@ -269,7 +269,7 @@ final class FetcherTests: XCTestCase {
         }()
         
         // act
-        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        sut.fetch(dummyEndpoint, id: UUID().uuidString) { result in receivedResult = result }
         
         do /*session result in too many request*/ {
             for _ in 0..<dummyAPIKeys.count {
@@ -295,7 +295,7 @@ final class FetcherTests: XCTestCase {
         receivedResult = nil
         
         // act
-        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        sut.fetch(dummyEndpoint, id: UUID().uuidString) { result in receivedResult = result }
         
         // assert
         do {
@@ -332,7 +332,7 @@ final class FetcherTests: XCTestCase {
         }()
         
         // act
-        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        sut.fetch(dummyEndpoint, id: UUID().uuidString) { result in receivedResult = result }
         
         do /*session result in invalid api key*/ {
             let tuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData
@@ -381,7 +381,7 @@ final class FetcherTests: XCTestCase {
         }()
         
         // act
-        sut.fetch(dummyEndpoint) { result in receivedResult = result }
+        sut.fetch(dummyEndpoint, id: UUID().uuidString) { result in receivedResult = result }
         
         do /*session result in invalid api key*/ {
             for _ in 0..<dummyAPIKeys.count {
