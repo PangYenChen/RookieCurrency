@@ -3,7 +3,7 @@ import Foundation
 class Fetcher: BaseFetcher {
     func fetch<Endpoint: EndpointProtocol>(
         _ endpoint: Endpoint,
-        id: String = UUID().uuidString, // TODO: 全部的 endpoint 都有自己的 id 後，這個預設值要刪掉
+        id: String = UUID().uuidString, // TODO: [2024/06/11] 全部的 endpoint 都有自己的 id 後，這個預設值要刪掉
         resultHandler: @escaping ResultHandler<Endpoint.ResponseType>
     ) {
         do {
@@ -64,8 +64,10 @@ extension Fetcher: HistoricalRateProviderProtocol {
 }
 
 extension Fetcher: LatestRateProviderProtocol {
-    func latestRate(resultHandler: @escaping LatestRateResultHandler) {
-        fetch(Endpoints.Latest(), resultHandler: resultHandler)
+    func latestRate(id: String, resultHandler: @escaping LatestRateResultHandler) {
+        fetch(Endpoints.Latest(),
+              id: id,
+              resultHandler: resultHandler)
     }
 }
 

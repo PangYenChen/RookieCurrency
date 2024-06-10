@@ -40,7 +40,7 @@ final class FetcherTests: XCTestCase {
         var receivedLatestRateResult: Result<ResponseDataModel.LatestRate, Error>?
         
         // act
-        sut.latestRate { result in receivedLatestRateResult = result }
+        sut.latestRate(id: UUID().uuidString) { result in receivedLatestRateResult = result }
         
         do {
             let latestRateTuple: (data: Data?, response: URLResponse?, error: Error?) = try TestingData.CurrencySessionTuple.latestRate()

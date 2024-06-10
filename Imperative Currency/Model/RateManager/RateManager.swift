@@ -48,7 +48,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         do /*request latest rate*/ {
             dispatchGroup.enter()
             
-            latestRateProvider.latestRate { [unowned self] result in
+            latestRateProvider.latestRate(id: UUID().uuidString) { [unowned self] result in
                 switch result {
                     case .success(let latestRate):
                         latestRateResult = .success(latestRate)
