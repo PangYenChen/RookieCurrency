@@ -14,7 +14,7 @@ extension TestDouble {
         private let passthroughSubject: PassthroughSubject<ResponseDataModel.LatestRate, Error>
         
         // MARK: - instance method
-        func latestRatePublisher() -> AnyPublisher<ResponseDataModel.LatestRate, Error> {
+        func latestRatePublisher(id: String) -> AnyPublisher<ResponseDataModel.LatestRate, Error> {
             passthroughSubject.eraseToAnyPublisher()
         }
         

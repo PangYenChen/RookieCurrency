@@ -50,7 +50,7 @@ extension Fetcher: HistoricalRateProviderProtocol {
 }
 
 extension Fetcher: LatestRateProviderProtocol {
-    func latestRatePublisher() -> AnyPublisher<ResponseDataModel.LatestRate, Swift.Error> {
+    func latestRatePublisher(id: String) -> AnyPublisher<ResponseDataModel.LatestRate, Swift.Error> {
         publisher(for: Endpoints.Latest())
     }
 }

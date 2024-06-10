@@ -18,7 +18,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                 return historicalRateProvider.historicalRatePublisherFor(dateString: historicalRateDateString, id: UUID().uuidString)
             }
             .collect(numberOfDays)
-            .combineLatest(latestRateProvider.latestRatePublisher()) { historicalRateArray, latestRate in
+            .combineLatest(latestRateProvider.latestRatePublisher(id: UUID().uuidString)) { historicalRateArray, latestRate in
                 (latestRate: latestRate, historicalRateSet: Set(historicalRateArray))
             }
             .eraseToAnyPublisher()

@@ -50,7 +50,7 @@ final class FetcherTests: XCTestCase {
         var receivedCompletion: Subscribers.Completion<Error>?
         
         // act
-        sut.latestRatePublisher()
+        sut.latestRatePublisher(id: UUID().uuidString)
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { latestRate in receivedValue = latestRate })
             .store(in: &anyCancellableSet)
