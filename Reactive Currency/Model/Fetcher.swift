@@ -4,7 +4,7 @@ import Combine
 class Fetcher: BaseFetcher {
     func publisher<Endpoint: EndpointProtocol>(
         for endpoint: Endpoint,
-        id: String = UUID().uuidString
+        id: String = UUID().uuidString // TODO: 全部的 endpoint 都有自己的 id 後，這個預設值要刪掉
     ) -> AnyPublisher<Endpoint.ResponseType, Swift.Error> {
         createRequestTupleFor(endpoint)
             .publisher
@@ -44,8 +44,8 @@ class Fetcher: BaseFetcher {
 }
 
 extension Fetcher: HistoricalRateProviderProtocol {
-    func historicalRatePublisherFor(dateString: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Swift.Error> {
-        publisher(for: Endpoints.Historical(dateString: dateString))
+    func historicalRatePublisherFor(dateString: String, id: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, Swift.Error> {
+        publisher(for: Endpoints.Historical(dateString: dateString), id: id)
     }
 }
 
