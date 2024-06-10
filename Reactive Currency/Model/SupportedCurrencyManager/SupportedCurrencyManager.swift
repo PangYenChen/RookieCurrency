@@ -26,7 +26,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
                     return currentPublisher
                 }
                 else {
-                    let currentPublisher: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> = supportedCurrencyProvider.supportedCurrencyPublisher()
+                    let currentPublisher: AnyPublisher<[ResponseDataModel.CurrencyCode: String], Error> = supportedCurrencyProvider.supportedCurrencyPublisher(id: UUID().uuidString)
                         .map { $0.symbols }
                         .handleEvents(
                             receiveOutput: { [unowned self] supportedCurrencyDescriptionDictionary in

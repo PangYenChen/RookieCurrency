@@ -128,7 +128,7 @@ final class FetcherTests: XCTestCase {
         var receivedCompletion: Subscribers.Completion<Error>?
         
         // act
-        sut.supportedCurrencyPublisher()
+        sut.supportedCurrencyPublisher(id: UUID().uuidString)
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
@@ -168,7 +168,7 @@ final class FetcherTests: XCTestCase {
         do {
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             sut
-                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)))
+                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)), id: UUID().uuidString)
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)
@@ -205,7 +205,7 @@ final class FetcherTests: XCTestCase {
         do {
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             sut
-                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)))
+                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)), id: UUID().uuidString)
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)
@@ -250,7 +250,7 @@ final class FetcherTests: XCTestCase {
         do {
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             sut
-                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)))
+                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)), id: UUID().uuidString)
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)
@@ -305,7 +305,7 @@ final class FetcherTests: XCTestCase {
         // act
         do {
             sut
-                .publisher(for: dummyEndpoint)
+                .publisher(for: dummyEndpoint, id: UUID().uuidString)
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)
@@ -343,7 +343,7 @@ final class FetcherTests: XCTestCase {
         
         // act
         sut
-            .publisher(for: dummyEndpoint)
+            .publisher(for: dummyEndpoint, id: UUID().uuidString)
             .sink(receiveCompletion: { completion in receivedCompletion = completion },
                   receiveValue: { value in receivedValue = value })
             .store(in: &anyCancellableSet)
@@ -383,7 +383,7 @@ final class FetcherTests: XCTestCase {
         do {
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             sut
-                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)))
+                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)), id: UUID().uuidString)
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)
@@ -434,7 +434,7 @@ final class FetcherTests: XCTestCase {
         do {
             let dummyURL: URL = try XCTUnwrap(URL(string: "https://www.apple.com"))
             sut
-                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)))
+                .publisher(for: Endpoints.TestEndpoint(urlResult: .success(dummyURL)), id: UUID().uuidString)
                 .sink(receiveCompletion: { completion in receivedCompletion = completion },
                       receiveValue: { value in receivedValue = value })
                 .store(in: &anyCancellableSet)

@@ -4,7 +4,7 @@ import Combine
 class Fetcher: BaseFetcher {
     func publisher<Endpoint: EndpointProtocol>(
         for endpoint: Endpoint,
-        id: String = UUID().uuidString // TODO: 全部的 endpoint 都有自己的 id 後，這個預設值要刪掉
+        id: String
     ) -> AnyPublisher<Endpoint.ResponseType, Swift.Error> {
         createRequestTupleFor(endpoint)
             .publisher
@@ -51,12 +51,12 @@ extension Fetcher: HistoricalRateProviderProtocol {
 
 extension Fetcher: LatestRateProviderProtocol {
     func latestRatePublisher(id: String) -> AnyPublisher<ResponseDataModel.LatestRate, Swift.Error> {
-        publisher(for: Endpoints.Latest())
+        publisher(for: Endpoints.Latest(), id: id)
     }
 }
 
 extension Fetcher: SupportedCurrencyProviderProtocol {
-    func supportedCurrencyPublisher() -> AnyPublisher<ResponseDataModel.SupportedSymbols, Swift.Error> {
-        publisher(for: Endpoints.SupportedSymbols())
+    func supportedCurrencyPublisher(id: String) -> AnyPublisher<ResponseDataModel.SupportedSymbols, Swift.Error> {
+        publisher(for: Endpoints.SupportedSymbols(), id: id)
     }
 }
