@@ -42,7 +42,8 @@ final class HistoricalRateProviderRingTests: XCTestCase {
         // act
         XCTAssertNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
         
-        sut.historicalRateFor(dateString: dummyDateString, id: UUID().uuidString) { rateResult in receivedRateResult = rateResult }
+        sut.historicalRateFor(dateString: dummyDateString,
+                              traceIdentifier: UUID().uuidString) { rateResult in receivedRateResult = rateResult }
         
         XCTAssertNotNil(nextHistoricalRateProvider.dateStringAndHistoricalRateResultHandlerDictionary[dummyDateString])
         
@@ -65,7 +66,8 @@ final class HistoricalRateProviderRingTests: XCTestCase {
         receivedRateResult = nil
         
         // act
-        sut.historicalRateFor(dateString: dummyDateString, id: UUID().uuidString) { rateResult in receivedRateResult = rateResult }
+        sut.historicalRateFor(dateString: dummyDateString,
+                              traceIdentifier: UUID().uuidString) { rateResult in receivedRateResult = rateResult }
         
         // assert
         XCTAssertNil(nextHistoricalRateProvider.dateStringAndHistoricalRateResultHandlerDictionary[dummyDateString])
@@ -90,7 +92,8 @@ final class HistoricalRateProviderRingTests: XCTestCase {
         // act
         XCTAssertNil(historicalRateStorage.dateStringAndRateDirectory[dummyDateString])
         
-        sut.historicalRateFor(dateString: dummyDateString, id: UUID().uuidString) { rateResult in receivedRateResult = rateResult }
+        sut.historicalRateFor(dateString: dummyDateString,
+                              traceIdentifier: UUID().uuidString) { rateResult in receivedRateResult = rateResult }
         
         XCTAssertNotNil(nextHistoricalRateProvider.dateStringAndHistoricalRateResultHandlerDictionary[dummyDateString])
         

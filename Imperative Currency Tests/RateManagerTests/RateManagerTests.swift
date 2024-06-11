@@ -186,7 +186,8 @@ final class RateManagerTests: XCTestCase {
         
         // act
         sut.historicalRateSet(numberOfDaysAgo: numberOfDays,
-                              from: startDate) { result in
+                              from: startDate,
+                              traceIdentifier: UUID().uuidString) { result in
             receivedResult = result
             expectation.fulfill()
         }

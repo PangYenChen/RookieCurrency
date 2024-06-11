@@ -11,7 +11,7 @@ extension TestDouble {
         
         private(set) var numberOfFunctionCall: Int
         
-        func supportedCurrency(id: String, resultHandler: @escaping SupportedCurrencyResultHandler) {
+        func supportedCurrency(traceIdentifier: String, resultHandler: @escaping SupportedCurrencyResultHandler) {
             self.completionHandler = resultHandler
             numberOfFunctionCall += 1
         }

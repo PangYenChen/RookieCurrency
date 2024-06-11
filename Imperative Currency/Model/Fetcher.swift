@@ -3,14 +3,14 @@ import Foundation
 class Fetcher: BaseFetcher {
     func fetch<Endpoint: EndpointProtocol>(
         _ endpoint: Endpoint,
-        id: String,
+        traceIdentifier: String,
         resultHandler: @escaping ResultHandler<Endpoint.ResponseType>
     ) {
         do {
             let (urlRequest, apiKey): (URLRequest, String) = try createRequestTupleFor(endpoint)
                 .get()
             
-            logger.debug("\(endpoint) with id \(id) starts requesting using api key: \(apiKey)")
+            logger.debug("\(endpoint) with id \(traceIdentifier) starts requesting using api key: \(apiKey)")
             
             currencySession.currencyDataTask(with: urlRequest) { [unowned self] data, urlResponse, error in
                 do {
@@ -18,22 +18,22 @@ class Fetcher: BaseFetcher {
                         .get()
                     
                     resultHandler(Result { try jsonDecoder.decode(Endpoint.ResponseType.self, from: data) })
-                    logger.debug("\(endpoint) with id \(id) using api key: \(apiKey) finishes with data")
+                    logger.debug("\(endpoint) with id \(traceIdentifier) using api key: \(apiKey) finishes with data")
                 }
                 catch Error.invalidAPIKey, Error.runOutOfQuota {
-                    logger.debug("\(endpoint) with id \(id) deprecates api key: \(apiKey)")
+                    logger.debug("\(endpoint) with id \(traceIdentifier) deprecates api key: \(apiKey)")
                     deprecate(apiKey)
                     
-                    fetch(endpoint, id: id, resultHandler: resultHandler)
+                    fetch(endpoint, traceIdentifier: traceIdentifier, resultHandler: resultHandler)
                 }
                 catch {
-                    logger.debug("\(endpoint) with id \(id) using api key: \(apiKey) fails with error:\(error)")
+                    logger.debug("\(endpoint) with id \(traceIdentifier) using api key: \(apiKey) fails with error:\(error)")
                     resultHandler(.failure(error))
                 }
             }
         }
         catch {
-            logger.debug("\(endpoint) with id \(id) fails with error:\(error)")
+            logger.debug("\(endpoint) with id \(traceIdentifier) fails with error:\(error)")
             resultHandler(.failure(error))
         }
     }
@@ -57,21 +57,21 @@ private extension Fetcher {
 
 extension Fetcher: HistoricalRateProviderProtocol {
     func historicalRateFor(dateString: String,
-                           id: String,
+                           traceIdentifier: String,
                            resultHandler: @escaping HistoricalRateResultHandler) {
-        fetch(Endpoints.Historical(dateString: dateString), id: id, resultHandler: resultHandler)
+        fetch(Endpoints.Historical(dateString: dateString), traceIdentifier: traceIdentifier, resultHandler: resultHandler)
     }
 }
 
 extension Fetcher: LatestRateProviderProtocol {
-    func latestRate(id: String, resultHandler: @escaping LatestRateResultHandler) {
-        fetch(Endpoints.Latest(), id: id, resultHandler: resultHandler)
+    func latestRate(traceIdentifier: String, resultHandler: @escaping LatestRateResultHandler) {
+        fetch(Endpoints.Latest(), traceIdentifier: traceIdentifier, resultHandler: resultHandler)
     }
 }
 
 extension Fetcher: SupportedCurrencyProviderProtocol {
-    func supportedCurrency(id: String, resultHandler: @escaping SupportedCurrencyResultHandler) {
-        fetch(Endpoints.SupportedSymbols(), id: id, resultHandler: resultHandler)
+    func supportedCurrency(traceIdentifier: String, resultHandler: @escaping SupportedCurrencyResultHandler) {
+        fetch(Endpoints.SupportedSymbols(), traceIdentifier: traceIdentifier, resultHandler: resultHandler)
     }
 }
 

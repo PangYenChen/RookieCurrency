@@ -1,7 +1,7 @@
 import Foundation
 
 protocol LatestRateProviderProtocol {
-    func latestRate(id: String, resultHandler: @escaping LatestRateResultHandler)
+    func latestRate(traceIdentifier: String, resultHandler: @escaping LatestRateResultHandler)
 }
 
 extension LatestRateProviderProtocol {

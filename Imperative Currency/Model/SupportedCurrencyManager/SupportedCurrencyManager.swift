@@ -28,7 +28,7 @@ class SupportedCurrencyManager: BaseSupportedCurrencyManager {
                 
                 guard 1 == descriptionHandlers.count else { return }
                 
-                supportedCurrencyProvider.supportedCurrency(id: UUID().uuidString) { [unowned self] result in
+                supportedCurrencyProvider.supportedCurrency(traceIdentifier: UUID().uuidString) { [unowned self] result in
                     internalSerialDispatchQueue.async { [unowned self] in
                         let result: Result<[ResponseDataModel.CurrencyCode: String], Error> = result.map { supportedSymbols in supportedSymbols.symbols }
                         
