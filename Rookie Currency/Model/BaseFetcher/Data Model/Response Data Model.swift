@@ -9,7 +9,7 @@ extension ResponseDataModel {
     
     static let jsonEncoder: JSONEncoder = {
         let jsonEncoder: JSONEncoder = JSONEncoder()
-        jsonEncoder.outputFormatting = .prettyPrinted
+        jsonEncoder.outputFormatting = [.prettyPrinted, .sortedKeys]
         return jsonEncoder
     }()
 }
