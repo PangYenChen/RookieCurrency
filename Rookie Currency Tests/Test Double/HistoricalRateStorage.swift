@@ -14,6 +14,8 @@ extension TestDouble {
         
         private(set) var dateStringAndRateDirectory: [String: ResponseDataModel.HistoricalRate]
         
+        var description: String { String(describing: Self.self) }
+        
         func readFor(dateString: String) -> ResponseDataModel.HistoricalRate? {
             dateStringAndRateDirectory[dateString]
         }
