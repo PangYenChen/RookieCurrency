@@ -14,7 +14,7 @@ class KeyManager {
         
         usedAPIKeys = []
         
-        logger = LoggerFactory.make(category: String(describing: KeyManager.self))
+        logger = LoggerFactory.make(category: String(describing: Self.self))
     }
     
     private var unusedAPIKeys: Set<String>

@@ -10,7 +10,7 @@ class BaseFetcher {
         self.currencySession = currencySession
         
         jsonDecoder = ResponseDataModel.jsonDecoder
-        logger = LoggerFactory.make(category: String(describing: Fetcher.self))
+        logger = LoggerFactory.make(category: String(describing: Self.self))
     }
     
     // MARK: - instance properties

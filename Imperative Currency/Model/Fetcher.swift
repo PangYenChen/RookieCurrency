@@ -10,30 +10,30 @@ class Fetcher: BaseFetcher {
             let (urlRequest, apiKey): (URLRequest, String) = try createRequestTupleFor(endpoint)
                 .get()
             
-            logger.debug("\(endpoint) with id \(traceIdentifier) starts requesting using api key: \(apiKey)")
+            logger.debug("trace identifier: \(traceIdentifier), endpoint: \(endpoint), starts requesting, api key: \(apiKey)")
             
             currencySession.currencyDataTask(with: urlRequest) { [unowned self] data, urlResponse, error in
                 do {
                     let data: Data = try venderResultFor(data: data, urlResponse: urlResponse, error: error)
                         .get()
                     
+                    logger.debug("trace identifier: \(traceIdentifier), endpoint: \(endpoint), receive data, api key: \(apiKey)")
                     resultHandler(Result { try jsonDecoder.decode(Endpoint.ResponseType.self, from: data) })
-                    logger.debug("\(endpoint) with id \(traceIdentifier) using api key: \(apiKey) finishes with data")
                 }
                 catch Error.invalidAPIKey, Error.runOutOfQuota {
-                    logger.debug("\(endpoint) with id \(traceIdentifier) deprecates api key: \(apiKey)")
+                    logger.debug("trace identifier: \(traceIdentifier), endpoint: \(endpoint), deprecates api key: \(apiKey)")
                     deprecate(apiKey)
                     
                     fetch(endpoint, traceIdentifier: traceIdentifier, resultHandler: resultHandler)
                 }
                 catch {
-                    logger.debug("\(endpoint) with id \(traceIdentifier) using api key: \(apiKey) fails with error:\(error)")
+                    logger.debug("trace identifier: \(traceIdentifier), endpoint: \(endpoint), fails with error:\(error), api key: \(apiKey)")
                     resultHandler(.failure(error))
                 }
             }
         }
         catch {
-            logger.debug("\(endpoint) with id \(traceIdentifier) fails with error:\(error)")
+            logger.debug("trace identifier: \(traceIdentifier), endpoint: \(endpoint), fails with error:\(error)")
             resultHandler(.failure(error))
         }
     }

@@ -18,7 +18,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                     completionHandlerQueue: DispatchQueue,
                     completionHandler: @escaping CompletionHandler) {
         let traceIdentifier: String = UUID().uuidString
-        logger.debug("start requesting rate for number of days: \(numberOfDays) from: \(start) with id: \(traceIdentifier)")
+        logger.debug("trace identifier: \(traceIdentifier), start requesting rate for number of days: \(numberOfDays) from: \(start)")
         
         let dispatchGroup: DispatchGroup = DispatchGroup()
         var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
@@ -34,7 +34,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                             historicalRateSetResult = .success(historicalRateSet)
                         case .failure(let failure):
                             historicalRateSetResult = .failure(failure)
-                            logger.debug("receive failure: \(failure) for historical rate and number of days: \(numberOfDays) from: \(start) with id: \(traceIdentifier)")
+                            logger.debug("trace identifier: \(traceIdentifier), receive failure: \(failure) from historical rate for number of days: \(numberOfDays) from: \(start)")
                             completionHandlerQueue.async { completionHandler(.failure(failure)) }
                     }
                     
@@ -54,7 +54,8 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                         latestRateResult = .success(latestRate)
                     case .failure(let failure):
                         latestRateResult = .failure(failure)
-                        logger.debug("receive failure: \(failure) for latest rate and number of days: \(numberOfDays) from: \(start) with id: \(traceIdentifier)")
+                        logger.debug("trace identifier: \(traceIdentifier), receive failure: \(failure) from latest rate for number of days: \(numberOfDays) from: \(start)")
+                        
                         completionHandlerQueue.async { completionHandler(.failure(failure)) }
                 }
                 
@@ -75,7 +76,8 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                 // resulting in failure has been handled.
                 return
             }
-            logger.debug("receive rate tuple for number of days: \(numberOfDays) from: \(start) with id: \(traceIdentifier)")
+            
+            logger.debug("trace identifier: \(traceIdentifier), receive rate tuple for number of days: \(numberOfDays) from: \(start)")
             
             completionHandlerQueue.async {
                 completionHandler(.success((latestRate: latestRate,

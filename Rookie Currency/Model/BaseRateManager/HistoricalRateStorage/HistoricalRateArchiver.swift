@@ -30,6 +30,8 @@ extension HistoricalRateArchiver {
 }
 
 extension HistoricalRateArchiver: HistoricalRateStorageProtocol {
+    var description: String { String(describing: Self.self) }
+    
     func readFor(dateString: String) -> ResponseDataModel.HistoricalRate? {
         let fileURL: URL = fileURLWith(fileName: dateString)
         
