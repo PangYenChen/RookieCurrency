@@ -6,7 +6,7 @@ class BaseHistoricalRateProviderRing: BaseHistoricalRateProviderProtocol {
         self.storage = storage
         self.nextProvider = nextProvider
         
-        logger = LoggerFactory.make(category: String(describing: Self.self) + " with " + storage.description)
+        logger = LoggerFactory.make(category: String(describing: Self.self) + " with " + String(describing: storage))
     }
     
     let storage: HistoricalRateStorageProtocol

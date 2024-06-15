@@ -5,7 +5,7 @@ class HistoricalRateProviderRing: BaseHistoricalRateProviderRing {}
 extension HistoricalRateProviderRing: HistoricalRateProviderProtocol {
     func historicalRatePublisherFor(dateString: String, traceIdentifier: String) -> AnyPublisher<ResponseDataModel.HistoricalRate, any Error> {
         if let storedRate = storage.readFor(dateString: dateString) {
-            logger.debug("trace identifier: \(traceIdentifier), read: \(dateString) from storage: \(self.storage.description)")
+            logger.debug("trace identifier: \(traceIdentifier), read: \(dateString) from storage: \(String(describing: self.storage))")
             
             return Just(storedRate)
                 .setFailureType(to: Error.self)

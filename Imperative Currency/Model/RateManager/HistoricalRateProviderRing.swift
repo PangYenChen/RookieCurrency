@@ -7,7 +7,7 @@ extension HistoricalRateProviderRing: HistoricalRateProviderProtocol {
                            traceIdentifier: String,
                            resultHandler: @escaping HistoricalRateResultHandler) {
         if let storedRate = storage.readFor(dateString: dateString) {
-            logger.debug("trace identifier: \(traceIdentifier), read: \(dateString) from storage: \(self.storage.description)")
+            logger.debug("trace identifier: \(traceIdentifier), read: \(dateString) from storage: \(String(describing: self.storage))")
             resultHandler(.success(storedRate))
         }
         else {
