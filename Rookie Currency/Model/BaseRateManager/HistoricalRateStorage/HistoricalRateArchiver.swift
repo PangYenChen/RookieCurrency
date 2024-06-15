@@ -4,7 +4,7 @@ import OSLog
 
 /// 讀寫 Historical Rate 的類別，當使用的 file manager 是 `.default`，這個 class 是 thread safe
 class HistoricalRateArchiver {
-    init(fileManager: FileManager) {
+    init(fileManager: FileManager, serialDispatchQueue: DispatchQueue = DispatchQueue(label: "historical.rate.archiver")) {
         self.fileManager = fileManager
         
         documentsDirectory = URL.documentsDirectory
@@ -13,6 +13,8 @@ class HistoricalRateArchiver {
         jsonType = UTType.json
         
         logger = LoggerFactory.make(category: String(describing: Self.self))
+        
+        self.serialDispatchQueue = serialDispatchQueue
     }
     
     private let fileManager: FileManager
@@ -23,6 +25,8 @@ class HistoricalRateArchiver {
     private let jsonType: UTType
     
     private let logger: Logger
+    
+    private let serialDispatchQueue: DispatchQueue
 }
 
 // MARK: - instance methods
@@ -63,30 +67,38 @@ extension HistoricalRateArchiver: HistoricalRateStorageProtocol {
     }
     
     func store(_ rate: ResponseDataModel.HistoricalRate) {
-        do {
-            let data: Data = try jsonEncoder.encode(rate)
-            let fileURL: URL = fileURLWith(fileName: rate.dateString)
+        serialDispatchQueue.async { [weak self] in
+            guard let self else { return }
             
-            try data.write(to: fileURL)
-            
-            logger.debug("store historical rate for date: \(rate.dateString)")
-        }
-        catch {
-            logger.debug("fail to store historical rate for date: \(rate.dateString), error: \(error)")
+            do {
+                let data: Data = try jsonEncoder.encode(rate)
+                let fileURL: URL = fileURLWith(fileName: rate.dateString)
+                
+                try data.write(to: fileURL)
+                
+                logger.debug("store historical rate for date: \(rate.dateString)")
+            }
+            catch {
+                logger.debug("fail to store historical rate for date: \(rate.dateString), error: \(error)")
+            }
         }
     }
     
     func removeAll() {
-        do {
-            try fileManager
-                .contentsOfDirectory(at: documentsDirectory,
-                                     includingPropertiesForKeys: nil,
-                                     options: .skipsHiddenFiles)
-                .filter { fileURL in fileURL.pathExtension == jsonType.preferredFilenameExtension }
-                .forEach { fileURL in try fileManager.removeItem(at: fileURL) }
+        serialDispatchQueue.async { [weak self] in
+            guard let self else { return }
             
-            logger.debug("remove all stored historical rate")
+            do {
+                try fileManager
+                    .contentsOfDirectory(at: documentsDirectory,
+                                         includingPropertiesForKeys: nil,
+                                         options: .skipsHiddenFiles)
+                    .filter { fileURL in fileURL.pathExtension == self.jsonType.preferredFilenameExtension }
+                    .forEach { fileURL in try self.fileManager.removeItem(at: fileURL) }
+                
+                logger.debug("remove all stored historical rate")
+            }
+            catch { logger.debug("fail to remove all stored historical rate") }
         }
-        catch { logger.debug("fail to remove all stored historical rate") }
     }
 }
