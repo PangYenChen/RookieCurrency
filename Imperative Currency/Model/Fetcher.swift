@@ -3,38 +3,38 @@ import Foundation
 class Fetcher: BaseFetcher {
     func fetch<Endpoint: EndpointProtocol>(
         _ endpoint: Endpoint,
-        id: String = UUID().uuidString,
-        completionHandler: @escaping CompletionHandler<Endpoint.ResponseType>
+        traceIdentifier: String,
+        resultHandler: @escaping ResultHandler<Endpoint.ResponseType>
     ) {
         do {
             let (urlRequest, apiKey): (URLRequest, String) = try createRequestTupleFor(endpoint)
                 .get()
             
-            logger.debug("\(endpoint) with id \(id) starts requesting using api key: \(apiKey)")
+            logger.debug("trace identifier: \(traceIdentifier), endpoint: \(endpoint), starts requesting, api key: \(apiKey)")
             
             currencySession.currencyDataTask(with: urlRequest) { [unowned self] data, urlResponse, error in
                 do {
                     let data: Data = try venderResultFor(data: data, urlResponse: urlResponse, error: error)
                         .get()
                     
-                    completionHandler(Result { try jsonDecoder.decode(Endpoint.ResponseType.self, from: data) })
-                    logger.debug("\(endpoint) with id \(id) using api key: \(apiKey) finishes with data")
+                    logger.debug("trace identifier: \(traceIdentifier), endpoint: \(endpoint), receive data, api key: \(apiKey)")
+                    resultHandler(Result { try jsonDecoder.decode(Endpoint.ResponseType.self, from: data) })
                 }
                 catch Error.invalidAPIKey, Error.runOutOfQuota {
-                    logger.debug("\(endpoint) with id \(id) deprecates api key: \(apiKey)")
+                    logger.debug("trace identifier: \(traceIdentifier), endpoint: \(endpoint), deprecates api key: \(apiKey)")
                     deprecate(apiKey)
                     
-                    fetch(endpoint, id: id, completionHandler: completionHandler)
+                    fetch(endpoint, traceIdentifier: traceIdentifier, resultHandler: resultHandler)
                 }
                 catch {
-                    logger.debug("\(endpoint) with id \(id) using api key: \(apiKey) fails with error:\(error)")
-                    completionHandler(.failure(error))
+                    logger.debug("trace identifier: \(traceIdentifier), endpoint: \(endpoint), fails with error:\(error), api key: \(apiKey)")
+                    resultHandler(.failure(error))
                 }
             }
         }
         catch {
-            logger.debug("\(endpoint) with id \(id) fails with error:\(error)")
-            completionHandler(.failure(error))
+            logger.debug("trace identifier: \(traceIdentifier), endpoint: \(endpoint), fails with error:\(error)")
+            resultHandler(.failure(error))
         }
     }
 }
@@ -57,23 +57,24 @@ private extension Fetcher {
 
 extension Fetcher: HistoricalRateProviderProtocol {
     func historicalRateFor(dateString: String,
+                           traceIdentifier: String,
                            resultHandler: @escaping HistoricalRateResultHandler) {
-        fetch(Endpoints.Historical(dateString: dateString), completionHandler: resultHandler)
+        fetch(Endpoints.Historical(dateString: dateString), traceIdentifier: traceIdentifier, resultHandler: resultHandler)
     }
 }
 
 extension Fetcher: LatestRateProviderProtocol {
-    func latestRate(resultHandler latestRateResultHandler: @escaping LatestRateResultHandler) {
-        fetch(Endpoints.Latest(), completionHandler: latestRateResultHandler)
+    func latestRate(traceIdentifier: String, resultHandler: @escaping LatestRateResultHandler) {
+        fetch(Endpoints.Latest(), traceIdentifier: traceIdentifier, resultHandler: resultHandler)
     }
 }
 
 extension Fetcher: SupportedCurrencyProviderProtocol {
-    func supportedCurrency(completionHandler: @escaping SupportedCurrencyHandler) {
-        fetch(Endpoints.SupportedSymbols(), completionHandler: completionHandler)
+    func supportedCurrency(traceIdentifier: String, resultHandler: @escaping SupportedCurrencyResultHandler) {
+        fetch(Endpoints.SupportedSymbols(), traceIdentifier: traceIdentifier, resultHandler: resultHandler)
     }
 }
 
 extension Fetcher {
-    typealias CompletionHandler<ResponseType> = (_ result: Result<ResponseType, Swift.Error>) -> Void
+    typealias ResultHandler<ResponseType> = (_ result: Result<ResponseType, Swift.Error>) -> Void
 }

@@ -8,7 +8,7 @@ class BaseRateManager {
         self.historicalRateProvider = historicalRateProvider
         self.latestRateProvider = latestRateProvider
         venderCalendar = AppUtility.venderCalendar
-        logger = LoggerFactory.make(category: String(describing: RateManager.self))
+        logger = LoggerFactory.make(category: String(describing: Self.self))
     }
     
     // MARK: - dependencies

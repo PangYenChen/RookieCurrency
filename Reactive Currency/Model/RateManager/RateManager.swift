@@ -11,30 +11,42 @@ class RateManager: BaseRateManager, RateManagerProtocol {
     // testing ratePublisher(numberOfDays:)
     func ratePublisher(numberOfDays: Int,
                        from start: Date) -> AnyPublisher<BaseRateManager.RateTuple, Error> {
-        let id: String = UUID().uuidString
+        let traceIdentifier: String = UUID().uuidString
         
-        return historicalRateDateStrings(numberOfDaysAgo: numberOfDays, from: start)
+        logger.debug("trace identifier: \(traceIdentifier), start requesting rate for number of days: \(numberOfDays) from: \(start)")
+        
+        let historicalRateSetPublisher: AnyPublisher<Set<ResponseDataModel.HistoricalRate>, Error> = historicalRateDateStrings(numberOfDaysAgo: numberOfDays,
+                                                                                                                               from: start)
             .publisher
-            .flatMap(historicalRateProvider.historicalRatePublisherFor(dateString:))
-            .collect(numberOfDays)
-            .combineLatest(latestRateProvider.latestRatePublisher()) { historicalRateArray, latestRate in
-                (latestRate: latestRate, historicalRateSet: Set(historicalRateArray))
+            .flatMap { [weak self] historicalRateDateString in
+                guard let self else { return Empty<ResponseDataModel.HistoricalRate, Error>().eraseToAnyPublisher() }
+                return historicalRateProvider
+                    .historicalRatePublisherFor(dateString: historicalRateDateString, traceIdentifier: traceIdentifier)
+                    .handleEvents(receiveCompletion: { [weak self] completion in
+                        guard case let .failure(failure) = completion else { return }
+                        self?.logger.debug("trace identifier: \(traceIdentifier), receive failure: \(failure) from historical rate for number of days: \(numberOfDays) from: \(start)")
+                    })
+                    .eraseToAnyPublisher()
             }
-            .handleEvents(
-                receiveSubscription: { [unowned self] _ in
-                    logger.debug("start requesting rate for number of days: \(numberOfDays) from: \(start) with id: \(id)")
-                },
-                receiveOutput: { [unowned self] _ in
-                    logger.debug("receive rate for number of days: \(numberOfDays) from: \(start) with id: \(id)")
-                },
-                receiveCompletion: { [unowned self] completion in
-                    guard case .failure = completion else { return }
-                    logger.debug("receive failure for number of days: \(numberOfDays) from: \(start) with id: \(id)")
-                },
-                receiveCancel: { [unowned self] in
-                    logger.debug("receive cancel for number of days: \(numberOfDays) from: \(start) with id: \(id)")
-                }
-            )
+            .collect(numberOfDays)
+            .map(Set.init)
+            .eraseToAnyPublisher()
+        
+        let latestRatePublisher: AnyPublisher<ResponseDataModel.LatestRate, Error> = latestRateProvider
+            .latestRatePublisher(traceIdentifier: traceIdentifier)
+            .handleEvents(receiveCompletion: { [weak self] completion in
+                guard case let .failure(failure) = completion else { return }
+                self?.logger.debug("trace identifier: \(traceIdentifier), receive failure: \(failure) from historical rate for number of days: \(numberOfDays) from: \(start)")
+            })
+            .eraseToAnyPublisher()
+        
+        return Publishers
+            .CombineLatest(latestRatePublisher,
+                           historicalRateSetPublisher)
+            .handleEvents(receiveOutput: { [weak self] _ in
+                self?.logger.debug("trace identifier: \(traceIdentifier), receive rate tuple for number of days: \(numberOfDays) from: \(start)")
+            })
+            .map { latestRate, historicalRateSet in (latestRate, historicalRateSet) }
             .eraseToAnyPublisher()
     }
 }

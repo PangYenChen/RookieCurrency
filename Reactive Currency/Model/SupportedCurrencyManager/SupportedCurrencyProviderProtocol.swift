@@ -1,5 +1,5 @@
 import Combine
 
 protocol SupportedCurrencyProviderProtocol {
-    func supportedCurrencyPublisher() -> AnyPublisher<ResponseDataModel.SupportedSymbols, Error>
+    func supportedCurrencyPublisher(traceIdentifier: String) -> AnyPublisher<ResponseDataModel.SupportedSymbols, Error>
 }

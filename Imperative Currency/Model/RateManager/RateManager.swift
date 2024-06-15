@@ -17,8 +17,8 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                     from start: Date,
                     completionHandlerQueue: DispatchQueue,
                     completionHandler: @escaping CompletionHandler) {
-        let id: String = UUID().uuidString
-        logger.debug("start requesting rate for number of days: \(numberOfDays) from: \(start) with id: \(id)")
+        let traceIdentifier: String = UUID().uuidString
+        logger.debug("trace identifier: \(traceIdentifier), start requesting rate for number of days: \(numberOfDays) from: \(start)")
         
         let dispatchGroup: DispatchGroup = DispatchGroup()
         var historicalRateSetResult: Result<Set<ResponseDataModel.HistoricalRate>, Error>?
@@ -27,14 +27,14 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         do /*request historical rate set*/ {
             dispatchGroup.enter()
             
-            historicalRateSet(numberOfDaysAgo: numberOfDays, from: start) { [unowned self] result in
+            historicalRateSet(numberOfDaysAgo: numberOfDays, from: start, traceIdentifier: traceIdentifier) { [unowned self] result in
                 serialDispatchQueue.async {
                     switch result {
                         case .success(let historicalRateSet):
                             historicalRateSetResult = .success(historicalRateSet)
                         case .failure(let failure):
                             historicalRateSetResult = .failure(failure)
-                            logger.debug("receive failure: \(failure) for historical rate and number of days: \(numberOfDays) from: \(start) with id: \(id)")
+                            logger.debug("trace identifier: \(traceIdentifier), receive failure: \(failure) from historical rate for number of days: \(numberOfDays) from: \(start)")
                             completionHandlerQueue.async { completionHandler(.failure(failure)) }
                     }
                     
@@ -48,13 +48,14 @@ class RateManager: BaseRateManager, RateManagerProtocol {
         do /*request latest rate*/ {
             dispatchGroup.enter()
             
-            latestRateProvider.latestRate { [unowned self] result in
+            latestRateProvider.latestRate(traceIdentifier: traceIdentifier) { [unowned self] result in
                 switch result {
                     case .success(let latestRate):
                         latestRateResult = .success(latestRate)
                     case .failure(let failure):
                         latestRateResult = .failure(failure)
-                        logger.debug("receive failure: \(failure) for latest rate and number of days: \(numberOfDays) from: \(start) with id: \(id)")
+                        logger.debug("trace identifier: \(traceIdentifier), receive failure: \(failure) from latest rate for number of days: \(numberOfDays) from: \(start)")
+                        
                         completionHandlerQueue.async { completionHandler(.failure(failure)) }
                 }
                 
@@ -75,7 +76,8 @@ class RateManager: BaseRateManager, RateManagerProtocol {
                 // resulting in failure has been handled.
                 return
             }
-            logger.debug("receive rate tuple for number of days: \(numberOfDays) from: \(start) with id: \(id)")
+            
+            logger.debug("trace identifier: \(traceIdentifier), receive rate tuple for number of days: \(numberOfDays) from: \(start)")
             
             completionHandlerQueue.async {
                 completionHandler(.success((latestRate: latestRate,
@@ -87,6 +89,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
     func historicalRateSet(
         numberOfDaysAgo: Int,
         from start: Date,
+        traceIdentifier: String,
         completionHandler: @escaping (Result<Set<ResponseDataModel.HistoricalRate>, Error>) -> Void
     ) {
         let dispatchGroup: DispatchGroup = DispatchGroup()
@@ -97,7 +100,7 @@ class RateManager: BaseRateManager, RateManagerProtocol {
             .forEach { historicalRateDateString in
                 dispatchGroup.enter()
                 
-                historicalRateProvider.historicalRateFor(dateString: historicalRateDateString) { result in
+                historicalRateProvider.historicalRateFor(dateString: historicalRateDateString, traceIdentifier: traceIdentifier) { result in
                     serialDispatchQueue.async {
                         switch historicalRateSetResult {
                             case .success(let historicalRateSet):

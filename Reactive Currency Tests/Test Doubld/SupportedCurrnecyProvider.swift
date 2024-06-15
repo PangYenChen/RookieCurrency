@@ -12,7 +12,7 @@ extension TestDouble {
         private var passthroughSubject: PassthroughSubject<ResponseDataModel.SupportedSymbols, Error>?
         private(set) var numberOfFunctionCall: Int
         
-        func supportedCurrencyPublisher() -> AnyPublisher<ResponseDataModel.SupportedSymbols, Error> {
+        func supportedCurrencyPublisher(traceIdentifier: String) -> AnyPublisher<ResponseDataModel.SupportedSymbols, Error> {
             numberOfFunctionCall += 1
             
             let passthroughSubject: PassthroughSubject<ResponseDataModel.SupportedSymbols, Error> = PassthroughSubject<ResponseDataModel.SupportedSymbols, Error>()

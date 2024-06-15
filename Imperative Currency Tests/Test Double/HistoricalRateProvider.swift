@@ -14,6 +14,7 @@ extension TestDouble {
         private(set) var numberOfRemoveAllStorageCall: Int
         
         func historicalRateFor(dateString: String,
+                               traceIdentifier: String,
                                resultHandler: @escaping HistoricalRateResultHandler) {
             dateStringAndHistoricalRateResultHandlerDictionary[dateString] = resultHandler
         }
