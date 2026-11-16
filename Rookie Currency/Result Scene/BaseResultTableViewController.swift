@@ -9,13 +9,6 @@ class BaseResultTableViewController: UITableViewController {
         
         super.init(coder: coder)
         
-        do /*configure search controller*/ {
-            let searchController: UISearchController = UISearchController()
-            searchController.searchBar.delegate = self
-            navigationItem.searchController = searchController
-            navigationItem.hidesSearchBarWhenScrolling = false
-        }
-        
         do /*show the app icon in app in order to distinguish the target quickly*/ {
             let imageView: UIImageView = UIImageView(image: UIImage(named: "AppIcon"))
             let rightBarButton: UIBarButtonItem = UIBarButtonItem(customView: imageView)
@@ -36,6 +29,13 @@ class BaseResultTableViewController: UITableViewController {
     // MARK: - life cycle
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        do /*configure search controller*/ {
+            let searchController: UISearchController = UISearchController()
+            searchController.searchBar.delegate = self
+            navigationItem.searchController = searchController
+            navigationItem.hidesSearchBarWhenScrolling = false
+        }
         
         do /*configure refresh control*/ {
             refreshControl = UIRefreshControl()
